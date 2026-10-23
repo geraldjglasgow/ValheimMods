@@ -1,5 +1,10 @@
 # Changelog
 
+## 3.33.0
+
+- Rendering Table: only a boss trophy makes a Forge idol; other trophies give ores or ingredients.
+- Compendium: a Rendering Table page lists each biome's trophies, ores, ingredients and idols.
+
 ## 3.32.1
 
 - Fixed: a tame whose stars `15 - Tamed` took no longer shows them on nameplate mods such as SeneaL UI.

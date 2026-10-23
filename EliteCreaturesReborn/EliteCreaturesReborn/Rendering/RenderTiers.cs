@@ -7,15 +7,15 @@ namespace EliteCreaturesReborn.Rendering
     /// Every fixed number of the Rendering Table (the user, 2026-10-20: "take trophies and convert them to items, random
     /// items, items in the tier the trophy is from; you can choose totems, ores, ingredients"). A trophy's tier is its
     /// creature's biome, 0 Meadows ... 7 the Deep North (homes read from the game's spawn lists, 2026-10-20: the Writhan
-    /// lives in the Swamp). One trophy renders into 2-4 of one ore or ingredient of its tier, drawn at random; five of
-    /// one tier make one Forge of Potential idol of it (the game's <c>Upgrader&lt;tier&gt;Weapon</c> or <c>Armor</c>,
-    /// Battle or Protection at random, as Hel's Arena pays them). A boss trophy counts as five of its biome. Trophies
-    /// not listed (Hildir's quest trophies, the Bog Witch's Kvastur, another mod's) are never taken.
+    /// lives in the Swamp). One trophy renders into 2-4 of one ore or ingredient of its tier, drawn at random, a boss
+    /// trophy into five such rolls. Only a boss trophy makes a Forge of Potential idol of its tier (the game's
+    /// <c>Upgrader&lt;tier&gt;Weapon</c> or <c>Armor</c>, Battle or Protection at random, as Hel's Arena pays them).
+    /// Trophies not listed (Hildir's quest trophies, the Bog Witch's Kvastur, another mod's) are never taken.
     /// </summary>
     internal static class RenderTiers
     {
-        /// <summary>Trophies an idol takes; also what one boss trophy counts as.</summary>
-        public const int PerIdol = 5;
+        /// <summary>The ore or ingredient rolls one boss trophy gives.</summary>
+        public const int BossRolls = 5;
 
         /// <summary>One ore or ingredient roll: at least this many, at most <see cref="MostPerRoll"/>.</summary>
         public const int LeastPerRoll = 2;
@@ -131,8 +131,35 @@ namespace EliteCreaturesReborn.Rendering
         }
 
         /// <summary>A Forge of Potential idol of this tier: Battle or Protection, at random.</summary>
-        public static string Idol(int tier) =>
-            "Upgrader" + Mathf.Clamp(tier, 0, TrophiesByTier.Length - 1) + (Random.value < 0.5f ? "Weapon" : "Armor");
+        public static string Idol(int tier) => IdolNames(tier)[Random.value < 0.5f ? 0 : 1];
+
+        /// <summary>Both Forge of Potential idols of this tier, Battle first.</summary>
+        public static string[] IdolNames(int tier)
+        {
+            string name = "Upgrader" + Mathf.Clamp(tier, 0, TrophiesByTier.Length - 1);
+            return new[] { name + "Weapon", name + "Armor" };
+        }
+
+        /// <summary>How many tiers there are, 0 Meadows to the Deep North.</summary>
+        public static int TierCount => TrophiesByTier.Length;
+
+        /// <summary>The creature trophies of a tier, its boss's (if it has one) last.</summary>
+        public static string[] TrophiesOf(int tier)
+        {
+            string[] trophies = TrophiesByTier[tier];
+            return HasBoss(tier) ? Append(trophies, BossTrophies[tier]) : trophies;
+        }
+
+        /// <summary>Whether the tier has a boss trophy, so an idol can be made of it (the Deep North has none yet).</summary>
+        public static bool HasBoss(int tier) => tier >= 0 && tier < BossTrophies.Length;
+
+        private static string[] Append(string[] names, string last)
+        {
+            string[] all = new string[names.Length + 1];
+            names.CopyTo(all, 0);
+            all[names.Length] = last;
+            return all;
+        }
 
         // Bosses: one tier each, in the order of their biomes.
         private static string[][] Single(string[] names)

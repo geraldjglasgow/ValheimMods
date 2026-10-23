@@ -9,16 +9,16 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Mutations: one per creature, named on the nameplate (below).
 - Boss aspects: one per fight (below), or chosen at the altar with E; bosses gain stars each defeat.
 - Taming: young inherit mutations and stars.
-- Loot: four drop modes, rules per creature; bosses pay every player.
+- Loot: four drop modes, per-creature rules; bosses pay every player.
 - Boss damage board: who did how much.
-- Boss hints: bosses point to traders and the forge.
-- Compendium: in-game pages on all of it.
+- Boss hints: pointers to traders and the forge.
+- Compendium: in-game pages on it all.
 - Death recap: `F10` replays the seconds before each death.
 - Respawning (off by default): cleared camps, dungeons and chests refill.
-- Horde (off by default): more creatures in the wild, each weaker.
-- Raids: stake gold in the Raiders Chest, call a raid, win back more.
-- Rendering Table: trophies into ores or ingredients of their biome, or five into a Forge idol.
-- Hel's Arena (off by default): an outdoor arena through Helgrind; endless waves from your gear's biome, a boss every fifth, rewards by progress. Subject to change.
+- Horde (off by default): more, weaker creatures in the wild.
+- Raids: stake gold in the Raiders Chest, call a raid, win more.
+- Rendering Table: trophies into ores or ingredients of their biome; boss trophies into Forge idols.
+- Hel's Arena (off by default): endless waves through Helgrind from your gear's biome, a boss every fifth, rewards by progress. Subject to change.
 - Works with PackPanel, GrindstoneSkills and Elite Creatures Pack.
 
 ## Mutations
@@ -70,8 +70,8 @@ Needed on the server and every client. Install with r2modman or the Thunderstore
 `EliteCreaturesReborn.dll` in `BepInEx/plugins`. Remove other star mods, or set `Creature stars` to false.
 
 ## Configuration
-`BepInEx/config/gglasgow.elitecreaturesreborn.cfg` (difficulty, mutations on/off, respawning and every switch, also in a
-configuration manager) and `BepInEx/config/creature_rules.yml` (the tables). Both apply without a restart; the server's bind every player.
+`BepInEx/config/gglasgow.elitecreaturesreborn.cfg` (every switch, also in a configuration
+manager) and `BepInEx/config/creature_rules.yml` (the tables). Both apply without a restart; the server's bind every player.
 Console: `elite tier`, `damage`, `deaths` for everyone; other `elite` commands for admins. Details:
 [reference](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/CLAUDE.md).
 Translate: save a copy of [English.yml](https://github.com/geraldjglasgow/ValheimMods/blob/main/EliteCreaturesReborn/EliteCreaturesReborn/translations/English.yml) as `EliteCreaturesReborn.translations.<Language>.yml` in `BepInEx/config`.

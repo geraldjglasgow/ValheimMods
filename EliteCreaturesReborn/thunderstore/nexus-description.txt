@@ -22,7 +22,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [*]Death recap: [b]F10[/b] replays the seconds before each death, hit by hit.
 [*]Respawning: cleared camps, dungeons and dungeon chests can refill (off by default).
 [*]Raids: stake gold in the Raiders Chest to call a raid and win it back with more (below).
-[*]Rendering Table: a narrow bench that renders creature trophies into ores or ingredients of their biome, or five of one biome into a Forge idol of its tier.
+[*]Rendering Table: a narrow bench that renders creature trophies into ores or ingredients of their biome, and a boss trophy into a Forge idol of its tier; the compendium lists what each biome gives.
 [*]Horde (off by default): more creatures in the wild, each weaker; the extra creatures pay no extra loot.
 [*]Hel's Arena (off by default): an outdoor arena 130 m across, reached through Helgrind, Hel's gate, under a cavern roof and ringed by a black lake that kills; three Bat-fiends guard it on the first visit and drop runes. Endless waves starting at your gear's biome and a boss every fifth; souls for every kill, spent at Hel's Anvil to mend your gear between waves; rewarded with Forge of Potential idols, coins, skill XP and (with EliteCrafting) runes and essence by how far you get. Subject to change without warning: it works and is tested, but its final shape is still being decided.
 [*]Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.

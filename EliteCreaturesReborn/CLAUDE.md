@@ -455,7 +455,7 @@ without the place says nothing. Each player turns it off with `Boss hints` in `8
 
 ## Compendium
 
-The game's compendium (the inventory's Compendium button) gets four pages after its own Active effects and Message
+The game's compendium (the inventory's Compendium button) gets four pages (five with the Rendering Table) after its own Active effects and Message
 log, written each time it opens from the rules the server sent and the world's keys (`Compendium/`, one
 `TextsDialog.UpdateTextsList` postfix, `Patches/CompendiumPatch.cs`; a player request for an in-game bestiary,
 2026-10-13). Each player turns them off with `Compendium pages` in `8 - Display (per player)`.
@@ -471,6 +471,8 @@ log, written each time it opens from the rules the server sent and the world's k
 - **Elite: Mutations** - each mutation that rolls on this server, its star in the player's colour for it, what it does
   with the numbers of the player's biome for a creature with no stars; the ones switched off by name.
 - **Elite: Boss aspects** - each aspect with its loot and the altar's own line for it (`AspectText.Describe`).
+- **Elite: Rendering Table** - only while `Rendering Table` is on: how a trophy renders, then each biome's trophies,
+  ores, ingredients and idols by the game's item names, items this game lacks left out (a player, 2026-10-22).
 
 ## Raids
 
@@ -541,12 +543,14 @@ check). Prefab `ECR_RenderingTable` (`Rendering/`).
 `Shift + E` changes what it makes, Ores, Ingredients or Idols in turn (anyone a ward lets in; kept in the table's ZDO,
 so everyone sees the same). `E` renders the first trophy in the inventory (grid order); held, one every 0.2 s. A trophy
 used on the table from the hotbar renders that one. Boss trophies are never taken by `E`, only from the hotbar.
+Only a boss trophy makes an idol (a player, 2026-10-22: idols from five of any trophy were far too many and gave no
+reason to fight the bosses); in Idols mode `E` only says so, and the hover says to use a boss trophy from the hotbar.
 
 | Makes | One trophy | Boss trophy |
 | --- | --- | --- |
 | Ores | 2-4 of a random ore of its biome | five such rolls |
 | Ingredients | 2-4 of a random ingredient of its biome | five such rolls |
-| Idols | five of one biome make one Forge idol of its tier (Battle or Protection at random) | one idol |
+| Idols | refused | one Forge idol of its tier (Battle or Protection at random) |
 
 | Tier | Trophies | Ores | Idol |
 | --- | --- | --- | --- |
@@ -557,9 +561,10 @@ used on the table from the hotbar renders that one. Boss trophies are never take
 | 4 Plains | lox, fulings, deathsquito, growth, vile, Yagluth | black metal scrap | Black Metal |
 | 5 Mistlands | hare, seekers, gjall, tick, dvergr, the Queen | black marble, soft tissue | Black Marble |
 | 6 Ashlands | asksvin, volture, morgen, the Charred, fallen valkyrie, lava blob, bonemaw, Fader | flametal ore, grausten | Flametal |
-| 7 Deep North | barka, elaking, eyeless one, moose, seal, frost blob, pulp, krigen, hexen | petrified tissue | Bloodgold |
+| 7 Deep North | barka, elaking, eyeless one, moose, seal, frost blob, pulp, krigen, hexen | petrified tissue | none (no boss) |
 
-Ingredients are the biome's creature parts and plants (`Rendering/RenderTiers.cs` has every list). Hildir's quest
+Ingredients are the biome's creature parts and plants (`Rendering/RenderTiers.cs` has every list; the compendium's
+Rendering Table page shows them to players). Hildir's quest
 trophies, the Bog Witch's Kvastur and other mods' trophies are never taken. What does not fit in the inventory drops at
 the player's feet. `16 - Rendering Table` / `Rendering Table` (on) puts the table in the hammer; off, a table already
 built renders nothing. It is synced from the server and held by `Lock to server`.

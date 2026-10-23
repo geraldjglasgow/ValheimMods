@@ -6,9 +6,9 @@ using EliteCreaturesReborn.Runtime;
 namespace EliteCreaturesReborn.Compendium
 {
     /// <summary>
-    /// The mod's pages in the game's compendium (the inventory's Compendium button): world difficulty, stars, mutations
-    /// and boss aspects, written each time the compendium opens from the rules this machine holds - the server's, synced
-    /// - and the world's own keys, so they always show this server's numbers right now. They go in after the game's own
+    /// The mod's pages in the game's compendium (the inventory's Compendium button): world difficulty, stars, mutations,
+    /// boss aspects and, while it is switched on, the Rendering Table, written each time the compendium opens from the
+    /// rules this machine holds - the server's, synced - and the world's own keys, so they always show this server's numbers right now. They go in after the game's own
     /// Active effects and Logs pages, in a fixed order, ahead of the lore.
     /// </summary>
     internal static class CompendiumPages
@@ -32,6 +32,10 @@ namespace EliteCreaturesReborn.Compendium
                 new TextsDialog.TextInfo(MutationsPage.Topic, MutationsPage.Text(set, here)),
                 new TextsDialog.TextInfo(AspectsPage.Topic, AspectsPage.Text(set)),
             };
+            if (TableSettings.TableEnabled)
+            {
+                pages.Add(new TextsDialog.TextInfo(RenderingPage.Topic, RenderingPage.Text()));
+            }
             texts.InsertRange(System.Math.Min(After, texts.Count), pages);
         }
     }
