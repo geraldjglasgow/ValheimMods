@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.1.1
+
+- Brazilian Portuguese translation by Yoroshiro, used while the game's language is Portuguese (Brazilian).
+
 ## 5.1.0
 
 - Translations: every word you read is in `translations/English.yml`; an `OpenKeep.translations.<Language>.yml` in `BepInEx/config` translates it.
