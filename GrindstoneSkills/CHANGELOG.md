@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.19.2
+
+- Brazilian Portuguese translation by Yoroshiro, used while the game's language is Portuguese (Brazilian).
+
 ## 0.19.1
 
 - Polish translation, used while the game's language is Polish.

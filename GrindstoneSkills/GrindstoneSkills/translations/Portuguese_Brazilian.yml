@@ -1,0 +1,934 @@
+# GrindstoneSkills - Portuguese Brazilian
+#
+# Used while the game's language is Portuguese Brazilian. The keys are the ones in English.yml beside this file; a key left out
+# stays English.
+
+# GrindstoneSkills: the skills window (sort bar, info pane, page helpers) and the names of the mod's own skills.
+# One line per word, the text double-quoted; $1, $2 ... are values filled in by the mod.
+
+# The mod's own skills, named the way the game names a skill: skill_ + its type number (the stable hash of its identity)
+skill_2060925741: "Navegação"
+skill_585068027: "Coleta"
+skill_1869457860: "Agropecuária"
+skill_1650628550: "Defesa"
+
+# Sort bar above the skills list
+gs_book_sort_by: "Ordenar por"
+gs_book_sort_default: "Padrão"
+gs_book_sort_name: "Nome"
+gs_book_sort_level: "Nível"
+
+# Info pane: the level line under the skill's name
+gs_book_level: "Nível $1"
+gs_book_level_progress: "$1% para o nível $2"
+gs_book_level_highest: "nível máximo"
+
+# Info pane: the perks
+gs_book_perks: "Vantagens"
+gs_book_perk_unlocked: "desbloqueado"
+gs_book_perk_at_level: "no nível $1"
+
+# Times on the pages ($1 is the number)
+gs_book_seconds: "$1 s"
+gs_book_minutes: "$1 min"
+gs_book_hours: "$1 h"
+
+# The skills window's info pages: Cooking, Fishing and Husbandry, and the names of their perks.
+# A line's hovered word is its own key, filled into the line as $1, so the hover finds it in every language.
+
+# Cooking page
+gs_page_cooking_about: "Uma cozinha mais rápida e generosa. Treinada ao cozinhar."
+gs_page_cooking_heading_kitchen: "Cozinha"
+gs_page_cooking_speed: "Velocidade de cozimento"
+gs_page_cooking_speed_line: "$1 +$2"
+gs_page_cooking_speed_tip: "Em estações de cozimento e no forno, para os alimentos que você colocar."
+gs_page_cooking_burn: "Tempo para queimar"
+gs_page_cooking_burn_line: "$1 +$2"
+gs_page_cooking_burn_tip: "Um prato pronto demora esse tempo a mais para queimar. O jogo o queima após passar um tempo extra de cozimento depois de pronto."
+gs_page_cooking_craft: "Tempo de produção"
+gs_page_cooking_craft_line: "$1 -$2"
+gs_page_cooking_craft_tip: "No caldeirão, caldeirão de hidromel e mesa de preparo. O bônus de Culinária próprio do jogo."
+gs_page_cooking_ferment: "Velocidade de fermentação"
+gs_page_cooking_ferment_line: "$1 +$2"
+gs_page_cooking_ferment_tip: "Para as bases de hidromel que você coloca em um fermentador."
+gs_page_cooking_extra_food: "Comida extra"
+gs_page_cooking_extra_food_line: "$1: $2 de chance de +$3"
+gs_page_cooking_extra_food_tip: "Em todas as cozinhas: estações de cozimento, forno, caldeirão, caldeirão de hidromel e mesa de preparo. Substitui o bônus de comida extra padrão do jogo nesses locais."
+gs_page_cooking_ingredient: "Ingrediente economizado"
+gs_page_cooking_ingredient_line: "$1: $2"
+gs_page_cooking_ingredient_tip: "Chance por produção no caldeirão, caldeirão de hidromel ou mesa de preparo de recuperar um ingrediente utilizado."
+gs_page_cooking_heading_experience: "Experiência"
+gs_page_cooking_rich: "Pratos ricos"
+gs_page_cooking_rich_line: "$1: até x$2"
+gs_page_cooking_rich_tip: "A experiência aumenta com a Vida + Vigor + Eitr do prato: x1 até $1, x$2 a partir de $3."
+gs_page_cooking_new_dish: "Novo prato"
+gs_page_cooking_new_dish_line: "$1: x$2"
+gs_page_cooking_new_dish_tip: "Na primeira vez que você prepara cada prato."
+gs_page_cooking_experience_line: "Experiência de cozinha x$1"
+
+# Fishing page
+gs_page_fishing_about: "Fisgue mais peixes e capture exemplares maiores. Treinada ao lutar com os peixes e retirá-los da água."
+gs_page_fishing_off: "A Pesca do GrindstoneSkills está desativada neste servidor."
+gs_page_fishing_reel_speed: "Velocidade de recolhimento"
+gs_page_fishing_reel_speed_line: "$1 $2 m/s"
+gs_page_fishing_reel_speed_tip: "Própria do jogo: a velocidade com que a linha vem vindo enquanto você recolhe (segurando o botão de bloqueio). Fica duas vezes mais lenta enquanto o peixe se debate."
+gs_page_fishing_reel_stamina: "Vigor ao recolher"
+gs_page_fishing_reel_stamina_line: "$1 -$2"
+gs_page_fishing_reel_stamina_tip: "Própria do jogo: recolher consome essa quantidade a menos de vigor. Um peixe na linha também drena $1 de vigor por segundo."
+gs_page_fishing_bite: "Chance de mordida"
+gs_page_fishing_bite_line: "$1 +$2"
+gs_page_fishing_bite_tip: "Mais peixes irão atrás da sua boia. As mordidas também aumentam $1% ao amanhecer e anoitecer e $2% sob a chuva."
+gs_page_fishing_bite_tip_chum: "Mais peixes irão atrás da sua boia. As mordidas também aumentam $1% ao amanhecer e anoitecer, $2% sob a chuva e $3% em um raio de $4 m de engodo ($5) flutuando na água."
+gs_page_fishing_heading_fight: "A luta"
+gs_page_fishing_strike: "Janela de fisgada"
+gs_page_fishing_strike_line: "$1 $2 s"
+gs_page_fishing_strike_tip: "Tempo após um puxão na linha em que recolher confirma a fisgada. O padrão do jogo é de 0.5 s."
+gs_page_fishing_tension: "Tensão da linha"
+gs_page_fishing_tension_line: "$1 $2/s"
+gs_page_fishing_tension_tip: "Recolher a linha enquanto o peixe se debate preenche a barra abaixo da mira nesta taxa; uma barra cheia arrebenta a linha. Soltar o botão alivia a tensão em $1/s."
+gs_page_fishing_tension_tip_spent: "Após se debater por $1 vezes, o peixe fica exausto e vem vindo $2% mais rápido."
+gs_page_fishing_heading_catch: "A captura"
+gs_page_fishing_big_one: "Peixe grande"
+gs_page_fishing_big_one_line: "$1 $2"
+gs_page_fishing_big_one_tip: "Chance de um peixe fisgado subir um nível, sorteado novamente até o nível $1: +$2% à noite."
+gs_page_fishing_bonus: "Item bônus"
+gs_page_fishing_bonus_line: "$1 $2"
+gs_page_fishing_bonus_range: "$1-$2"
+gs_page_fishing_bonus_tip: "Chance de um peixe retirado da água trazer também um item bônus próprio. Um peixe lendário sempre traz."
+gs_page_fishing_bait: "Economia de isca"
+gs_page_fishing_bait_line: "$1 $2"
+gs_page_fishing_bait_tip: "Chance de um peixe retirado da água devolver a sua isca."
+gs_page_fishing_snag: "Fisgar detrito"
+gs_page_fishing_snag_line: "$1 $2"
+gs_page_fishing_snag_tip: "Uma vez por arremesso, após $1 na água sem nenhuma mordida, a linha pode fisgar um achado da lista de detritos do bioma. Ele é recolhido de forma lenta e pesada, e não concede experiência."
+gs_page_fishing_line: "linha"
+gs_page_fishing_cast_line: "Arremesso +$2, linha $1 +$3"
+gs_page_fishing_line_tip: "Os arremessos voam mais longe, e a linha aguenta mais antes de arrebentar em relação à vara."
+gs_page_fishing_line_tip_reach: "Os arremessos voam mais longe, e a linha só arrebenta quando a boia estiver a $1 m de distância da vara."
+gs_page_fishing_perfect_tip: "Comece a recolher dentro de $1 s após um puxão, caso já não estivesse recolhendo antes, e o peixe pulará o seu primeiro debate."
+gs_page_fishing_log_tip: "Cada espécie e tamanho que você retira da água é registrado com a sua maior captura. Digite $1 no chat ou leia a descrição de um peixe."
+gs_page_fishing_log_tip_bonus: "Cada nova espécie ou tamanho descoberto concede experiência bônus."
+gs_page_fishing_species_tip: "Um beliscão na linha revela o nome do peixe, e um arremesso bem-sucedido informa as condições de pesca: amanhecer, anoitecer, chuva, noite."
+gs_page_fishing_size_tip: "Um beliscão na linha também revela o nível do peixe, assim como olhar diretamente para um peixe na água."
+gs_page_fishing_double_tip: "O sorteio de bônus de um peixe retirado da água pode trazer dois itens em vez de apenas um."
+gs_page_fishing_legendary_tip_tire: "$1% dos peixes gerados são lendários: nível $2, brilham e ficam exaustos após se debaterem por $3 vezes."
+gs_page_fishing_legendary_tip_never: "$1% dos peixes gerados são lendários: nível $2, brilham e nunca ficam exaustos."
+gs_page_fishing_legendary_tip_bait: "A partir deste nível eles mordem a sua isca e sempre trazem um item bônus."
+gs_page_fishing_grace_tip: "Uma vez por peixe, ficar sem vigor não faz você perdê-lo imediatamente: por $1 ele leva a linha enquanto seu vigor se recupera. Se continuar vazio após isso, ele foge."
+gs_page_fishing_water_tip: "Um arremesso bem-sucedido informa quais peixes ao alcance mordem a sua isca e se um lendário está à espreita."
+
+# Husbandry page
+gs_page_husbandry_about: "Domestique mais rápido e crie animais melhores. Treinada ao domesticar, alimentar e cruzar os animais."
+gs_page_husbandry_off: "Desativada neste servidor."
+gs_page_husbandry_heading_taming: "Domesticação"
+gs_page_husbandry_taming: "Velocidade de domesticação"
+gs_page_husbandry_taming_line: "$1 +$2"
+gs_page_husbandry_taming_tip: "O maior nível dentro do raio de domesticação da criatura é o que conta. Acumula com o bônus de domesticação do jogo."
+gs_page_husbandry_taming_tip_boar: "O maior nível dentro do raio de domesticação da criatura é o que conta: os $1 de um javali tornam-se $2. Acumula com o bônus de domesticação do jogo."
+gs_page_husbandry_gates: "Bloqueios de nível"
+gs_page_husbandry_gates_line: "$1: você supera $2 de $3"
+gs_page_husbandry_gates_tip: "Estes fazem com que o progresso de domesticação ocorra apenas com um jogador daquele nível dentro do raio de alcance delas: $1."
+gs_page_husbandry_gate: "$1 $2"
+gs_page_husbandry_fed: "Tempo alimentado"
+gs_page_husbandry_fed_line: "$1 +$2"
+gs_page_husbandry_fed_tip: "Para animais que comem em um raio de $1 m de você. Eles só domesticam, reproduzem e curam enquanto estiverem alimentados."
+gs_page_husbandry_fed_tip_boar: "Para animais que comem em um raio de $1 m de você: os $2 de um javali tornam-se $3. Eles só domesticam, reproduzem e curam enquanto estiverem alimentados."
+gs_page_husbandry_pack: "Líder da alcateia"
+gs_page_husbandry_pack_line: "$1: dano +$2, recebido -$3"
+gs_page_husbandry_pack_tip: "Um lobo domesticado que te segue causa essa quantidade a mais de dano e recebe essa quantidade a menos."
+gs_page_husbandry_heading_breeding: "Reprodução"
+gs_page_husbandry_breeding: "Velocidade de reprodução"
+gs_page_husbandry_breeding_line: "$1 +$2"
+gs_page_husbandry_breeding_tip: "Gestações mais curtas e menos checagens de afeto ignoradas para animais em um raio de $1 m de você. O maior nível perto deles é o que conta."
+gs_page_husbandry_herd: "Tamanho do rebanho"
+gs_page_husbandry_herd_line: "$1 +$2"
+gs_page_husbandry_herd_tip: "Mais animais de uma mesma espécie podem se aglomerar antes que a reprodução seja interrompida. O jogo permite de 4 a 10 dependendo da espécie."
+gs_page_husbandry_offspring: "Filhote melhor"
+gs_page_husbandry_offspring_line: "$1 $2"
+gs_page_husbandry_offspring_tip_ecr: "Chance de um recém-nascido obter uma estrela a mais do que o sorteado pelo Elite Creatures Reborn, limitado a até uma estrela acima do progenitor mais forte."
+gs_page_husbandry_offspring_tip_one: "Chance de um recém-nascido ou de um ovo botado ter uma estrela acima do progenitor, limitado a até $1 estrela."
+gs_page_husbandry_offspring_tip_many: "Chance de um recém-nascido ou de um ovo botado ter uma estrela acima do progenitor, limitado a até $1 estrelas."
+gs_page_husbandry_twins: "Gêmeos"
+gs_page_husbandry_twins_line: "$1 $2"
+gs_page_husbandry_twins_tip: "Chance de um nascimento ser acompanhado por um segundo (um segundo ovo para as galinhas) meio minuto depois. Um gêmeo nunca tem gêmeos."
+gs_page_husbandry_growth: "Velocidade de crescimento"
+gs_page_husbandry_growth_line: "$1 +$2"
+gs_page_husbandry_growth_tip: "Filhotes domesticados crescem e ovos aquecidos chocam mais rápido em um raio de $1 m de você."
+gs_page_husbandry_growth_tip_piglet: "Filhotes domesticados crescem e ovos aquecidos chocam mais rápido em um raio de $1 m de você: os $2 de um leitão tornam-se $3."
+gs_page_husbandry_heading_yield: "Rendimento"
+gs_page_husbandry_butcher: "Rendimento do abate"
+gs_page_husbandry_butcher_line: "$1 +$2"
+gs_page_husbandry_butcher_tip: "Mais carne, peles e penas de animais domesticados que você matar (nunca troféus). Valores fracionados representam a chance de obter uma unidade a mais."
+gs_page_husbandry_produce: "Produção"
+gs_page_husbandry_produce_line: "$1 $2 a cada $3"
+gs_page_husbandry_produce_tip: "Chance de um animal domesticado alimentado em um raio de $1 m de você derrubar penas, restos, fragmentos ou peles sem precisar ser morto. O maior nível perto dele é o que conta."
+gs_page_husbandry_honey: "Mel extra"
+gs_page_husbandry_honey_line: "$1 $2 por mel"
+gs_page_husbandry_honey_tip: "Chance de obter uma unidade a mais para cada mel retirado de uma colmeia."
+gs_page_husbandry_petting_tip: "Acaricie um animal domesticado que você não possa comandar (exceto lobos): ele ficará contente por $1. Apenas fazer carinho em um que ainda não esteja contente treina a habilidade."
+gs_page_husbandry_petting_tip_breeds: "Acaricie um animal domesticado que você não possa comandar (exceto lobos): ele ficará contente por $1 e se reproduzirá $2% mais rápido. Apenas fazer carinho em um que ainda não esteja contente treina a habilidade."
+gs_page_husbandry_eggs_tip: "Os ovos mantêm as estrelas da galinha que os botou: eles as exibem, acumulam-se separadamente no inventário e chocam pintinhos com estrelas."
+gs_page_husbandry_lore_tip: "Passar o cursor sobre um animal ou ovo mostra seus cronômetros: alimentação, domesticação, afeto ou gestação, espaço do rebanho, contentamento, crescimento e incubação."
+gs_page_husbandry_feeder_build: "Martelo, Miscelânea, perto de uma bancada de trabalho."
+gs_page_husbandry_feeder_build_cost: "Martelo, Miscelânea, perto de uma bancada de trabalho: $1."
+gs_page_husbandry_feeder_cost_item: "$1 $2"
+gs_page_husbandry_feeder_walk: "Animais domesticados famintos e criaturas em processo de domesticação em um raio de $1 m caminham até ele e comem sua comida."
+gs_page_husbandry_calm_tip: "Uma criatura que você começou a domesticar não irá fugir de você nem te atacar, permitindo que a domesticação continue ao seu lado. Se feri-la, ela lutará contra você por $1."
+
+# Perk names (also used by the features' messages)
+gs_perk_perfectstrike: "Fisgada Perfeita"
+gs_perk_anglerslog: "Diário do Pescador"
+gs_perk_speciessense: "Senso de Espécie"
+gs_perk_sizesense: "Senso de Tamanho"
+gs_perk_doublebonus: "Bônus Duplo"
+gs_perk_legendaryfish: "Peixe Lendário"
+gs_perk_grace: "Graciosidade"
+gs_perk_watersense: "Senso Aquático"
+gs_perk_petting: "Carinho"
+gs_perk_starredeggs: "Ovos Estrelados"
+gs_perk_animallore: "Conhecimento Animal"
+gs_perk_animalfeeder: "Alimentador Animal"
+gs_perk_calm: "Calma"
+
+# GrindstoneSkills - English words: the skills window's pages for Farming, Woodcutting and Pickaxes
+#
+# A line's hovered word (Bonus crop, Chop damage ...) is its own key and goes into the line's sentence (the key ending
+# in _line) as $1: keep $1 in that sentence, in the order your language puts it. Perk names are the gs_perk_ keys; the
+# messages that name a perk use them too. Keep $1, $2 ... and each text on one line between double quotes.
+
+# Perk names (the info pane's Perks list, and the messages that name a perk)
+gs_perk_tending: "Cultivo Direto"
+gs_perk_compostbin: "Composteira"
+gs_perk_rowofthree: "Fileira de Três"
+gs_perk_rowoffive: "Fileira de Cinco"
+gs_perk_autoreplant: "Replantio Automático"
+gs_perk_heattolerance: "Tolerância ao Calor"
+gs_perk_coldtolerance: "Tolerância ao Frio"
+gs_perk_readtherock: "Leitura da Rocha"
+gs_perk_echo: "Eco"
+gs_perk_unbroken: "Intacto"
+
+# Farming page
+gs_page_farming_about: "Cultive mais plantações, mais rápido. Treinada ao plantar e colher."
+gs_page_farming_off: "A Agricultura do GrindstoneSkills está desativada neste servidor."
+gs_page_farming_stamina: "Vigor ao plantar"
+gs_page_farming_stamina_line: "$1 -$2"
+gs_page_farming_stamina_tip: "Própria do jogo: cada uso do cultivador consome menos vigor, caindo pela metade no nível 100."
+gs_page_farming_scythe: "Foice"
+gs_page_farming_scythe_line: "O alcance da $1 aumenta com o nível"
+gs_page_farming_scythe_tip: "Própria do jogo: um golpe de foice colhe todas as plantações maduras dentro de um raio que aumenta conforme seu nível."
+gs_page_farming_reach_line: "Alcance da $1: $2 m"
+gs_page_farming_reach_tip: "Própria do jogo: um golpe colhe todas as plantações maduras dentro deste raio."
+gs_page_farming_bonus: "Cultivo bônus"
+gs_page_farming_bonus_game_line: "A chance de $1 aumenta com o nível"
+gs_page_farming_bonus_game_tip: "Própria do jogo: uma plantação que você colhe às vezes concede um bônus."
+gs_page_farming_bonus_line: "$1 $2"
+gs_page_farming_bonus_tip: "Chance de cada plantação colhida render sua recompensa bônus além da padrão."
+gs_page_farming_seed: "Retorno de semente"
+gs_page_farming_seed_line: "$1 $2"
+gs_page_farming_seed_tip: "Chance de uma colheita também devolver a semente que deu origem à planta."
+gs_page_farming_growth: "Crescimento"
+gs_page_farming_growth_line: "$1 +$2"
+gs_page_farming_growth_tip: "Tudo o que você planta cresce mais rápido nessa proporção, inclusive mudas de árvore."
+gs_page_farming_growth_tip_rain: "Tudo o que você planta cresce mais rápido nessa proporção, inclusive mudas de árvore; a chuva adiciona +$1% enquanto cai."
+gs_page_farming_growth_tip_compost: "Tudo o que você planta cresce mais rápido nessa proporção, inclusive mudas de árvore; compostagem +$1%."
+gs_page_farming_growth_tip_both: "Tudo o que você planta cresce mais rápido nessa proporção, inclusive mudas de árvore; a chuva adiciona +$1% enquanto cai, compostagem +$2%."
+gs_page_farming_spacing: "Espaçamento de cultivo"
+gs_page_farming_spacing_line: "$1 -$2"
+gs_page_farming_spacing_tip: "As plantações precisam de menos espaço livre ao redor delas, permitindo que fiquem mais próximas."
+gs_page_farming_ripening: "Amadurecimento"
+gs_page_farming_giant: "Plantação gigante"
+gs_page_farming_giant_line: "$1 $2"
+gs_page_farming_giant_tip: "Uma plantação pode amadurecer e ficar gigante: $1x o tamanho e $2x o rendimento. Colher uma concede $3x mais experiência."
+gs_page_farming_tending_tip: "Pressione $1 em uma planta em crescimento: ela avança $2% do tempo de cultivo, uma vez por dia do jogo."
+gs_page_farming_tending_tip_area: "Pressione $1 em uma planta em crescimento: ela e todas as plantas em crescimento em um raio de $2 m avançam $3% do tempo de cultivo, uma vez por dia do jogo."
+gs_page_farming_compost_tip: "Um barril disponível no menu do cultivador. Restos e plantações sobressalentes colocados nele viram um ponto de composto a cada $1, e cada cultivo em crescimento dentro de $2 m consome um ponto: +$3% de crescimento."
+gs_page_farming_row_tip: "Colocar uma semente planta uma fileira de $1 perpendicular à sua visão, consumindo as sementes correspondentes. Segure $2 para plantar dessa forma."
+gs_page_farming_replant_tip: "Colher uma plantação recoloca a muda instantaneamente no mesmo local, consumindo uma semente do seu inventário."
+gs_page_farming_heat_tip: "As plantações que você plantar crescem nas Terras Cinzentas (Ashlands) mesmo sem a proteção de um escudo."
+# Perk names (also used by the features' messages)
+gs_perk_perfectstrike: "Fisgada Perfeita"
+gs_perk_anglerslog: "Diário do Pescador"
+gs_perk_speciessense: "Percepção de Espécie"
+gs_perk_sizesense: "Percepção de Tamanho"
+gs_perk_doublebonus: "Bônus Duplo"
+gs_perk_legendaryfish: "Peixe Lendário"
+gs_perk_grace: "Tolerância"
+gs_perk_watersense: "Percepção da Água"
+gs_perk_petting: "Carinho"
+gs_perk_starredeggs: "Ovos Estrelados"
+gs_perk_animallore: "Conhecimento Animal"
+gs_perk_animalfeeder: "Alimentador Animal"
+gs_perk_calm: "Acalmar"
+
+# GrindstoneSkills - English words: the skills window's pages for Farming, Woodcutting and Pickaxes
+gs_perk_tending: "Cultivo"
+gs_perk_compostbin: "Composteira"
+gs_perk_rowofthree: "Fileira de Três"
+gs_perk_rowoffive: "Fileira de Cinco"
+gs_perk_autoreplant: "Replantio Automático"
+gs_perk_heattolerance: "Tolerância ao Calor"
+gs_perk_coldtolerance: "Tolerância ao Frio"
+gs_perk_readtherock: "Leitura da Rocha"
+gs_perk_echo: "Eco"
+gs_perk_unbroken: "Intacto"
+
+# Farming page
+gs_page_farming_about: "Cultive mais plantações, mais rápido. Treinada ao plantar e colher."
+gs_page_farming_off: "A Agricultura do GrindstoneSkills está desativada neste servidor."
+gs_page_farming_stamina: "Vigor ao plantar"
+gs_page_farming_stamina_line: "$1 -$2"
+gs_page_farming_stamina_tip: "Própria do jogo: cada uso do cultivador consome menos vigor, caindo pela metade no nível 100."
+gs_page_farming_scythe: "Foice"
+gs_page_farming_scythe_line: "O alcance da $1 aumenta com o nível"
+gs_page_farming_scythe_tip: "Própria do jogo: um golpe de foice colhe todas as plantações maduras em um raio que aumenta de acordo com seu nível."
+gs_page_farming_reach_line: "Alcance da $1: $2 m"
+gs_page_farming_reach_tip: "Própria do jogo: um golpe colhe todas as plantações maduras dentro deste raio."
+gs_page_farming_bonus: "Plantação bônus"
+gs_page_farming_bonus_game_line: "A chance de $1 aumenta com o nível"
+gs_page_farming_bonus_game_tip: "Própria do jogo: uma plantação colhida às vezes concede um bônus."
+gs_page_farming_bonus_line: "$1 $2"
+gs_page_farming_bonus_tip: "Chance de cada plantação colhida conceder o seu rendimento bônus adicional."
+gs_page_farming_seed: "Retorno de semente"
+gs_page_farming_seed_line: "$1 $2"
+gs_page_farming_seed_tip: "Chance de uma colheita também devolver a semente que deu origem à planta."
+gs_page_farming_growth: "Crescimento"
+gs_page_farming_growth_line: "$1 +$2"
+gs_page_farming_growth_tip: "Tudo o que você plantar crescerá mais rápido, incluindo mudas de árvores."
+gs_page_farming_growth_tip_rain: "Tudo o que você plantar crescerá mais rápido, incluindo mudas de árvores; a chuva adiciona $1% enquanto estiver caindo."
+gs_page_farming_growth_tip_compost: "Tudo o que você plantar crescerá mais rápido, incluindo mudas de árvores; composto $1%."
+gs_page_farming_growth_tip_both: "Tudo o que você plantar crescerá mais rápido, incluindo mudas de árvores; a chuva adiciona $1% enquanto estiver caindo, composto $2%."
+gs_page_farming_spacing: "Espaçamento de cultivo"
+gs_page_farming_spacing_line: "$1 -$2"
+gs_page_farming_spacing_tip: "As plantações precisam de menos espaço livre ao redor delas, permitindo que fiquem mais próximas."
+gs_page_farming_ripening: "Maturação"
+gs_page_farming_giant: "Plantação gigante"
+gs_page_farming_giant_line: "$1 $2"
+gs_page_farming_giant_tip: "Uma plantação pode amadurecer e se tornar gigante: $1x o tamanho e $2x a colheita. Colher uma concede $3x mais experiência."
+gs_page_farming_tending_tip: "Pressione $1 em uma planta em crescimento: ela ganha $2% do tempo de maturação, uma vez por dia no jogo."
+gs_page_farming_tending_tip_area: "Pressione $1 em uma planta em crescimento: ela e todas as plantas em crescimento em um raio de $2 m ganham $3% do tempo de maturação, uma vez por dia no jogo."
+gs_page_farming_compost_tip: "Um barril no menu do cultivador. Restos de comida e plantas sobressalentes colocados nele tornam-se um ponto de composto a cada $1, e cada planta em crescimento dentro de $2 m consome um: +$3% de crescimento."
+gs_page_farming_row_tip: "Colocar uma semente planta uma fileira de $1 através da sua linha de visão, cada uma consumindo sua própria semente. Segure $2 para plantar."
+gs_page_farming_replant_tip: "Colher uma plantação coloca uma nova muda no mesmo lugar automaticamente, consumindo uma semente do seu inventário."
+gs_page_farming_heat_tip: "As plantas cultivadas por você crescem nas Ashlands sem a necessidade de um escudo contra calor."
+gs_page_farming_cold_tip: "Plantas que normalmente crescem nos Prados também crescerão nas Montanhas e no Extremo Norte."
+gs_page_farming_own_off: "Desativado em sua configuração ($1)."
+
+# Woodcutting page
+gs_page_woodcutting_about: "Derrube árvores mais rápido e obtenha mais madeira delas. Treinada ao cortar madeira."
+gs_page_woodcutting_off: "Os extras de Corte de Madeira do GrindstoneSkills estão desativados neste servidor."
+gs_page_woodcutting_felling: "Derrubada"
+gs_page_woodcutting_damage: "Dano de corte"
+gs_page_woodcutting_damage_line: "$1 $2"
+gs_page_woodcutting_damage_tip: "Próprio do jogo: cada golpe de machado na madeira causa esta proporção do dano do machado, calculado por golpe (85–100% no nível 100). O consumo de vigor ao golpear segue a habilidade de Machados."
+gs_page_woodcutting_refund: "Reembolso de vigor"
+gs_page_woodcutting_refund_line: "$1 $2, desgaste do machado -$3"
+gs_page_woodcutting_refund_tip: "Um golpe que atinge a madeira devolve essa parcela do vigor gasto e gasta menos o machado. $1 e -$2 no nível 100."
+gs_page_woodcutting_split: "Corte limpo"
+gs_page_woodcutting_split_line: "$1 $2, +$3 de madeira"
+gs_page_woodcutting_split_tip: "Chance de um golpe de machado em um tronco dividi-lo instantaneamente, caso o machado seja capaz de cortar aquela madeira; esse tronco renderá $1 a mais de madeira. $2 no nível 100."
+gs_page_woodcutting_oldgrowth: "Árvore antiga"
+gs_page_woodcutting_oldgrowth_line: "$1 até +$2 de madeira"
+gs_page_woodcutting_oldgrowth_tip: "Troncos de árvores grandes rendem mais madeira em comparação ao padrão da própria espécie: varia de nada até $1% do limite de tamanho, atingindo o máximo a partir de $2%. Segue o nível de quem quebrar o tronco; +$3 no nível 100."
+gs_page_woodcutting_xp: "Experiência"
+gs_page_woodcutting_xp_line: "$1 +$2 por árvore, +$3 por tronco"
+gs_page_woodcutting_xp_tip: "Para cada árvore derrubada e cada tronco quebrado em madeira, além de +$1 por golpe que atingir a madeira."
+gs_page_woodcutting_xp_tip_tiers: "Bétula e carvalho ensinam ×$1, Yggdrasil ×$2."
+gs_page_woodcutting_xp_tip_small: "Mudas e árvores pequenas (com menos de $1 de vida) ensinam $2."
+gs_page_woodcutting_xp_tip_discovery: "Sua primeira árvore de cada espécie conta ×$1."
+gs_page_woodcutting_timber: "Madeira!"
+gs_page_woodcutting_timber_line: "Empurrão de $1 +$2, segurança de troncos $3"
+gs_page_woodcutting_timber_tip: "Uma árvore derrubada por você cai na direção oposta, empurrada com ×$1 da força padrão do jogo, e seus troncos causam essa proporção a menos de dano em você (outros jogadores recebem o dano padrão). ×$2 e $3 no nível 100."
+gs_page_woodcutting_domino: "Dominó"
+gs_page_woodcutting_domino_line: "Impacto de $1 +$2"
+gs_page_woodcutting_domino_tip: "Troncos de árvores derrubadas por você atingem outras árvores, troncos e cepos com ×$1 da força, permitindo que uma árvore derrube a próxima, até um limite de $2 na reação em cadeia. ×$3 no nível 100."
+gs_page_woodcutting_cleanfell: "Derrubada total"
+gs_page_woodcutting_cleanfell_line: "$1 $2"
+gs_page_woodcutting_cleanfell_tip: "Chance de uma árvore derrubada por você arrancar o cepo junto; o cepo derruba sua respectiva madeira. $1 no nível 100."
+gs_page_woodcutting_replanting: "Reflorestamento"
+gs_page_woodcutting_replanting_line: "$1 $2"
+gs_page_woodcutting_replanting_tip: "Chance de uma muda gratuita da mesma espécie criar raízes onde ficava a árvore derrubada, caso ela possa crescer ali. Nem toda árvore gera uma muda. $1 no nível 100."
+gs_page_woodcutting_finds: "Achados"
+gs_page_woodcutting_finds_line: "$1 $2 por árvore"
+gs_page_woodcutting_finds_tip: "Chance de uma árvore derrubada por você esconder algo, como um ninho de pássaro ou uma colmeia selvagem. $1 no nível 100."
+
+# Pickaxes page
+gs_page_pickaxes_about: "Minere mais rápido e extraia mais da rocha. Treinada ao golpear rochas."
+gs_page_pickaxes_off: "Os extras de Picaretas do GrindstoneSkills estão desativados neste servidor."
+gs_page_pickaxes_damage: "Dano de mineração"
+gs_page_pickaxes_damage_line: "$1 $2"
+gs_page_pickaxes_damage_tip: "Próprio do jogo: cada golpe de picareta causa esta proporção do dano da ferramenta, calculado por golpe (85–100% no nível 100)."
+gs_page_pickaxes_stamina: "Vigor ao golpear"
+gs_page_pickaxes_stamina_line: "$1 -$2"
+gs_page_pickaxes_stamina_tip: "Próprio do jogo, para cada golpe de picareta: -$1 no nível 100."
+gs_page_pickaxes_seams: "Filões"
+gs_page_pickaxes_seams_line: "$1 $2, aberto por $3"
+gs_page_pickaxes_seams_tip: "Chance de um golpe em uma rocha com vários pedaços fazer com que um pedaço ao alcance brilhe, apenas para você, por este período. Golpeie-o a tempo para realizar um golpe certeiro."
+gs_page_pickaxes_clean: "Golpe certeiro"
+gs_page_pickaxes_clean_line: "$1 ×$2 de dano"
+gs_page_pickaxes_clean_tip: "Um golpe no pedaço brilhante: causa aquele dano, concede um sorteio de recompensa a mais quando um pedaço de minério quebra e abre o próximo filão instantaneamente. Um golpe em qualquer outro lugar da rocha encerra a sequência."
+gs_page_pickaxes_clean_tip_xp: "Um golpe no pedaço brilhante: causa aquele dano, concede um sorteio de recompensa a mais quando um pedaço de minério quebra, +$1 de experiência (mais em biomas avançados e em minérios) e abre o próximo filão instantaneamente. Um golpe em qualquer outro lugar da rocha encerra a sequência."
+gs_page_pickaxes_splash: "Impacto colateral"
+gs_page_pickaxes_splash_line: "Dano de $1 $2"
+gs_page_pickaxes_splash_tip: "O primeiro golpe de cada ataque em um pedaço também causa este valor, compartilhado pelos pedaços adjacentes. Aumenta a cada 10 níveis, chegando a $1 no nível 100."
+gs_page_pickaxes_ore: "Minério extra"
+gs_page_pickaxes_ore_line: "$1 $2"
+gs_page_pickaxes_ore_tip: "Chance de cada pedaço de uma jazida de minério que você quebrar derrubar suas recompensas mais uma vez. $1 no nível 100."
+gs_page_pickaxes_wear: "Desgaste da picareta"
+gs_page_pickaxes_wear_line: "$1 -$2 na rocha"
+gs_page_pickaxes_wear_tip: "Menos durabilidade perdida por golpes que atingem rochas: -$1 no nível 100."
+gs_page_pickaxes_finds: "Achados"
+gs_page_pickaxes_finds_line: "$1 $2 por pedaço"
+gs_page_pickaxes_finds_tip: "Chance de um pedaço quebrado por você esconder uma preciosidade, como âmbar ou um rubi; pedaços com menos de 50 de vida recebem uma parcela (uma pilha de lama recebe um décimo). $1 no nível 100."
+gs_page_pickaxes_xp: "Experiência"
+gs_page_pickaxes_xp_line: "$1 +$2% por bioma, ×$3 em minério"
+gs_page_pickaxes_xp_tip: "Golpes que atingem rochas ensinam mais em biomas avançados: ×$1 na Floresta Negra indo até ×$2 nas Ashlands."
+gs_page_pickaxes_xp_tip_discovery: "O primeiro golpe em cada tipo de jazida de minério concede +$1, multiplicado pela mesma escala de bioma."
+gs_page_pickaxes_xp_tip_server: "Tudo isso ×$1 neste servidor."
+gs_page_pickaxes_readtherock_tip: "Passar o cursor sobre uma jazida de minério mostra suas estrelas de veio e os pedaços restantes. Veios ricos: 1 estrela $1, 2 estrelas $2, 3 estrelas $3 das jazidas; cada estrela concede +$4 sorteios de recompensas para quem minerar."
+gs_page_pickaxes_echo_tip: "Um golpe que atinge uma rocha emite um sinal em direção à jazida de minério mais próxima dentro de $1 m: produz um som vindo da direção dela, exibindo seu nome e distância. No máximo a cada $2; jazidas que a Fíbia localiza são deixadas para ela."
+gs_page_pickaxes_unbroken_tip: "Golpes certeiros em sequência batem mais forte: ×$1 no segundo golpe, +$2 para cada um subsequente, limitados a até ×$3."
+
+# GrindstoneSkills - the skills window's info pages: staff summons and shields, the movement skills, Sailing, Crafting.
+# $1, $2 ... are values filled in by the code (numbers, names, the hovered term).
+# A line's hovered term is its own key and goes into the line as $1: a translation keeps $1 in the line.
+# The Sailing abilities' names (the Wind Call and Lookout perks) are the Sailing feature's gs_sail_ability_* words.
+
+# Staff lines (magic skills)
+gs_page_staff_shield: "Escudo"
+gs_page_staff_shield_line: "$1 absorve $2 de dano"
+gs_page_staff_shield_tip: "O escudo do $1 recebe golpes até ter absorvido esta quantidade: $2 mais $3 por nível, +$4 no seu nível atual."
+
+# Summon line (magic skills)
+gs_page_summon_no_stars: "$1: nenhuma estrela ainda"
+gs_page_summon_stars: "$1 $2★"
+gs_page_summon_damage: "$1, dano +$2"
+gs_page_summon_stars_damage: "$1 $2★, dano +$3"
+gs_page_summon_with: "Invocado com o $1."
+gs_page_summon_star_step: "$1★ a partir do nível $2"
+gs_page_summon_star_steps: "$1. Uma estrela adiciona novamente a sua vida base e metade do seu dano."
+gs_page_summon_damage_at100: "Dano +$1 no nível 100."
+gs_page_summon_follow_quality: "Tantos te seguem ao mesmo tempo quanto o nível de qualidade do cajado; invocar um novo manda o mais antigo embora."
+gs_page_summon_follow_max: "No máximo $1 te seguem ao mesmo tempo; invocar um novo manda o mais antigo embora."
+gs_page_summon_fallback: "Invocação"
+
+# Movement skills
+gs_page_movement_rate: "$1 de vigor/s"
+
+# Movement: Run
+gs_page_movement_run_about: "Corra mais rápido e por mais tempo. Treinada ao correr."
+gs_page_movement_run_stamina: "Vigor ao correr"
+gs_page_movement_run_stamina_line: "$1 -$2"
+gs_page_movement_run_stamina_tip: "$1 no seu nível atual, $2 sem treinamento, antes dos equipamentos. -$3 no nível 100."
+gs_page_movement_run_speed: "Velocidade de corrida"
+gs_page_movement_run_speed_line: "$1 +$2"
+gs_page_movement_run_speed_tip: "$1 m/s no seu nível atual, $2 sem treinamento, antes dos equipamentos. +$3 no nível 100."
+
+# Movement: Swim
+gs_page_movement_swim_about: "Nadar consome menos vigor. Treinada ao nadar."
+gs_page_movement_swim_stamina: "Vigor ao nadar"
+gs_page_movement_swim_stamina_line: "$1 -$2"
+gs_page_movement_swim_stamina_tip: "$1 no seu nível atual, $2 sem treinamento, $3 no nível 100, antes dos equipamentos. Sem vigor você se afoga: 5% da vida máxima por segundo."
+
+# Movement: Jump
+gs_page_movement_jump_about: "Salte mais alto e mais longe. Treinada ao saltar."
+gs_page_movement_jump_force: "Força do salto"
+gs_page_movement_jump_force_line: "$1 +$2"
+gs_page_movement_jump_force_tip: "Tanto o impulso para cima quanto para frente de um salto. +$1 no nível 100. Um salto consome a mesma quantidade de vigor."
+
+# Movement: Sneak
+gs_page_movement_sneak_about: "Mova-se furtivamente sem ser visto e por mais tempo. Treinada ao usar a furtividade perto de inimigos que não notaram você."
+gs_page_movement_sneak_stamina: "Vigor em furtividade"
+gs_page_movement_sneak_stamina_line: "$1 -$2"
+gs_page_movement_sneak_stamina_tip: "$1 no seu nível atual, $2 sem treinamento, antes dos equipamentos. -$3 no nível 100; os primeiros níveis são os que mais ajudam."
+gs_page_movement_sneak_sight: "Visão do inimigo"
+gs_page_movement_sneak_sight_line: "$1 $2 a $3"
+gs_page_movement_sneak_sight_tip: "Enquanto você estiver agachado, os inimigos te veem e são alertados por você apenas dentro desta proporção do alcance deles: o limite menor na escuridão, o limite maior sob luz plena. $1 a $2 no nível 100."
+
+# Movement: Dodge
+gs_page_movement_dodge_about: "Esquivar-se consome menos vigor. Treinada ao esquivar-se, principalmente ao esquivar-se através de um golpe."
+gs_page_movement_dodge_stamina: "Vigor da esquiva"
+gs_page_movement_dodge_stamina_line: "$1 -$2"
+gs_page_movement_dodge_stamina_tip: "$1 por esquiva no seu nível atual, $2 sem treinamento, antes dos equipamentos. -$3 no nível 100."
+gs_page_movement_dodge_perfect: "Esquiva perfeita"
+gs_page_movement_dodge_perfect_line: "$1 reembolsa $2 de vigor"
+gs_page_movement_dodge_perfect_tip: "Esquivar-se através de um ataque devolve $1 do vigor gasto na esquiva e concede $2 de adrenalina."
+
+# Movement: Ride
+gs_page_movement_ride_about: "Sua montaria galopa mais rápido e por mais tempo. Treinada ao cavalgar a galope."
+gs_page_movement_ride_gallop: "Velocidade de galope"
+gs_page_movement_ride_gallop_line: "$1 +$2"
+gs_page_movement_ride_gallop_tip: "O quão mais rápido uma montaria que você cavalga corre. +$1 no nível 100."
+gs_page_movement_ride_stamina: "Vigor da montaria"
+gs_page_movement_ride_stamina_line: "$1 -$2"
+gs_page_movement_ride_stamina_tip: "Sua montaria gasta essa quantidade a menos de vigor galopando e nadando. -$1 no nível 100."
+
+# Sailing
+gs_page_sailing_about: "Navios mais resistentes e mais rápidos. Treinada ao navegar com eles."
+gs_page_sailing_off: "Desativada neste servidor."
+gs_page_sailing_built: "Navios construídos por você"
+gs_page_sailing_built_line: "$1: vida +$2"
+gs_page_sailing_built_tip: "Definida pelo seu nível no momento em que você posiciona o navio. Navios construídos anteriormente mantêm a vida original."
+gs_page_sailing_helm: "ao leme"
+gs_page_sailing_helm_line: "Velocidade do navio $1 +$2"
+gs_page_sailing_helm_tip: "Velocidade máxima de qualquer navio que você pilotar, seja sob velas ou nos remos."
+gs_page_sailing_reveal: "Revelação de mapa"
+gs_page_sailing_reveal_line: "$1 a bordo $2 m (+$3)"
+gs_page_sailing_reveal_tip: "O quão longe o mapa se revela ao seu redor enquanto você está a bordo de um navio. Em terra firme o padrão é $1 m."
+gs_page_sailing_xp: "Experiência"
+gs_page_sailing_xp_line: "$1 $2 por km ao leme"
+gs_page_sailing_xp_tip_crew: "Pela distância que um navio se move enquanto você o pilota. Tripulantes a bordo recebem $1 desse valor; um navio que ninguém pilota não gera nada."
+gs_page_sailing_xp_tip_nocrew: "Pela distância que um navio se move enquanto você o pilota. Tripulantes a bordo não recebem nada; um navio que ninguém pilota não gera nada."
+gs_page_sailing_windcall_tip: "Pressione $1 enquanto pilota um navio: o vento muda para soprar na direção em que você está olhando, para todos a bordo, por $2."
+gs_page_sailing_lookout_tip: "Pressione $1 a bordo de um navio: todos a bordo conseguem ver as barras de nome dos inimigos (exceto chefes) dentro de $2 m por $3."
+gs_page_sailing_again: "Uma vez a cada $1."
+gs_page_sailing_key_unset: "o botão $1 (não configurado)"
+
+# Crafting
+gs_page_crafting_about: "Produza itens mais rápido. Treinada ao produzir e reparar equipamentos."
+gs_page_crafting_about_build: "Produza itens mais rápido e construa gastando menos. Treinada ao produzir, reparar equipamentos e construir."
+gs_page_crafting_time: "Tempo de produção"
+gs_page_crafting_time_line: "$1 -$2"
+gs_page_crafting_time_tip: "Nas estações que treinam Artesanato: $1 por produção em vez de $2, ou $3 para $4 de uma só vez. -$5 no nível 100."
+gs_page_crafting_extra: "Item extra"
+gs_page_crafting_extra_line: "$1 $2"
+gs_page_crafting_extra_tip: "Cada produção de um item acumulável, como flechas, tem essa chance de conceder $1 a mais. $2 no nível 100."
+gs_page_crafting_tool_line: "$1: vigor -$2"
+gs_page_crafting_tool_tip: "Para construir, remover e reparar estruturas com ela. -$1 no nível 100."
+gs_page_crafting_tool_wear_line: "$1: vigor -$2, desgaste -$3"
+gs_page_crafting_tool_wear_tip: "Vigor gasto para construir, remover e reparar estruturas com ela; desgaste sofrido ao construir e remover. -$1 e -$2 no nível 100."
+
+# GrindstoneSkills: the skills window's pages for Defense, Foraging, Blocking and the game's weapon and magic skills.
+# A line with a hover word: key = the word, key_line = the line ($1 is the word), key_tip = the hover.
+
+# Defense
+gs_page_defense_about: "Torna você mais resistente. Treinada ao bloquear e ao receber golpes."
+gs_page_defense_off: "Desativada neste servidor."
+gs_page_defense_health: "Vida máxima +$1"
+gs_page_defense_food: "Vida concedida por alimentos +$1"
+gs_page_defense_damage: "Dano recebido -$1"
+gs_page_defense_outofcombat: "Fora de combate"
+gs_page_defense_outofcombat_line: "$1: cura $2 da vida máxima a cada $3"
+gs_page_defense_outofcombat_tip: "Após passar $1 sem atacar, bloquear ou receber dano."
+gs_page_defense_poise: "Postura"
+gs_page_defense_poise_line: "$1 +$2"
+gs_page_defense_poise_tip: "É necessária essa quantidade a mais de dano de atordoamento para cambalear você ou para quebrar a sua guarda enquanto estiver bloqueando."
+gs_page_defense_parry: "Janela de aparo"
+gs_page_defense_parry_line: "$1 +$2 s"
+gs_page_defense_parry_tip: "Adicionado aos 0.25 s padrão do jogo, fazendo com que um bloqueio levantado um pouco antes do tempo ainda apare o golpe."
+gs_page_defense_stamina: "Vigor ao bloquear -$1, vigor ao esquivar -$2"
+
+# Defense: guard
+gs_page_defense_guard: "Guarda"
+gs_page_defense_reflex: "Reflexo"
+gs_page_defense_reflex_line: "$1 $2"
+gs_page_defense_reflex_tip: "Chance de que um golpe vindo pela frente seja bloqueado pelo seu escudo, mesmo que você não esteja bloqueando ativamente. Consome vigor como um bloqueio normal e nunca ativa um aparo (parry)."
+gs_page_defense_bash: "Pancada com escudo"
+gs_page_defense_bash_line: "$1 $2"
+gs_page_defense_bash_tip: "Chance de que um bloqueio comum com o escudo atordoe o atacante, da mesma forma que um aparo (parry) faria."
+gs_page_defense_thorns: "Espinhos"
+gs_page_defense_thorns_line: "$1 $2"
+gs_page_defense_thorns_tip: "Parcela do dano que o seu bloqueio mitigou que é devolvida a um atacante corpo a corpo."
+gs_page_defense_adrenaline: "Adrenalina"
+gs_page_defense_adrenaline_line: "$1 +$2"
+gs_page_defense_adrenaline_tip: "Mais adrenalina obtida através de bloqueios e aparos, e essa mesma proporção a menos de adrenalina perdida ao receber golpes que você não bloqueou."
+gs_page_defense_wear: "Desgaste ao bloquear -$1, recuo ao bloquear -$2"
+gs_page_defense_desperation: "Desespero: abaixo de $1% de vida, redução de dano x$2"
+
+# Defense: perks (the names are used by the Defense features too)
+gs_perk_riposte: "Riposte"
+gs_page_defense_riposte_tip: "Por $1 após realizar um aparo, o seu próximo ataque corpo a corpo causará $2% a mais de dano."
+gs_perk_shieldwall: "Muralha de Escudos"
+gs_page_defense_shieldwall_tip: "Enquanto você estiver bloqueando com um escudo, os jogadores em um raio de $1 m atrás de você receberão $2% a menos de dano. O bônus de múltiplos jogadores bloqueando não se acumula."
+gs_perk_hardened: "Calejado"
+gs_page_defense_hardened_tip: "Cada golpe que causa dano a você adiciona um acúmulo: $1% a menos de dano recebido por acúmulo, limitado a até $2 acúmulos ($3%). Eles duram por $4 após o último golpe recebido."
+gs_perk_laststand: "Último Suspiro"
+gs_page_defense_laststand_tip: "Um golpe que seria fatal deixa você com 1 de vida, e você não receberá nenhum dano por $1. Ativa uma vez a cada $2."
+
+# Foraging
+gs_page_foraging_about: "Melhores coletas selvagens. Treinada ao colher frutas silvestres, cogumelos e ervas."
+gs_page_foraging_off: "Desativada neste servidor."
+gs_page_foraging_yield: "Rendimento extra"
+gs_page_foraging_yield_line: "$1 $2"
+gs_page_foraging_yield_tip: "Chance de que uma coleta conceda uma unidade a mais do recurso. $1 no nível 100."
+gs_page_foraging_xp: "Experiência"
+gs_page_foraging_xp_line: "$1 $2 por coleta"
+gs_page_foraging_xp_range_line: "$1 $2 a $3 por coleta"
+gs_page_foraging_xp_tip: "$1 nos Prados, +$2 para cada bioma adiante, chegando a até $3 nas Ashlands. Plantações cultivadas, mesmo as selvagens, treinam Agricultura."
+
+# Foraging: perks
+gs_perk_discovery: "Descoberta"
+gs_page_foraging_discovery_tip: "A primeira coleta de cada tipo de recurso selvagem concede $1x mais experiência, uma vez por personagem."
+gs_perk_sweep: "Varredura"
+gs_page_foraging_sweep_tip: "Colher uma planta também colhe todas as plantas do mesmo tipo em um raio de $1 m dela. Chega a $2 m no nível 100."
+gs_page_foraging_sweep_locked_tip: "Colher uma planta também colhe todas as plantas do mesmo tipo em um raio de $1 m dela no nível $2, chegando a $3 m no nível 100."
+
+# Blocking ($1 of the held lines is the blocker's or the parry effect's name from the game)
+gs_page_blocking_about: "Torna os seus bloqueios mais fortes. Treinada ao bloquear golpes; um aparo (parry) conta o dobro."
+gs_page_blocking_armor: "Armadura de bloqueio"
+gs_page_blocking_armor_line: "$1 +$2"
+gs_page_blocking_armor_tip: "O quanto de dano um bloqueio mitiga, representado pelo número entre colchetes na descrição do escudo. Um bloqueio consome vigor proporcionalmente à parcela de armadura de bloqueio utilizada, logo, um bloqueio mais forte custa menos vigor. +$1 no nível 100."
+gs_page_blocking_held_line: "$1: armadura de bloqueio $2"
+gs_page_blocking_held_tip: "$1 sem treinamento, $2 no nível 100."
+gs_page_blocking_parry: "Aparo"
+gs_page_blocking_parry_line: "$1: armadura de bloqueio $2"
+gs_page_blocking_parry_tip: "Um bloqueio levantado a menos de $1 s antes do impacto multiplica a armadura de bloqueio pelo bônus de aparo (x$2) e pode atordoar o atacante."
+gs_page_blocking_shield: "Escudo de aparo"
+gs_page_blocking_shield_line: "$1: absorve $2 de dano"
+gs_page_blocking_shield_tip: "Concedido por um aparo. Absorve $1 a mais de dano por nível de Bloqueio."
+
+# Weapon skills: the lines they share ($1 of a cost line is the cost's name, $2 of its tip the cost's own sentence)
+gs_page_weapon_damage: "Dano"
+gs_page_weapon_damage_line: "$1 $2 do total da arma"
+gs_page_weapon_damage_tip: "Cada golpe calcula seu dano e recuo com base nesta proporção do valor total: a variação amarela exibida na descrição da arma. No nível 100: 85–100%."
+gs_page_weapon_cost_line: "$1 -$2"
+gs_page_weapon_cost_tip: "No nível 100: -$1. $2"
+gs_page_weapon_stamina: "Vigor de ataque"
+gs_page_weapon_stamina_tip: "Qualquer custo de eitr ou vida que um ataque exija diminui na mesma proporção."
+gs_page_weapon_seconds: "$1 s"
+
+# Melee skills
+gs_page_swords_about: "Espadas batem mais forte e consomem menos vigor. Treinada ao atingir criaturas com uma espada."
+gs_page_knives_about: "Facas batem mais forte e consomem menos vigor. Treinada ao atingir criaturas com uma faca."
+gs_page_clubs_about: "Clavas, maças e marretas batem mais forte e consomem menos vigor. Treinada ao atingir criaturas com um deles."
+gs_page_polearms_about: "Atgeirs batem mais forte e consomem menos vigor. Treinada ao atingir criaturas com um deles."
+gs_page_spears_about: "Lanças batem mais forte, arremessadas ou empunhadas, e consomem menos vigor. Treinada ao atingir criaturas com uma lança."
+gs_page_axes_about: "Machados e machados de batalha batem mais forte e consomem menos vigor. Treinada ao atingir criaturas com um machado."
+gs_page_axes_woodcutting: "Corte de Madeira"
+gs_page_axes_trees_line: "Árvores utilizam $1 em seu lugar"
+gs_page_axes_trees_tip: "A maioria dos machados calcula seu dano em árvores, troncos e cepos com base na habilidade de Corte de Madeira e a treina por lá, não em Machados. A perícia Machados ainda reduz o consumo de vigor do golpe."
+gs_page_unarmed_about: "Punhos batem mais forte e consomem menos vigor. Treinada ao atingir criaturas desarmado."
+gs_page_unarmed_fists: "Punhos limpos"
+gs_page_unarmed_fists_line: "$1 batem por $2–$3"
+gs_page_unarmed_fists_tip: "Dano de um soco antes de aplicar a armadura e as resistências do alvo."
+
+# Ranged skills ($1 of the held sentence is the tip before it, $2 the weapon in hand)
+gs_page_ranged_held: "$1 Seu $2: $3 (a partir de $4)."
+gs_page_bows_about: "Arcos são puxados mais rápido e batem mais forte. Treinada ao atingir criaturas com flechas."
+gs_page_bows_damage_line: "$1 $2 do arco e da flecha"
+gs_page_bows_damage_tip: "$1 Com a puxada máxima; uma puxada parcial reduz o dano proporcionalmente."
+gs_page_bows_draw: "Tempo de puxada"
+gs_page_bows_draw_line: "$1 -$2"
+gs_page_bows_draw_tip: "Tempo necessário para uma puxada completa: o disparo que bate mais forte, voa mais rápido e desvia menos. No nível 100: um quinto do tempo padrão do arco."
+gs_page_bows_stamina: "Vigor da puxada"
+gs_page_bows_stamina_tip: "Drenado enquanto você segura a puxada, caindo pela metade assim que estiver totalmente puxado. Qualquer custo do disparo em si diminui na mesma proporção."
+gs_page_crossbows_about: "Bestas recarregam mais rápido e batem mais forte. Treinada ao atingir criaturas com virotes."
+gs_page_crossbows_damage_line: "$1 $2 da besta e do virote"
+gs_page_crossbows_reload: "Tempo de recarga"
+gs_page_crossbows_reload_line: "$1 -$2"
+gs_page_crossbows_reload_tip: "No nível 100: metade do tempo padrão da besta, reduzindo também pela metade o vigor drenado pela recarga."
+
+# Magic skills
+gs_page_magic_elemental_about: "Cajados elementais batem mais forte e consomem menos eitr. Treinada ao atingir criaturas com seus feitiços."
+gs_page_magic_damage_line: "$1 $2 do total do cajado"
+gs_page_magic_eitr: "Custo de eitr"
+gs_page_magic_eitr_tip: "Aplica-se também a qualquer eitr drenado enquanto segura uma carga, e a qualquer custo de vigor ou vida exigido pelo feitiço."
+gs_page_magic_blood_about: "Invocações e escudos mais fortes, feitiços mais baratos. Treinada ao usar magia de sangue."
+gs_page_magic_bloodcost: "Custo de eitr e vida"
+gs_page_magic_bloodcost_tip: "Aplica-se também a qualquer vigor exigido pelo feitiço."
+gs_page_magic_grow: "aumentam com o nível"
+gs_page_magic_grow_line: "Invocações e escudos $1"
+gs_page_magic_grow_tip: "Tenha um cajado de magia de sangue em seu inventário ao menos uma vez para ver os atributos dele exibidos aqui."
+
+# Fishing: callouts floating over the water
+gs_fish_big_one: "É um peixe grande!"
+gs_fish_monster: "É um monstro!"
+gs_fish_perfect_strike: "Fisgada perfeita!"
+gs_fish_spent: "Exausto!"
+gs_fish_snag_found: "Encontrou $1!"
+
+# Fishing: a legendary catch, top left for every player ($1 the angler, $2 the fish, $3 its weight)
+gs_fish_legendary_announce: "$1 pescou um $2 lendário ($3 kg)!"
+
+# Fishing: the angler's senses (fishing conditions; $1 is the list of conditions)
+gs_fish_conditions_quiet: "Águas calmas."
+gs_fish_conditions_good: "Boas condições de pesca: $1."
+gs_fish_condition_dawn: "amanhecer"
+gs_fish_condition_dusk: "anoitecer"
+gs_fish_condition_rain: "chuva"
+gs_fish_condition_night: "noite, quando os grandes se alimentam"
+
+# Fishing: what nibbles ($1 the fish; English picks "A" or "An" by the name's first letter; level: $1 level, $2 fish)
+gs_fish_nibble_a: "Um $1 está beliscando!"
+gs_fish_nibble_an: "Um $1 está beliscando!"
+gs_fish_nibble_level: "Um $2 nível $1 está beliscando!"
+gs_fish_nibble_legendary: "Um $1 lendário está beliscando!"
+
+# Fishing: a fish in the water, looked at ($1 the game's hover text, $2 the level)
+gs_fish_hover_legendary: "$1 Lendário"
+gs_fish_hover_level: "$1 (Nível $2)"
+
+# Fishing: the fish in reach of a cast ($1 of reach_some is a list of reach_count: $1 how many, $2 the fish)
+gs_fish_reach_none: "Nada ao alcance morde esta isca."
+gs_fish_reach_some: "Ao alcance para esta isca: $1."
+gs_fish_reach_count: "$1 $2"
+gs_fish_reach_lurks: "$1 Algo grande está à espreita aqui..."
+
+# Fishing: the fight and the tension bar
+gs_fish_grace: "Ele está levando a linha — recupere o fôlego!"
+gs_fish_bar_line: "Linha"
+gs_fish_bar_thrashing: "Se debatendo! Alivie o botão"
+gs_fish_bar_spent: "Exausto! Recolha a linha"
+gs_fish_bar_breath: "Recupere o fôlego $1"
+
+# Fishing: the catch ($1 the game's catch message, $2 the weight) and the angler's log
+gs_fish_catch_weight: "$1 ($2 kg)"
+gs_fish_catch_record: "$1 ($2 kg, novo recorde!)"
+gs_fish_bait_saved: "Isca economizada"
+gs_fish_log_new_species: "Nova descoberta no diário do pescador: $1 ($2 de $3 espécies)"
+gs_fish_log_new_size_level: "Novo tamanho no diário do pescador: um $2 nível $1"
+gs_fish_log_new_size_legendary: "Novo tamanho no diário do pescador: um $1 lendário"
+
+# Fishing: a fish's tooltip ($1 the levels landed; record: $1 weight, $2 level)
+gs_fish_tip_legendary: "Lendário"
+gs_fish_tip_not_logged: "Ainda não registrado no diário do pescador"
+gs_fish_tip_levels: "Níveis capturados: $1"
+gs_fish_tip_record: "Seu recorde: $1 kg (Nível $2)"
+
+# Fishing: snags ($1 the find's name, from the snags file)
+gs_fish_snagged: "Fisgou algo pesado!"
+gs_fish_snag_weeds: "Apenas algas."
+gs_fish_snag_landed: "Retirou da água: $1!"
+
+# Crafting: perk names (skills window, tooltips, messages)
+gs_perk_makersmark: "Marca do Artífice"
+gs_perk_sturdybuild: "Construção Robusta"
+gs_perk_thrifty: "Econômico"
+gs_perk_journeyman: "Oficial"
+
+# Crafting: perk tips in the skills window ($1 at your level, $2 at level 100)
+gs_craft_makersmark_tip: "Armas, armaduras, escudos e ferramentas que você produzir ou aprimorar em uma estação que treine Artesanato ganham +$1 de durabilidade máxima (+$2 no nível 100). A marca permanece no item independentemente de quem o use; um aprimoramento marca o item novamente com o nível atual de quem o aprimorou."
+gs_craft_sturdybuild_tip: "Estruturas posicionadas por você com o martelo ganham +$1 de vida máxima (+$2 no nível 100), benefício que é mantido na estrutura para todos. Navios mantêm a vida concedida pela habilidade de Navegação."
+gs_craft_thrifty_tip: "Cada produção ou aprimoramento na bancada de trabalho, forja ou outra estação que treine Artesanato tem uma chance de $1 ($2 no nível 100) de devolver um dos materiais utilizados. Construções nunca ativam este efeito: uma estrutura removida já devolve seu custo total."
+gs_craft_journeyman_tip: "A bancada de trabalho e a forja contam como um nível acima para você: produza, aprimore e repare o que exigir um nível de estação a mais do que elas possuem. Novas receitas ainda aparecem com base nos níveis de estação convencionais que você já descobriu."
+
+# Crafting: the Maker's Mark tooltip line ($1 the perk's name, $2 the coloured bonus) and Thrifty's message ($1 the perk, $2 the item)
+gs_craft_mark_line: "$1: $2"
+gs_craft_mark_durability: "+$1% de durabilidade"
+gs_craft_thrifty_saved: "$1: 1 $2 economizado(a)"
+
+# Kitchen: an ingredient saved ($1 the item)
+gs_kitchen_saved: "Economizado: 1 $1"
+
+# Sailing: the skill's description (skills panel and skill book)
+gs_sail_skill_description: "Vida dos navios que você constrói, velocidade dos navios que você pilota e o quão longe você explora o mapa ao mar."
+
+# Sailing: the abilities, also shown by ShipConfig's ship panel (windcall: $1 seconds, $2 cooldown; lookout: $1 metres, $2 seconds, $3 cooldown)
+gs_sail_ability_windcall: "Chamado do Vento"
+gs_sail_ability_lookout: "Vigia"
+gs_sail_ability_windcall_description: "Muda a direção do vento para soprar para onde você estiver olhando por $1 s, beneficiando todos a bordo. Use enquanto estiver pilotando. Tempo de recarga: $2."
+gs_sail_ability_lookout_description: "Envia um pulso de radar a $1 m a partir do navio: todos a bordo conseguem ver as barras de nome dos inimigos alcançados por $2 s. Tempo de recarga: $3."
+gs_sail_seconds: "$1 s"
+gs_sail_minutes: "$1 min"
+
+# Sailing: Wind Call ($1 the level or seconds; announcements: the compass point and the duration, other: $1 the player)
+gs_sail_windcall_needs: "O Chamado do Vento exige Navegação nível $1"
+gs_sail_windcall_wait: "Chamado do Vento pronto em $1 s"
+gs_sail_windcall_you: "Você muda a direção do vento para o $1 por $2"
+gs_sail_windcall_other: "$1 muda a direção do vento para o $2 por $3"
+gs_sail_windcall_nobody: "O vento muda de direção para o $1 por $2"
+gs_sail_compass_north: "norte"
+gs_sail_compass_north_east: "nordeste"
+gs_sail_compass_east: "leste"
+gs_sail_compass_south_east: "sudeste"
+gs_sail_compass_south: "sul"
+gs_sail_compass_south_west: "sudoeste"
+gs_sail_compass_west: "oeste"
+gs_sail_compass_north_west: "noroeste"
+
+# Sailing: the lookout ($1 the level, seconds or metres; many: $1 how many, $2 metres)
+gs_sail_lookout_needs: "O Vigia exige Navegação nível $1"
+gs_sail_lookout_aboard: "O Vigia só funciona a bordo de um navio"
+gs_sail_lookout_wait: "Vigia pronto em $1 s"
+gs_sail_lookout_none: "Vigia: nenhum inimigo em um raio de $1 m"
+gs_sail_lookout_one: "Vigia: 1 inimigo em um raio de $1 m"
+gs_sail_lookout_many: "Vigia: $1 inimigos em um raio de $2 m"
+
+# Woodcutting: callouts floating over a tree or a log ($1 the find's name, from the finds file)
+gs_wood_timber: "Madeira!"
+gs_wood_clean_split: "Corte limpo!"
+gs_wood_found: "Encontrou $1!"
+gs_wood_find_something: "algo"
+
+# Woodcutting: a domino chain ($1 how many trees)
+gs_wood_chain: "Corrente ×$1!"
+
+# GrindstoneSkills: Farming, Foraging, Husbandry, Pickaxes and Defense (messages, callouts, hovers, pieces, status effects)
+
+# Farming: the compost bin piece and its hover
+gs_farm_compost_bin: "Composteira"
+gs_farm_compost_bin_desc: "Transforma restos de comida e plantas sobressalentes em composto que alimenta os cultivos ao redor: eles crescem mais rápido."
+gs_farm_compost_points: "Composto $1 / $2"
+gs_farm_compost_resting: "Composto $1 / $2 (em repouso)"
+
+# Farming: a plant's hover
+gs_farm_fertilized: "Fertilizado"
+gs_farm_ripe_soon: "Amadurecendo em breve"
+gs_farm_ripe_under_minute: "Maduro em menos de um minuto"
+gs_farm_ripe_minutes: "Maduro em $1 min"
+gs_farm_ripe_hours: "Maduro em $1 h $2 min"
+gs_farm_tended_today: "Cultivado hoje"
+gs_farm_tend: "Cultivar"
+
+# Farming: tending messages
+gs_farm_already_tended: "Já foi cultivado hoje"
+gs_farm_tended_one: "1 planta cultivada"
+gs_farm_tended_many: "$1 plantas cultivadas"
+
+# Farming: giant crops ($1 the crop's hover name) and callouts ($1 the crop in lower case, $2 as the game writes it)
+gs_farm_giant_name: "$1 Gigante"
+gs_farm_giant_callout: "$1 Gigante!"
+gs_farm_seed_return: "+1 $1"
+
+# Foraging
+gs_forage_skill_desc: "Coleta de frutas silvestres, cogumelos, ervas e pedras selvagens: rendimento extra, colheita por varredura."
+gs_forage_discovered: "Descobriu $1!"
+
+# Husbandry: the skill and the Animal Feeder piece
+gs_herd_skill_desc: "Domesticação, reprodução e cuidado de animais: domesticação mais rápida, criaturas calmas, filhotes melhores e maior rendimento do rebanho."
+gs_herd_feeder: "Alimentador Animal"
+gs_herd_feeder_desc: "Animais domesticados famintos e criaturas em processo de domesticação vêm comer a comida que você colocar nele."
+
+# Husbandry: callouts over animals
+gs_herd_strong_offspring: "Filhote forte!"
+gs_herd_twins: "Gêmeos!"
+
+# Husbandry: how a time span reads in the animal lore lines
+gs_herd_seconds: "$1 s"
+gs_herd_minutes: "$1 min"
+gs_herd_hours: "$1 h $2 min"
+
+# Husbandry: animal lore lines ($1 a time span where there is one)
+gs_herd_needs_keeper: "Exige um cuidador com Agropecuária nível $1 em um raio de $2 m para domesticar"
+gs_herd_tamed_in: "Domesticado em cerca de $1 enquanto estiver alimentado e calmo"
+gs_herd_fed_for: "Alimentado por $1"
+gs_herd_content_for: "Contente por $1"
+gs_herd_love: "Afeto $1 de $2"
+gs_herd_pregnant_due: "Grávida, nasce em $1"
+gs_herd_pregnant_any_moment: "Grávida, nasce a qualquer momento"
+gs_herd_full: "Rebanho cheio ($1 de $2 em um raio de $3 m)"
+gs_herd_count: "Rebanho $1 de $2"
+gs_herd_grows_up_in: "Cresce em $1"
+gs_herd_grows_up_any_moment: "Cresce a qualquer momento"
+gs_herd_hatches_in: "Choca em $1"
+gs_herd_hatches_any_moment: "Choca a qualquer momento"
+
+# Pickaxes: callouts ($1 a deposit's or a find's name)
+gs_mine_discovered: "Descobriu $1!"
+gs_mine_found: "Encontrou $1!"
+gs_mine_echo: "$1, $2 m"
+gs_mine_clean_strike: "Golpe certeiro!"
+gs_mine_clean_strike_chain: "Golpe certeiro ×$1!"
+
+# Pickaxes: Read the rock, under an ore deposit's hover ($1 the gold stars)
+gs_mine_rich_vein: "Veio rico $1"
+gs_mine_plain_vein: "Veio comum"
+gs_mine_chunks_left: "Restam $1 de $2 pedaços"
+
+# Defense: the skill
+gs_defense_skill_desc: "Mais vida, mais vida concedida por alimentos e menos dano recebido; regeneração fora de combate, postura, uma janela de aparo mais ampla e menor consumo de vigor ao bloquear e esquivar. Treinada ao bloquear e ao receber golpes."
+
+# Defense: status effects in the HUD (the others are named by their perk's name)
+gs_defense_laststand_recovering: "Último Suspiro em recarga"
+gs_defense_desperation: "Desespero"
+gs_defense_seconds: "$1s"
+gs_defense_stacks: "$1x"
+
+# Defense: callouts and messages ($1 a perk's name, or the creature's name)
+gs_defense_perk_callout: "$1!"
+gs_defense_reflex: "Reflexo!"
+gs_defense_bash: "Pancada!"
+gs_defense_first_block: "Primeiro bloqueio: $1"
+
+# GrindstoneSkills: the movement skills' perks (Running, Jumping, Swimming, Sneaking, Dodging, Riding) and Weapon Mastery
+# with Catch Up: perk names (gs_perk_), their tips, callouts and lines.
+
+# Running
+gs_perk_packmule: "Mula de Carga"
+gs_perk_burden: "Fardo"
+gs_perk_secondwind: "Fôlego Renovado"
+gs_run_secondwind_callout: "Fôlego renovado!"
+gs_run_packmule_tip: "Você pode carregar $1 a mais no seu nível atual, chegando a $2 no nível 100."
+gs_run_burden_tip: "Enquanto estiver com excesso de peso, mover-se drena $1 de vigor/s em vez de $2."
+gs_run_secondwind_tip: "Ficar sem vigor enquanto você corre devolve $1 de vigor instantaneamente, e você continua correndo. Ativa uma vez a cada $2."
+gs_run_secondwind_ready: "Pronto novamente em $1."
+
+# Jumping
+gs_perk_lightfeet: "Pés Leves"
+gs_perk_softlanding: "Pouso Suave"
+gs_perk_roll: "Amortecer"
+gs_jump_lightfeet_tip: "Um salto consome $1 de vigor no seu nível atual em vez de $2, antes dos equipamentos: -$3. -$4 no nível 100."
+gs_jump_softlanding_tip: "Quedas de até $1 m não causam dano no seu nível atual ($2 m sem treinamento, $3 m no nível 100). Quedas maiores causam $4 a menos de dano ($5 no nível 100): no máximo $6 de dano, a partir de $7 m."
+gs_jump_roll_tip: "Aterrisse de uma queda que causaria dano enquanto se move para frente e você executará uma rolagem: nenhum dano para quedas de até $1 m ($2 m no nível 100) e apenas $3 do dano excedente. A rolagem não consome vigor e não concede imunidade contra golpes."
+
+# Swimming
+gs_perk_quickdry: "Secagem Rápida"
+gs_perk_longbreath: "Fôlego Prolongado"
+gs_perk_salvage: "Resgate Náutico"
+gs_swim_quickdry_tip: "O efeito de Molhado termina $1 mais rápido após você sair da água ou da chuva. $2 no nível 100."
+gs_swim_quickdry_tip_times: "O efeito de Molhado termina $1 mais rápido após você sair da água ou da chuva: $2 no seu nível atual, $3 sem treinamento, $4 no nível 100."
+gs_swim_longbreath_tip: "Ao ficar sem vigor na água, o afogamento começa $1 s mais tarde e causa $2 a menos de dano: drena $3 da vida máxima por segundo em vez de $4. Começa $5 s mais tarde e causa $6 a menos de dano no nível 100."
+gs_swim_salvage_tip: "Enquanto você nada, itens soltos são coletados a partir de $1 m em vez de $2 m. Chega a $3 m no nível 100."
+
+# Sneaking
+gs_perk_prowl: "Espreitar"
+gs_perk_softsteps: "Passos Suaves"
+gs_perk_assassin: "Assassino"
+gs_perk_vanish: "Desaparecer"
+gs_sneak_vanish_callout: "Desapareceu"
+gs_sneak_prowl_tip: "Velocidade ao caminhar agachado de $1 m/s no seu nível atual (+$2), $3 sem treinamento, antes dos equipamentos. +$4 no nível 100. Não funciona com excesso de peso."
+gs_sneak_softsteps_tip: "Atacar, esquivar, minerar e construir enquanto estiver agachado faz $1 a menos de barulho no seu nível atual, e $2 a menos no nível 100. As criaturas só te ouvem dentro do raio do seu ruído; caminhar agachado não faz barulho."
+gs_sneak_assassin_tip: "Um ataque furtivo em uma criatura que não notou você causa $1 a mais de dano no seu nível atual, e $2 a mais no nível 100, acumulando sobre o bônus próprio da arma, além de conceder $3 de experiência em Furtividade. Limite de um ataque por criatura a cada $4, conforme o padrão do jogo."
+gs_sneak_vanish_tip: "Agache-se por $1 sem nenhum inimigo em um raio de $2 m enquanto as criaturas te caçam, e cada uma delas em um raio de $3 m perderá o seu rastro. Não afeta chefes. Ativa uma vez a cada $4."
+
+# Dodging
+gs_perk_longroll: "Rolagem Longa"
+gs_perk_counter: "Contra-ataque"
+gs_perk_heavyroll: "Rolagem Pesada"
+gs_dodge_counter_callout: "Contra-ataque!"
+gs_dodge_longroll_tip: "Sua rolagem te mantém invulnerável por $1 a mais no seu nível atual, e por $2 a mais no nível 100."
+gs_dodge_longroll_last: "Sua última rolagem: $1 s invulnerável sem a vantagem, $2 s com ela."
+gs_dodge_counter_tip: "Esquivar-se através de um ataque prepara um contra-ataque por $1: o próximo ataque corpo a corpo que você iniciar causará $2 a mais de dano a cada golpe que acertar. Arcos, cajados e arremessos não consomem nem se beneficiam deste efeito."
+gs_dodge_heavyroll_tip: "Você pode se esquivar mesmo com excesso de peso, ao custo de x$1 de vigor: consome $2 por rolagem agora, contra $3 de uma rolagem comum."
+
+# Riding
+gs_perk_gallop: "Galope"
+gs_perk_steadyseat: "Assento Firme"
+gs_ride_gallop_tip: "A montaria que você cavalga corre $1 mais rápido, acumulando sobre a velocidade de galope do jogo exibida acima. +$2 no nível 100."
+gs_ride_steadyseat_tip: "A montaria recebe $1 a menos de dano enquanto você a cavalga, incluindo afogamento. $2 a menos no nível 100."
+
+# Weapon Mastery: Catch Up and Weapon Switch lines on every skill's page
+gs_mastery_catchup_term: "Recuperação"
+gs_mastery_catchup_line: "$1: x$2 até o nível $3"
+gs_mastery_catchup_tip: "Recuperação: esta habilidade está abaixo do nível $1 (o maior nível que ela já atingiu), logo, ela ganha x$2 de experiência até retornar a esse patamar. O maior nível de cada habilidade fica salvo com o personagem."
+gs_mastery_switch_term: "Alternância de Arma"
+gs_mastery_switch_line: "$1: +$2 de experiência"
+gs_mastery_switch_tip: "Uma habilidade de arma que esteja abaixo da sua melhor habilidade de arma ganha $1 a mais de experiência, até alcançar o nível da sua melhor habilidade de arma (nível $2)."
+
+# Weapon Mastery: melee milestones
+gs_perk_edge: "Gume"
+gs_perk_bleed: "Sangramento"
+gs_perk_crush: "Esmagamento"
+gs_perk_polearmsweep: "Varredura"
+gs_perk_longthrow: "Arremesso Longo"
+gs_perk_rend: "Dilacerar"
+gs_perk_brawler: "Briguento"
+gs_mastery_edge_tip: "Golpes de espada em um inimigo atordoado causam $1 a mais de dano, acumulando sobre o dobro de dano que o jogo base já concede contra criaturas atordoadas."
+gs_mastery_bleed_tip: "Golpes de faca também envenenam o inimigo em $1 do dano do golpe, antes de aplicar resistências; inimigos imunes a veneno não sofrem o efeito. O veneno não se acumula: uma nova dose substitui a atual apenas se causar mais dano."
+gs_mastery_crush_tip: "Golpes de clava acumulam $1 a mais de atordoamento, fazendo com que os inimigos percam o equilíbrio mais rápido."
+gs_mastery_sweep_tip: "Golpes de Atgeir empurram os inimigos $1 mais forte para trás. Inimigos pesados ainda mal se movem."
+gs_mastery_longthrow_tip: "Lanças arremessadas causam $1 a mais de dano. Estocadas com a lança empunhada continuam inalteradas."
+gs_mastery_rend_tip: "Cada golpe de machado no mesmo inimigo dentro de $1 desde o último causa $2 a mais de dano que o anterior, limitando-se a até $3 assim que $4 golpes consecutivos acertarem."
+gs_mastery_brawler_tip: "Golpes desarmados, sejam com os punhos limpos ou com garras, causam $1 a mais de dano."
+
+# Weapon Mastery: ranged and magic milestones
+gs_perk_recover: "Recuperar"
+gs_perk_steadyreload: "Recarga Firme"
+gs_perk_attunement: "Sintonia"
+gs_perk_lifetap: "Sifão de Vida"
+gs_perk_shieldtraining: "Treino de Escudo"
+gs_mastery_recover_tip: "Cada disparo de arco tem uma chance de $1 de não consumir a flecha: ela permanece no seu inventário."
+gs_mastery_steadyreload_tip: "Correr arrancada, saltar ou se esquivar pausa a recarga da besta em vez de reiniciá-la: ela continua de onde parou assim que você cessar a ação."
+gs_mastery_attunement_tip: "+$1 de regeneração de eitr enquanto você empunhar um cajado de Magia Elemental. Acumula com os bônus de regeneração de hidroméis e equipamentos."
+gs_mastery_lifetap_tip: "Feitiços de magia de sangue que consomem vida custam $1 a menos de vida, acumulando sobre a redução nativa da própria perícia."
+gs_mastery_shieldtraining_tip: "Um escudo de magia de sangue conjurado por você, em si mesmo ou em qualquer outra pessoa, treina a sua perícia de Magia de Sangue conforme absorve golpes de criaturas: concede 1 de experiência a cada $1 de dano (um feitiço que acerta concede 1), limitando-se a no máximo $2 por golpe. Quedas, fogo e golpes de jogadores não geram experiência. A experiência padrão do jogo concedida quando um escudo quebra ainda vai para quem estiver usando o escudo."
