@@ -3,6 +3,7 @@
 # Used while the game's language is Polish. The keys are the ones in English.yml beside this file; a key left out
 # stays English. "$1 $2" patterns set the word order (ecr_name_decorated: $1 the mutation and aspect
 # words, $2 the creature's name).
+# The Rendering Table lines (piece_ecr_renderingtable*, ecr_render_*, ecr_book_render_*) were added 2026-10-22, not by the translator; corrections welcome.
 
 # Mutation names: the word before a creature's name ("Mad Greydwarf"), also used by the compendium and eggs
 ecr_mut_mad: "Szalony"
@@ -280,7 +281,7 @@ ecr_book_mut_frostbound_ice: "Pozostawia śliski lód na swojej drodze. Na lodzi
 ecr_book_mut_frostbound_no_ice: "Na tym serwerze nie pozostawia lodu."
 ecr_book_mut_mudbound: "Pozostawia na swojej drodze gęste błoto. W błocie poruszasz się o $1% wolniej, a efekt utrzymuje się jeszcze przez $2 po wyjściu. Każda plama pozostaje przez $3."
 ecr_book_mut_mudbound_none: "Na tym serwerze nie pozostawia błota."
-ecr_book_mut_corrodent: "Jego ataki sprawiają, że twój pancerz traci wytrzymałość $1 razy szybciej. Tarcze zużywają się w normalnym tempie."
+ecr_book_mut_corrodent: "Jego ataki sprawiają, że twój pancerz traci wytrzymałość $1 razy szybciej, a każdy cios, który się przebije, zabiera dodatkowo $2% maksymalnej wytrzymałości elementu. Tarcze zużywają się w normalnym tempie."
 ecr_book_mut_cloning: "Gdy zbliży się do ciebie na $1 m i szykuje do walki, zostawia na miejscu nieszkodliwą kopię i walczy dalej niewidzialne. Ujawnia się, gdy trafi cię pierwszy raz albo gdy zabijesz kopię. $2"
 ecr_book_mut_cloning_late: "Gdy zbliży się do ciebie na $1 m i szykuje do walki, zostawia na miejscu nieszkodliwą kopię i walczy dalej niewidzialne. Ujawnia się po pierwszym trafieniu lub zabiciu kopii, a po $2 pokazuje się również samo. $3"
 ecr_book_mut_cloning_once: "Raz w ciągu życia."
@@ -295,10 +296,17 @@ ecr_book_aspects_topic: "Elitarne stworzenia: aspekty bossów"
 ecr_book_aspects_off: "Aspekty bossów są wyłączone na tym serwerze — każdy boss walczy tak jak w podstawowej wersji gry."
 ecr_book_aspects_intro: "Boss przywołany przy ołtarzu może otrzymać aspekt, który zmienia przebieg walki. Nazwa aspektu pojawia się przed nazwą bossa. Ołtarz pokazuje aspekt przed przywołaniem, a jego wybór co jakiś czas się zmienia. Aspekt utrudnia walkę, ale zwiększa zdobywane łupy."
 ecr_book_loot: "Łup x$1"
+ecr_book_render_topic: "Elitarne stworzenia: stół przetwarzania trofeów"
+ecr_book_render_how: "Jak przetwarza"
+ecr_book_render_rolls: "Trofeum daje $1-$2 sztuk jednej rudy lub jednego składnika ze swojego biomu, wylosowanych z poniższych list; stół można przełączać między rudami a składnikami. Trofeum bossa, użyte na stole z paska szybkiego dostępu, daje $3 takich losowań."
+ecr_book_render_idols: "Tylko trofeum bossa tworzy bożka Kuźni: jednego bożka swojego biomu, losowo Bitwy lub Ochrony."
+ecr_book_render_trophies: "Trofea: $1"
+ecr_book_render_ores: "Rudy: $1"
+ecr_book_render_ingredients: "Składniki: $1"
+ecr_book_render_idol: "Bożki: $1"
 
 # Hel's hall
 ecr_arena_hel: "Hel"
-hud_ecr_arena_begin: "Rozpocznij próbę"
 msg_ecr_arena_river: "Rzeka Hel zabiera cię ze sobą."
 
 # Helgrind, Hel's gate
@@ -470,3 +478,17 @@ ecr_recap_type_fire: "ogień"
 ecr_recap_type_frost: "mróz"
 ecr_recap_type_lightning: "błyskawice"
 ecr_recap_type_spirit: "duchowe"
+piece_ecr_renderingtable: "Stół przetwarzania trofeów"
+piece_ecr_renderingtable_description: "Wąski stół do przetwarzania trofeów. Każde trofeum daje rudy lub składniki ze swojego biomu. Trofeum bossa, użyte z paska szybkiego dostępu, daje pięć razy więcej albo bożka Kuźni swojego poziomu. Kompendium podaje, co daje każdy biom."
+ecr_render_ores: "Rudy"
+ecr_render_ingredients: "Składniki"
+ecr_render_idols: "Bożki"
+ecr_render_makes: "Wytwarza: $1"
+ecr_render_one: "Przetwórz trofeum (przytrzymaj, aby przetworzyć więcej)"
+ecr_render_idol_hint: "Użyj na nim trofeum bossa z paska szybkiego dostępu, aby stworzyć bożka"
+ecr_render_change: "Zmień, co wytwarza"
+ecr_render_off: "Stół przetwarzania trofeów jest wyłączony."
+ecr_render_none: "Brak trofeów do przetworzenia. Trofea bossów przetwarza się tylko z paska szybkiego dostępu."
+ecr_render_need_boss: "Tylko trofeum bossa tworzy bożka: użyj go na stole z paska szybkiego dostępu."
+ecr_render_unknown: "Stół przetwarzania trofeów nie może przetworzyć tego trofeum."
+ecr_render_nothing_made: "W tej grze nie ma nic z tego biomu do wytworzenia."

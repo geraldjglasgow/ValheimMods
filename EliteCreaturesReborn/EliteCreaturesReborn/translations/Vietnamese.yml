@@ -5,6 +5,7 @@
 # BepInEx/config/EliteCreaturesReborn.translations.English.yml.
 # The keys are the ones in English.yml beside this file; a key left out stays English. "$1 $2" patterns set the word
 # order (ecr_name_decorated: $1 the mutation and aspect words, $2 the creature's name).
+# The Rendering Table lines (piece_ecr_renderingtable*, ecr_render_*, ecr_book_render_*) were added 2026-10-22, not by the translator; corrections welcome.
 
 # Mutation names: the word before a creature's name ("Mad Greydwarf"), also used by the compendium and eggs
 ecr_mut_mad: "Điên Cuồng"
@@ -282,7 +283,7 @@ ecr_book_mut_frostbound_ice: "Để lại băng trơn nơi nó đi qua: đứng 
 ecr_book_mut_frostbound_no_ice: "Nó không tạo băng trên máy chủ này."
 ecr_book_mut_mudbound: "Để lại bùn dày nơi nó đi qua: đứng trong đó bạn di chuyển chậm hơn $1%, và duy trì $2 sau khi bước ra ngoài. Mỗi mảng tồn tại $3."
 ecr_book_mut_mudbound_none: "Nó không tạo bùn trên máy chủ này."
-ecr_book_mut_corrodent: "Trang bị giáp của bạn giảm độ bền nhanh gấp $1 lần dưới các đòn đánh của nó. Khiên giảm độ bền như bình thường."
+ecr_book_mut_corrodent: "Trang bị giáp của bạn giảm độ bền nhanh gấp $1 lần dưới các đòn đánh của nó, và mỗi đòn xuyên qua còn lấy thêm $2% độ bền tối đa của món giáp. Khiên giảm độ bền như bình thường."
 ecr_book_mut_cloning: "Khi nó đối đầu với bạn trong bán kính $1 m, nó để lại một hình nhân thế thân vô hại tại chỗ và tiếp tục chiến đấu tàng hình. Đòn đánh đầu tiên trúng đích sẽ làm lộ diện nó, tiêu diệt hình nhân thế thân cũng vậy. $2"
 ecr_book_mut_cloning_late: "Khi nó đối đầu với bạn trong bán kính $1 m, nó để lại một hình nhân thế thân vô hại tại chỗ và tiếp tục chiến đấu tàng hình. Đòn đánh đầu tiên trúng đích sẽ làm lộ diện nó, tiêu diệt hình nhân thế thân cũng vậy, và sau $2 nó cũng sẽ tự hiện hình. $3"
 ecr_book_mut_cloning_once: "Một lần trong đời."
@@ -297,10 +298,17 @@ ecr_book_aspects_topic: "Elite: Thuộc tính trùm"
 ecr_book_aspects_off: "Thuộc tính trùm đã tắt trên máy chủ này: mọi trùm chiến đấu theo mặc định của game."
 ecr_book_aspects_intro: "Trùm được triệu hồi tại bàn thờ có thể đi kèm với một thuộc tính: một điểm biến tấu trong trận chiến, ghi sau tên của trùm. Bàn thờ hiển thị thuộc tính trước khi bạn triệu hồi, và nó thay đổi theo thời gian. Thuộc tính làm trận chiến khó hơn và phần thưởng phong phú hơn."
 ecr_book_loot: "vật phẩm rơi x$1"
+ecr_book_render_topic: "Elite: Bàn chế biến chiến lợi phẩm"
+ecr_book_render_how: "Cách chế biến"
+ecr_book_render_rolls: "Mỗi chiến lợi phẩm cho $1-$2 một loại quặng hoặc nguyên liệu của vùng đất của nó, chọn ngẫu nhiên từ các danh sách bên dưới; có thể chuyển bàn giữa quặng và nguyên liệu. Chiến lợi phẩm của trùm, dùng lên bàn từ thanh phím tắt, cho $3 lượt như vậy."
+ecr_book_render_idols: "Chỉ chiến lợi phẩm của trùm mới tạo ra tượng thần Lò rèn: một tượng thần của vùng đất đó, ngẫu nhiên Chiến đấu hoặc Bảo vệ."
+ecr_book_render_trophies: "Chiến lợi phẩm: $1"
+ecr_book_render_ores: "Quặng: $1"
+ecr_book_render_ingredients: "Nguyên liệu: $1"
+ecr_book_render_idol: "Tượng thần: $1"
 
 # Hel's hall
 ecr_arena_hel: "Hel"
-hud_ecr_arena_begin: "Bắt đầu thử thách"
 msg_ecr_arena_river: "Dòng sông của Hel cuốn lấy bạn."
 
 # Helgrind, Hel's gate
@@ -472,3 +480,17 @@ ecr_recap_type_fire: "sát thương lửa"
 ecr_recap_type_frost: "sát thương băng giá"
 ecr_recap_type_lightning: "sát thương sét"
 ecr_recap_type_spirit: "sát thương linh hồn"
+piece_ecr_renderingtable: "Bàn chế biến chiến lợi phẩm"
+piece_ecr_renderingtable_description: "Một chiếc bàn hẹp để chế biến chiến lợi phẩm. Mỗi chiến lợi phẩm cho quặng hoặc nguyên liệu của vùng đất của nó. Chiến lợi phẩm của trùm, dùng từ thanh phím tắt, cho gấp năm lần hoặc một tượng thần Lò rèn cùng cấp. Cẩm nang liệt kê những gì mỗi vùng đất cho."
+ecr_render_ores: "Quặng"
+ecr_render_ingredients: "Nguyên liệu"
+ecr_render_idols: "Tượng thần"
+ecr_render_makes: "Tạo ra: $1"
+ecr_render_one: "Chế biến một chiến lợi phẩm (giữ để chế biến thêm)"
+ecr_render_idol_hint: "Dùng chiến lợi phẩm của trùm lên bàn từ thanh phím tắt để tạo tượng thần"
+ecr_render_change: "Đổi thứ được tạo ra"
+ecr_render_off: "Bàn chế biến chiến lợi phẩm đang bị tắt."
+ecr_render_none: "Không có chiến lợi phẩm để chế biến. Chiến lợi phẩm của trùm chỉ chế biến được từ thanh phím tắt."
+ecr_render_need_boss: "Chỉ chiến lợi phẩm của trùm mới tạo ra tượng thần: hãy dùng nó lên bàn từ thanh phím tắt."
+ecr_render_unknown: "Bàn chế biến không thể chế biến chiến lợi phẩm này."
+ecr_render_nothing_made: "Trò chơi này không có gì của vùng đất đó để tạo ra."

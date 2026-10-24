@@ -10,11 +10,12 @@ namespace EliteCreaturesReborn.Rendering
 {
     /// <summary>
     /// The Rendering Table piece <c>ECR_RenderingTable</c> (the user, 2026-10-20: "a new workbench that is as tall as the
-    /// vanilla workbench, but 1/2 the width"): a copy of the game's workbench (<c>piece_workbench</c>: its model, wear
-    /// states, fragments, snow, collider, health and sounds) with every model part squeezed to half its width along the
-    /// bench's long side (3.05 m to 1.53 m; its 1.85 m height and 1.33 m depth kept). It is not a crafting station: the
-    /// station, its build circle, its base area, its roof check, its extension point and Hugin's guide point go, and
-    /// <see cref="RenderingTable"/> takes the hover and E. The station's craft-done sound is kept for a finished render.
+    /// vanilla workbench, but 1/2 the width"): a copy of the game's workbench (<c>piece_workbench</c>: its health, wear
+    /// and sounds) wearing the table's own model (<see cref="RenderModel"/>, 2026-10-22), 1.53 m wide and as tall and
+    /// deep as the workbench. Without that model's bundle the workbench's own model stays, every part squeezed to half
+    /// its width along the bench's long side. It is not a crafting station: the station, its build circle, its base area,
+    /// its roof check, its extension point and Hugin's guide point go, and <see cref="RenderingTable"/> takes the hover
+    /// and E. The station's craft-done sound is kept for a finished render.
     /// Built once per process on every peer, dedicated server included, under BundlePrefabs' inactive bench (no Awake,
     /// no ZDO), and put in the scene's prefab list before <c>ZNetScene.Awake</c> registers it, whether the setting is on
     /// or not, so tables already built always load. The prefab's name is hashed into saves: it never changes.
@@ -88,7 +89,10 @@ namespace EliteCreaturesReborn.Rendering
             _done = station.m_craftItemDoneEffects;
             Object.DestroyImmediate(station);
             StripStation(copy.transform);
-            Squeeze(copy.transform);
+            if (!RenderModel.Wear(copy))
+            {
+                Squeeze(copy.transform);
+            }
             Describe(copy.GetComponent<Piece>());
             copy.AddComponent<RenderingTable>();
             return copy;
@@ -106,8 +110,8 @@ namespace EliteCreaturesReborn.Rendering
             }
         }
 
-        // Every remaining child is model, collider, snow or fragments, each unrotated on the bench's root: half the
-        // width along X, and half its distance from the middle.
+        // Without the table's own model: every remaining child is model, collider, snow or fragments, each unrotated on
+        // the bench's root: half the width along X, and half its distance from the middle.
         private static void Squeeze(Transform root)
         {
             foreach (Transform part in root)
@@ -126,6 +130,10 @@ namespace EliteCreaturesReborn.Rendering
             piece.m_description = Name + "_description";
             piece.m_category = Piece.PieceCategory.Crafting;
             piece.m_enabled = true;
+            if (RenderModel.Icon != null)
+            {
+                piece.m_icon = RenderModel.Icon;
+            }
         }
     }
 }

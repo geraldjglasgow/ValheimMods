@@ -66,8 +66,9 @@ namespace EliteCreaturesReborn.Arena
             }
         });
 
-        /// <summary>Asks the core's owner to start a trial for the players in the hall (from Hel's interaction). Does
-        /// nothing when a trial runs, the hall is not built, or the local player is not in the hall.</summary>
+        /// <summary>Asks the core's owner to start a trial for the players in the hall (from Hel's interaction): the one
+        /// the local player brought from Helgrind. Does nothing when a trial runs, the hall is not built, or the local
+        /// player is not in the hall.</summary>
         public static void RequestStart() => Guard.Run("ArenaTrial.RequestStart", Ask);
 
         private static void Ask()
@@ -77,15 +78,33 @@ namespace EliteCreaturesReborn.Arena
             {
                 return;
             }
+            int mode = ChosenMode();
             if (core.IsOwner)
             {
-                ArenaStart.Begin(core, ZNet.GetUID()); // this machine runs the trial: no round trip
+                ArenaStart.Begin(core, ZNet.GetUID(), mode); // this machine runs the trial: no round trip
             }
             else
             {
-                core.View.InvokeRPC(ArenaKeys.StartRpc);
+                core.View.InvokeRPC(ArenaKeys.StartRpc, mode);
             }
         }
+
+        /// <summary>The trial the local player brought from Helgrind (<see cref="ArenaModes"/>), as the world has it open
+        /// now: what Hel's hover offers and what waking her asks for.</summary>
+        public static int ChosenMode()
+        {
+            Player? player = Player.m_localPlayer;
+            int mode = ArenaModes.Unset;
+            if (player != null && player.m_customData.TryGetValue(ArenaKeys.Mode, out string kept)
+                && int.TryParse(kept, out int read))
+            {
+                mode = read;
+            }
+            return ArenaModes.Resolve(mode, ArenaModes.Highest());
+        }
+
+        /// <summary>The name of <see cref="ChosenMode"/> in this player's language ("Swamp", "Infinite").</summary>
+        public static string ChosenName() => ArenaModes.Name(ChosenMode());
 
         private static ZDO? CoreZdo()
         {

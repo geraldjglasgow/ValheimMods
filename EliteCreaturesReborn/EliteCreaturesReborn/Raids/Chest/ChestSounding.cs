@@ -6,9 +6,10 @@ namespace EliteCreaturesReborn.Raids
     /// Sounding a raid from a Raiders Chest (features/raids.md section 4.1). The player's Shift + E goes to the chest's
     /// owner as one RPC (this machine when it owns it: the game routes it to itself, one code path). The owner decides:
     /// the chest's own rules (<see cref="ChestRules"/>), the raid's (<see cref="RaidStart.Refusal"/>: no raid on here,
-    /// none within 200 m), the chest not open, coins in it. Then the raid is sounded with every coin as the stake
-    /// (<see cref="RaidStart.Start"/>, which tells the players near and blows the horn) and, only once it is on, every coin
-    /// is taken out of the chest in the same frame, so a refused raid never costs a coin and nothing can slip in between.
+    /// none within 200 m), the chest not open, coins or trophies in it. Then the raid is sounded with every coin and trophy
+    /// as the stake (<see cref="RaidStart.Start"/>, which tells the players near and blows the horn) and, only once it is
+    /// on, every coin and trophy is taken out of the chest in the same frame (the trophies kept in the raid's state for a
+    /// win, <see cref="ChestTrophies"/>), so a refused raid never costs a coin and nothing can slip in between.
     /// A refusal goes back to the player who asked, and only to them, as a <c>LangWire</c> message read in that player's
     /// language; the owner always answers, even when ownership moved while the ask was on its way.
     /// </summary>
@@ -65,14 +66,16 @@ namespace EliteCreaturesReborn.Raids
             container.Load(); // the contents as last saved, should ownership have only just come here
             Inventory inventory = container.GetInventory();
             int stake = ChestCoins.Count(inventory);
-            if (stake <= 0)
+            int trophies = ChestTrophies.Count(inventory, out int worth);
+            if (stake <= 0 && trophies <= 0)
             {
                 return LangWire.Message(RaidWords.NoGold);
             }
-            refusal = RaidStart.Start(chest.View, stake, -1);
+            refusal = RaidStart.Start(chest.View, stake, -1, worth);
             if (refusal == null)
             {
                 ChestCoins.Take(inventory, stake);
+                new RaidState(chest.View.GetZDO()).Trophies = ChestTrophies.Take(inventory);
             }
             return refusal;
         }

@@ -53,7 +53,7 @@ namespace EliteCreaturesReborn.Arena.Trial
                 return; // the inactive prefab itself, or a ZDO-less copy: no trial
             }
             _live = true;
-            _nview.Register(ArenaKeys.StartRpc, OnStart);
+            _nview.Register<int>(ArenaKeys.StartRpc, OnStart);
             _nview.Register(ArenaKeys.StopRpc, OnStop);
             _nview.Register<long, int, bool>(ArenaKeys.KillRpc, OnKill);
             _nview.Register<Vector3>(ArenaKeys.RepairRpc, OnRepair);
@@ -93,11 +93,11 @@ namespace EliteCreaturesReborn.Arena.Trial
             }
         }
 
-        private void OnStart(long sender) => Guard.Run("ArenaCore.OnStart", () =>
+        private void OnStart(long sender, int mode) => Guard.Run("ArenaCore.OnStart", () =>
         {
             if (IsOwner)
             {
-                ArenaStart.Begin(this, sender);
+                ArenaStart.Begin(this, sender, mode);
             }
         });
 

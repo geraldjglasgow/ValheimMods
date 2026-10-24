@@ -11,7 +11,9 @@ While any registered window is open:
 - the cursor is shown and free (unless the game menu is up),
 - the player does not attack, block, use the hotbar or other player keys (`Player.TakeInput`),
 - the camera does not follow the mouse (`PlayerController.InInventoryEtc`) and the wheel does not zoom
-  (`ZInput.GetMouseScrollWheel`; the window's own scroll views still scroll),
+  (`ZInput.GetMouseScrollWheel`; the window's own scroll views still scroll), unless every open window lets the wheel
+  through right now: `GameWindow.Add(isOpen, close, passesWheel)`, for a tool's window whose wheel zooms the view while
+  the pointer is off the window (Keelwright's size window),
 - Esc closes the window instead of opening the game menu (`Menu.Update`).
 
 Walking stays possible, as with the inventory.

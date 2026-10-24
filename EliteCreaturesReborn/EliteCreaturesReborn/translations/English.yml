@@ -8,500 +8,907 @@
 # Keep each key as it is, keep $1, $2 ... (filled in by the game), keep \n (a line break), and keep each text on one line
 # between double quotes (write \" for a quote inside it). Patterns such as "$1 $2" set the word order: a creature's
 # name is ecr_name_decorated, so a language that puts its words after the name writes "$2 $1".
+# The "# " line above each key says where the text shows, what its $1, $2 ... hold, and "Rare." for text few
+# players ever see; leave those out first if time is short.
 
 # Mutation names: the word before a creature's name ("Mad Greydwarf"), also used by the compendium and eggs
+# Mutation name: adjective before a creature's name ("Mad Greydwarf"), one form for every creature, also alone in compendium and egg tooltips. Far faster.
 ecr_mut_mad: "Mad"
+# Mutation name: adjective before a creature's name ("Bloated Boar"); also alone in compendium, egg tooltips. Double health, explodes after death.
 ecr_mut_bloated: "Bloated"
+# Mutation name: adjective before a creature's name ("Cloaked Wolf"); also alone in compendium, egg tooltips. Invisible beyond 10 m.
 ecr_mut_cloaked: "Cloaked"
+# Mutation name: adjective before a creature's name ("Splintering Troll"); also alone in compendium, egg tooltips. Splits into weaker copies when killed.
 ecr_mut_splintering: "Splintering"
+# Mutation name: adjective before a creature's name ("Leeching Draugr"); also alone in compendium, egg tooltips. Heals from the damage it deals.
 ecr_mut_leeching: "Leeching"
+# Mutation name: adjective before a creature's name ("Warding Troll"); also alone in compendium, egg tooltips. Reflects part of each hit back.
 ecr_mut_warding: "Warding"
+# Mutation name: adjective before a creature's name ("Plated Boar"); also alone in compendium, egg tooltips. Armoured while healthy.
 ecr_mut_plated: "Plated"
+# Mutation name: adjective before a creature's name ("Miasmic Draugr"); also alone in compendium, egg tooltips. Trails poison clouds.
 ecr_mut_miasmic: "Miasmic"
+# Mutation name: adjective before a creature's name ("Devouring Wolf"); also alone in compendium, egg tooltips. Eats other creatures and grows stronger.
 ecr_mut_devouring: "Devouring"
+# Mutation name: adjective before a creature's name ("Thieving Greydwarf"); also alone in compendium, egg tooltips. Steals items from you with its hits.
 ecr_mut_thieving: "Thieving"
+# Mutation name: adjective before a creature's name ("Gilded Boar"); also alone in compendium, egg tooltips. Glitters gold, flees, drops rich loot.
 ecr_mut_gilded: "Gilded"
+# Mutation name: adjective before a creature's name ("Blinking Wolf"); also alone in compendium, egg tooltips. Teleports behind its target.
 ecr_mut_blinking: "Blinking"
+# Mutation name: adjective before a creature's name ("Relentless Draugr"); also alone in compendium, egg tooltips. Never stops chasing you.
 ecr_mut_relentless: "Relentless"
+# Mutation name: a noun put before a creature's name ("Juggernaut Troll"); also alone in compendium, egg tooltips. Never staggers or is knocked back.
 ecr_mut_juggernaut: "Juggernaut"
+# Mutation name: a noun put before a creature's name ("Screecher Greydwarf"); also alone in compendium, egg tooltips. One who screeches; deafens.
 ecr_mut_screecher: "Screecher"
+# Mutation name: adjective before a creature's name ("Frostbound Wolf"); also alone in compendium, egg tooltips. Freezing aura, ice trail, frost heals it.
 ecr_mut_frostbound: "Frostbound"
+# Mutation name: adjective before a creature's name ("Mudbound Troll"); also alone in compendium, egg tooltips. Leaves deep mud where it walks.
 ecr_mut_mudbound: "Mudbound"
+# Mutation name: adjective before a creature's name ("Corrodent Draugr"); also alone in compendium, egg tooltips. Its hits corrode your armour.
 ecr_mut_corrodent: "Corrodent"
+# Mutation name: adjective before a creature's name ("Cloning Greydwarf"); also alone in compendium, egg tooltips. Leaves a decoy copy and fights unseen.
 ecr_mut_cloning: "Cloning"
+# Mutation name: adjective before a creature's name ("Piercing Draugr"); also alone in compendium, egg tooltips. Ignores part of your armour. Off by default.
 ecr_mut_piercing: "Piercing"
+# Mutation name: adjective before a creature's name ("Howling Wolf"); also alone in compendium, egg tooltips. Howls to call creatures on you. Off by default.
 ecr_mut_howling: "Howling"
+# Mutation name: adjective before a creature's name ("Binding Greydwarf"); also alone in compendium, egg tooltips. Roots that hold your feet. Off by default.
 ecr_mut_binding: "Binding"
+# Mutation name: adjective before a creature's name ("Flamebound Surtling"); also alone in compendium, egg tooltips. Leaves burning ground where it walks.
 ecr_mut_flamebound: "Flamebound"
 
 # Creature names: $1 its mutation and aspect words, $2 its own name ("Mad Greydwarf")
+# Full creature/boss name on nameplate, hover, boss bar, messages, death recap. $1 = its mutation/aspect words ("Bloated Warding"), $2 = its name ("Troll").
 ecr_name_decorated: "$1 $2"
 # Two words of a creature's name side by side, joined left to right ("Bloated Warding", then "Bloated Warding Miasmic")
+# Creature names: joins two mutation/aspect words, repeated for 3+. $1 = words so far ("Bloated"), $2 = next word ("Warding"). Usually just a space.
 ecr_name_words: "$1 $2"
 
 # Mutations, told to the player they happen to
 # $1 the creature, $2 the item, $3 how many
+# Thieving mutation: top-left message to the robbed player. $1 = the creature's full name ("Thieving Greydwarf"), $2 = item name ("Wood"), $3 = count (20).
 ecr_mut_msg_stole: "$1 stole $2 x$3"
 # $1 the item, $2 how many
+# Thieving: top-left message when a steal does not go through and the item is given back. $1 = item name ("Wood"), $2 = count (20). Rare.
 ecr_mut_msg_not_stolen: "$1 x$2 was not stolen"
+# Thieving: top-left message when a steal confirmed late takes back an item already given back. $1 = item name ("Wood"), $2 = count (20). Rare.
 ecr_mut_msg_stolen_late: "$1 x$2 was stolen after all"
 # $1 the armour piece, $2 the percent of it left
+# Corrodent mutation: top-left message, with the item's icon, when its hit wears your armour. $1 = armour piece ("Bronze helmet"), $2 = percent left (63).
 ecr_mut_msg_corrodes: "Your $1 corrodes ($2% left)"
 
 # Over a creature, where damage numbers show
+# Juggernaut mutation: grey floating word over the creature, like a damage number, where it would have staggered. Alone; describes the creature.
 ecr_display_unstoppable: "Unstoppable"
 # A Frostbound creature healed by frost: $1 the health it healed (the game puts + before it)
+# Frostbound: green floating heal number over the creature when frost heals it; game adds + before. $1 = health healed (12.5) -> "+12.5 frost".
 ecr_display_frost_heal: "$1 frost"
 
 # Status effects
+# Status effect name on the HUD beside its icon, while near a Frostbound creature's freezing aura. A state of the player (adjective).
 ecr_se_chilled: "Chilled"
+# Tooltip (description) of the Chilled status effect, from a Frostbound creature's aura.
 ecr_se_chilled_tooltip: "A Frostbound creature's freezing aura: your stamina recovers slowly while you stay near it."
+# Status effect name on the HUD beside its icon and countdown, after a Screecher's (or Bat-fiend's) shriek deafens you. Noun phrase.
 ecr_se_ringing_ears: "Ringing ears"
+# Tooltip (description) of the Ringing ears status effect.
 ecr_se_ringing_ears_tooltip: "A shriek left your ears ringing: the world is muffled and spells will not cast."
+# Ringing ears: the status effect's start message, top-left, the moment a shriek deafens you.
 ecr_se_ringing_ears_start: "Your ears ring - the world goes quiet"
+# Ringing ears: centre-of-screen message when you try to cast with an Elemental or Blood Magic weapon while deafened.
 ecr_se_ringing_ears_no_cast: "Your ears ring - you cannot cast"
+# Status effect name on the HUD while you stand on a Frostbound creature's ice trail. Noun phrase (the ground).
 ecr_se_slick_ice: "Slick ice"
+# Tooltip (description) of the Slick ice status effect.
 ecr_se_slick_ice_tooltip: "Frostbound ice underfoot: your feet slide, so starting, turning and stopping all take longer."
+# Status effect name on the HUD while you are in a Mudbound creature's mud trail (and a moment after). Noun phrase (the ground).
 ecr_se_deep_mud: "Deep mud"
+# Tooltip (description) of the Deep mud status effect.
 ecr_se_deep_mud_tooltip: "Mudbound mud underfoot: thick and deep, it drags at every step and clings a moment after."
+# Status effect name on the HUD while a Binding creature's roots hold you (about 1 s). A state of the player (adjective).
 ecr_se_rooted: "Rooted"
+# Tooltip (description) of the Rooted status effect.
 ecr_se_rooted_tooltip: "Binding roots hold your feet: you cannot walk, run, jump or roll until they let go."
 
 # Eggs: what an egg will hatch. $1 the number of stars, $2 its mutations (each in its star colour)
+# Eggs: last line of an egg's hover text (on the ground) and inventory tooltip, when it will hatch a creature with no stars and no mutations.
 ecr_egg_plain: "Hatches plain"
+# Eggs: egg hover/tooltip line, it will hatch a 1-star creature with no mutations. $1 = the number of stars (1).
 ecr_egg_stars_one: "Hatches with $1 star"
+# Eggs: egg hover/tooltip line, hatches with 2+ stars and no mutations. $1 = number of stars (2).
 ecr_egg_stars_many: "Hatches with $1 stars"
+# Eggs: hover/tooltip line, 1 star plus mutations. $1 = 1, $2 = the mutation names, coloured, joined by ecr_egg_list ("Leeching, Mad").
 ecr_egg_stars_one_mutations: "Hatches with $1 star, $2"
+# Eggs: hover/tooltip line, 2+ stars (or 0) plus mutations. $1 = stars (2), $2 = the coloured mutation names ("Leeching, Mad").
 ecr_egg_stars_many_mutations: "Hatches with $1 stars, $2"
 # Two mutations in an egg's list, joined left to right ("Leeching, Mad", then "Leeching, Mad, Gilded")
+# Eggs: joins two mutation names in an egg's line, repeated for 3+. $1 = list so far ("Leeching"), $2 = next name ("Mad").
 ecr_egg_list: "$1, $2"
 
 # World tier: the inventory plate's tooltip ($1 the number of tiers) and the message when it rises
+# World tier: heading of the tooltip on the world tier plate in the inventory (only with PackPanel installed). Alone, as a title.
 ecr_tier_topic: "World tier"
+# World tier: body of the inventory plate's tooltip. $1 = total number of tiers (7).
 ecr_tier_tip: "There are $1 world tiers in total. The tier rises the first time each boss is defeated, and each tier makes stars and mutations more common in every biome."
 # $1 the new tier, $2 the number of tiers
+# World tier: centre-of-screen message to every player when the tier rises (a boss's first defeat). $1 = new tier (3), $2 = number of tiers (7).
 ecr_tier_risen: "The world hardens: tier $1 of $2"
 
 # Boss hints: a defeated boss points toward a place. $1 one of the directions below
+# Boss hints: centre-of-screen message to players near a defeated Elder, Bonemass, Moder or Yagluth. $1 = a direction word below ("north").
 ecr_hint_pull: "You feel a presence pulling you... $1"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... north"); lower case, the last word of the message.
 ecr_hint_north: "north"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... northeast"); lower case, the last word of the message.
 ecr_hint_northeast: "northeast"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... east"); lower case, the last word of the message.
 ecr_hint_east: "east"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... southeast"); lower case, the last word of the message.
 ecr_hint_southeast: "southeast"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... south"); lower case, the last word of the message.
 ecr_hint_south: "south"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... southwest"); lower case, the last word of the message.
 ecr_hint_southwest: "southwest"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... west"); lower case, the last word of the message.
 ecr_hint_west: "west"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... northwest"); lower case, the last word of the message.
 ecr_hint_northwest: "northwest"
 
 # Boss rewards, on a boss altar's hover: $1-$2 the amount, $3 the item
+# Boss altar hover text: the extra reward the fight pays. $1-$2 = amount range (10-20), $3 = item name ("Iron scrap"), each player.
 ecr_loot_altar_reward: "Reward: $1-$2 $3 per player"
 
-# The Bat-fiend: its name and its attacks' names (the death recap and the damage log)
+# The Bat-fiend: its name and its attacks' names
+# Bat-fiend creature's name: nameplate, hover, death recap killer, sound captions; mutation words may go before it. Hel's Arena guardian or console.
 enemy_ecr_batfiend: "Bat-fiend"
+# Name of a Bat-fiend attack (a leap with claws), set as its attack item's name. Not shown in ECR's own windows; other mods may. Rare.
 item_ecr_batfiend_pounce: "Raking Pounce"
+# Name of a Bat-fiend attack (a lunging bite that heals it), set as its attack item's name. Not shown in ECR's own windows. Rare.
 item_ecr_batfiend_bite: "Bloodletting Bite"
+# Name of a Bat-fiend attack (a sideways wing slash), set as its attack item's name. Not shown in ECR's own windows. Rare.
 item_ecr_batfiend_wing: "Wing Guillotine"
+# Name of a Bat-fiend attack (a freezing gust), set as its attack item's name. Not shown in ECR's own windows. Rare.
 item_ecr_batfiend_gravewind: "Gravewind Blast"
+# Name of a Bat-fiend attack (a shriek that deafens and staggers), set as its attack item's name. Not shown in ECR's own windows. Rare.
 item_ecr_batfiend_screech: "Shattering Screech"
 
 # Elite Creatures Reborn: the compendium pages, boss aspects, boss altars and the boss damage board.
 # $1, $2 ... are values the mod fills in (numbers, names). Colours and layout stay in the code.
 
 # Boss aspects: each aspect's name, put before a boss's own name ("none" is the fight as the game ships it)
+# Boss aspects: the plain fight, no aspect. Altar hover "Aspect: none" (lower case after a colon); altar window list item, capitalised ("None").
 ecr_aspect_none: "none"
+# Boss aspect: adjective before a boss's name ("Reflective Eikthyr"); also alone on its altar, altar window, compendium. Reflects your hits back.
 ecr_aspect_reflective: "Reflective"
+# Boss aspect: adjective before a boss's name ("Shielded Bonemass"); also alone on its altar, altar window, compendium. Less damage from arrows.
 ecr_aspect_shielded: "Shielded"
+# Boss aspect: adjective before a boss's name ("Mending Moder"); also alone on its altar, altar window, compendium. Regenerates health.
 ecr_aspect_mending: "Mending"
+# Boss aspect: a noun before a boss's name ("Summoner Bonemass"); also alone on its altar, altar window, compendium. Calls creatures.
 ecr_aspect_summoner: "Summoner"
+# Boss aspect: a noun before a boss's name ("Elementalist Yagluth"); also alone on its altar, altar window, compendium. More elemental damage.
 ecr_aspect_elementalist: "Elementalist"
+# Boss aspect: adjective before a boss's name ("Enraged Eikthyr"); also alone on its altar, altar window, compendium. More physical damage.
 ecr_aspect_enraged: "Enraged"
+# Boss aspect: a noun before a boss's name ("Twin Bonemass"); also alone on its altar, altar window, compendium. Comes as two sharing health.
 ecr_aspect_twin: "Twin"
+# Boss aspect: a noun before a boss's name ("Phantom Moder"); also alone on its altar, altar window, compendium. Splits off phantom copies.
 ecr_aspect_phantom: "Phantom"
+# Boss aspect: adjective before a boss's name ("Adaptive Yagluth"); also alone on its altar, altar window, compendium. Resists the damage type hitting it most.
 ecr_aspect_adaptive: "Adaptive"
+# Boss aspect name: adjective before a boss's name ("Fixated Bonemass"), also alone as a label on the altar/compendium. The boss fixes on one player.
 ecr_aspect_fixated: "Fixated"
+# Boss aspect name: adjective before a boss's name ("Stormbound Moder"), also alone as a label on the altar/compendium. Calls lightning on players.
 ecr_aspect_stormbound: "Stormbound"
+# Boss aspect name: adjective before a boss's name ("Gravitic Yagluth"), also alone as a label on the altar/compendium. Pulls players in (gravity).
 ecr_aspect_gravitic: "Gravitic"
+# Boss aspect name: adjective before a boss's name ("Colossal Eikthyr"), also alone as a label on the altar/compendium. The boss is bigger.
 ecr_aspect_colossal: "Colossal"
+# Boss aspect name: adjective before a boss's name ("Tethered Bonemass"), also alone as a label. Two bosses joined by a tether (a link).
 ecr_aspect_tethered: "Tethered"
+# Boss aspect name: adjective before a boss's name, first of several ("Bountiful Enraged Mending Eikthyr"), also alone as a label. Extra aspects, more loot.
 ecr_aspect_bountiful: "Bountiful"
+# Boss aspect name: adjective before a boss's name ("Portalbound Bonemass"), also alone as a label on the altar/compendium. Throws through portals.
 ecr_aspect_portalbound: "Portalbound"
+# Boss aspect name: adjective before a boss's name ("Nightfall Moder"), also alone as a label. Brings a stormy night; an English noun used as an adjective.
 ecr_aspect_nightfall: "Nightfall"
+# Boss aspect name: adjective before a boss's name ("Brutal Eikthyr"), also alone as a label on the altar/compendium. Throws players far away.
 ecr_aspect_brutal: "Brutal"
+# Boss aspect name: adjective before a boss's name ("Echoing Eikthyr"), also alone as a label. A ghost of the boss repeats its moves later.
 ecr_aspect_echoing: "Echoing"
 
 # Boss aspects: what each does. Lower case and no full stop: the altar shows it on the line under the aspect's name,
 # the compendium and the altar window give it a capital and ecr_aspect_sentence.
+# Boss altar hover: line under "Aspect: none" for a plain fight; capitalised + full stop in the altar window. Also in the elite inspect console reply.
 ecr_aspect_does_none: "the fight as the game ships it"
+# Boss aspect effect ('it' = the boss): altar hover line under its name; capitalised as a sentence in compendium and altar window. $1 = percent (15).
 ecr_aspect_does_reflective: "$1% of each hit you land on it comes back to you"
+# Boss aspect effect ('it'/subject = the boss): altar hover line under its name; capitalised as a sentence in compendium/altar window. $1 = percent (30).
 ecr_aspect_does_shielded: "takes $1% less damage from arrows and bolts"
+# Boss aspect effect (subject = the boss): altar hover line under its name; capitalised as a sentence in compendium/altar window. $1 = percent (0.2).
 ecr_aspect_does_mending: "regenerates $1% of its current health every second"
+# Boss aspect effect (subject = the boss): altar hover line; sentence in compendium/altar window. $1 = creatures per wave (2), $2 = percent of health (33).
 ecr_aspect_does_summoner: "calls $1 creatures each time it loses $2% of its health"
+# Boss aspect effect (subject = the boss): altar hover line under its name; capitalised as a sentence in compendium/altar window. $1 = percent (20).
 ecr_aspect_does_elementalist: "deals $1% more elemental damage"
+# Boss aspect effect (subject = the boss): altar hover line under its name; capitalised as a sentence in compendium/altar window. $1 = percent (20).
 ecr_aspect_does_enraged: "deals $1% more physical damage"
+# Boss aspect effect (boss comes as two): altar hover line; sentence in compendium/altar window. $1 = percent less health (25), $2 = percent less damage (25).
 ecr_aspect_does_twin: "comes as two sharing one health pool, each with $1% less health and $2% less damage"
+# Boss aspect effect: altar line; compendium sentence. $1 = health marks ("66% and 33%" or "no"), $2 = copies per player (1), $3 = copy health (50), $4 = % (50).
 ecr_aspect_does_phantom: "at $1 health splits off phantom copies, $2 per player online, with $3 health and $4% less damage"
+# Boss aspect effect (subject = the boss): altar hover line; sentence in compendium/altar window. $1 = percent (50), $2 = seconds (15).
 ecr_aspect_does_adaptive: "takes $1% less of whichever damage type hit it most in the last $2 seconds"
+# Boss aspect effect (subject = the boss): altar line; compendium sentence. $1 = percent harder (50), $2 = percent softer (30), $3 = seconds (30).
 ecr_aspect_does_fixated: "marks one player and hits them $1% harder, everyone else $2% softer; the mark moves every $3 seconds to whoever hurt it most"
+# Boss aspect effect (subject = the boss): altar hover line; sentence in compendium/altar window. $1 = seconds between strikes (20), $2 = seconds (2).
 ecr_aspect_does_stormbound: "every $1 seconds calls lightning down on a circle under each player, $2 seconds after it appears"
+# Boss aspect effect: altar line; compendium sentence. $1 = seconds (20), $2 = metres pull range (30), $3 = percent of max health (10), $4 = metres (6).
 ecr_aspect_does_gravitic: "every $1 seconds pulls every player within $2 m toward it, then slams: $3% of max health to players within $4 m of it"
+# Boss aspect effect: altar line; compendium sentence. $1 = percent bigger (40), $2 = percent more health (15), $3 = percent slower (15), $4 = metres (8).
 ecr_aspect_does_colossal: "$1% bigger, $2% more health, $3% slower; its heavy attacks send a $4 m shockwave that knocks players down (roll through it or jump it)"
+# Boss aspect effect (two bosses): altar line; compendium sentence. $1 = percent less health (25), $2 = percent faster (50), $3 = percent less damage (50).
 ecr_aspect_does_tethered: "comes as two bound by a tether, each with $1% less health; the further apart their health, the faster both attack (up to $2%) and the less damage the weaker one takes (up to $3%)"
+# Boss aspect effect (subject = the boss): altar hover line; sentence in compendium/altar window. $1 = number of extra aspects (2).
 ecr_aspect_does_bountiful: "carries $1 more aspects at once"
+# Boss aspect effect (subject = the boss, the Elder or Bonemass only): altar hover line; sentence in compendium/altar window. No values.
 ecr_aspect_does_portalbound: "throws through portals (the Elder its vines, Bonemass its slime): one opens at its hand, the other somewhere above you"
+# Boss aspect effect: altar line; compendium sentence. $1 = metres (60), $2-$3 = seconds range (18-28), $4 = seconds (10), $5 = damage per second (25).
 ecr_aspect_does_nightfall: "turns the sky to a storming midnight within $1 m of it; every $2-$3 seconds a tornado rises by each player there and hunts them for $4 seconds: $5 damage a second inside it"
+# Boss aspect effect (subject = the boss's heavy blows): altar hover line; sentence in compendium/altar window. $1 = metres thrown (20).
 ecr_aspect_does_brutal: "its heavy blows throw the players they hit $1 m away; a block that holds or a parry keeps you on your feet, and the landing never hurts"
+# Boss aspect effect: altar hover line; sentence in compendium/altar window. $1 = seconds (15), used twice; 'it' = the boss.
 ecr_aspect_does_echoing: "$1 seconds into the fight a white ghost of it rises and does everything it did $1 seconds before, blows and throws included, until it dies"
 # What an aspect does as a sentence of its own ($1 already starts with a capital)
+# Wraps a boss aspect's effect line as a full sentence (compendium Boss aspects page, altar window). $1 = the effect text, already capitalised.
 ecr_aspect_sentence: "$1."
 # Phantom splits at no health marks at all ("at no health splits off ...")
+# Phantom aspect: fills $1 of its effect line when it never splits ("at no health splits off ..."). Only when the rule file sets no split marks. Rare.
 ecr_aspect_marks_none: "no"
 
 # Fixated: the chat line when its mark lands ($1 the boss, $2 a player)
+# Fixated boss: red chat line to nearby players when the mark lands on another player. $1 = the boss's name (Bonemass), $2 = a player's name.
 ecr_aspect_fixates_on: "$1 fixes on $2!"
+# Fixated boss: red chat line to the marked player when the mark lands on them. $1 = the boss's name (Bonemass).
 ecr_aspect_fixates_you: "$1 fixes on you!"
+# Fixated boss: stands in for the player's name ($2 of ecr_aspect_fixates_on) when the marked player has left the game. Rare.
 ecr_aspect_fixated_gone: "a player who has left"
 
 # Boss altar: the bowl's hover lines
+# Boss altar hover: action after the key prompt, "[E] Choose the fight"; opens the altar window. Imperative, like a button label.
 ecr_altar_choose: "Choose the fight"
+# Boss altar hover (also the altar window's "On the altar now" box): the boss's stars. $1 = star symbols (★★) or "none".
 ecr_altar_stars_line: "Stars: $1"
+# Boss altar hover: $1 of "Stars: $1" when the boss has no stars; also the 0-star row in the compendium boss stars table. Means no stars.
 ecr_altar_stars_none: "none"
+# Boss altar hover and altar window heading: the current or chosen aspect. $1 = an aspect name (Enraged, none) or "Random" in the window.
 ecr_altar_aspect_line: "Aspect: $1"
+# Boss altar hover: grey mark after the Stars or Aspect line when a player picked it in the altar window (not rolled). Past participle, in brackets.
 ecr_altar_chosen: "(chosen)"
+# Boss altar hover: grey note after the Aspect line, what the aspects multiply the loot by. $1 = multiplier (1.4).
 ecr_altar_loot_paren: "(loot x$1)"
+# Boss altar hover, Bountiful only: one line per extra aspect. $1 = "+ " and the aspect name (+ Enraged), $2 = its lower-case effect line.
 ecr_altar_extra_line: "$1: $2"
+# Boss altar hover: grey line at the moment the altar re-rolls its stars and aspect (countdown at zero).
 ecr_altar_shifting: "Shifting..."
+# Boss altar hover: grey countdown until the altar re-rolls its stars and aspect. $1 = minutes:seconds (0:15).
 ecr_altar_shifts_in: "Shifts in $1"
+# Boss altar hover: grey line after the boss was killed once in this world; its next star roll leans higher. Only with "harder each kill" on.
 ecr_altar_defeated_once: "Defeated once: more stars likelier"
+# Boss altar hover: grey line, how often this boss was killed in this world; its star roll leans higher. $1 = kills (2 to 9).
 ecr_altar_defeated_many: "Defeated $1 times: more stars likelier"
+# Boss altar hover: grey line once the kill count reaches its cap; "$1+" means that many or more. $1 = 10.
 ecr_altar_defeated_most: "Defeated $1+ times: more stars likelier"
 
 # Boss altar: the window where a player chooses the fight
+# Boss altar window: the window's title at the top. Opened with E on the altar to pick the boss's stars and aspect.
 ecr_altar_title: "Choose the Fight"
+# Boss altar window: orange heading over the box that repeats the altar's current hover lines (stars, aspect, countdown).
 ecr_altar_now: "On the altar now"
+# Boss altar window: orange heading over the row of star-count buttons (Random, None, ★, ★★ ...). Noun, plural.
 ecr_altar_stars: "Stars"
+# Boss altar window: replaces the Stars heading when boss stars are switched off by the server's rule file. Rare.
 ecr_altar_stars_off: "Stars: off in the rule file"
+# Boss altar window: replaces the aspect heading when boss aspects are switched off by the server's rule file. Rare.
 ecr_altar_aspect_off: "Aspect: off in the rule file"
+# Boss altar window: button label in the star row, first row of the aspect list, and $1 of "Aspect: $1". Let the altar roll it.
 ecr_altar_random: "Random"
+# Boss altar window: button label in the star row for 0 stars (no stars). Short.
 ecr_altar_none: "None"
+# Boss altar window: description under "Aspect: Random" when the player leaves the aspect on Random.
 ecr_altar_random_text: "Rolled from this boss's aspects at every shift of the altar."
+# Boss altar window: added after the Bountiful aspect's description sentence. 'Its' = the boss's.
 ecr_altar_bountiful_text: "Its extra aspects roll at every shift of the altar."
+# Boss altar window: grey line under the chosen aspect's description, its loot multiplier. $1 = multiplier (1.4).
 ecr_altar_loot: "Loot x$1"
 
 # Boss damage board ($1 the boss)
+# Boss damage board: bold title at the left of the screen after a boss dies, above each player's damage. $1 = the boss's name (Eikthyr).
 ecr_tally_defeated: "$1 defeated"
 
 # Difficulties, as a player reads them
+# Difficulty name, compendium World difficulty page: in "Difficulty: $1" and starting a sentence ("Custom: this server sets..."). Adjective/label.
 ecr_difficulty_custom: "Custom"
+# Difficulty name, compendium World difficulty page: in "Difficulty: $1" and as a list label ("Easy: 1 star..."). Adjective/label.
 ecr_difficulty_easy: "Easy"
+# Difficulty name, compendium World difficulty page: in "Difficulty: $1" and as a list label ("Medium: 2 stars..."). Adjective/label.
 ecr_difficulty_medium: "Medium"
+# Difficulty name, compendium: in "Difficulty: $1", as a list label, and inside the Very Hard line ("halfway between Hard and Extreme").
 ecr_difficulty_hard: "Hard"
+# Difficulty name, compendium World difficulty page: in "Difficulty: $1" and as a list label ("Very Hard: 4 stars..."). Adjective/label.
 ecr_difficulty_veryhard: "Very Hard"
+# Difficulty name, compendium: in "Difficulty: $1", as a list label, and inside the Very Hard line ("halfway between Hard and Extreme").
 ecr_difficulty_extreme: "Extreme"
 
 # Compendium: shared words
+# Compendium Mutations page: a duration filled into mutation descriptions ("each patch lasts $2") when the number is exactly 1. $1 = 1.
 ecr_book_seconds_one: "$1 second"
+# Compendium Mutations page: a duration filled into mutation descriptions ("each patch lasts $2"). $1 = seconds, any number but 1 (1.5, 10).
 ecr_book_seconds_many: "$1 seconds"
+# List separator (comma and space) between names in compendium lists (ores, trophies, mutations off) and Phantom's health marks.
 ecr_book_list_comma: ", "
+# Joins the last two items of a list: Phantom aspect's health marks ("66% and 33%"). $1 = earlier items, comma-joined, $2 = the last item.
 ecr_book_list_and: "$1 and $2"
 
 # Compendium: World difficulty page
+# Compendium: title of the World difficulty page, as listed in the game's lore compendium. "Elite:" prefixes every ECR page.
 ecr_book_difficulty_topic: "Elite: World difficulty"
+# Compendium World difficulty page: orange heading at the top. $1 = the server's difficulty name (Hard).
 ecr_book_difficulty: "Difficulty: $1"
+# Compendium World difficulty page: under the heading. $1 = current world tier (2), $2 = highest tier, the number of bosses counted (7).
 ecr_book_tier: "World tier $1 of $2: one tier for every boss below that has fallen. Each tier makes creatures stronger."
+# Compendium World difficulty page: under the heading, instead of the tier line, when the server turned world tiers off.
 ecr_book_tier_off: "World tiers are off on this server: the world stays at tier 0."
+# Compendium World difficulty page: under the tier line when the server lets the game, not ECR, give creature stars.
 ecr_book_creature_stars_off: "Creature stars are off on this server: creatures keep the game's own stars, and only their mutations come from Elite Creatures."
+# Compendium World difficulty page: orange heading over a table of bosses, each with "defeated" or "not yet".
 ecr_book_bosses: "Bosses"
+# Compendium World difficulty page, Bosses table: green status in the column after a boss's name. The boss has been killed.
 ecr_book_boss_defeated: "defeated"
+# Compendium World difficulty page, Bosses table: grey status after a boss's name; the boss is not defeated yet.
 ecr_book_boss_not_yet: "not yet"
+# Compendium World difficulty page: orange heading over the explanation of the current difficulty.
 ecr_book_meaning: "What it means"
+# Compendium World difficulty page, under "What it means" on a Custom server. $1 = "Custom", $2 = star multiplier (1.2), $3 = mutation multiplier (1.3).
 ecr_book_meaning_custom: "$1: this server sets each biome's star and mutation chances itself. Each world tier raises them; now stars x$2 and mutations x$3."
+# Compendium, World difficulty page: paragraph under the 'What it means' heading when the server uses a preset difficulty (not Custom). \n = line break.
 ecr_book_meaning_preset: "The difficulty decides how many stars and mutations creatures get as the world's bosses fall. The biome you're entering is the gentlest. A biome you've cleared gets harder with every boss killed after it, so by the end of the game the Meadows is the hardest place. Biomes you haven't reached match the one you're entering.\nUnder the most stars allowed, most creatures are plain and each extra star is rarer than the one before. Each star a creature has adds a quarter to its chance of a mutation."
+# Compendium, World difficulty page: heading above the table of biomes. $1 = the current world tier number (2).
 ecr_book_biomes: "Each biome at world tier $1"
+# Compendium, World difficulty page: column heading of the biome table; the cells below are biome names. A noun alone, short.
 ecr_book_col_biome: "Biome"
+# Compendium, World difficulty page: column heading; cells are a number, the most stars a creature can have in that biome (4). Short label, narrow column.
 ecr_book_col_most_stars: "Most stars"
+# Compendium, World difficulty page: column heading; cells are the percent of creatures that have any star (27%). Short label, narrow column.
 ecr_book_col_with_stars: "With stars"
+# Compendium, World difficulty page: column heading; cells are the percent of creatures with no stars that carry a mutation (10%). Adjective, short.
 ecr_book_col_mutated: "Mutated"
+# Compendium, World difficulty page: grey note under the biome table. 'Mutated' is the column heading ecr_book_col_mutated: use the same word.
 ecr_book_biomes_note: "Your biome is in orange. Mutated: creatures with no stars that carry a mutation."
+# Compendium, World difficulty page: heading above the list of the five difficulties (Easy to Extreme), one line each. Heading alone.
 ecr_book_ladder: "The difficulties"
+# Compendium, World difficulty page: one line of the difficulty list. $1 = the difficulty's name (Easy), $2 = its description (ecr_book_ladder_easy etc.).
 ecr_book_ladder_line: "$1: $2"
+# Compendium, difficulty list: Easy's description, after 'Easy: ' (lower-case phrase): stars per biome and how they climb; share of creatures mutated.
 ecr_book_ladder_easy: "1 star where you're entering, one more for every boss killed after a biome, up to 4; 10% mutated, rising to 35% as bosses fall after a biome"
+# Compendium, difficulty list: Medium's description after 'Medium: ', shortened from Easy's pattern (stars where you enter, up to 5; mutated share rising).
 ecr_book_ladder_medium: "2 stars, up to 5; 25% mutated, rising to 55%"
+# Compendium, difficulty list: Hard's description after 'Hard: ', shortened from Easy's pattern (stars where you enter, up to 5; mutated share rising).
 ecr_book_ladder_hard: "3 stars, up to 5; 30% mutated, rising to 65%"
+# Compendium, difficulty list: Very Hard's description after 'Very Hard: '. $1 = the Hard difficulty's name (Hard), $2 = the Extreme difficulty's name (Extreme).
 ecr_book_ladder_veryhard: "4 stars, up to 5; mutations halfway between $1 and $2"
+# Compendium, difficulty list: Extreme's description after 'Extreme: ' (lower-case phrase, same pattern as Easy's).
 ecr_book_ladder_extreme: "5 stars in every biome you've reached, 6 to 8 as more bosses fall; 45% mutated, rising to 98%"
+# Compendium, World difficulty page: line under the difficulty list, only when the server uses Custom. $1 = the Custom difficulty's name (Custom).
 ecr_book_ladder_custom: "$1: the server's own chances for each biome, raised by each world tier."
+# Compendium, World difficulty page: grey note under the difficulty list (preset difficulties), explaining 'stars' and 'mutated' in those lines.
 ecr_book_ladder_note: "Stars: the most a creature can have. Mutated: creatures with no stars that carry one."
+# Compendium, World difficulty page: heading for the game's own world difficulty setting (the world modifiers' damage rates). Heading alone.
 ecr_book_game: "The game's own World Difficulty"
+# Compendium, World difficulty page: text under that heading. $1 = percent of normal damage enemies deal (100), $2 = percent the player deals (100).
 ecr_book_game_rates: "Separate from all this, and it stacks: on this world enemies deal $1% of their normal damage and you deal $2% of yours."
+# Compendium, World difficulty page: sentence right after ecr_book_game_rates when Elite Creatures gives the stars. 'Its' = the game's World Difficulty.
 ecr_book_game_stars_ours: "Its extra star chance does nothing while Elite Creatures gives the stars."
+# Compendium, World difficulty page: sentence right after ecr_book_game_rates when creature stars are off on the server. 'Its' = the game's World Difficulty.
 ecr_book_game_stars_game: "Its extra star chance applies as usual, since the game gives the stars here."
 
 # Compendium: Stars page
+# Compendium: title of the mod's Stars page in the compendium's list of topics (inventory, Compendium button), like the other 'Elite:' pages.
 ecr_book_stars_topic: "Elite: Stars"
+# Compendium, Stars page: heading shown instead of the creature star tables when creature stars are off on the server.
 ecr_book_stars_off_heading: "Creature stars are off"
+# Compendium, Stars page: text under that heading when creature stars are off on the server.
 ecr_book_stars_off: "Creatures keep the game's own stars on this server, with the game's own numbers for them."
+# Compendium, Stars page: heading above the star table for the player's current biome. $1 = the biome's name as the game shows it (Black Forest).
 ecr_book_stars_here: "Stars in the $1 (where you are)"
+# Compendium, Stars page: heading above the star table of another biome whose numbers differ. $1 = the biome's name (Swamp).
 ecr_book_stars_in: "Stars in the $1"
+# Compendium, Stars page: column heading in the creature and boss star tables; cells are none, 1★, 2★... Noun alone, narrow column.
 ecr_book_col_stars: "Stars"
+# Compendium, Stars page: column heading in both star tables; cells are health multipliers (x1.5). Noun alone, narrow column.
 ecr_book_col_health: "Health"
+# Compendium, Stars page: column heading in both star tables; cells are multipliers of the damage it deals (x1.2). Noun alone, narrow column.
 ecr_book_col_damage: "Damage"
+# Compendium, Stars page: column heading in the creature star table; cells are attack (swing) speed multipliers (x1.1). Noun alone, narrow column.
 ecr_book_col_attack: "Attack"
+# Compendium, Stars page: column heading in the creature star table; cells are movement speed multipliers (x1.1). Noun alone, narrow column.
 ecr_book_col_speed: "Speed"
+# Compendium, Stars page: column heading in both star tables; cells are size multipliers (x1.1). Noun alone, narrow column.
 ecr_book_col_size: "Size"
+# Compendium, Stars page: column heading in the creature star table; cells are multipliers of its drops (x2). Noun alone, narrow column.
 ecr_book_col_loot: "Loot"
+# Compendium, Stars page: column heading in the boss star table; cells are the percent chance a boss rolls that many stars (25%). Noun alone.
 ecr_book_col_chance: "Chance"
+# Compendium, Stars page: grey note under the creature star tables. 'Speed' and 'attack' are the column headings: use the same words.
 ecr_book_stars_note: "Each number multiplies the game's own creature. Speed is how fast it moves, attack how fast it swings. A large star on a nameplate counts as five."
+# Compendium, Stars page: heading above the boss star table. Heading alone.
 ecr_book_boss_stars: "Boss stars"
+# Compendium, Stars page: text under the 'Boss stars' heading when boss stars are off on the server.
 ecr_book_boss_stars_off: "Off on this server: bosses keep the game's own level."
+# Compendium, Stars page: grey note under the boss star table.
 ecr_book_boss_stars_note: "The altar shows a boss's stars before you summon it. A boss's stars never multiply its drops."
+# Compendium, Stars page: sentence added to the end of the boss star note when the server makes each kill lean a boss's next fight toward more stars.
 ecr_book_boss_stars_again: "Each time a boss is killed, its next fight leans toward more stars."
 
 # Compendium: Mutations page ($1 in the intro is the Gilded mutation's name)
+# Compendium: title of the mod's Mutations page in the compendium's list of topics, like the other 'Elite:' pages.
 ecr_book_mutations_topic: "Elite: Mutations"
+# Compendium, Mutations page: opening paragraph. $1 = the Gilded mutation's name (Gilded). A mutation's name goes before the creature's: 'Mad Boar'.
 ecr_book_mutations_intro: "A mutated creature wears its mutation's name before its own, and its stars take the mutation's colour, the colour of the star before each name below. $1 is the rarest and the only one in your favour."
+# Compendium, Mutations page: grey line under the intro. $1 = the biome the player stands in, by the game's name (Meadows).
 ecr_book_mutations_numbers: "Numbers for a creature with no stars in the $1, where you are."
+# Compendium, Mutations page: sentence added to that grey line only when the server's large star power isn't 1. $1 = a multiplier (2).
 ecr_book_mutations_large: "A mutation on a large star is stronger: what it gains is x$1."
+# Compendium, Mutations page: heading above a comma list of the mutation names switched off on this server. Heading alone.
 ecr_book_mutations_off: "Off on this server"
 
 # Compendium: what each mutation does (a $n that names a mutation is that mutation's own name)
+# Compendium, Mutations page: Mad's description under its name. $1 = move speed gain (60%), $2 = attack speed gain (50%), $3 = health lost (50%); % included.
 ecr_book_mut_mad: "Moves $1 faster and attacks $2 faster, with $3 less health. Never on bats."
+# Compendium, Mutations page: Bloated's description. $1 = health multiplier (2), $2 = a duration with its unit (1.5 seconds), $3 = damage (40), $4 = metres (4).
 ecr_book_mut_bloated: "$1 times its usual health. $2 after it dies it explodes: $3 damage within $4 m, more for each star."
+# Compendium, Mutations page: Cloaked's description. $1 = metres (10), $2 = this mutation's own name (Cloaked), used as an adjective after 'are never'.
 ecr_book_mut_cloaked: "Invisible until you are within $1 m. Drakes, bats, gjall and deathsquitos are never $2."
+# Compendium, Mutations page: Splintering's description. $1 = a percent number (60), $2 = this mutation's own name (Splintering), as an adjective.
 ecr_book_mut_splintering: "Splits into weaker copies when killed, each dealing $1% of its damage, and they can split again. Oozers are never $2."
+# Compendium, Mutations page: Leeching's description. $1 = percent (0.5), $2 = health points (20), $3 = a duration with unit (5 seconds), $4 = percent (10).
 ecr_book_mut_leeching: "Regenerates $1% of its health a second (at most $2 a second) once $3 pass without a hit, and heals $4% of the damage it deals."
+# Compendium, Mutations page: Warding's description. $1 = percent of each hit reflected (30), $2 = percent of max health (7.5).
 ecr_book_mut_warding: "Reflects $1% of each hit back at you and knocks you back, never more than $2% of your maximum health in any second."
+# Compendium, Mutations page: Plated's description. $1 = percent of damage shrugged off (40), $2 = percent harder hits (60).
 ecr_book_mut_plated: "Shrugs off $1% of the damage it takes at full health, less as it is hurt, and hits up to $2% harder as that armour goes."
+# Compendium, Mutations page: Miasmic's description. $1 = metres (4), $2 = a duration with its unit (6 seconds).
 ecr_book_mut_miasmic: "Leaves poison clouds behind it, $1 m wide, each lasting $2. They poison players, never creatures."
+# Compendium, Mutations page: Devouring's description. $1 = percent (50), $2 = percent (25), $3 = number of meals (1), $4 = a duration with unit (60 seconds).
 ecr_book_mut_devouring: "Kills smaller creatures in one bite and keeps $1% of their health and $2% of their damage, slowing as it grows: one meal per star in its life (at least $3), one every $4, never a boss or a large creature. Once it is big enough it hunts players too. Its nameplate shows what it ate."
+# Compendium, Mutations page: Thieving's description. $1 = number of items (1).
 ecr_book_mut_thieving: "Steals an item with each melee hit that lands, up to one per star (at least $1), and carries them on its nameplate. Kill it to get everything back."
+# Compendium, Mutations page: Gilded's description. $1 = metres (30), $2 = loot multiplier (3), $3 = a count (20), $4 = an item's name in lower case (coins).
 ecr_book_mut_gilded: "Glitters gold, never attacks a player and runs from any within $1 m. Drops $2 times its loot plus $3 $4, more for each star. Never on large creatures."
+# Compendium, Mutations page: Blinking's description. $1 = a duration with unit (30 seconds), $2 = metres (4), $3 = health lost (25%, % included).
 ecr_book_mut_blinking: "Every $1 of a fight it reappears $2 m behind its target, after a flash and a chime at the spot. $3 less health."
+# Compendium, Mutations page: Blinking's description instead, when the server turns its blinks off. $1 = health lost (25%, % included). Rare.
 ecr_book_mut_blinking_never: "$1 less health. It never blinks on this server."
+# Compendium, Mutations page: Relentless's description. $1 = metres (150).
 ecr_book_mut_relentless: "Once it picks you it keeps coming, seen or not, until you are $1 m away; sneaking does not hide you. Never faster than its usual speed, never on large creatures."
+# Compendium, Mutations page: Juggernaut's description, no $n. 'Unstoppable' is the word shown over the creature (ecr_display_unstoppable): same word.
 ecr_book_mut_juggernaut: "Never staggers or is knocked back: hits, parries, blasts and traps don't stop it. \"Unstoppable\" shows over it instead."
+# Compendium, Mutations page: Screecher's description. $1 = percent (15), $2 = metres (20), $3 = a duration (4 seconds), $4 = a duration (15 seconds).
 ecr_book_mut_screecher: "When one hit takes $1% of its health it shrieks: players within $2 m are deafened for $3, and Elemental and Blood Magic weapons will not cast. At most once every $4; a killing blow makes no shriek."
+# Compendium, Mutations page: Frostbound's description. $1 = metres (6), $2 = percent (50), $3 = a whole sentence (ecr_book_mut_frostbound_ice or _no_ice).
 ecr_book_mut_frostbound: "Players within $1 m recover stamina $2% slower (\"Chilled\"). $3 Frost heals it instead of hurting it."
+# Compendium, Mutations page: the sentence put in $3 of Frostbound's description when it lays ice. $1 = percent (15), $2 = a duration with unit (10 seconds).
 ecr_book_mut_frostbound_ice: "Leaves slick ice where it walks: on it you slide and move $1% slower; each patch lasts $2."
+# Compendium, Mutations page: the sentence put in $3 of Frostbound's description when the server turns its ice trail off. Rare.
 ecr_book_mut_frostbound_no_ice: "It lays no ice on this server."
+# Compendium, Mutations page: Mudbound's description. $1 = percent (40), $2 = a duration with unit (1 second), $3 = a duration (10 seconds).
 ecr_book_mut_mudbound: "Leaves thick mud where it walks: in it you move $1% slower, and for $2 after stepping out. Each patch lasts $3."
+# Compendium, Mutations page: Mudbound's whole description instead, when the server turns its mud trail off. Rare.
 ecr_book_mut_mudbound_none: "It lays no mud on this server."
-ecr_book_mut_corrodent: "Your armour loses durability $1 times as fast under its hits. Shields wear as usual."
+# Compendium, Mutations page: Corrodent's description. $1 = a multiplier, how many times as fast (3), $2 = percent of the piece's maximum durability each hit takes on top (4).
+ecr_book_mut_corrodent: "Your armour loses durability $1 times as fast under its hits, and each hit that gets through takes another $2% of the piece's maximum. Shields wear as usual."
+# Compendium, Mutations page: Cloning's description when the server gives the decoy no time limit. $1 = metres (12), $2 = a sentence (cloning_once/_times). Rare.
 ecr_book_mut_cloning: "When it squares up to you within $1 m it leaves a harmless decoy in its place and fights on unseen. Its first blow that lands shows it, so does killing the decoy. $2"
+# Compendium, Mutations page: Cloning's usual description. $1 = metres (12), $2 = a duration with unit (20 seconds), $3 = a sentence (cloning_once/_times).
 ecr_book_mut_cloning_late: "When it squares up to you within $1 m it leaves a harmless decoy in its place and fights on unseen. Its first blow that lands shows it, so does killing the decoy, and after $2 it shows itself anyway. $3"
+# Compendium, Mutations page: sentence that ends Cloning's description when it does it once in its life (the default).
 ecr_book_mut_cloning_once: "Once in its life."
+# Compendium, Mutations page: sentence that ends Cloning's description when it does it more than once. $1 = number of times (2).
 ecr_book_mut_cloning_times: "$1 times in its life."
+# Compendium, Mutations page: Piercing's description, only if the server switches it on (off by default). $1 = percent of armour ignored (15).
 ecr_book_mut_piercing: "Its hits ignore $1% of your armour."
+# Compendium, Mutations page: Howling's description, if switched on (off by default). $1 = creatures (4), $2 = metres (30), $3 = a duration (45 seconds).
 ecr_book_mut_howling: "When it turns on you it howls, and the $1 nearest creatures on its side within $2 m come for you; again every $3 while it fights you. Never calls a boss."
+# Compendium, Mutations page: Binding's description, if on (off by default). $1 = metres (3), $2-$4 = durations (10 seconds, 1 second, 3 seconds).
 ecr_book_mut_binding: "Leaves patches of tangled roots where it walks, one every $1 m, each lasting $2. Step into one and the roots hold you for $3 (\"Rooted\": you can still turn, block and strike), then let you go for $4."
+# Compendium, Mutations page: Flamebound's description. $1 = a duration with its unit (7 seconds), $2 = fire damage a second (6).
 ecr_book_mut_flamebound: "Leaves burning ground where it walks, each patch lasting $1. Standing in it sets you on fire: $2 fire damage a second, more with stars. Fire resistance and being wet help; armour does not."
 
 # Compendium: Boss aspects page
+# Compendium: title of the mod's Boss aspects page in the compendium's list of topics, like the other 'Elite:' pages.
 ecr_book_aspects_topic: "Elite: Boss aspects"
+# Compendium, Boss aspects page: the page's only text when boss aspects are off on the server.
 ecr_book_aspects_off: "Boss aspects are off on this server: every boss fights as the game ships it."
+# Compendium, Boss aspects page: opening paragraph, above the list of aspects (each one's name, then what it does).
 ecr_book_aspects_intro: "A boss summoned at its altar may come with an aspect: a twist on the fight, named before the boss's own name. The altar shows it before you summon, and it changes again from time to time. An aspect makes the fight harder and the loot richer."
+# Compendium, Boss aspects page: grey tag after an aspect's name ('Enraged loot x1.2') when its loot is not x1. $1 = the multiplier (1.2). Lower-case noun.
 ecr_book_loot: "loot x$1"
 
 # Compendium: Rendering Table page ($1 of each list line is the items, by the game's names)
+# Compendium: title of the Rendering Table page in the list of topics, only while the table is on. 'Rendering Table' = the piece's name (piece_ecr_renderingtable).
 ecr_book_render_topic: "Elite: Rendering Table"
+# Compendium, Rendering Table page: the first orange heading, alone on its line, above how a trophy renders. A heading, not a question.
 ecr_book_render_how: "How it renders"
+# Compendium, Rendering Table page: paragraph under the heading. $1 = least per roll (2), $2 = most per roll (4), $3 = draws from a boss trophy (5).
 ecr_book_render_rolls: "A trophy gives $1-$2 of one ore or ingredient of its biome, drawn at random from the lists below; the table switches between ores and ingredients. A boss trophy, used on the table from the hotbar, gives $3 such draws."
+# Compendium, Rendering Table page: sentence right after the rolls paragraph, before the per-biome lists.
 ecr_book_render_idols: "Only a boss trophy makes a Forge idol: one idol of its biome, Battle or Protection at random."
+# Compendium, Rendering Table page: a line under each biome's heading. $1 = that biome's trophies by the game's names, comma separated.
 ecr_book_render_trophies: "Trophies: $1"
+# Compendium, Rendering Table page: a line under each biome's heading. $1 = its ores by the game's names, comma separated (Copper ore, Tin ore).
 ecr_book_render_ores: "Ores: $1"
+# Compendium, Rendering Table page: a line under each biome's heading. $1 = its creature parts and plants by the game's names, comma separated.
 ecr_book_render_ingredients: "Ingredients: $1"
+# Compendium, Rendering Table page: a line under a biome with a boss. $1 = its two Forge idols by the game's names, comma separated.
 ecr_book_render_idol: "Idols: $1"
 
 # Hel's hall
+# Hel's hall: the name on the hover of Hel, the goddess seated on her throne in the arena. Proper name, alone on the line.
 ecr_arena_hel: "Hel"
-hud_ecr_arena_begin: "Begin the trial"
+# Hel's hall: action on Hel's hover after the key, "[E] Begin the trial: Swamp", when no trial runs. Imperative, like a button label. $1 = the trial chosen at Helgrind: a biome name (Swamp) or ecr_arena_mode_infinite.
+hud_ecr_arena_begin_trial: "Begin the trial: $1"
+# Hel's hall: centre message to a player who falls past the arena into the black river below, just as it kills them.
 msg_ecr_arena_river: "Hel's river takes you."
 
 # Helgrind, Hel's gate
+# Helgrind: the gate piece's name in the hammer's build menu and on its hover. Proper name of Hel's gate.
 piece_ecr_helgrind: "Helgrind"
+# Helgrind: the gate piece's description in the hammer's build menu.
 piece_ecr_helgrind_description: "Hel's gate, which leads to her hall and her trial. Walk through it to go in; the swirl at the end of the hall's gate passage brings you back out here."
+# Helgrind: the gate's hover line after the key, "[E] Trial: Swamp": the trial the gate is set to; E picks the next one. $1 = a biome name (Meadows) or ecr_arena_mode_infinite.
+hud_ecr_helgrind_trial: "Trial: $1"
+# Hel's Trial: the name of the endless trial, chosen at Helgrind after the biomes: the highest biome again and again, harder each round.
+ecr_arena_mode_infinite: "Infinite"
+# Helgrind: last line of the gate's hover, while the arena is on. An instruction to the player.
 ecr_helgrind_open: "Walk through into Hel's hall"
+# Helgrind: hover line while the arena is off on the server, and centre message when a player walks into the gate then.
 ecr_helgrind_closed: "Hel's gate is closed."
 
 # Hel's Trial: the line under the minimap ($1 the biome, $2 the wave, then creatures left or seconds, then souls)
+# Hel's Trial: the trial's name, coloured, put before the end and reward messages in the chat window (as $1 of ecr_arena_chat_line).
 ecr_arena_name: "Hel's Trial"
+# Hel's Trial: event bar under the minimap during a wave. $1 = biome (Ashlands), $2 = wave number, $3 = creatures left, $4 = the player's souls (342).
 ecr_arena_line: "Hel's Trial - $1, wave $2 - $3 left - $4 souls"
+# Hel's Trial: the biome part ($1 of the event bar lines) in the Infinite trial, with its level. $1 = biome (Meadows), $2 = level, 1 to 5.
+ecr_arena_level_line: "$1, level $2"
+# Hel's Trial: event bar under the minimap before wave 1. $1 = biome name (Meadows), $2 = time left as m:ss (0:07).
 ecr_arena_countdown: "Hel's Trial - $1 - the first wave in $2"
+# Hel's Trial: event bar during a break. $1 = biome, $2 = wave just cleared, $3 = seconds to the next wave (14), $4 = the player's souls.
 ecr_arena_break_line: "Hel's Trial - $1, wave $2 cleared - next wave in $3 - $4 souls"
+# Hel's Trial: event bar while Hel's recall runs. $1 = biome, $2 = wave, $3 = creatures left, $4 = time to recall as m:ss (0:45), $5 = souls.
 ecr_arena_recall_line: "Hel's Trial - $1, wave $2 - $3 left, recalled in $4 - $5 souls"
 # A rest's line ($1) with who is ready after it ($2: ecr_arena_ready_hint or ecr_arena_ready_mine)
+# Hel's Trial: event bar in the countdown or a break. $1 = the countdown or break line, $2 = ecr_arena_ready_hint or ecr_arena_ready_mine.
 ecr_arena_line_ready: "$1 - $2"
+# Hel's Trial: end of the event bar in the countdown or a break; F is the fixed key to vote ready. $1 = players ready (1), $2 = players alive in the arena (3).
 ecr_arena_ready_hint: "F: ready ($1/$2)"
+# Hel's Trial: end of the event bar once this player pressed F to vote ready. $1 = players ready (1), $2 = players alive in the arena (3).
 ecr_arena_ready_mine: "(ready) $1/$2"
 
 # Hel's Trial: centre messages
-ecr_arena_started: "Hel wakes. Her trial begins!"
+# Hel's Trial: centre message to every player of the trial when a player starts it at Hel. $1 = the trial: a biome name (Swamp) or ecr_arena_mode_infinite.
+ecr_arena_started: "Hel wakes. Her trial begins: $1!"
+# Hel's Trial: centre message to the trial's players as a boss wave begins. $1 = the boss's name (Moder).
 ecr_arena_boss: "Hel sends $1!"
+# Hel's Trial: centre message and chat line to each player when the trial ends. $1 = wave reached (12), $2 = kills (340), $3 = their souls (18,420).
 ecr_arena_ended: "Hel's Trial ends at wave $1: $2 kills, $3 souls."
+# Hel's Trial: centre message and chat line to each player when they beat the boss that ends a biome's trial. $1 = the biome (Swamp), $2 = kills (40), $3 = their souls (1,250).
+ecr_arena_won: "You won Hel's trial of the $1: $2 kills, $3 souls."
+# Hel's Trial: centre message when the wave(s) fighting are over and a break begins. $1 = wave number, $2 = break in seconds (20).
 ecr_arena_cleared: "Wave $1 cleared. The next comes in $2 seconds."
+# Hel's Trial: as ecr_arena_cleared, but for the trial's first cleared wave, adding the reward note. $1 = wave number, $2 = break seconds (20).
 ecr_arena_cleared_first: "Wave $1 cleared. The next comes in $2 seconds. Hel pays your reward when her trial ends."
+# Hel's Trial: centre message when one wave is cleared while a wave called early still fights. $1 = wave number (6).
 ecr_arena_wave_done: "Wave $1 cleared."
+# Hel's Trial: centre message when only the last quarter of a wave is left; they are marked on the map. $1 = seconds until they vanish (60).
 ecr_arena_recall: "Hel marks the last of the dead on your map. She recalls them in $1 seconds."
+# Hel's Trial: centre message after respawning from a death in Hel's hall (no skill loss, no tombstone).
 ecr_arena_spared: "Hel spares your skills and your gear."
+# Hel's Trial: centre message to the trial's players each time someone votes ready with F. $1 = players ready (2), $2 = players alive in the arena (3).
 ecr_arena_ready_vote: "Ready: $1 of $2"
+# Hel's Trial: centre message when every player alive in the arena has voted ready: the break ends and the next wave comes at once.
 ecr_arena_all_ready: "All ready - the dead come!"
+# Hel's Trial: action on Hel's hover after the key, "[E] Call the next wave", during a wave whose creatures are all out. Imperative, button label.
 ecr_arena_call_hint: "Call the next wave"
+# Hel's Trial: centre message to the trial's players when someone calls the next wave early at Hel. $1 = that player's name.
 ecr_arena_called: "$1 calls the next wave!"
+# Hel's Trial: centre message to a player who tried to call the next wave while a boss still lives. $1 = the boss's name (Moder).
 ecr_arena_boss_waits: "Hel waits until $1 falls."
 # The end and the reward again in the chat window: $1 the trial's name (coloured), $2 the message
+# Hel's Trial: a line in the chat window repeating the end and reward messages. $1 = ecr_arena_name (coloured), $2 = the message.
 ecr_arena_chat_line: "$1: $2"
 
 # Hel's Trial: the reward (the end message and Hel's hover while a trial runs)
+# Hel's Trial: centre message and chat line a few seconds after the end. $1 = the reward list (Bronze Battle Idol, 412 coins, +18% skill XP).
 ecr_arena_reward: "Hel rewards you: $1."
+# Hel's Trial: line on Hel's hover while a trial runs: what it would pay now. $1 = the reward list, or ecr_arena_reward_none.
 ecr_arena_reward_now: "Current rewards: $1"
+# Hel's Trial: fills $1 of ecr_arena_reward_now on Hel's hover when nothing is earned yet. Lowercase, after "Current rewards:".
 ecr_arena_reward_none: "none yet"
 # A named item given more than once: $1 the item, $2 how many
+# Hel's Trial: one item in the reward list when there is more than one of it. $1 = item's game name (Bronze Battle Idol), $2 = how many (2).
 ecr_arena_reward_item: "$1 x$2"
 # The reward's parts one after another: $1 the parts so far, $2 the next
+# Hel's Trial: joins reward list parts one by one. $1 = the parts so far, $2 = the next part. Only the separator matters (", " in English).
 ecr_arena_reward_list: "$1, $2"
+# Hel's Trial: a part of the reward list. $1 = number of coins (412), always this one form, even for 1.
 ecr_arena_reward_coins: "$1 coins"
+# Hel's Trial: a part of the reward list, only with the EliteCrafting mod. $1 = number of runes (6), always this one form.
 ecr_arena_reward_runes: "$1 runes"
+# Hel's Trial: a part of the reward list, only with the EliteCrafting mod. $1 = amount of essence (3); essence is a mass noun.
 ecr_arena_reward_essence: "$1 essence"
+# Hel's Trial: the last part of the reward list: bonus on the skill experience earned in the trial. $1 = a percentage (18).
 ecr_arena_reward_xp: "+$1% skill XP"
 
 # Hel's Anvil
+# Hel's Anvil: the name on the hover of the two anvils beside Hel's throne in the arena. Proper name, alone on the line.
 ecr_arena_anvil: "Hel's Anvil"
+# Hel's Anvil: hover action after "[E]" in the countdown or a break. $1 = cost in souls (30). Imperative, button label.
 ecr_arena_anvil_repair: "Repair your gear ($1 souls)"
+# Hel's Anvil: hover line, and centre message on E, when the player's souls do not cover the repair. $1 = the cost in souls (30).
 ecr_arena_anvil_poor: "Not enough souls ($1)"
+# Hel's Anvil: hover line during a wave, when the anvil cannot be used (only in the countdown and breaks).
 ecr_arena_anvil_cold: "The anvil is cold while the dead come"
+# Hel's Anvil: centre message after the anvil repairs all the player's damaged gear. $1 = souls spent (30).
 ecr_arena_anvil_done: "Hel's Anvil mends your gear for $1 souls."
+# Hel's Anvil: centre message on E when no item the player carries is damaged.
 ecr_arena_anvil_nothing: "Nothing you carry needs mending."
 
 # Raids: the Raiders Chest, the messages as a raid starts and ends, the line under the minimap, and the death recap.
 # $1, $2 ... are values the mod fills in (names, numbers, key hints). "$1 raid" names a raid after its creature.
 
 # The Raiders Chest
+# Raids: the Raiders Chest's name in the hammer's build menu, on its hover and as the chest window's title. A noun (a chest).
 piece_ecr_raiderschest: "Raiders Chest"
-piece_ecr_raiderschest_description: "An iron-bound chest with a war horn on its lid. Fill it with gold and sound the horn: raiders come for the gold, and beating them brings it back with more. The more gold for your gear, the harder the raid and the richer the loot. Only in a base, once a day."
+# Raids: the Raiders Chest's description in the hammer's build menu.
+piece_ecr_raiderschest_description: "An iron-bound chest with a war horn on its lid. Fill it with gold or trophies and sound the horn: raiders come for them, and beating them brings them back with more. The bigger the stake for your gear, the harder the raid and the richer the loot. Only in a base, once a day."
+# Raids: action on the Raiders Chest's hover after "[Shift + E]", next to the game's "[E] Open". Imperative, button label.
 hud_ecr_raid_sound: "Sound the raid"
+# Raids: the on-screen caption (the game's closed captions option) of the war horn sound as a raid starts. A noun, alone.
 ecr_raid_horn: "War horn"
 
 # The Raiders Chest's hover ($1 of the stake line is the coins, $2 the difficulty)
+# Raids: the coin count on the Raiders Chest's hover when it holds exactly one coin. $1 = 1. Also $1 of ecr_raid_stake_line.
 ecr_raid_coins_one: "$1 coin"
+# Raids: the coin count on the Raiders Chest's hover for any other number. $1 = number of coins (1,000). Also $1 of ecr_raid_stake_line.
 ecr_raid_coins_many: "$1 coins"
-ecr_raid_stake_line: "$1 - $2 raid (coins back x$3, drops x$4)"
-ecr_raid_empty: "Put gold coins in to sound a raid."
+# Raids: the trophy count on the Raiders Chest's hover when it holds exactly one trophy. $1 = 1.
+ecr_raid_trophies_one: "$1 trophy"
+# Raids: the trophy count on the Raiders Chest's hover for any other number. $1 = number of trophies (12).
+ecr_raid_trophies_many: "$1 trophies"
+# Raids: coins and trophies together on the Raiders Chest's hover. $1 = ecr_raid_coins_many (1,000 coins), $2 = ecr_raid_trophies_many (12 trophies).
+ecr_raid_coins_and_trophies: "$1 and $2"
+# Raids: chest hover line. $1 = the stake (1,000 coins, 12 trophies, or ecr_raid_coins_and_trophies), $2 = difficulty before "raid" (Deadly), $3 = how many times the stake comes back (2), $4 = loot multiplier (5).
+ecr_raid_stake_line: "$1 - $2 raid (stake back x$3, drops x$4)"
+# Raids: line on the Raiders Chest's hover when it holds no coins.
+ecr_raid_empty: "Put gold coins or trophies in to sound a raid."
+# Raids: line on the Raiders Chest's hover during a raid. $1 = the use key in brackets ([E]).
 ecr_raid_hold_to_stop: "Hold $1 to stop the raid (the raiders' gold is lost)"
+# Raids: line on the Raiders Chest's hover while the player holds E to stop the raid. $1 = progress as a percentage (0-100, by tens).
 ecr_raid_stopping: "Stopping the raid... $1%"
+# Raids: centre message when a player presses E on the Raiders Chest during its raid.
 ecr_raid_locked: "The Raiders Chest is locked while the raid is on. Hold to stop the raid."
 
 # Why no raid is sounded
+# Raids: centre message refusing a raid when the Raiders Chest setting is off on the server. Rare.
 ecr_raid_off: "Raids from the Raiders Chest are off on this server."
+# Raids: Raiders Chest hover line, and centre message on Shift+E, when the chest has no base around it (workbench, fire, bed within 20 m).
 ecr_raid_not_in_base: "Not in a base: a raid needs a base to attack."
+# Raids: Raiders Chest hover line, and centre message on Shift+E, while the horn's once-a-day wait runs. $1 = time left as m:ss (18:05).
 ecr_raid_resting: "The horn must rest: ready in $1"
+# Raids: Raiders Chest hover line, and centre message on Shift+E, when one of the game's own raids is on within 200 m.
 ecr_raid_game_raid_near: "Another raid is already on nearby."
+# Raids: Raiders Chest hover line, and centre message on Shift+E, when another Raiders Chest's raid is on within 200 m.
 ecr_raid_chest_raid_near: "Another raid is already on within 200 m."
+# Raids: centre message refusing Shift+E on the Raiders Chest while another player has it open.
 ecr_raid_in_use: "Someone has the Raiders Chest open."
-ecr_raid_no_gold: "No gold, no raid."
+# Raids: centre message refusing a raid when the chest turns out to hold no coins as it is sounded; also an admin console reply. Rare.
+ecr_raid_no_gold: "No gold or trophies, no raid."
+# Raids: centre message refusing Shift+E when the Raiders Chest's owning machine changed during the request. Rare.
 ecr_raid_moved: "The Raiders Chest changed hands just then: try again."
+# Raids: refusal when the object cannot host a raid, an internal check; seen in the admin console's elite raid start reply. Rare.
 ecr_raid_no_host: "This cannot hold a raid."
+# Raids: refusal when this machine does not own the raid's object; seen in the admin console's elite raid start reply. Rare.
 ecr_raid_not_owner: "Only the machine that owns it can sound a raid here."
+# Raids: refusal when a raid already runs at this chest or marker; centre message or admin console reply. Rare.
 ecr_raid_already_on: "A raid is already on here."
+# Raids: centre message refusing Shift+E (also a console reply) when the world has no raid unlocked yet (e.g. no boss beaten).
 ecr_raid_none_unlocked: "No raid has been unlocked in this world yet."
 
 # A raid starts and ends ($1 the raid's creature, $2 the difficulty)
+# Raids: centre message, two lines, to players within 100 m when a raid is sounded. $1 = raid's creature (Fuling), $2 = difficulty (Brutal).
 ecr_raid_started: "Raiders are coming for your gold!\n$1 raid ($2)"
+# Raids: centre message to players near when the raid's last wave is dead. $1 = the raid's creature (Fuling), as in "Fuling raid".
 ecr_raid_won: "$1 raid beaten! Your gold is yours again."
+# Raids: centre message to the players near when a raid staked with trophies is won, in place of ecr_raid_won. $1 = the raid's name before "raid" (Fuling), $2 = how many trophies were put back (24).
+ecr_raid_won_trophies: "$1 raid beaten! Your gold is yours again, and $2 trophies are back in the Raiders Chest."
+# Raids: centre message to players near when the Raiders Chest is broken during its raid.
 ecr_raid_robbed: "The Raiders Chest is broken: the raiders make off with your gold."
+# Raids: centre message when a raid is stopped (E held on the chest, or a console command). $1 = the raid's creature (Fuling).
 ecr_raid_stopped: "$1 raid called off. The raiders fall, and your gold with them."
+# Raids: centre message to players within 100 m when a raid is abandoned (nobody within 96 m for 60 s, last player logged out, or server restart).
 ecr_raid_abandoned: "The raid is abandoned: the raiders leave with your gold."
+# Raids: centre message to players within 100 m when the raid's 15 minutes run out before the last wave is beaten.
 ecr_raid_timed_out: "Time is up: the raiders leave with your gold."
 
 # The raid's line under the minimap ($1 the raid's creature, $2 the difficulty; times as m:ss)
+# Raids: the event line under the minimap (also in the Raiders Chest hover) before wave 1. $1 = raid's creature (Fuling), $2 = difficulty (Brutal), $3 = m:ss (0:20).
 ecr_raid_line_countdown: "$1 raid ($2) - first wave in $3"
+# Raids: line under the minimap between waves. $1 = creature (Fuling), $2 = difficulty, $3 = next wave (2), $4 = waves (3), $5 = time to it (0:20), $6 = raid time left (12:40).
 ecr_raid_line_break: "$1 raid ($2) - wave $3 of $4 in $5 - $6"
+# Raids: line under the minimap during a wave. $1 = creature (Fuling), $2 = difficulty, $3 = wave (2), $4 = waves (3), $5 = raiders still alive in it (5), $6 = time left (8:40).
 ecr_raid_line_wave: "$1 raid ($2) - wave $3 of $4 - $5 left - $6"
 
 # Raid difficulty
+# Raids: difficulty name (lowest of five). In brackets after the raid name ('Fuling raid (Trivial)') and before 'raid' in the Raiders Chest hover ('Trivial raid').
 ecr_raid_band_trivial: "Trivial"
+# Raids: difficulty name (2nd of five). In brackets after the raid name ('Fuling raid (Fair)') and before 'raid' in the Raiders Chest hover ('Fair raid').
 ecr_raid_band_fair: "Fair"
+# Raids: difficulty name (3rd of five). In brackets after the raid name ('Fuling raid (Hard)') and before 'raid' in the Raiders Chest hover ('Hard raid').
 ecr_raid_band_hard: "Hard"
+# Raids: difficulty name (4th of five). In brackets after the raid name ('Fuling raid (Brutal)') and before 'raid' in the Raiders Chest hover ('Brutal raid').
 ecr_raid_band_brutal: "Brutal"
+# Raids: difficulty name (highest). In brackets after the raid name ('Fuling raid (Deadly)') and before 'raid' in the Raiders Chest hover ('Deadly raid').
 ecr_raid_band_deadly: "Deadly"
 
 # Death recap: the window
+# Death recap: the window's title (window opened with F10 or /deaths). Heading.
 ecr_recap_topic: "Death Recap"
+# Death recap window: button label (narrow, about 130 px) that plays the death video; it turns into Pause while playing. Imperative verb.
 ecr_recap_play: "Play"
+# Death recap window: the Play button's label while the video plays; pressing it pauses. Imperative verb.
 ecr_recap_pause: "Pause"
+# Death recap window: big title in the right pane when no death has been recorded since the game started.
 ecr_recap_none: "No deaths yet"
+# Death recap window: line under 'No deaths yet'. $1 = the recap key (F10), or the chat command /deaths when no key is set.
 ecr_recap_none_help: "Deaths are kept here until the game closes. $1 opens and closes this window."
+# Death recap window: text in the empty video box for a death without video. $1 = the .cfg setting's name, left in English ('Record deaths').
 ecr_recap_no_video: "No video of this death: recording was off ($1 in the .cfg) or not possible."
 
 # Death recap: the killer, the summary and the hit rows
+# Death recap: window title of a death no creature or player dealt. $1 = the cause, capitalised (Fall, Drowning, Edge of the world).
 ecr_recap_died: "Died: $1"
+# Death recap: window title of the selected death. $1 = the killer's name, a creature with its stars (Mad Greydwarf 2★).
 ecr_recap_killed_by: "Killed by $1"
+# Death recap: window title. $1 = the killer's name (Greydwarf 2★), $2 = how, in grey brackets: '(ranged)', '(burning)', '(poison)'.
 ecr_recap_killed_by_how: "Killed by $1 $2"
+# Death recap: a death's date in the summary line and the death list. $1 = in-game day (96), $2 = real clock time HH:mm (14:32).
 ecr_recap_when: "Day $1, $2"
+# Death recap summary, after 'Day 96, 14:32 · ': no hits were logged before the death. Lower-case phrase.
 ecr_recap_no_hits: "no hits recorded"
+# Death recap summary, after the date and ' · '. $1 = total damage taken (312), $2 = seconds from first to last hit (8.4); 's' = seconds.
 ecr_recap_damage: "$1 damage in $2 s"
+# Death recap summary, as above. $1 = total damage (312), $2 = seconds (8.4), $3 = up to four shares joined by ', ' ('slash 62%, frost 30%').
 ecr_recap_damage_shares: "$1 damage in $2 s: $3"
+# Death recap summary: one damage share in the list. $1 = damage type word (slash), $2 = whole percent (62); '%' follows $2.
 ecr_recap_share: "$1 $2%"
+# Death recap hit row: one part of a hit's damage, parts joined by ' · '. $1 = damage type word (slash), $2 = damage amount (34).
 ecr_recap_part: "$1 $2"
+# Death recap hit row, right column: the player's health after that hit. $1 = health left (51), $2 = max health (158).
 ecr_recap_hp: "HP $1/$2"
 
 # Death recap: the line at the top left after a death ($2 the recap key)
+# Death recap: the game's top-left message after dying. $1 = killer's name (Greydwarf 2★), $2 = recap key (F10) or /deaths, then how to open the recap.
 ecr_recap_notice_killed: "Killed by $1. $2: death recap"
+# Death recap: top-left message after a death nobody dealt. $1 = the cause, capitalised (Fall, Drowning), $2 = recap key (F10) or /deaths.
 ecr_recap_notice_died: "Died: $1. $2: death recap"
 
 # Death recap: how a hit came
+# Death recap: a plain melee hit. Shown only capitalised, alone, as a hit row's dealer or 'Died: Hit' when the attacker is unknown. Rare.
 ecr_recap_type_hit: "hit"
+# Death recap: a ranged hit (arrow, thrown). In grey brackets after 'Killed by X (ranged)'; capitalised alone when the attacker is unknown.
 ecr_recap_type_ranged: "ranged"
+# Death recap cause: burning (fire over time). In brackets after 'Killed by X (burning)'; capitalised alone ('Died: Burning') as a hit row's source.
 ecr_recap_type_burning: "burning"
+# Death recap: poison, as a cause ('Killed by X (poison)', 'Died: Poison') and as a damage-type label before a number or % ('poison 34', 'poison 20%').
 ecr_recap_type_poison: "poison"
+# Death recap cause: freezing (cold over time). In brackets after 'Killed by X (freezing)'; capitalised alone ('Died: Freezing') as a hit row's source.
 ecr_recap_type_freezing: "freezing"
+# Death recap cause: falling. Capitalised alone ('Died: Fall') and as a hit row's source; lower case as a damage label ('fall 34', 'fall 100%').
 ecr_recap_type_fall: "fall"
+# Death recap cause: drowning. Capitalised alone ('Died: Drowning') and as a hit row's source; lower case as a damage label ('drowning 10').
 ecr_recap_type_drowning: "drowning"
+# Death recap cause: the world's edge. Capitalised, first letter only ('Died: Edge of the world'); lower case as a damage label.
 ecr_recap_type_edge_of_world: "edge of the world"
+# Death recap cause: hit by a falling tree. Capitalised alone ('Died: Falling tree') and as a hit row's source; lower case as a damage label.
 ecr_recap_type_falling_tree: "falling tree"
+# Death recap cause: hit by a collapsing building piece. Capitalised alone ('Died: Falling building'); lower case as a damage label.
 ecr_recap_type_falling_building: "falling building"
+# Death recap cause: hurt by a ship (the game's Boat hit type). Capitalised alone ('Died: Ship'); lower case as a damage label. Rare.
 ecr_recap_type_ship: "ship"
+# Death recap cause: the Ashlands' boiling sea. Capitalised alone ('Died: Boiling sea'); lower case as a damage label ('boiling sea 20').
 ecr_recap_type_boiling_sea: "boiling sea"
+# Death recap cause: Ashlands lava. Capitalised alone ('Died: Lava') and as a hit row's source; lower case as a damage label ('lava 30').
 ecr_recap_type_lava: "lava"
+# Death recap cause: the Ashlands' cinder fire on the ground. Capitalised alone ('Died: Cinder fire'); lower case as a damage label.
 ecr_recap_type_cinder_fire: "cinder fire"
+# Death recap cause: the game's 'Water' hit type. Capitalised alone ('Died: Water'); lower case as a damage label. Rare.
 ecr_recap_type_water: "water"
+# Death recap cause: smoke (the game's Smoke hit type). Capitalised alone ('Died: Smoke'); lower case as a damage label. Rare.
 ecr_recap_type_smoke: "smoke"
+# Death recap cause: an impact (the game's Impact hit type, struck by a heavy object). Capitalised alone ('Died: Impact'); also a damage label. Rare.
 ecr_recap_type_impact: "impact"
+# Death recap cause: hit by a cart. Capitalised alone ('Died: Cart') and as a hit row's source; lower case as a damage label. Rare.
 ecr_recap_type_cart: "cart"
+# Death recap cause: damage the player did to themselves (the game's Self hit type). Capitalised alone ('Died: Self'). Rare.
 ecr_recap_type_self: "self"
+# Death recap cause: hit by a turret (a ballista). Capitalised alone ('Died: Turret') when nobody is named; lower case as a damage label. Rare.
 ecr_recap_type_turret: "turret"
+# Death recap cause: a falling stalactite (the game's own spelling). Capitalised alone ('Died: Stalagtite'); lower case as a damage label. Rare.
 ecr_recap_type_stalagtite: "stalagtite"
+# Death recap cause: hit by a catapult. Capitalised alone ('Died: Catapult'); lower case as a damage label. Rare.
 ecr_recap_type_catapult: "catapult"
+# Death recap cause: the game's incinerator (the Obliterator piece). Capitalised alone ('Died: Incinerator'); lower case as a damage label. Rare.
 ecr_recap_type_incinerator: "incinerator"
+# Death recap cause: crushed by a drawbridge. Capitalised alone ('Died: Drawbridge'); lower case as a damage label. Rare.
 ecr_recap_type_drawbridge: "drawbridge"
+# Death recap: cause not known. Capitalised alone as the cause of death ('Died: Unknown') in the window, death list and top-left notice. Rare.
 ecr_recap_type_unknown: "unknown"
 
 # Death recap: damage types
+# Death recap damage type: untyped (direct) damage of a creature's hit. Label before a number in hit rows ('true 34') and a % in the summary.
 ecr_recap_type_true: "true"
+# Death recap damage type label, lower case: before a number in hit rows ('blunt 34') and a percentage in the summary ('blunt 62%').
 ecr_recap_type_blunt: "blunt"
+# Death recap damage type label, lower case: before a number in hit rows ('slash 34') and a percentage in the summary ('slash 62%').
 ecr_recap_type_slash: "slash"
+# Death recap damage type label, lower case: before a number in hit rows ('pierce 34') and a percentage in the summary ('pierce 62%').
 ecr_recap_type_pierce: "pierce"
+# Death recap damage type label (the game's chop damage), lower case: before a number in hit rows ('chop 34') and a % in the summary. Rare.
 ecr_recap_type_chop: "chop"
+# Death recap damage type label (the game's pickaxe damage), lower case: before a number in hit rows ('pickaxe 34') and a % in the summary. Rare.
 ecr_recap_type_pickaxe: "pickaxe"
+# Death recap damage type label, lower case: before a number in hit rows ('fire 34') and a percentage in the summary ('fire 62%').
 ecr_recap_type_fire: "fire"
+# Death recap damage type label, lower case: before a number in hit rows ('frost 34') and a percentage in the summary ('frost 30%').
 ecr_recap_type_frost: "frost"
+# Death recap damage type label, lower case: before a number in hit rows ('lightning 34') and a percentage in the summary ('lightning 62%').
 ecr_recap_type_lightning: "lightning"
+# Death recap damage type label, lower case: before a number in hit rows ('spirit 34') and a percentage in the summary ('spirit 62%').
 ecr_recap_type_spirit: "spirit"
 
 # The Rendering Table: renders trophies into ores, ingredients or a Forge idol of the trophy's biome
+# Rendering Table: the piece's name in the hammer's Crafting tab and the first line of its hover. Noun (a narrow bench where trophies are rendered down).
 piece_ecr_renderingtable: "Rendering Table"
+# Rendering Table: the piece's description in the hammer's build menu. 'Hotbar' = the game's quick slots 1-8; a Forge idol is an ECR item.
 piece_ecr_renderingtable_description: "A narrow bench for rendering trophies down. Each trophy gives ores or ingredients of its own biome. A boss trophy, used from the hotbar, gives five times as much or a Forge idol of its tier. The compendium lists what each biome gives."
+# Rendering Table: one of its three modes, after 'Makes:' in its hover. Plural noun, alone (ores of the trophy's biome).
 ecr_render_ores: "Ores"
+# Rendering Table: one of its three modes, after 'Makes:' in its hover. Plural noun, alone (ingredients of the trophy's biome).
 ecr_render_ingredients: "Ingredients"
+# Rendering Table: one of its three modes, after 'Makes:' in its hover. Plural noun, alone (Forge idols, from boss trophies).
 ecr_render_idols: "Idols"
 
 # The Rendering Table's hover ($1 of the first line is Ores, Ingredients or Idols)
+# Rendering Table hover, second line. $1 = the current mode: Ores, Ingredients or Idols.
 ecr_render_makes: "Makes: $1"
+# Rendering Table hover: action after the [E] key label (Ores and Ingredients modes). Holding E keeps rendering trophies one by one.
 ecr_render_one: "Render a trophy (hold for more)"
+# Rendering Table hover in Idols mode, in place of the [E] action line: a boss trophy must be used on it from the hotbar.
 ecr_render_idol_hint: "Use a boss trophy on it from the hotbar to make an idol"
+# Rendering Table hover: action after the [Shift + E] key label; switches the mode (Ores, Ingredients, Idols) for everyone.
 ecr_render_change: "Change what it makes"
 
 # Why the Rendering Table renders nothing
+# Rendering Table: hover line and centre message on a table already built after the admin switched the table off in the .cfg. Rare.
 ecr_render_off: "The Rendering Table is switched off."
+# Rendering Table: centre message on pressing E with no ordinary trophy in the inventory (E never takes boss trophies).
 ecr_render_none: "No trophies to render. Boss trophies render only from the hotbar."
+# Rendering Table, Idols mode: centre message on pressing E, or on using an ordinary (non-boss) trophy on it from the hotbar.
 ecr_render_need_boss: "Only a boss trophy makes an idol: use one on the table from the hotbar."
+# Rendering Table: centre message when a trophy that is in none of its biome lists (e.g. another mod's) is used on it from the hotbar. Rare.
 ecr_render_unknown: "The Rendering Table cannot render this trophy."
+# Rendering Table: centre message when none of the items that trophy's biome should give exist in this game. Rare.
 ecr_render_nothing_made: "This game has nothing of that biome to make."

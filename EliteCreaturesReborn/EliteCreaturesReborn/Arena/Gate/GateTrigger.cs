@@ -12,7 +12,7 @@ namespace EliteCreaturesReborn.Arena.Gate
     /// <see cref="GateModel.Opening"/>), in place of the game's trigger.
     /// The local player is jumped into Hel's hall through <see cref="ArenaTravel.Enter"/>, keeping the gate's <c>exit</c>
     /// point (1 m up, as the game's portals put an arriving player, facing away from the gate) as where the way out brings
-    /// them back. While Arena is off a centre message says the gate is closed (the hall itself is built on the way in,
+    /// them back, and carrying the trial the gate is set to (<see cref="GateChoice"/>). While Arena is off a centre message says the gate is closed (the hall itself is built on the way in,
     /// on demand); carrying
     /// what the game will not let through a portal (ores, metals and the like), the game's own message, as its portals
     /// do. A placement ghost (no ZDO) does nothing.
@@ -58,7 +58,10 @@ namespace EliteCreaturesReborn.Arena.Gate
             Transform? exit = ExitPoint();
             Vector3 at = exit != null ? exit.position : root.TransformPoint(GateModel.ExitAsBuilt);
             Quaternion facing = exit != null ? exit.rotation : root.rotation;
-            ArenaTravel.Enter(player, at + Vector3.up * Rise, facing);
+            if (ArenaTravel.Enter(player, at + Vector3.up * Rise, facing))
+            {
+                GateChoice.Carry(player, GetComponentInParent<ZNetView>());
+            }
         }
 
         // The model's exit point, found once; without the model the same place is worked out from the piece.

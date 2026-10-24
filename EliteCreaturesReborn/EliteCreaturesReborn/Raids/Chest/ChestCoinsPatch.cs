@@ -5,7 +5,7 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Raids
 {
     /// <summary>
-    /// Keeps everything but coins out of a Raiders Chest (<see cref="ChestCoins"/>), wherever an item could come from:
+    /// Keeps everything but coins and trophies out of a Raiders Chest (<see cref="ChestCoins"/>), wherever an item could come from:
     /// a drag and drop or a swap in the chest's window, Shift + click, "stack all" and any other mod's quick stack through
     /// the game's inventory calls. The refused item stays where it was. Patched are the game's public ways in -
     /// <c>CanAddItem</c>, both <c>AddItem</c>s taking an item, <c>MoveItemToThis</c> to a cell and <c>MoveAll</c> - never

@@ -22,9 +22,21 @@ namespace EliteCreaturesReborn.Raids
 
         private const string SoundPad = "   [<color=yellow><b>$KEY_AltKeys + $KEY_Use</b></color>] $" + SoundWord;
 
-        /// <summary>"1,000 coins - Deadly raid (coins back x2, drops x5)": the raid these coins would make now.</summary>
-        public static string Stake(int coins, RaidHeat heat) => Lang.Format(RaidWords.StakeLine, Coins(coins),
-            heat.Band.Title, Times(heat.Band.CoinsBack), Times(heat.Drops));
+        /// <summary>"1,000 coins and 12 trophies - Deadly raid (back x2, drops x5)": the raid this stake would make now.</summary>
+        public static string Stake(int coins, int trophies, RaidHeat heat) => Lang.Format(RaidWords.StakeLine,
+            Amount(coins, trophies), heat.Band.Title, Times(heat.Band.CoinsBack), Times(heat.Drops));
+
+        /// <summary>"1,000 coins", "12 trophies" or "1,000 coins and 12 trophies".</summary>
+        public static string Amount(int coins, int trophies)
+        {
+            if (trophies <= 0)
+            {
+                return Coins(coins);
+            }
+            string counted = Lang.Format(trophies == 1 ? RaidWords.TrophiesOne : RaidWords.TrophiesMany,
+                trophies.ToString("N0", CultureInfo.InvariantCulture));
+            return coins > 0 ? Lang.Format(RaidWords.CoinsAndTrophies, Coins(coins), counted) : counted;
+        }
 
         /// <summary>"1,000 coins", for a chest that cannot sound a raid.</summary>
         public static string Coins(int coins) =>

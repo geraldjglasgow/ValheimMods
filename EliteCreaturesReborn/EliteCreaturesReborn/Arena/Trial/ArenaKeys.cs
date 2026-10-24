@@ -23,9 +23,17 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// wave it ended at.</summary>
         public const string Wave = "ecr_arena_wave";
 
-        /// <summary>The trial's first biome, 0 Meadows to 7 the Deep North, from the strongest gear in the arena as it
-        /// began (<see cref="ArenaPower"/>).</summary>
+        /// <summary>The trial's first biome, 0 Meadows to 7 the Deep North, from the trial chosen at Helgrind
+        /// (<see cref="ArenaModes"/>).</summary>
         public const string StartBiome = "ecr_arena_start_biome";
+
+        /// <summary>The trial's last biome (<see cref="TrialSpan.Last"/>); a core from before 2026-10-23 has none and reads
+        /// the Deep North.</summary>
+        public const string LastBiome = "ecr_arena_last_biome";
+
+        /// <summary>True for the Infinite trial (<see cref="TrialSpan.Endless"/>): it goes on past its last biome's boss.
+        /// A core from before 2026-10-23 has none and reads true.</summary>
+        public const string Endless = "ecr_arena_endless";
 
         /// <summary>The last wave cleared (or swept after its time ran out): an arena creature of that wave or an earlier
         /// one vanishes on its owner. 0 at the start.</summary>
@@ -114,9 +122,19 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// the way out brings them back to (<see cref="Travel.ArenaTravel"/>).</summary>
         public const string ReturnPoint = "ecr_arena_return";
 
+        /// <summary>The trial the player brought from the Helgrind they walked through (<see cref="ArenaModes"/>: 0 to 7 a
+        /// biome's, 8 Infinite), sent to the core's owner when they wake Hel.</summary>
+        public const string Mode = "ecr_arena_mode";
+
+        // ---- On Helgrind's own ZDO, written by whoever pressed E there (taking its ownership first). ----
+
+        /// <summary>The trial the gate is set to (<see cref="ArenaModes"/>); none set: the highest open biome's.</summary>
+        public const string GateMode = "ecr_helgrind_mode";
+
         // ---- RPC names. ----
 
-        /// <summary>On the core's ZNetView, to its owner: a player at Hel asks for a trial.</summary>
+        /// <summary>On the core's ZNetView, to its owner: a player at Hel asks for a trial, with the trial they chose
+        /// (an int, <see cref="Mode"/>).</summary>
         public const string StartRpc = "ecr_arena_start";
 
         /// <summary>On the core's ZNetView, to its owner: end the trial now (`elite arena stop`).</summary>
@@ -160,6 +178,9 @@ namespace EliteCreaturesReborn.Arena.Trial
         public static readonly int SweptHash = Swept.GetStableHashCode();
         public static readonly int DoneHash = Done.GetStableHashCode();
         public static readonly int StartBiomeHash = StartBiome.GetStableHashCode();
+        public static readonly int LastBiomeHash = LastBiome.GetStableHashCode();
+        public static readonly int EndlessHash = Endless.GetStableHashCode();
+        public static readonly int GateModeHash = GateMode.GetStableHashCode();
         public static readonly int PortalsHash = Portals.GetStableHashCode();
         public static readonly int BossesBeatenHash = BossesBeaten.GetStableHashCode();
         public static readonly int RecallAtHash = RecallAt.GetStableHashCode();

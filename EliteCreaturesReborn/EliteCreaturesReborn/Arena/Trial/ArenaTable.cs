@@ -61,8 +61,16 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>Waves per biome; the last of each is the boss wave.</summary>
         public const int WavesPerBiome = 5;
 
-        /// <summary>Biomes in the trial (Meadows to the Deep North); past them it stays in the last.</summary>
+        /// <summary>Biomes with a trial (Meadows to the Deep North), each opened by its boss's death in the world.</summary>
         public const int Biomes = 8;
+
+        /// <summary>The Infinite trial's levels: a round of five waves each, every level past the first one star more and a
+        /// quarter more creatures; after the last it goes on at the last (the user, 2026-10-23: "maybe like 5 levels
+        /// total").</summary>
+        public const int Levels = 5;
+
+        /// <summary>The creatures a wave brings more for each level of the Infinite trial past the first.</summary>
+        public const float PerLevel = 0.25f;
 
         /// <summary>Creatures in the first wave of a biome; each later wave of it brings <see cref="MoreEachWave"/> more:
         /// 6, 8, 10, 12 alone, round eight archways, then the boss.</summary>
@@ -76,8 +84,9 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// kind's.</summary>
         public const float EliteHealthRatio = 2.5f;
 
-        /// <summary>Elites a wave may hold: none in a biome's first two waves, 1 in its 3rd, 2 in its 4th; past the Deep
-        /// North's boss 3, one more every 10 waves, at most 6; and one more for every two players past the first.</summary>
+        /// <summary>Elites a wave may hold: none in a biome's first two waves, 1 in its 3rd, 2 in its 4th; in the Infinite
+        /// trial past its first level 3, one more every 10 waves, at most 6; and one more for every two players past the
+        /// first.</summary>
         public const int EliteFromWave = 3;
         public const int EliteEndless = 3;
         public const int EliteEndlessEvery = 10;
@@ -132,35 +141,35 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>True for a boss wave: every fifth, the last of its biome.</summary>
         public static bool IsBossWave(int wave) => wave > 0 && wave % WavesPerBiome == 0;
 
-        /// <summary>The biome's place for a wave of a trial that began at <paramref name="start"/> (0 Meadows to 7 Deep
-        /// North, from the strongest player's gear, <see cref="ArenaPower"/>): five waves each, the Deep North for
-        /// good after its boss.</summary>
-        public static int BiomeIndex(int start, int wave) =>
-            Mathf.Clamp(Mathf.Clamp(start, 0, Biomes - 1) + (Mathf.Max(1, wave) - 1) / WavesPerBiome, 0, Biomes - 1);
+        /// <summary>The biome's place for a wave of the trial (0 Meadows to 7 Deep North): five waves each from its first
+        /// biome, its last for good after that one's boss.</summary>
+        public static int BiomeIndex(TrialSpan span, int wave) =>
+            Mathf.Clamp(span.First + (Mathf.Max(1, wave) - 1) / WavesPerBiome, span.First, span.Last);
 
         /// <summary>The biome tier, 1 to 8: what souls, rewards and the anvil go by.</summary>
-        public static int BiomeNumber(int start, int wave) => BiomeIndex(start, wave) + 1;
+        public static int BiomeNumber(TrialSpan span, int wave) => BiomeIndex(span, wave) + 1;
 
-        /// <summary>The wave's place within its biome, 1 to 5 (5 the boss wave); past the Deep North's boss it counts 1
+        /// <summary>The wave's place within its biome, 1 to 5 (5 the boss wave); past the last biome's boss it counts 1
         /// to 5 again.</summary>
         public static int WaveInBiome(int wave) => (Mathf.Max(1, wave) - 1) % WavesPerBiome + 1;
 
-        /// <summary>The Deep North's boss wave for a trial that began at <paramref name="start"/>.</summary>
-        public static int LastBossWave(int start) => (Biomes - Mathf.Clamp(start, 0, Biomes - 1)) * WavesPerBiome;
-
-        /// <summary>Rounds of five waves past the Deep North's boss, each one more star: 1 for the next five, 2 for the
-        /// five after...</summary>
-        public static int PastLastBiome(int start, int wave)
+        /// <summary>Rounds of five waves past the last biome's boss (the Infinite trial's), each one star more: 1 for the
+        /// next five, 2 for the five after... up to <see cref="Levels"/> - 1.</summary>
+        public static int PastLastBiome(TrialSpan span, int wave)
         {
-            int past = wave - LastBossWave(start);
-            return past > 0 ? (past - 1) / WavesPerBiome + 1 : 0;
+            int past = wave - span.LastBossWave;
+            return past > 0 ? Mathf.Min((past - 1) / WavesPerBiome + 1, Levels - 1) : 0;
         }
 
+        /// <summary>The Infinite trial's level, 1 to <see cref="Levels"/>: its round of five waves, the first as the biome
+        /// comes, each later one harder; it stays at the top level from there.</summary>
+        public static int Level(TrialSpan span, int wave) => PastLastBiome(span, wave) + 1;
+
         /// <summary>The most elites a regular wave holds (<see cref="EliteFromWave"/>); a boss wave is its boss alone.</summary>
-        public static int EliteCap(int start, int wave, int players)
+        public static int EliteCap(TrialSpan span, int wave, int players)
         {
             int extra = Mathf.Max(0, players - 1) / ElitePlayersEach;
-            int past = wave - LastBossWave(start);
+            int past = wave - span.LastBossWave;
             if (past > 0)
             {
                 return Mathf.Min(EliteEndlessMax, EliteEndless + past / EliteEndlessEvery) + extra;
@@ -169,20 +178,21 @@ namespace EliteCreaturesReborn.Arena.Trial
             return inBiome < EliteFromWave ? 0 : inBiome - EliteFromWave + 1 + extra;
         }
 
-        /// <summary>Extra stars for a creature of this wave: +1 from the 3rd wave of each biome, and one more for every
-        /// five waves past the Deep North's boss.</summary>
-        public static int ExtraStars(int start, int wave) =>
-            (WaveInBiome(wave) >= StarWaveInBiome ? 1 : 0) + PastLastBiome(start, wave);
+        /// <summary>Extra stars for a creature of this wave: +1 from the 3rd wave of each biome's round, and one more for
+        /// each level of the Infinite trial past the first.</summary>
+        public static int ExtraStars(TrialSpan span, int wave) =>
+            (WaveInBiome(wave) >= StarWaveInBiome ? 1 : 0) + PastLastBiome(span, wave);
 
         /// <summary>The percent chance that a creature of this wave which rolled no mutation is given one.</summary>
         public static float MutationChance(int wave) =>
             Mathf.Min(MutationMax, MutationStart + MutationStep * (Mathf.Max(1, wave) - 1));
 
-        /// <summary>How many creatures a (regular) wave brings for this many players in the hall.</summary>
-        public static int CountFor(int wave, int players)
+        /// <summary>How many creatures a (regular) wave brings for this many players in the hall: a quarter more for each
+        /// player past the first and for each level of the Infinite trial past the first.</summary>
+        public static int CountFor(TrialSpan span, int wave, int players)
         {
             int baseCount = FirstWaveCount + MoreEachWave * (WaveInBiome(wave) - 1);
-            float scale = 1f + PerExtraPlayer * Mathf.Max(0, players - 1);
+            float scale = (1f + PerExtraPlayer * Mathf.Max(0, players - 1)) * (1f + PerLevel * PastLastBiome(span, wave));
             return Mathf.Max(1, Mathf.RoundToInt(baseCount * scale));
         }
 

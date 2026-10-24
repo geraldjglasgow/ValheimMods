@@ -129,7 +129,7 @@ namespace EliteCreaturesReborn.Arena.Gate
             }
         }
 
-        // The hammer's Misc tab; the cost and the Black Forge are set with the hammer (GateHammer), once items exist.
+        // The hammer's Misc tab; the cost and the workbench are set with the hammer (GateHammer), once items exist.
         private static void Describe(Piece piece)
         {
             piece.m_name = "$" + GateWords.Piece;

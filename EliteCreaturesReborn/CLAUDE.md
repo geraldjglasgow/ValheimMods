@@ -136,7 +136,7 @@ Howling and Binding start switched off: set them to `true` in the .cfg's `2 - Mu
 | Screecher | When one hit takes 15% of its health it shrieks: players within 20 m are deafened for 4 seconds - the world goes near-silent under a ringing, and Elemental and Blood Magic weapons will not cast. At most once every 15 seconds; a killing blow makes no shriek |
 | Frostbound | A freezing aura: players within 6 m recover stamina half as fast ("Chilled"). Leaves slick ice where it walks: on it you slide - slow to start, turn and stop - and move 15% slower; each patch lasts 10 seconds. Frost heals it instead of hurting it and never slows it (a green "+N frost") |
 | Mudbound | Leaves thick mud where it walks: in it you move 40% slower ("Deep mud"), and for a second after stepping out. Each patch lasts 10 seconds |
-| Corrodent | Your armour loses durability three times as fast under its hits, melee, thrown or shot; a line names the piece that corroded and how much is left. Shields wear as usual |
+| Corrodent | Your armour loses durability three times as fast under its hits, melee, thrown or shot, and each hit that gets through takes another 4% of the piece's maximum; a line names the piece that corroded and how much is left. Shields wear as usual |
 | Cloning | When it squares up to you it leaves a decoy in its place and fights on unseen. The decoy looks exactly like it but its blows do nothing; the first blow of the unseen one that lands on you shows it, and the decoy vanishes in a puff. Kill the decoy first and it shows itself too; after 20 seconds it shows itself anyway. Once in its life |
 | Piercing | Each of its hits - melee, thrown or shot - ignores 15% of your armour. Block, parry, resistances and armour wear are as usual. Off by default |
 | Howling | When it turns on you it howls (a wolf's howl), and the 4 nearest creatures on its side within 30 m that are hostile to you come for you; again every 45 seconds while it fights you. It calls creatures already there, never new ones, and never a boss. Off by default |
@@ -225,8 +225,9 @@ Any mutation can also be switched off entirely in the .cfg's `2 - Mutations`, re
   out (enhanced, at most 90); `trail effect` the vanilla effect whose ground decal draws the patches. A tamed one lays
   no trail
 - **Corrodent** - `durability` how many times as fast a player's armour wears under its hits (enhanced, as a
-  `1 + bonus` multiplier); 1 is the game's own rate, 0 stops its hits wearing armour. Durability never goes below 0;
-  shields wear as usual
+  `1 + bonus` multiplier); 1 is the game's own rate, 0 cancels the game's wear. `wear` the percent of the piece's
+  maximum durability each hit that gets through takes on top (enhanced; 0 turns it off); a hit fully blocked takes
+  none. Durability never goes below 0; shields wear as usual
 - **Cloning** - `times` how many times in its life it hides behind a decoy (enhanced; 0 turns it off); `range` metres
   from the player it is fighting at which it does it; `decoy life` seconds before it shows itself anyway when no blow
   has landed, 0 for no limit; `cooldown` seconds after it shows itself before it can do it again (only with `times`
@@ -477,15 +478,17 @@ log, written each time it opens from the rules the server sent and the world's k
 ## Raids
 
 The game's own raids still come to bases as they always have. Beside them, the **Raiders Chest** (the hammer's Misc
-tab, at a workbench: 10 wood, 4 leather scraps, 1 hard antler) sounds a raid on your own base for gold. It holds only
-coins, and its hover shows what the coins in it would make of a raid now, for the players near it: "1,000 coins -
-Deadly raid (coins back x2, drops x5)". `Shift + E` sounds the raid. It needs a base (3 base pieces - workbench, fire,
+tab, at a workbench: 10 wood, 4 leather scraps, 1 hard antler) sounds a raid on your own base for gold or trophies. It
+holds only coins and trophies, and its hover shows what they would make of a raid now, for the players near it: "1,000
+coins and 12 trophies - Deadly raid (stake back x2, drops x5)". `Shift + E` sounds the raid. It needs a base (3 base pieces - workbench, fire,
 bed - within 20 m of the chest), one raid a day per chest (chests within 100 m share the wait), and no other raid,
 the game's or a chest's, within 200 m.
 
-**Gold against gear.** Sounding takes every coin out of the chest. The raid's heat is those coins over the fair stake
-for the gear of the strongest player within 96 m: the higher of the best metal they have ever held and the armour
-they wear.
+**Gold against gear.** Sounding takes every coin and trophy out of the chest. The raid's heat is the stake over the fair
+stake for the gear of the strongest player within 96 m: the higher of the best metal they have ever held and the armour
+they wear. A trophy (any the Rendering Table takes, its tier its creature's biome) counts as a tenth of its tier's fair
+stake in coins, a boss's five times that (`RaidTable.TrophyWorth`): a boar's 10, a troll's 20, a Fuling's 90, a Deep
+North creature's 180, Eikthyr's 50.
 
 | Tier | Gear | Fair stake |
 | --- | --- | --- |
@@ -515,6 +518,11 @@ biome at the world tier (Very Hard: 5). Players within 96 m see the raid in the 
 minimap: "Fuling raid (Brutal) - wave 2 of 3 - 5 left - 8:40". Raiders hunt players first; with none, half go for the
 Raiders Chest and half for the base's chests and then its crafting stations, breaking through what stands between.
 
+**The trophies come back** only with a win: each kind staked goes back into the Raiders Chest times the coins back
+(rounded, never fewer; what does not fit falls beside it), kept meanwhile in the chest's ZDO (`ecr_raid_trophies`,
+`Raids/Chest/ChestTrophies.cs`); "Fuling raid beaten! Your gold is yours again, and 24 trophies are back in the Raiders
+Chest." Any other end loses them, as the coins are lost.
+
 **The gold comes back.** The coins back are shared among every raider of every wave, the Warlord carrying a quarter,
 and each drops its share as it dies, however it dies, with its own loot times the heat's drops. A stronger player
 arriving mid-raid lowers the drops to what their gear would make of the gold, from then on. Splintering copies carry
@@ -535,10 +543,15 @@ Design in `features/raids.md`.
 
 ## Rendering Table
 
-A narrow bench that renders creature trophies into what their biome gives. It is the game's workbench squeezed to half
-its width (1.53 m wide, as tall and deep as the workbench), in the hammer's Crafting tab right after the workbench, built
-at a workbench: 10 wood, 5 flint, 2 leather scraps. It is not a crafting station (no build circle, no base, no roof
-check). Prefab `ECR_RenderingTable` (`Rendering/`).
+A narrow bench that renders creature trophies into what their biome gives. A copy of the game's workbench (health,
+wear, sounds) wearing its own decorated model, 1.54 m wide and as tall and deep as the workbench (2026-10-22, after a
+player said the squeezed workbench looked like the basic table): a chopping block with a cleaver, a pot of tallow, a
+back frame with beast-head posts and a horned skull, hanging tools and a shelf of ore and hide. ValheimAssets
+`Assets/Props/RenderingTable`, bundle `ecr_renderingtable` (prefab `ecr_renderingtable`, `model`, `col_box_table`,
+`col_box_frame`, sprite `ecr_renderingtable_icon`), dressed in `Workbench_mat` with a metal mask at 0.6 by
+`Rendering/RenderModel.cs`; without the bundle it falls back to the workbench squeezed to half its width. In the
+hammer's Crafting tab right after the workbench, built at a workbench: 10 wood, 5 flint, 2 leather scraps. It is not a
+crafting station (no build circle, no base, no roof check). Prefab `ECR_RenderingTable` (`Rendering/`).
 
 `Shift + E` changes what it makes, Ores, Ingredients or Idols in turn (anyone a ward lets in; kept in the table's ZDO,
 so everyone sees the same). `E` renders the first trophy in the inventory (grid order); held, one every 0.2 s. A trophy
@@ -658,8 +671,8 @@ Together 40,416,091 bytes (38.5 MB; 19.5 MB per platform); the DLL is 44,029,952
 | `HallRunes.cs`, `RuneLight.cs` | The floor's runes, each its own material: one to three at a time between trials and in the breaks between waves (`ArenaTrial.Break`), more and faster while a wave is fought, all flaring on a boss wave; only changing runes are touched |
 | `HallDoors.cs` | The gate's leaves (hinges at (+-3, 0, 66.3)), every peer: open (left -90, right +90 about Y) between trials, shut in one, eased over 1.5 s |
 | `HelSeat.cs` | Hel on `seat_root` with the player's `Player_animator` and avatar (`attach_throne`, `onGround`: Sit_Throne_Idle), a 3 x 5.2 x 2.6 m box round her seated body, her spear |
-| `HelHover.cs` | "Hel"; "[E] Begin the trial" while no trial runs and you stand in the arena, calling `ArenaTrial.RequestStart`; 3 m more reach than usual |
-| `HallWords.cs` | The keys `ecr_arena_hel` "Hel", `hud_ecr_arena_begin` "Begin the trial", `msg_ecr_arena_river` "Hel's river takes you." (English in `translations/English.yml`) |
+| `HelHover.cs` | "Hel"; "[E] Begin the trial: Swamp" (the trial brought from Helgrind) while no trial runs and you stand in the arena, calling `ArenaTrial.RequestStart`; 3 m more reach than usual |
+| `HallWords.cs` | The keys `ecr_arena_hel` "Hel", `hud_ecr_arena_begin_trial` "Begin the trial: $1", `msg_ecr_arena_river` "Hel's river takes you." (English in `translations/English.yml`) |
 | `HallLake.cs` | Hel's river kills (the user, 2026-10-13): four times a second on every peer, each loaded character in the band under the river's surface (y -8 to -408, within 1,200 m) is taken once: its owner deals 10,000,000 damage through `Character.Damage` (hit type Drowning, not blockable or dodgeable), so it is the game's own death with every hook; the local player first reads "Hel's river takes you." (`msg_ecr_arena_river`); a creature's drops are switched off. Every client splashes there: the river's `ecr_helarena_bubble` and the game's `fx_WaterImpact_Big`. Not an arena death (`ArenaHall.Contains` is false below y -5, so `Trial/ArenaDeath` does not spare skills): the game's skill loss. Dungeon interiors stand 5,000 m over their entrances (5,030 m and up near the centre), above the band |
 | `HallLakeGrave.cs` | A river death's grave on the arena floor: a `Player.CreateTombStone` prefix marks the local player's grave made under the river (finalizer clears it), and a `TombStone.Awake` prefix moves that new tombstone, and its fresh ZDO, to the walls' `gate_inside` a metre up, before its Awake records the spawn point it returns to |
 | `HallNoBuild.cs` | Placing a piece within 75 m (across) of the origin above 4,900 m: the game's no-build status and message (`$msg_nobuildzone`) |
@@ -732,13 +745,13 @@ and every player in the hall is in it; whoever enters later joins. Waves, number
 | What | Number |
 | --- | --- |
 | Countdown | 10 s |
-| First biome | the strongest gear among the players alive in the arena as Hel wakes (`ArenaPower`, the raids' `GearTier.Full`): 0 no metal Meadows, 1 Bronze Black Forest, 2 Iron Swamp, 3 Silver Mountains, 4 Black metal Plains, 5 Mistlands gear Mistlands, 6 Flametal Ashlands, 7 Bloodgold (`Gold`) or a Deep North set Deep North; in `ecr_arena_start_biome`, later joiners change nothing |
-| Biomes | five waves each from the first biome (the 5th its boss), then the next; after the Deep North's boss the Deep North |
-| Creatures in a wave | 6, 8, 10, 12 in a biome's four waves, x(1 + 0.25 per player past the first) |
-| Extra stars | +1 from a biome's 3rd wave, +1 more per five waves past the Deep North's boss; at most 8 (ECR's maximum) |
+| Trial | the one the asker brought from Helgrind (`ArenaTrial.ChosenMode`, the player's `ecr_arena_mode`, sent with `ecr_arena_start`), made one the world has open by the core's owner (`ArenaModes.Resolve`): a biome's (0 Meadows ... 7 Deep North) or Infinite (8); the biomes open are the Meadows and every biome up to the latest whose boss's defeat key (read from the boss prefab) is set; in the core's ZDO as `TrialSpan` (`ecr_arena_start_biome`, `ecr_arena_last_biome`, `ecr_arena_endless`), later joiners change nothing |
+| Biomes | a biome's trial: that biome's five waves (the 5th its boss), then it ends ("You won Hel's trial of the Swamp: 40 kills, 1,250 souls.", `ecr_arena_won`, when the boss fell; the reward as at any end); Infinite: the highest open biome's five waves round after round, each round a level (`ArenaTable.Level`, 1 to 5, then 5 for good), the boss each fifth |
+| Creatures in a wave | 6, 8, 10, 12 in a biome's four waves, x(1 + 0.25 per player past the first), x(1 + 0.25 per Infinite level past the first) |
+| Extra stars | +1 from a round's 3rd wave, +1 more per Infinite level past the first (at most +4); at most 8 (ECR's maximum) |
 | Mutation chance | 15% in wave 1, +4% a wave, at most 60%, for a creature that rolled none; never Gilded (stripped from the base roll too) |
-| Elites | a kind `BodySize.IsLarge` finds large or with base health over 2.5 x its biome's middle kind's (`ArenaCreatures.Kind.Elite`); a wave at most none (a biome's waves 1-2), 1 (wave 3), 2 (wave 4), past the Deep North's boss 3 +1 per 10 waves (at most 6); +1 per two players past the first (`ArenaTable.EliteCap`); an elite drawn past that is redrawn from the rest, never two from one archway in a wave |
-| Call the next wave | E at Hel in a wave whose creatures are all out (`ArenaTrial.RequestNextWave`, `ecr_arena_call_next` to the core's owner; `ArenaCalls`): the next wave on top at once, none past a living boss; each wave cleared by its own creatures (`ArenaClears`, `ecr_arena_done`), the break after the last; the 5 minutes restart with each call |
+| Elites | a kind `BodySize.IsLarge` finds large or with base health over 2.5 x its biome's middle kind's (`ArenaCreatures.Kind.Elite`); a wave at most none (a biome's waves 1-2), 1 (wave 3), 2 (wave 4), from Infinite's level 2 on 3 +1 per 10 waves (at most 6); +1 per two players past the first (`ArenaTable.EliteCap`); an elite drawn past that is redrawn from the rest, never two from one archway in a wave |
+| Call the next wave | E at Hel in a wave whose creatures are all out (`ArenaTrial.RequestNextWave`, `ecr_arena_call_next` to the core's owner; `ArenaCalls`): the next wave on top at once, none past a living boss or a biome trial's last wave; each wave cleared by its own creatures (`ArenaClears`, `ecr_arena_done`), the break after the last; the 5 minutes restart with each call |
 | Archways | every `portal_N` the built hall has, up to 8 (the outdoor arena's, about 67 m out; `ArenaSpots.ArchwayCount`); each wave's creatures given to all of them in turn; each sends one at a time, 0.8-1.2 s apart, the first 0.6-1.0 s after its portal opens; out of its recess, 0.8 m off the `portal_N` back face, on the recess floor, with `sfx_spawn` |
 | Alive at once | 24 (20 indoors); the archways wait while 24 live |
 | Next wave | only when the wave is cleared (nothing alive or to come, held 2 s), after a break of 20 s (25 s after a boss wave) |
@@ -858,7 +871,7 @@ core is not loaded here; it ends the trial as an empty hall does.
 | File (`Arena/Trial/`, `Arena/Travel/`) | Does |
 | --- | --- |
 | `ArenaKeys.cs`, `ArenaTable.cs`, `ArenaPhase.cs` | Keys and RPC names; every fixed number and the sums from them; Idle, Countdown, Fighting, Break |
-| `ArenaPower.cs` | The first biome from the strongest gear in the arena (`Raids/Heat/GearTier.Full`, 0-7) |
+| `ArenaModes.cs`, `TrialSpan.cs` | The trials (a biome's, Infinite), the highest open biome from the bosses' defeat keys, the gate's next, names; the biomes a trial fights |
 | `ArenaState.cs` | The trial in the core's ZDO (as `RaidState`) |
 | `ArenaCore.cs`, `ArenaCorePrefab.cs`, `ArenaCoreKeeper.cs` | The core (RPCs, the owner's step, `Current`); its prefab and `ZNetScene.Awake` prefix; the server keeping exactly one (`ZoneSystem.Start` postfix) |
 | `ArenaOrphanWatch.cs`, `ArenaLegacy.cs`, `ArenaZdos.cs` | The server ending a trial nobody is at; removing an older world's arena at (0, 5000, 0); removing ZDOs round a point |
@@ -902,9 +915,13 @@ call) and the elites per wave.
 
 Built 2026-10-12, not seen in game. The entrance (`features/arena.md` section 2): **Helgrind**, Hel's gate, piece
 `ECR_Helgrind`, a copy of the game's `portal_stone` without its pairing, in the hammer's Misc tab while `Arena` is on,
-built at the Black Forge (`blackforge`) from `FrozenKingDrop` 1, `FrostCore` 2, `Gold` 10, `MemorialCoal` 5. Walking
-into its opening jumps the local player into the hall through `ArenaTravel.Enter`, keeping the gate's `exit` point (1 m
-up, facing away) as the way back. The gate is about the game's wood portal's size: 4.61 x 4.20 x 1.94 m, 4.03 m above
+built at a workbench (`piece_workbench`) from `Wood` 20, `Stone` 20, `TrophyEikthyr` 1 (cheaper since 2026-10-23; it was
+the Black Forge's Deep North parts). E on the gate picks its trial (`GateChoice`, the gate's ZDO `ecr_helgrind_mode`,
+written by the pressing player's machine after `ClaimOwnership`, past the ward): the Meadows, each biome up to the
+latest boss killed in the world, Infinite, the Meadows again; Shift + E back; none chosen reads as the highest biome's.
+Walking into its opening jumps the local player into the hall through `ArenaTravel.Enter`, keeping the gate's `exit`
+point (1 m up, facing away) as the way back and carrying the gate's trial in their `ecr_arena_mode`; Hel's hover
+offers it: "[E] Begin the trial: Swamp". The gate is about the game's wood portal's size: 4.61 x 4.20 x 1.94 m, 4.03 m above
 the ground, an arched opening 2.44 x 3.22 m whose centre is 1.73 m over its sill; the wall at the end of the hall's gate passage is the way out (`ArenaTravel.Leave`).
 
 | Bundle (both platforms, `assets/bundles`) | What | Bytes (Windows + Linux) |
@@ -917,13 +934,14 @@ the ground, an arched opening 2.44 x 3.22 m whose centre is 1.73 m over its sill
 | `GatePrefab.cs` | `ZNetScene.Awake` prefix, every peer: `portal_stone` copied on the bench; `TeleportWorld` removed (no tag, no link; the name is in none of the game's portal lists), `TELEPORT`'s `TeleportWorldTrigger` swapped for `GateTrigger` and its box moved to `portal_center`, unscaled, size (2.24, 3.12, 0.40) (`GateModel.Opening`), `_target_found_red` stripped to its `SFX` hum under its `EffectFade`; Misc tab, name, icon |
 | `GateModel.cs` | The bundles (EmbeddedBundle, a failure logged once); `New`, `Mesh collider` and `floor collider` replaced by the gate on the piece's layer; one object for every wear state; the point names, their values as built (used only without the model) and `PointIn`, which reads a point from a piece |
 | `GateMaterials.cs` | Clients: the hall's stone (`Custom/Piece` from `stone_wall_4x2`'s `New`, white, gloss 0.15) with the Bloodgold metal mask at 0.76 (the Nord Buckler's); glow parts keep the bundle's emissive material |
-| `GateHammer.cs` | Hammer, cost and the Black Forge in every ObjectDB, in or out with `Arena` (as `ChestHammer`) |
+| `GateHammer.cs` | Hammer, cost and the workbench in every ObjectDB, in or out with `Arena` (as `ChestHammer`) |
+| `GateChoice.cs` | The gate's trial: read from its ZDO, stepped by E (Shift + E back) past the ward, carried by the walker |
 | `GateTrigger.cs` | Walk-in, the walker's machine: closed ("Hel's gate is closed.") while Arena is off or the hall not built; `$msg_noteleport` when `IsTeleportable(false)` fails (the game's per-item rule); else `ArenaTravel.Enter` with the exit point |
 | `GateLook.cs` | Clients, not on a ghost: while Arena is on, the swirl at `portal_center`, the light at `light`, the hum faded in |
 | `GateSwirl.cs` | The swirl, dressed once (BundleEffects) and copied local-only (LocalEffects), facing its anchor; its point light #80ebe0, intensity 2, range 6, soft shadows, with a LightLod |
 | `GateWayOut.cs`, `WayOutTrigger.cs` | The way out, clients only, built with the hall: at 1.6 m behind `arrive` (the walls' back wall, r 29.5; no point in the bundle), facing into the passage, the swirl seated as in the gate with its sill on the passage floor: centre at `portal_center`'s height (1.73 m) and 0.15 m off the wall, its light `light`'s 0.2475 m further out (both read from the gate prefab), range 6; a 2.24 x 3.12 x 0.7 m trigger on `character_trigger` on the same centre (0.9 m clear of `arrive`) calling `ArenaTravel.Leave` |
-| `GateHover.cs` | "Helgrind" and "Walk through into Hel's hall" or "Hel's gate is closed." |
-| `GateWords.cs` | `piece_ecr_helgrind`, `_description`, `ecr_helgrind_open`, `ecr_helgrind_closed` (keys; English in `translations/English.yml`) |
+| `GateHover.cs` | Hoverable and Interactable: "Helgrind", "[E] Trial: Swamp" and "Walk through into Hel's hall", or "Hel's gate is closed." |
+| `GateWords.cs` | `piece_ecr_helgrind`, `_description`, `hud_ecr_helgrind_trial`, `ecr_helgrind_open`, `ecr_helgrind_closed` (keys; English in `translations/English.yml`) |
 
 Outside `Arena/Gate/`: `Arena/Hall/HallBuilder.cs` calls `GateWayOut.Build` in `Look` (one line);
 `Arena/Travel/ArenaTravel.cs` has `Enter` and `Leave`; `Arena/Trial/ArenaKeys.cs` documents the return point's yaw;

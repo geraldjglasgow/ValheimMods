@@ -66,8 +66,9 @@ namespace EliteCreaturesReborn.Arena.Trial
             int count = phase == ArenaPhase.Fighting ? state.Left : Seconds(state.Next - now);
             long souls = SoulWallets.Souls(state.Zdo, ZDOMan.GetSessionID()); // this player's own
             long key = Key(phase, wave, count, souls);
-            int start = state.StartBiome;
-            int extra = (phase == ArenaPhase.Fighting ? Recall(state, now) : Ready(state.Zdo)) | (start & 7) << 20;
+            TrialSpan span = state.Span;
+            int extra = (phase == ArenaPhase.Fighting ? Recall(state, now) : Ready(state.Zdo)) | (span.First & 7) << 20
+                | (span.Endless ? 1 << 23 : 0);
             if (_shown && key == _shownKey && extra == _shownExtra && _shownLanguage == Lang.Version)
             {
                 return;
@@ -76,10 +77,16 @@ namespace EliteCreaturesReborn.Arena.Trial
             _shownKey = key;
             _shownExtra = extra;
             _shownLanguage = Lang.Version;
-            string biome = ArenaWords.BiomeName(ArenaCreatures.Biome(ArenaTable.BiomeIndex(start, Math.Max(1, wave))));
-            string text = Text(phase, biome, wave, count, souls, extra & 0xFFFF);
+            string text = Text(phase, Where(span, wave), wave, count, souls, extra & 0xFFFF);
             hud.m_eventName.text = phase == ArenaPhase.Fighting ? text
                 : ArenaWords.HudReady(text, (extra & 0x10000) != 0, extra & 0xFF, extra >> 8 & 0xFF);
+        }
+
+        // The wave's biome, and in the Infinite trial its level: "Meadows, level 3".
+        private static string Where(TrialSpan span, int wave)
+        {
+            string biome = ArenaWords.BiomeName(ArenaCreatures.Biome(ArenaTable.BiomeIndex(span, Math.Max(1, wave))));
+            return span.Endless ? ArenaWords.HudLevel(biome, ArenaTable.Level(span, Math.Max(1, wave))) : biome;
         }
 
         // In a wave, Hel's recall of the stragglers, packed: its seconds left plus one; 0 while none runs.

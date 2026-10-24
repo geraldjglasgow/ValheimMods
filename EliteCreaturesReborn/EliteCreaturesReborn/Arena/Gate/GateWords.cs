@@ -12,6 +12,9 @@ namespace EliteCreaturesReborn.Arena.Gate
 
         public const string Description = Piece + "_description";
 
+        /// <summary>The hover's E line: the trial the gate is set to ("Trial: $1").</summary>
+        public const string Trial = "hud_ecr_helgrind_trial";
+
         /// <summary>The hover's line while the gate is open.</summary>
         public const string Open = "ecr_helgrind_open";
 

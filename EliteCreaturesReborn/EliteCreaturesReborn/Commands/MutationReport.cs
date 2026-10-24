@@ -45,7 +45,7 @@ namespace EliteCreaturesReborn.Commands
                 Mutation.Screecher => $"Screecher: shrieks when one hit takes {r.PowerOf(m, Fields.Threshold):0}% of its max hp, at most every {r.PowerOf(m, Fields.Cooldown):0}s; enemy players within {Enhance.Magnitude(r, t, m, Fields.Radius):0}m deafened and unable to cast for {Enhance.Magnitude(r, t, m, Fields.MuteTime):0.0}s; shriek {r.PrefabOf(m, Fields.ShriekSound)}{tag}",
                 Mutation.Frostbound => $"Frostbound: {FrostboundAura(r, t)}; {TrailSpec.Describe(r, t, m)}{tag}",
                 Mutation.Mudbound => $"Mudbound: {TrailSpec.Describe(r, t, m)}{tag}",
-                Mutation.Corrodent => $"Corrodent: a player's armour wears x{Enhance.Stat(r, t, m, Fields.Durability):0.0} as fast under its hits (shields as usual){tag}",
+                Mutation.Corrodent => $"Corrodent: a player's armour wears x{Enhance.Stat(r, t, m, Fields.Durability):0.0} as fast under its hits, plus {Enhance.Magnitude(r, t, m, Fields.Wear):0.#}% of the piece's max per hit that gets through (shields as usual){tag}",
                 Mutation.Piercing => $"Piercing: its hits ignore {Piercing.Share(r, t) * 100f:0}% of a player's armour{tag}",
                 Mutation.Howling => $"Howling: when it turns on a player it calls the {HowlBehaviour.MaxCalled} nearest creatures on its side within {HowlBehaviour.Reach:0}m to fight them, at most every {HowlBehaviour.Cooldown:0}s; never bosses; none when tamed",
                 Mutation.Binding => $"Binding: {TrailSpec.Describe(r, t, m)}{tag}",

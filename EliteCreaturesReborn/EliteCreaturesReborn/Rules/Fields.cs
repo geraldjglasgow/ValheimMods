@@ -117,6 +117,7 @@ namespace EliteCreaturesReborn.Rules
 
         // Corrodent
         public const string Durability = "durability";
+        public const string Wear = "wear";
 
         // Cloning (`range` and `cooldown` are shared)
         public const string Times = "times";

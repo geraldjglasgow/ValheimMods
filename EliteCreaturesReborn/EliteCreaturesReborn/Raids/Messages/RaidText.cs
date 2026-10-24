@@ -15,6 +15,10 @@ namespace EliteCreaturesReborn.Raids
         public static string Started(string face, RaidBand band) =>
             LangWire.Message(RaidWords.Started, face, Lang.Token(band.Word));
 
+        /// <summary>A raid staked with trophies won, for the wire: the win, and how many trophies are back in the chest.</summary>
+        public static string WonTrophies(string face, int back) =>
+            LangWire.Message(RaidWords.WonTrophies, face, back.ToString(System.Globalization.CultureInfo.InvariantCulture));
+
         /// <summary>How the raid ended, for the wire; empty for none.</summary>
         public static string Ended(string face, RaidEnd how)
         {

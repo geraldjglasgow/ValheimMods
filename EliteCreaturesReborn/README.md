@@ -16,9 +16,9 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Death recap: `F10` replays the seconds before each death.
 - Respawning (off by default): cleared camps, dungeons and chests refill.
 - Horde (off by default): more, weaker creatures in the wild.
-- Raids: stake gold in the Raiders Chest, call a raid, win more.
+- Raids: stake gold or trophies in the Raiders Chest, call a raid, win more.
 - Rendering Table: trophies into ores or ingredients of their biome; boss trophies into Forge idols.
-- Hel's Arena (off by default): endless waves through Helgrind from your gear's biome, a boss every fifth, rewards by progress. Subject to change.
+- Hel's Arena (off by default): through Helgrind, a biome's trial or Infinite; a boss every fifth wave, rewards by progress. Subject to change.
 - Works with PackPanel, GrindstoneSkills and Elite Creatures Pack.
 
 ## Mutations
@@ -39,7 +39,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 - Screecher: shrieks when hit hard, deafening you and stopping magic.
 - Frostbound: chilling aura, slippery ice trails; frost heals it.
 - Mudbound: leaves slowing mud.
-- Corrodent: wears armour down three times as fast.
+- Corrodent: wears armour down three times as fast, plus 4% of the piece per hit.
 - Cloning: leaves a decoy and fights on unseen.
 - Flamebound: leaves burning ground.
 - Piercing, Howling, Binding (off by default): ignores 15% of armour; calls nearby creatures; roots you.

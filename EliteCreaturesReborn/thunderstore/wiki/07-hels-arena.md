@@ -8,14 +8,17 @@ on a server the server's value holds for everyone. ECR is needed on the server a
 
 ## Getting there
 
-Build **Helgrind**, Hel's gate, from the hammer's Misc tab near a **Black Forge**:
+Build **Helgrind**, Hel's gate, from the hammer's Misc tab near a **workbench**:
 
 | Material | Amount |
 | --- | --- |
-| Sacrificial Blood (Kall Fimbulbringer) | 1 |
-| Frostcore | 2 |
-| Bloodgold | 10 |
-| Memorial Coal | 5 |
+| Wood | 20 |
+| Stone | 20 |
+| Eikthyr trophy | 1 |
+
+**Choose the trial** on the gate: its hover shows "[E] Trial: Swamp". **E** steps to the next trial, **Shift + E**
+back. The Meadows is always open; each later biome opens once its boss has been killed in the world (Black Forest after
+Eikthyr, Swamp after the Elder, and so on); then **Infinite**. Everyone sees the same choice on a gate.
 
 Walk through it to enter Hel's hall, high above the far ocean at the world's western edge, where nobody gets but
 through Helgrind. Every Helgrind leads to the same hall. Items the game
@@ -25,33 +28,31 @@ the end of the hall's gate passage: you come back out in front of the gate you u
 
 ## Hel's Trial
 
-Hel sits on her throne at the far end of the hall. Hover her and press **E** to begin the trial: every player in the
-hall is in it, and anyone who comes in later joins. After a 10 second countdown the doors close and the dead come out
+Hel sits on her throne at the far end of the hall. Hover her and press **E** to begin the trial you chose at the gate
+("[E] Begin the trial: Swamp"): every player in the hall is in it, and anyone who comes in later joins. After a 10 second countdown the doors close and the dead come out
 of the eight archways round the arena's wall, about 60 m from the middle: a portal opens in each archway that has
 creatures to send, and they step out one at a time, about a second apart, then run for you. The portal closes after its
 last one.
 
-- **The first biome is your gear's:** the trial starts in the biome of the best gear among the players in the arena
-  (best metal ever held, or armour worn): no metal the Meadows, Bronze the Black Forest, Iron the Swamp, Silver the
-  Mountains, Black metal the Plains, Mistlands gear the Mistlands, Flametal the Ashlands, Bloodgold or Deep North
-  armour the Deep North. Players who come in later don't change it.
-- **Waves** come five to a biome: four of its creatures, then its boss, then the next biome, up to the Deep North,
-  which stays.
+- **A biome's trial** is five waves: four of its creatures, then its boss. Kill the boss and you win the trial ("You
+  won Hel's trial of the Swamp") and get its reward.
+- **Infinite** is the highest open biome, round after round of five waves, each round a **level** harder (level 1 to
+  5, then level 5 for good): one more star and a quarter more creatures each level. The bar under the minimap shows
+  "Meadows, level 3".
 - **Each wave** brings 6, 8, 10 and 12 creatures in a biome's four waves, a quarter more for each extra player, spread
   round all eight archways. At most 24 are alive at once.
 - **Elites** - big or very tough creatures such as trolls, bears, lox, golems, Abominations, Gjall and Morgen - come
-  only late in a biome: none in its first two waves, at most 1 in the 3rd and 2 in the 4th (3 to 6 in the endless Deep
-  North), one more for every two extra players, never two out of one archway.
+  only late in a biome: none in its first two waves, at most 1 in the 3rd and 2 in the 4th (3 to 6 from Infinite's
+  level 2), one more for every two extra players, never two out of one archway.
 - **A wave is a round:** the next one comes only when every creature of it is dead, after a short break - 20 seconds,
   25 after a boss - to catch your breath and reach an anvil ("Wave 7 cleared"). A wave not cleared within 5 minutes
   counts as cleared: its last creatures vanish and are worth nothing.
 - **Stragglers:** once a wave's creatures are all out and only a quarter of them are left, Hel marks the last ones -
   they glow and show on your map - and recalls them a minute later (no boss wave). Kill them in that minute for their
   souls; recalled, they are worth nothing.
-- **Stars and mutations** rise with the waves: +1 star from a biome's 3rd wave, one more for every five waves after
-  the Deep North's boss; a 15% mutation chance in wave 1, 4% more each wave, up to 60%. No Gilded in the arena.
+- **Stars and mutations** rise with the waves: +1 star from a round's 3rd wave, one more for each Infinite level; a 15% mutation chance in wave 1, 4% more each wave, up to 60%. No Gilded in the arena.
 - **Every 5th wave** is the biome's boss on the rune circle: Eikthyr, the Elder, Bonemass, Moder, Yagluth, the Queen,
-  Fader, Kall Fimbulbringer, then round again from your first boss with more stars. Arena boss kills don't count as world progress.
+  Fader or Kall Fimbulbringer; in Infinite the same boss each round, with more stars. Arena boss kills don't count as world progress.
 - **Souls:** every kill is worth souls, and every player of the trial gets them all: 2 x the biome's tier (1 Meadows ...
   8 Deep North) x (stars + 1), x 1.5 for each mutation; a boss 50 x the tier x (stars + 1) x what its aspects pay. Your
   souls, the biome, the wave and the creatures left show under the minimap; in a break, the seconds to the next wave.

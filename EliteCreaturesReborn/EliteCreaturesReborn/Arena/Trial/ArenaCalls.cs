@@ -61,8 +61,10 @@ namespace EliteCreaturesReborn.Arena.Trial
             ArenaWaves.Call(core, inHall.Count, NetTime.NowMs());
         }
 
-        // Every creature of the wave fighting has come out, and another wave has room.
+        // Every creature of the wave fighting has come out, another wave has room, and the trial has one more: a biome's
+        // trial ends with its boss's wave.
         private static bool AllOut(ArenaState state) =>
-            ArenaQueue.Read(state.Zdo).Of(state.Wave) == 0 && state.Wave - state.Swept < ArenaTable.MaxWavesAtOnce;
+            ArenaQueue.Read(state.Zdo).Of(state.Wave) == 0 && state.Wave - state.Swept < ArenaTable.MaxWavesAtOnce
+            && !state.Span.IsFinal(state.Wave);
     }
 }

@@ -13,6 +13,9 @@ namespace EliteCreaturesReborn.Raids
         // ---- The Raiders Chest's hover (ChestText). ----
         public const string CoinsOne = "ecr_raid_coins_one";
         public const string CoinsMany = "ecr_raid_coins_many";
+        public const string TrophiesOne = "ecr_raid_trophies_one";
+        public const string TrophiesMany = "ecr_raid_trophies_many";
+        public const string CoinsAndTrophies = "ecr_raid_coins_and_trophies";
         public const string StakeLine = "ecr_raid_stake_line";
         public const string Empty = "ecr_raid_empty";
         public const string HoldToStop = "ecr_raid_hold_to_stop";
@@ -36,6 +39,7 @@ namespace EliteCreaturesReborn.Raids
         // ---- A raid starts and ends (RaidText), sent from the host's owner. ----
         public const string Started = "ecr_raid_started";
         public const string Won = "ecr_raid_won";
+        public const string WonTrophies = "ecr_raid_won_trophies";
         public const string Robbed = "ecr_raid_robbed";
         public const string Stopped = "ecr_raid_stopped";
         public const string Abandoned = "ecr_raid_abandoned";

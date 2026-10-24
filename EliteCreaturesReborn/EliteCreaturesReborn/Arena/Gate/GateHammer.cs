@@ -8,10 +8,10 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Arena.Gate
 {
     /// <summary>
-    /// Helgrind in the hammer (features/arena.md section 2): in the Misc tab, built at the Black Forge, while the `Arena`
-    /// setting is on; out of it while it is off (gates already built stay, closed). An endgame build from the Deep North:
-    /// Kall Fimbulbringer's Sacrificial Blood, two Frostcores, ten Bloodgold bars and five Memorial Coal, the parts the gate
-    /// is made of. Put in every ObjectDB the game builds or copies, once the prefab exists, and again whenever the setting
+    /// Helgrind in the hammer (features/arena.md section 2): in the Misc tab, built at a workbench, while the `Arena`
+    /// setting is on; out of it while it is off (gates already built stay, closed). An early build (the user, 2026-10-23:
+    /// "buildable with like wood, stone, maybe eikthyr trophy"): 20 wood, 20 stone and Eikthyr's trophy, so a world that
+    /// has killed its first boss can open the Meadows' trial. Put in every ObjectDB the game builds or copies, once the prefab exists, and again whenever the setting
     /// changes - the server's value arriving after a player joins included. Every peer; idempotent. As the Raiders Chest's
     /// (<see cref="Raids.ChestHammer"/>).
     /// </summary>
@@ -19,11 +19,11 @@ namespace EliteCreaturesReborn.Arena.Gate
     internal static class GateHammer
     {
         private const string Hammer = "Hammer";
-        private const string Forge = "blackforge";
+        private const string Workbench = "piece_workbench";
 
         private static readonly (string Item, int Amount)[] Cost =
         {
-            ("FrozenKingDrop", 1), ("FrostCore", 2), ("Gold", 10), ("MemorialCoal", 5),
+            ("Wood", 20), ("Stone", 20), ("TrophyEikthyr", 1),
         };
 
         private static bool _listening;
@@ -45,7 +45,7 @@ namespace EliteCreaturesReborn.Arena.Gate
         private static void SceneAwake() =>
             SafeCall.Run("Helgrind in the hammer", static db => Refresh(db), ObjectDB.instance);
 
-        /// <summary>The gate in or out of the hammer, with its cost and the Black Forge, as the setting says now.</summary>
+        /// <summary>The gate in or out of the hammer, with its cost and the workbench, as the setting says now.</summary>
         public static void Refresh(ObjectDB? db)
         {
             Listen();
@@ -57,10 +57,10 @@ namespace EliteCreaturesReborn.Arena.Gate
             }
             Piece piece = gate.GetComponent<Piece>();
             piece.m_resources = Requirements(db);
-            CraftingStation? forge = Station();
-            if (forge != null)
+            CraftingStation? bench = Station();
+            if (bench != null)
             {
-                piece.m_craftingStation = forge;
+                piece.m_craftingStation = bench;
             }
             pieces.Remove(gate);
             if (ArenaSettings.Enabled)
@@ -99,8 +99,8 @@ namespace EliteCreaturesReborn.Arena.Gate
 
         private static CraftingStation? Station()
         {
-            GameObject? forge = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(Forge) : null;
-            return forge != null ? forge.GetComponent<CraftingStation>() : null;
+            GameObject? bench = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(Workbench) : null;
+            return bench != null ? bench.GetComponent<CraftingStation>() : null;
         }
 
         private static Piece.Requirement[] Requirements(ObjectDB db)

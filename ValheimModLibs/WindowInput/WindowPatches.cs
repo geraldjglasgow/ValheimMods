@@ -7,7 +7,7 @@ namespace WindowInput;
 /// The game's own checks for its windows, answered for the mod's windows too: <c>Player.TakeInput</c> (attacks,
 /// blocks, hotbar and other player keys), <c>PlayerController.InInventoryEtc</c> (the camera does not follow the
 /// mouse), <c>GameCamera.UpdateMouseCapture</c> (the cursor is shown and free unless the game menu is up),
-/// <c>ZInput.GetMouseScrollWheel</c> (no zoom; UI scroll views read the wheel themselves) and <c>Menu.Update</c> (Esc
+/// <c>ZInput.GetMouseScrollWheel</c> (no zoom, unless the window lets the wheel through; UI scroll views read the wheel themselves) and <c>Menu.Update</c> (Esc
 /// closes the window instead of opening the menu). Installed once per merged copy; private members are reached by name.
 /// </summary>
 internal static class WindowPatches
@@ -58,7 +58,7 @@ internal static class WindowPatches
 
 	private static void NoZoom(ref float __result)
 	{
-		if (__result != 0f && GameWindow.AnyOpen)
+		if (__result != 0f && GameWindow.HoldsWheel)
 		{
 			__result = 0f;
 		}

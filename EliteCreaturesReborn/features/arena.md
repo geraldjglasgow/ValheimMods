@@ -73,7 +73,8 @@ throne is used.
   Client only.
 - **Hel** sits on her throne, a still presence using the player's own throne-sitting animation (the player prefab's
   animator and avatar on her `Visual`, `attach_throne` set). Not a creature yet (a boss later). Hovering her shows
-  "Hel" and, when no trial is running and the player is in the arena, `[E] Begin the trial`.
+  "Hel" and, when no trial is running and the player is in the arena, `[E] Begin the trial: Swamp` (the trial the
+  player brought from Helgrind).
 - **The gate doors** stand open between trials and close while one runs (on every client, from the run state).
 - **No building** in or round the arena: placing a piece within 75 m of the arena origin above 4900 m is refused with a
   message.
@@ -81,9 +82,14 @@ throne is used.
 # 2. Getting in and out
 
 - **Helgrind**, Hel's gate (piece `ECR_Helgrind`, "Helgrind": "Hel's gate, which leads to her hall and her trial"): a
-  portal piece about the size of the game's wood portal (4.61 x 4.20 x 1.94 m, an arched opening 2.44 x 3.22 m), in the hammer's Misc tab while `Arena` is on, built at the **Black
-  Forge** from **1 Sacrificial Blood** (`FrozenKingDrop`), **2 Frostcore**, **10 Bloodgold** (`Gold`) and **5 Memorial
-  Coal**. Its art is `..\ValheimAssets\Assets\Props\HelGate\ecr_helgate` and the swirl `Assets\Effects\ecr_helgate_swirl`.
+  portal piece about the size of the game's wood portal (4.61 x 4.20 x 1.94 m, an arched opening 2.44 x 3.22 m), in the hammer's Misc tab while `Arena` is on, built at a **workbench** from
+  **20 Wood**, **20 Stone** and **Eikthyr's trophy** (the user, 2026-10-23: "make hels portal cheaper"; it was the Black
+  Forge's Deep North parts). Its art is `..\ValheimAssets\Assets\Props\HelGate\ecr_helgate` and the swirl `Assets\Effects\ecr_helgate_swirl`.
+  - **Choosing the trial** (the user, 2026-10-23: "allow pressing E on hels portal to choose difficulty"): the hover
+    shows the trial the gate is set to, "[E] Trial: Swamp"; E steps to the next the world has open - the Meadows, each
+    biome up to the one whose boss the world killed last, then **Infinite**, then the Meadows again - and Shift + E back.
+    The Meadows is always open, so new players can fight too. The choice is the gate's (its ZDO), so everyone sees the
+    same, behind the ward's access; none chosen reads as the highest biome's. Walking through carries it into the hall.
   - A copy of the game's `portal_stone` (placement, health, stone wear, sounds, its teleport trigger's box) **without
     its pairing**: no tag, no link with any other portal; the game's portal lists never see it.
   - **Walking into the opening** jumps you to the hall's `arrive` point at once (no loading screen) and keeps the gate's
@@ -142,31 +148,33 @@ throne is used.
   is sent for them.
 - **Getting harder** (all fixed numbers in the code; the user, 2026-10-13: "the difficulty needs to scale up a bit. I am
   on wave 6 now still fighting neck, boar, greyling"):
-  - **First biome from the players' gear:** as Hel wakes, the core's owner reads the strongest gear among the players
-    alive in the arena with the raids' own gear check (`Raids/Heat/GearTier`: the best metal a player has ever held and
-    the armour worn, published by each player's machine in its player's ZDO): 0 (no metal: leather, troll, bone)
-    Meadows, 1 Bronze the Black Forest, 2 Iron the Swamp, 3 Silver the Mountains, 4 Black metal the Plains, 5 Mistlands
-    gear (carapace, eitr-weave) the Mistlands, 6 Flametal the Ashlands, 7 Bloodgold or a Deep North set the Deep North
-    (the raids still count that as 6). The trial begins in that biome and skips the earlier ones; it is kept in the
-    core's ZDO, so players who come later change nothing.
-  - **Biome by wave:** five waves a biome from the first: waves 1-4 its creatures, wave 5 its boss, then the next
-    biome. After the Deep North's boss it stays in the Deep North and only the stars and mutations keep rising.
+  - **Trials** (the user, 2026-10-23, replacing the first biome from the players' gear): the trial is the one the
+    player who wakes Hel brought from Helgrind, made one the world has open (a biome past the latest boss's reads as that
+    biome). It is kept in the core's ZDO, so players who come later change nothing.
+    - **A biome's trial:** that biome's five waves, 1-4 its creatures, 5 its boss; when the boss falls the trial is won
+      ("You won Hel's trial of the Swamp: 40 kills, 1,250 souls.") and ends, paying its reward as any end does. No wave
+      can be called past the boss's.
+    - **Infinite:** the highest open biome's five waves round after round, the boss each fifth, each round a **level**
+      (1 to 5, the HUD line's "Meadows, level 3"; after level 5 it goes on at level 5): every level past the first one
+      star more and a quarter more creatures, and from level 2 on 3 elites a wave, one more every 10 waves, at most 6
+      (the user: "infinite mode would need to scale up difficulty of medows creatures more and more. maybe like 5 levels
+      total").
   - **Creatures:** each biome's hostile land creatures, read at runtime from the game's own spawn lists (so other mods'
     creatures can appear too), with no bosses, no water-only creatures, nothing passive and nothing a player cannot hurt.
   - **How many:** 6, 8, 10 and 12 in a biome's four waves (alone), then its boss; a quarter more for each player
-    past the first.
+    past the first and for each Infinite level past the first.
   - **Elites** (the user, 2026-10-13: "bears/trolls should spawn at the later waves of this category, and we need to
     limit the amount"): a kind whose body ECR's own measure finds large (`Traits/BodySize`: a body 1 m or more wide or
     3.5 m or more long with 300 or more base health; modded creatures measured the same) or whose base health is over
-    2.5 x its biome's middle kind's. A biome's waves 1 and 2 have none, wave 3 at most 1, wave 4 at most 2; past the
-    Deep North's boss at most 3, one more every 10 waves past it, at most 6; each +1 for every two players past the
+    2.5 x its biome's middle kind's. A biome's waves 1 and 2 have none, wave 3 at most 1, wave 4 at most 2; from
+    Infinite's level 2 at most 3, one more every 10 waves past its first round, at most 6; each +1 for every two players past the
     first. An elite drawn past that is drawn again from the biome's other kinds, so the count stays; never two elites
     out of one archway in a wave. Bosses are apart. In this game (2026-10-13): the Meadows none; the Black Forest Bjorn,
     Troll; the Swamp Abomination, Writhan; the Mountains Stone Golem (and the Elite Creatures Pack's Rime Giant); the
     Plains Unbjorn, Fuling berserker, Lox; the Mistlands Gjall, Seeker Soldier; the Ashlands Fallen Valkyrie, Morgen,
     Asksvin; the Deep North Barka, Moose, Jotun warrior. The log's biome lines mark them "(elite)".
   - **Stars and mutations:** each creature rolls as ECR rolls any creature (`CreatureRoll.For`), plus extra stars
-    (+1 from the 3rd wave of each biome, +1 more for every 5 waves after the Deep North's boss, up to ECR's maximum)
+    (+1 from the 3rd wave of each round, +1 more for each Infinite level past the first, up to ECR's maximum)
     and a mutation chance of 15% in the first wave, 4% more each wave (at most 60%, from wave 13).
 - **Bosses:** every 5th wave is a boss wave instead: the biome's boss alone on the rune circle (Eikthyr, the Elder,
   Bonemass, Moder, Yagluth, the Queen, Fader, Kall Fimbulbringer; after Kall the cycle starts again from the trial's
@@ -329,8 +337,8 @@ Settled with the user on 2026-10-12:
 3. **Normal death:** the tombstone stays in the hall. (Replaced 2026-10-14: no tombstone, gear kept.)
 4. **One hall, always loaded** on every peer, at a fixed point (not an instance per gate), so jumps in are instant.
 5. **Rewards wait** for the user (see the top) - decided on 2026-10-13, decision 10.
-6. **The entrance is Helgrind** (decided 2026-10-12): a craftable endgame portal piece at the Black Forge (1 Sacrificial
-   Blood, 2 Frostcore, 10 Bloodgold, 5 Memorial Coal), without the game's tag pairing; the way back is the wall at the
+6. **The entrance is Helgrind** (decided 2026-10-12): a craftable portal piece, since 2026-10-23 at a workbench from 20
+   Wood, 20 Stone and Eikthyr's trophy (it was an endgame build at the Black Forge), without the game's tag pairing; the way back is the wall at the
    end of the hall's gate passage, to the gate you came in by. `elite arena` stays for admins.
 7. **Rounds with breaks** (the user, 2026-10-13, after playing): "a short waiting period between rounds ... a brief
    moment to prepare". The next wave comes only when the last is cleared, after 15 s (20 s after a boss); no early
@@ -351,8 +359,8 @@ Settled with the user on 2026-10-12:
 12. **Ready with F** (the user, 2026-10-13: "allow pressing F key to go to the next wave, multiple people... everyone
     must press"): every player alive in the arena presses F and the break ends at once; a second press undoes it; F is
     fixed, no setting.
-13. **Harder sooner, from the players' gear** (the user, 2026-10-13: "the difficulty needs to scale up a bit. I am on
-    wave 6 now still fighting neck, boar, greyling"): the trial starts at the biome of the strongest gear in the arena
+13. **Harder sooner, from the players' gear** (replaced 2026-10-23 by decision 18; the user, 2026-10-13: "the difficulty
+    needs to scale up a bit. I am on wave 6 now still fighting neck, boar, greyling"): the trial starts at the biome of the strongest gear in the arena
     (Bloodgold or a Deep North set the Deep North), five waves a biome (the fifth its boss), 6/8/10/12 creatures, +1 star
     from a biome's 3rd wave, mutations 15% +4% a wave; rewards follow the biomes fought, skill XP x waves / 10.
 14. **Calling the next wave with E at Hel** (the user, 2026-10-13): any player of the trial alive in the arena, one press,
@@ -367,6 +375,13 @@ Settled with the user on 2026-10-12:
     somewhere, where the only way it's loaded is if players teleport to it"): it moved from over the world's spawn to
     the far western ocean beyond the land, and is built on a machine only while its player (or, on a server, any
     player) is there.
+18. **The trial is chosen at Helgrind** (the user, 2026-10-23: "allow pressing E on hels portal to choose difficulty:
+    latest boss that you have killed on the map is the highest, but new peopel can do arena. medows, forest, swamp...
+    etc all the way up to infinite"): E on the gate picks a biome's trial (the Meadows always, each later biome once the
+    world killed its boss) or Infinite. My calls, to confirm: a biome's trial is its five waves and ends with its boss;
+    Infinite is the highest open biome's rounds, five levels (+1 star and +25% creatures a level), then level 5 for
+    good; the choice is the gate's, carried in by whoever walks through, and the player who wakes Hel decides; Helgrind
+    costs 20 Wood, 20 Stone and Eikthyr's trophy at a workbench.
 
 ---
 

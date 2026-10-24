@@ -5,8 +5,8 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Raids
 {
     /// <summary>
-    /// The Raiders Chest holds coins and nothing else (features/raids.md section 2), and nothing at all while its raid is
-    /// on (section 4.1: the chest stays locked until the raid ends). Its inventory is known by its name (the chest's
+    /// The Raiders Chest holds coins and trophies (<see cref="ChestTrophies"/>) and nothing else (features/raids.md section
+    /// 2), and nothing at all while its raid is on (section 4.1: the chest stays locked until the raid ends). Its inventory is known by its name (the chest's
     /// container name, one string comparison, so every other inventory in the game pays only that) and found back to its
     /// chest through a weak table filled as each chest wakes. The coin is the game's own Coins item, by its name token as
     /// the trader reads it. Counting and taking the stake happen on the chest's owner (<see cref="ChestSounding"/>).
@@ -28,8 +28,11 @@ namespace EliteCreaturesReborn.Raids
         public static bool IsChest(Inventory? inventory) =>
             inventory != null && string.Equals(inventory.GetName(), ChestPrefab.ContainerName);
 
-        /// <summary>Whether a Raiders Chest's inventory takes this item: a coin, while no raid is on.</summary>
-        public static bool Takes(Inventory chest, ItemDrop.ItemData? item) => IsCoin(item) && !Locked(chest);
+        /// <summary>Whether a Raiders Chest's inventory takes this item: a coin or a trophy, while no raid is on.</summary>
+        public static bool Takes(Inventory chest, ItemDrop.ItemData? item) => IsStake(item) && !Locked(chest);
+
+        /// <summary>A coin or a trophy: what a raid may be staked with.</summary>
+        public static bool IsStake(ItemDrop.ItemData? item) => IsCoin(item) || ChestTrophies.IsTrophy(item);
 
         /// <summary>Every coin in the inventory, whatever world level it was found at.</summary>
         public static int Count(Inventory inventory) => inventory.CountItems(Token, -1, false);
@@ -45,8 +48,8 @@ namespace EliteCreaturesReborn.Raids
         }
 
         /// <summary>
-        /// "Move everything" into a Raiders Chest moves its coins only, each through the game's own add (which stacks them
-        /// and saves). Whatever is not a coin stays where it was.
+        /// "Move everything" into a Raiders Chest moves its coins and trophies only, each through the game's own add (which
+        /// stacks them and saves). Whatever else stays where it was.
         /// </summary>
         public static void MoveCoins(Inventory chest, Inventory from)
         {
@@ -56,7 +59,7 @@ namespace EliteCreaturesReborn.Raids
             }
             foreach (ItemDrop.ItemData item in new List<ItemDrop.ItemData>(from.GetAllItems()))
             {
-                if (IsCoin(item))
+                if (IsStake(item))
                 {
                     chest.MoveItemToThis(from, item);
                 }

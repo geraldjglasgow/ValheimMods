@@ -101,6 +101,17 @@ namespace EliteCreaturesReborn.Raids
         /// <summary>The fair stake for a gear tier, clamped to 0-6.</summary>
         public static int FairStake(int tier) => FairStakes[Mathf.Clamp(tier, 0, MaxTier)];
 
+        /// <summary>A trophy staked in the Raiders Chest counts as this share of its tier's fair stake in coins (a boar's
+        /// 10, a troll's 20, a Fuling's 90, a Deep North creature's 180), a boss's <see cref="BossTrophyWorth"/> times that
+        /// (Eikthyr's 50). Its tier is its creature's biome (<see cref="Rendering.RenderTiers"/>), the Deep North counted as
+        /// the Ashlands' gear.</summary>
+        public const float TrophyWorthShare = 0.1f;
+        public const int BossTrophyWorth = 5;
+
+        /// <summary>One trophy's worth in coins toward the heat.</summary>
+        public static int TrophyWorth(int tier, bool boss) =>
+            Mathf.RoundToInt(FairStake(tier) * TrophyWorthShare) * (boss ? BossTrophyWorth : 1);
+
         /// <summary>The band a heat falls in.</summary>
         public static RaidBand BandFor(float heat)
         {

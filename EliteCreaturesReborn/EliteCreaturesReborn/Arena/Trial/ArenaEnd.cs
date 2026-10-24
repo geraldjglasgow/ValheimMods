@@ -15,8 +15,8 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// </summary>
     internal static class ArenaEnd
     {
-        /// <summary>The owner ends its trial.</summary>
-        public static void End(ArenaCore core, bool stopped)
+        /// <summary>The owner ends its trial; <paramref name="won"/> names a biome's trial its players won.</summary>
+        public static void End(ArenaCore core, bool stopped, string? won = null)
         {
             ZDO? zdo = core.Zdo;
             if (zdo == null || !core.IsOwner)
@@ -24,18 +24,28 @@ namespace EliteCreaturesReborn.Arena.Trial
                 return;
             }
             long trial = core.State.TrialId;
-            if (Close(zdo, stopped))
+            if (Close(zdo, stopped, won))
             {
                 ArenaFighters.VanishOwned(trial);
             }
         }
 
+        /// <summary>The owner: a biome's trial is over with its last wave, its boss's (<see cref="ArenaWaves.Rest"/>).
+        /// With the boss beaten every player of the trial first reads that they won it; then it ends as any trial does,
+        /// told and paid.</summary>
+        public static void Finish(ArenaCore core)
+        {
+            ArenaState state = core.State;
+            bool beaten = (state.BossesBeaten & ArenaState.BossBit(state.Wave)) != 0L;
+            End(core, stopped: false, beaten ? ArenaModes.Token(ArenaModes.Of(state.Span)) : null);
+        }
+
         /// <summary>
         /// The trial in the core's ZDO ends, written by whoever owns it now (the core's owner, or the server that has just
-        /// taken a core nobody was at): idle, nothing waiting, no portal, the end told and the reward paid. False when no
-        /// trial was running.
+        /// taken a core nobody was at): idle, nothing waiting, no portal, the end told (as won, naming the trial, when
+        /// <paramref name="won"/> is given) and the reward paid. False when no trial was running.
         /// </summary>
-        public static bool Close(ZDO zdo, bool stopped)
+        public static bool Close(ZDO zdo, bool stopped, string? won = null)
         {
             ArenaState state = new ArenaState(zdo);
             if (!state.Running)
@@ -48,21 +58,27 @@ namespace EliteCreaturesReborn.Arena.Trial
             state.RecallAt = 0L;
             state.Portals = 0;
             new ArenaQueue().Write(zdo);
-            TellEach(zdo, state);
+            TellEach(zdo, state, won);
             Rewards.RewardSend.Pay(zdo, state); // to every player of the trial, dead or alive
             Log.Info($"Hel's Trial {(stopped ? "stopped" : "ended")} at wave {state.Wave}: {state.Kills} kills, "
                 + $"{state.Souls} souls");
             return true;
         }
 
-        // Each player of the trial reads the end with the souls they earned in it.
-        private static void TellEach(ZDO zdo, ArenaState state)
+        // Each player of the trial reads the end with the souls they earned in it: "Hel's Trial ends at wave 12 ..." or
+        // "You won Hel's trial of the Swamp ...".
+        private static void TellEach(ZDO zdo, ArenaState state, string? won)
         {
             System.Collections.Generic.List<long> players = TrialPlayers.All(zdo);
             for (int i = 0; i < players.Count; i++)
             {
-                ArenaNet.TellOne(players[i], ArenaWords.Ended, Number(state.Wave), Number(state.Kills),
-                    Number(SoulWallets.Earned(zdo, players[i])));
+                string souls = Number(SoulWallets.Earned(zdo, players[i]));
+                if (won != null)
+                {
+                    ArenaNet.TellOne(players[i], ArenaWords.Won, won, Number(state.Kills), souls);
+                    continue;
+                }
+                ArenaNet.TellOne(players[i], ArenaWords.Ended, Number(state.Wave), Number(state.Kills), souls);
             }
         }
 

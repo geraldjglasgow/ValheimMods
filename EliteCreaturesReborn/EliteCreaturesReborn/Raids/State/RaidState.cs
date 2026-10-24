@@ -15,6 +15,7 @@ namespace EliteCreaturesReborn.Raids
         private static readonly int BandKey = RaidKeys.Band.GetStableHashCode();
         private static readonly int TierKey = RaidKeys.Tier.GetStableHashCode();
         private static readonly int StakeKey = RaidKeys.Stake.GetStableHashCode();
+        private static readonly int TrophiesKey = RaidKeys.Trophies.GetStableHashCode();
         private static readonly int CoinsBackKey = RaidKeys.CoinsBack.GetStableHashCode();
         private static readonly int CoinsUnspentKey = RaidKeys.CoinsUnspent.GetStableHashCode();
         private static readonly int DropsKey = RaidKeys.Drops.GetStableHashCode();
@@ -53,6 +54,9 @@ namespace EliteCreaturesReborn.Raids
         public int Tier { get => Zdo.GetInt(TierKey); set => Zdo.Set(TierKey, value); }
 
         public int Stake { get => Zdo.GetInt(StakeKey); set => Zdo.Set(StakeKey, value); }
+
+        /// <summary>The trophies staked, as <see cref="ChestTrophies"/> wrote them; given back on a win.</summary>
+        public string Trophies { get => Zdo.GetString(TrophiesKey); set => Zdo.Set(TrophiesKey, value); }
 
         public int CoinsBack { get => Zdo.GetInt(CoinsBackKey); set => Zdo.Set(CoinsBackKey, value); }
 
@@ -130,6 +134,7 @@ namespace EliteCreaturesReborn.Raids
             Band = heat.Band.Index;
             Tier = heat.Tier;
             Stake = stake;
+            Trophies = "";
             CoinsBack = heat.Band.CoinsFor(stake);
             CoinsUnspent = CoinsBack;
             Drops = heat.Drops;

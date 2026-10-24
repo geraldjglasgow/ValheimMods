@@ -45,8 +45,12 @@ namespace EliteCreaturesReborn.Arena.Trial
             set => Zdo.Set(ArenaKeys.StartBiomeHash, value);
         }
 
+        /// <summary>The biomes the trial fights; a core from before 2026-10-23 reads to the Deep North, endless.</summary>
+        public TrialSpan Span => new TrialSpan(StartBiome, Zdo.GetInt(ArenaKeys.LastBiomeHash, ArenaTable.Biomes - 1),
+            Zdo.GetBool(ArenaKeys.EndlessHash, true));
+
         /// <summary>The biome tier, 1-8, of a wave of this trial.</summary>
-        public int TierOf(int wave) => ArenaTable.BiomeNumber(StartBiome, wave);
+        public int TierOf(int wave) => ArenaTable.BiomeNumber(Span, wave);
 
         /// <summary>The last wave cleared or swept: its creatures, and any of an earlier wave, vanish.</summary>
         public int Swept { get => Zdo.GetInt(ArenaKeys.SweptHash); set => Zdo.Set(ArenaKeys.SweptHash, value); }
@@ -119,12 +123,14 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// <summary>The running trial's id in the ZDO; 0 when none runs.</summary>
         public static long RunningTrial(ZDO? zdo) => IsRunning(zdo) ? zdo!.GetLong(ArenaKeys.TrialHash) : 0L;
 
-        /// <summary>The owner, as Hel wakes: a new trial with its countdown, from biome <paramref name="startBiome"/>.
+        /// <summary>The owner, as Hel wakes: a new trial with its countdown, over the biomes of <paramref name="span"/>.
         /// Everything the last one left is cleared.</summary>
-        public void Begin(long now, int startBiome)
+        public void Begin(long now, TrialSpan span)
         {
             TrialId = now;
-            StartBiome = startBiome;
+            StartBiome = span.First;
+            Zdo.Set(ArenaKeys.LastBiomeHash, span.Last);
+            Zdo.Set(ArenaKeys.EndlessHash, span.Endless);
             Wave = 0;
             Swept = 0;
             Done = 0;

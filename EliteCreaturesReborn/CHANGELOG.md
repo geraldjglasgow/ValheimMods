@@ -1,5 +1,15 @@
 # Changelog
 
+## 3.34.0
+
+- Rendering Table: a decorated model of its own, half the workbench's width and as tall.
+- Metal on the mod's pieces (Rendering Table, Helgrind, Hel's Anvils) now shines.
+- Corrodent is stronger: each hit that gets through your armour also takes 4% of the piece (new `wear` field).
+- Hel's Arena: E on Helgrind picks the trial: any biome whose boss your world has killed, or Infinite.
+- Hel's Arena: a biome's trial is won by beating its boss; Infinite climbs five levels, each harder.
+- Helgrind is cheaper: 20 wood, 20 stone and an Eikthyr trophy, at a workbench.
+- Raids: the Raiders Chest takes trophies as a stake too; a win gives them back multiplied.
+
 ## 3.33.1
 
 - Russian translation, used while the game's language is Russian.

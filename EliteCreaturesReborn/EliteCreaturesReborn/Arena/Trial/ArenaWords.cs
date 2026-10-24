@@ -49,6 +49,8 @@ namespace EliteCreaturesReborn.Arena.Trial
         public const string RecallLine = "ecr_arena_recall_line";
         public const string RewardNow = "ecr_arena_reward_now";
         public const string RewardNone = "ecr_arena_reward_none";
+        public const string LevelLine = "ecr_arena_level_line";
+        public const string Won = "ecr_arena_won";
 
         /// <summary>A message from the trial's owner (<see cref="ArenaNet"/>), in this player's language, in the centre;
         /// the end also in the chat window. A boss's name arrives as its name key ("$enemy_dragon") and is read here.</summary>
@@ -56,7 +58,8 @@ namespace EliteCreaturesReborn.Arena.Trial
         {
             string text = LangWire.Read(message);
             Show(text);
-            if (message.StartsWith(LangWire.Message(Ended, ""), StringComparison.Ordinal))
+            if (message.StartsWith(LangWire.Message(Ended, ""), StringComparison.Ordinal)
+                || message.StartsWith(LangWire.Message(Won, ""), StringComparison.Ordinal))
             {
                 ToChat(text);
             }
@@ -105,6 +108,9 @@ namespace EliteCreaturesReborn.Arena.Trial
         /// this player has voted.</summary>
         public static string HudReady(string line, bool mine, int ready, int players) => Lang.Format(LineReady, line,
             Lang.Format(mine ? ReadyMine : ReadyHint, ready.ToString(), players.ToString()));
+
+        /// <summary>The biome on the Infinite trial's HUD line, with its level: "Meadows, level 3".</summary>
+        public static string HudLevel(string biome, int level) => Lang.Format(LevelLine, biome, level.ToString());
 
         /// <summary>The HUD line during the countdown.</summary>
         public static string HudCountdown(string biome, string clock) => Lang.Format(Countdown, biome, clock);

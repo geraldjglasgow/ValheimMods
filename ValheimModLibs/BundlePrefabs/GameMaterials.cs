@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace BundlePrefabs;
@@ -10,6 +11,13 @@ namespace BundlePrefabs;
 /// </summary>
 public static class GameMaterials
 {
+	// The building shader's metal mask and its gloss (Custom/Piece; the creature and item shader's are
+	// _MetallicGlossMap and _MetalGloss).
+	private const string PieceMetalMap = "_MetallicTex";
+	private const string PieceMetalGloss = "_MetallicAlphaGloss";
+
+	private static readonly Dictionary<Texture, Texture2D> GlossyMasks = new Dictionary<Texture, Texture2D>();
+
 	/// <summary>
 	/// A copy of the material on the prefab's first mesh renderer (or the named child's), or null. Particle, line and trail
 	/// renderers are passed over: most game items keep their sparkle on the root (a ParticleSystemRenderer on
@@ -75,7 +83,8 @@ public static class GameMaterials
 	/// A dressed material (<see cref="Dress"/>) without the game maps it kept that are laid out for the game model's
 	/// UVs, not the workshop model's: metal and gloss, glow, style variants. No metal, the given gloss, no glow, no
 	/// styles (a material with styles on, such as a painted shield's, draws its emptied style map as plain white). The
-	/// game's creature and item shader (<c>Custom/Creature</c>) has all of these; any it lacks are skipped.
+	/// game's creature and item shader (<c>Custom/Creature</c>) has all of these; the building shader (<c>Custom/Piece</c>)
+	/// keeps its metal in <c>_MetallicTex</c>, cleared too; any a shader lacks are skipped.
 	/// </summary>
 	public static Material Plain(Material material, float gloss)
 	{
@@ -87,8 +96,14 @@ public static class GameMaterials
 				material.SetTexture(map, null);
 			}
 		}
+		if (material.HasProperty(PieceMetalMap))
+		{
+			material.SetTexture(PieceMetalMap, null);
+			material.DisableKeyword("_METALLICGLOSSMAP");
+		}
 		SetFloat(material, "_Metallic", 0f);
 		SetFloat(material, "_MetalGloss", 0f);
+		SetFloat(material, PieceMetalGloss, 0f);
 		SetFloat(material, "_Glossiness", gloss);
 		if (material.HasProperty("_EmissionColor"))
 		{
@@ -118,21 +133,82 @@ public static class GameMaterials
 	/// A plain material (<see cref="Plain"/>) given back the shine of metal from the workshop model's own metal mask:
 	/// the placeholder's <c>_MetallicGlossMap</c> (red 1 on metal texels, laid out for the model's UVs), metallic on and
 	/// <paramref name="metalGloss"/> smoothness on the metal, as the game's metal gear has (the Silver Shield 0.65, the
-	/// Flametal Shield 0.77). A placeholder without a mask leaves the material matte.
+	/// Flametal Shield 0.77). The creature and item shader takes the mask as it is; the building shader takes it as
+	/// <see cref="PieceMetal"/> says. A placeholder without a mask leaves the material matte.
 	/// </summary>
 	public static Material Metal(Material material, Material placeholder, float metalGloss)
 	{
 		Texture? mask = placeholder.HasProperty("_MetallicGlossMap") ? placeholder.GetTexture("_MetallicGlossMap") : null;
-		if (mask == null || !material.HasProperty("_MetallicGlossMap"))
+		if (mask == null)
 		{
 			return material;
 		}
+		if (material.HasProperty("_MetallicGlossMap"))
+		{
+			return ItemMetal(material, mask, metalGloss);
+		}
+		return material.HasProperty(PieceMetalMap) ? PieceMetal(material, mask, metalGloss) : material;
+	}
+
+	private static Material ItemMetal(Material material, Texture mask, float metalGloss)
+	{
 		material.SetTexture("_MetallicGlossMap", mask);
 		material.EnableKeyword("_METALLICGLOSSMAP");
 		SetFloat(material, "_Metallic", 1f);
 		SetFloat(material, "_MetalGloss", metalGloss);
 		SetFloat(material, "_UseGlossmap", 0f);
 		return material;
+	}
+
+	/// <summary>
+	/// Metal on the game's building shader (<c>Custom/Piece</c>), which has no <c>_MetallicGlossMap</c>: it reads metal
+	/// from <c>_MetallicTex</c> and the metal's gloss from that map's alpha times <c>_MetallicAlphaGloss</c>, as the
+	/// reinforced chest has it (<c>ironchest_m</c>, 0.682; found 2026-10-22: until then no workshop piece's metal shone).
+	/// The workshop's mask is opaque everywhere, so a copy is made with its alpha set to its red: only metal texels gloss
+	/// and the rest keeps the plain gloss. Nothing on a dedicated server, which draws nothing.
+	/// </summary>
+	private static Material PieceMetal(Material material, Texture mask, float metalGloss)
+	{
+		Texture2D? glossy = GlossOnMetal(mask);
+		if (glossy == null)
+		{
+			return material;
+		}
+		material.SetTexture(PieceMetalMap, glossy);
+		material.EnableKeyword("_METALLICGLOSSMAP");
+		SetFloat(material, "_Metallic", 1f);
+		SetFloat(material, PieceMetalGloss, metalGloss);
+		if (material.HasProperty("_MetalColor"))
+		{
+			material.SetColor("_MetalColor", Color.white);
+		}
+		return material;
+	}
+
+	// One copy per mask: the pieces of a set share their atlas.
+	private static Texture2D? GlossOnMetal(Texture mask)
+	{
+		if (GlossyMasks.TryGetValue(mask, out Texture2D made))
+		{
+			return made;
+		}
+		Color32[]? pixels = TexturePixels.ReadLinear(mask, out int width, out int height);
+		if (pixels == null)
+		{
+			return null;
+		}
+		for (int i = 0; i < pixels.Length; i++)
+		{
+			pixels[i].a = pixels[i].r;
+		}
+		var copy = new Texture2D(width, height, TextureFormat.RGBA32, false, true)
+		{
+			name = mask.name + "_piece", filterMode = FilterMode.Point, wrapMode = mask.wrapMode,
+		};
+		copy.SetPixels32(pixels);
+		copy.Apply(false, true);
+		GlossyMasks[mask] = copy;
+		return copy;
 	}
 
 	private static void SetFloat(Material material, string name, float value)

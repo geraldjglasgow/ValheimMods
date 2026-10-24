@@ -49,7 +49,7 @@ namespace EliteCreaturesReborn.Compendium
         private static string Last(Mutation m, BiomeRules r, CreatureTraits t) => m switch
         {
             Mutation.Mudbound => Mud(r, t),
-            Mutation.Corrodent => Says(m, N(r, m, Fields.Durability)),
+            Mutation.Corrodent => Says(m, N(r, m, Fields.Durability), N(r, m, Fields.Wear)),
             Mutation.Cloning => Cloning(r),
             Mutation.Piercing => Says(m, (Piercing.Share(r, t) * 100f).ToString("0")),
             Mutation.Howling => Says(m, HowlBehaviour.MaxCalled, HowlBehaviour.Reach.ToString("0"),

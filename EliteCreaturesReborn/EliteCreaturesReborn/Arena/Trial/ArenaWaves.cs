@@ -52,14 +52,15 @@ namespace EliteCreaturesReborn.Arena.Trial
             state.WaveSize = state.Left;
             state.RecallAt = 0L;
             OpenArchways(core);
-            Heightmap.Biome biome = ArenaCreatures.Biome(ArenaTable.BiomeIndex(state.StartBiome, wave));
+            Heightmap.Biome biome = ArenaCreatures.Biome(ArenaTable.BiomeIndex(state.Span, wave));
             Log.Info($"Hel's Trial: wave {wave} ({biome}), {planned} coming, {players} player(s) in the hall");
         }
 
         /// <summary>Every wave fighting is over: <paramref name="swept"/> when the time ran out, or Hel recalled the
         /// stragglers, with creatures still standing. They vanish (those this machine owns at once, the rest on their
         /// owners as they read the swept wave), the break begins, and the players read that wave <paramref name="told"/>
-        /// (the last to clear) is cleared; after the trial's first, that Hel pays when the trial ends.</summary>
+        /// (the last to clear) is cleared; after the trial's first, that Hel pays when the trial ends. After a biome's
+        /// trial's last wave, its boss's, the trial ends instead (<see cref="ArenaEnd.Finish"/>).</summary>
         public static void Rest(ArenaCore core, long now, bool swept, int told)
         {
             ZDO zdo = core.Zdo!;
@@ -67,6 +68,11 @@ namespace EliteCreaturesReborn.Arena.Trial
             float rest = ArenaTable.BreakAfter(told);
             string words = state.Swept == 0 ? ArenaWords.ClearedFirst : ArenaWords.Cleared;
             state.Swept = state.Wave;
+            if (state.Span.IsFinal(state.Wave))
+            {
+                ArenaEnd.Finish(core);
+                return;
+            }
             state.RecallAt = 0L;
             state.Done = 0;
             new ArenaQueue().Write(zdo);
@@ -82,16 +88,17 @@ namespace EliteCreaturesReborn.Arena.Trial
 
         private static int PlanWave(ArenaState state, ArenaQueue queue, int wave, int players)
         {
-            List<ArenaCreatures.Kind> kinds = ArenaCreatures.For(ArenaTable.BiomeIndex(state.StartBiome, wave));
+            TrialSpan span = state.Span;
+            List<ArenaCreatures.Kind> kinds = ArenaCreatures.For(ArenaTable.BiomeIndex(span, wave));
             if (kinds.Count == 0)
             {
                 return 0;
             }
-            int count = ArenaTable.CountFor(wave, players);
+            int count = ArenaTable.CountFor(span, wave, players);
             int archways = ArenaSpots.ArchwayCount();
             int first = Mathf.Abs(state.SpawnTurn) % archways;
             Picked.Clear();
-            Pick(kinds, count, first, archways, ArenaTable.EliteCap(state.StartBiome, wave, players));
+            Pick(kinds, count, first, archways, ArenaTable.EliteCap(span, wave, players));
             foreach (KeyValuePair<long, int> pick in Picked)
             {
                 queue.Add((int)(pick.Key >> 8), wave, (int)(pick.Key & 0xFF), pick.Value);
@@ -123,7 +130,7 @@ namespace EliteCreaturesReborn.Arena.Trial
 
         private static int PlanBoss(ZDO zdo, ArenaQueue queue, int wave)
         {
-            string name = ArenaBosses.For(new ArenaState(zdo).StartBiome, wave);
+            string name = ArenaBosses.For(new ArenaState(zdo).Span, wave);
             GameObject? prefab = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(name) : null;
             Character? boss = prefab != null ? prefab.GetComponent<Character>() : null;
             if (boss == null)

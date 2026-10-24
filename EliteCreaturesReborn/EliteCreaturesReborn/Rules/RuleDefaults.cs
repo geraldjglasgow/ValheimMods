@@ -176,7 +176,7 @@ namespace EliteCreaturesReborn.Rules
                   [Fields.PatchRadius] = 1.5f, [Fields.PatchSpacing] = 1.5f, [Fields.Grip] = 5f, [Fields.Slow] = 15f };
             table[Mutation.Mudbound] = new Dictionary<string, float>
                 { [Fields.TrailLife] = 10f, [Fields.PatchRadius] = 1.5f, [Fields.PatchSpacing] = 1.5f, [Fields.Slow] = 40f };
-            table[Mutation.Corrodent] = new Dictionary<string, float> { [Fields.Durability] = 3f };
+            table[Mutation.Corrodent] = new Dictionary<string, float> { [Fields.Durability] = 3f, [Fields.Wear] = 4f };
             table[Mutation.Cloning] = new Dictionary<string, float>
                 { [Fields.Times] = 1f, [Fields.Range] = 12f, [Fields.DecoyLife] = 20f, [Fields.Cooldown] = 30f };
         }

@@ -60,7 +60,7 @@ defaults:
     Screecher:   { threshold: 15, radius: 20, mute time: 4, cooldown: 15, shriek sound: sfx_fallenvalkyrie_screech }
     Frostbound:  { aura radius: 6, stamina regen: 50, frost heal: 100, aura effect: vfx_Frost, trail life: 10, patch radius: 1.5, patch spacing: 1.5, grip: 5, slow: 15, trail effect: vfx_blob_frost_death }
     Mudbound:    { trail life: 10, patch radius: 1.5, patch spacing: 1.5, slow: 40, trail effect: vfx_blobtar_death }
-    Corrodent:   { durability: 3 }
+    Corrodent:   { durability: 3, wear: 4 }
     Cloning:     { times: 1, range: 12, decoy life: 20, cooldown: 30, reveal effect: vfx_spawn_small, reveal sound: sfx_spawn, vanish effect: vfx_odin_despawn }
 
 " + WorldRuleText.Block + BossRuleText.Block + @"# mode: Vanilla (drops untouched), Scaled (quantities times the star drops line),

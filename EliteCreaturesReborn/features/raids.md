@@ -38,12 +38,15 @@ From `assembly_valheim.dll` (RandEventSystem, RandomEvent, SpawnSystem, MonsterA
 A build piece with its **own model** (made in `../ValheimAssets`, never a copy of a game piece): an iron-bound chest with
 a war horn on it, which sounds when a raid starts. Built near a workbench, in the hammer's Misc tab.
 
-- **It holds only coins.** Open it and put gold in, like any chest.
+- **It holds only coins and trophies.** Open it and put gold or trophies in, like any chest (trophies since 2026-10-23,
+  the user: "make it so you can pay trophies for the raiders chest too, so you can earn trophies"). A trophy is any the
+  Rendering Table takes; it counts toward the heat as a tenth of its tier's fair stake in coins (its tier its
+  creature's biome; a boss's five times that).
 - **Hover:**
 
   ```
   Raiders Chest
-  1,000 coins - Deadly raid (coins back x2, drops x5)
+  1,000 coins and 12 trophies - Deadly raid (stake back x2, drops x5)
   [E] Open   [Shift + E] Sound the raid
   ```
 
@@ -89,7 +92,9 @@ back and five times the raiders' loot. The numbers are judgement calls, here to 
 
 ## The gold
 
-- **The raid costs it.** Sounding the raid takes every coin out of the chest.
+- **The raid costs it.** Sounding the raid takes every coin and trophy out of the chest.
+- **Trophies come back only with a win**, into the Raiders Chest, each kind times the heat's coins back (rounded, never
+  fewer; what does not fit falls beside it). Any other end loses them, as it loses the coins.
 - **The raiders carry it.** The stake times the heat's coins back is shared across every raider of every wave, the
   Warlord carrying a quarter. Each drops its share when it dies, however it dies (a player, a trap, another creature, a
   fall), except when the raid is stopped. Splintering copies carry none.

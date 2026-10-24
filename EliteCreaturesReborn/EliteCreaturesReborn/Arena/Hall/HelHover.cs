@@ -5,7 +5,8 @@ namespace EliteCreaturesReborn.Arena.Hall
 {
     /// <summary>
     /// Looking at Hel (features/arena.md section 1, "Hel"), clients only: her hover shows "Hel" and, while no trial runs
-    /// and the local player stands in the hall, "[E] Begin the trial"; E then asks the trial to start
+    /// and the local player stands in the hall, "[E] Begin the trial: Swamp" (the trial they brought from Helgrind); E then
+    /// asks the trial to start
     /// (<see cref="ArenaTrial.RequestStart"/>, which sends it to the arena core's owner). During a wave whose creatures
     /// have all come out, "[E] Call the next wave" (<see cref="ArenaTrial.RequestNextWave"/>). While a trial runs, what it
     /// would pay this player now: "Current rewards: ..." (<see cref="Rewards.RewardPreview"/>). Her box collider is on this
@@ -15,7 +16,7 @@ namespace EliteCreaturesReborn.Arena.Hall
     /// </summary>
     internal sealed class HelHover : MonoBehaviour, Hoverable, Interactable
     {
-        private const string BeginLine = "\n[<color=yellow><b>$KEY_Use</b></color>] $" + HallWords.Begin;
+        private const string UseKey = "\n[<color=yellow><b>$KEY_Use</b></color>] ";
         private const string CallLine = "\n[<color=yellow><b>$KEY_Use</b></color>] $" + ArenaTrial.CallNextWord;
         private const float Every = 0.25f;
         private const float Reach = 3f;
@@ -32,7 +33,8 @@ namespace EliteCreaturesReborn.Arena.Hall
             _builtAt = Time.time;
             TrialView.Refresh();
             string name = Lang.Get(HallWords.Hel);
-            _text = CanBegin(TrialView.Running) ? name + Localization.instance.Localize(BeginLine)
+            _text = CanBegin(TrialView.Running)
+                ? name + Localization.instance.Localize(UseKey) + Lang.Format(HallWords.Begin, ArenaTrial.ChosenName())
                 : ArenaTrial.CanCallNext ? name + Localization.instance.Localize(CallLine) : name;
             string rewards = TrialView.Running ? Rewards.RewardPreview.Line() : "";
             _text += rewards.Length > 0 ? "\n" + rewards : "";

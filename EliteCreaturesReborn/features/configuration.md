@@ -28,7 +28,7 @@ where a new setting goes.
 the game and so are held by the server like the rule file (a Charter clause each: while the server binds its players
 through `lock to server`, the server's value holds for everyone): `11 - Raids` / `Raiders Chest` (on; `raids.md`) and
 `12 - Arena` / `Arena` (off; `arena.md`), which builds Hel's hall over the world centre on every peer, lets Hel's
-Trial be run, and puts Helgrind, the gate into the hall, in the hammer (built at the Black Forge). A change to either
+Trial be run, and puts Helgrind, the gate into the hall, in the hammer (built at a workbench). A change to either
 applies at once, without a restart: the hall builds or goes and Helgrind enters or leaves the hammer as the value
 arrives.
 

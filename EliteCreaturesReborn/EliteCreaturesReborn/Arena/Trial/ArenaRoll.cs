@@ -12,22 +12,22 @@ namespace EliteCreaturesReborn.Arena.Trial
     /// any creature of the wave's biome (<see cref="CreatureRoll.For"/>, through the raids' roll,
     /// <see cref="RaiderTraits"/>), then takes the wave's extra stars and, at the wave's mutation chance, a mutation when
     /// it rolled none - never Gilded, whose worth is a purse an arena creature does not drop and who runs from every
-    /// player. A boss rolls its stars and aspects as any boss does, with the extra stars past the Deep North's boss. The roll is forced
+    /// player. A boss rolls its stars and aspects as any boss does, with the extra stars of the Infinite trial's levels. The roll is forced
     /// on the creature's controller, so it is written as its one roll; up to ECR's maximum of stars.
     /// </summary>
     internal static class ArenaRoll
     {
         private const int NoGilded = 1 << (int)Mutation.Gilded;
 
-        public static void Roll(Character creature, int start, int wave)
+        public static void Roll(Character creature, TrialSpan span, int wave)
         {
-            Heightmap.Biome biome = ArenaCreatures.Biome(ArenaTable.BiomeIndex(start, wave));
+            Heightmap.Biome biome = ArenaCreatures.Biome(ArenaTable.BiomeIndex(span, wave));
             if (creature.IsBoss())
             {
-                RollBoss(creature, biome, ArenaTable.PastLastBiome(start, wave));
+                RollBoss(creature, biome, ArenaTable.PastLastBiome(span, wave));
                 return;
             }
-            int stars = ArenaTable.ExtraStars(start, wave);
+            int stars = ArenaTable.ExtraStars(span, wave);
             RaiderTraits.Roll(creature, biome, stars, ArenaTable.MutationChance(wave), NoGilded);
         }
 

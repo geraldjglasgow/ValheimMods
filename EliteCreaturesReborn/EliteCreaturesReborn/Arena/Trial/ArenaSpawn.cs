@@ -103,7 +103,7 @@ namespace EliteCreaturesReborn.Arena.Trial
             try
             {
                 ArenaTag.Write(zdo, state.TrialId, boss, state.TierOf(wave), wave);
-                ArenaRoll.Roll(body, state.StartBiome, wave);
+                ArenaRoll.Roll(body, state.Span, wave);
                 ArenaHunt.Begin(body);
                 made.AddComponent<ArenaFighter>();
             }

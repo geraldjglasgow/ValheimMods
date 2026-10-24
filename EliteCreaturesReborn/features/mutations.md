@@ -717,6 +717,9 @@ Added with the user on 2026-10-04: "attacks shatter target player armor durabili
 - Armour a player wears loses durability `durability` (3) times as fast under its hits: the game wears one worn piece
   by what got through the armour (`Player.DamageArmorDurability`), and Corrodent multiplies what was lost. Never
   below 0.
+- On top, each hit that gets through takes `wear` (4) percent of that piece's maximum durability (2026-10-23, after a
+  player found it too weak: the multiplied wear is small against good armour). A hit fully blocked wears no armour in
+  the game, so it takes none.
 - Only its own hits: melee, projectiles it throws or shoots, area attacks. Poison and burning ticks never wear armour
   in the game, and still don't. Shields are not armour: their block wear is the game's.
 - The player sees it: at most every 8 seconds a line with the piece's icon - "Your Bronze helmet corrodes (42% left)".
@@ -1733,7 +1736,7 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
       green "+N frost", never slows it; a killing frost blow heals nothing
 - [ ] Frostbound and Mudbound trails: patches every 1.5 m walked, 10 s each, the same on every client, outliving the
       creature; ice slides (grip 5) and slows 15%, mud slows 40% and lingers 1 s; none from a tame; nothing airborne
-- [ ] Corrodent: armour wears three times as fast under its hits, the throttled corrosion line; shields as usual
+- [ ] Corrodent: armour wears three times as fast under its hits plus 4% of the piece per hit that gets through, none on a full block; the throttled corrosion line; shields as usual
 - [ ] Cloning: decoy swap at 12 m unseen; decoy blows do nothing; the real one's landed blow (or the decoy's death, or
       20 s) shows it and the decoy vanishes; a hand-over or unload mid-trick shows it; never from a tame
 - [ ] Bats are never Mad or Cloaked on a fresh rule file
@@ -1784,3 +1787,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-10-04 | Frostbound, Mudbound, Corrodent and Cloning added at the user's request (15-18; colours pale ice, mud, rust, lavender), with their "in full" sections; the shipped Bat entry (never Mad or Cloaked). Built by parallel agents, untested in game. | - |
 | 2026-10-08 | Piercing, Howling, Binding and Flamebound added at the user's request (19-22; colours crimson, teal, olive, flame), with their "in full" section; Flamebound on by default, the other three off (`OnByDefault`); no power fields. Built, untested in game. | - |
 | 2026-10-17 | The shipped Gjall entry (never Cloaked), after a player's report that a Cloaked Gjall cannot be seen from the ground. Built, untested in game. | - |
+| 2026-10-23 | Corrodent's `wear` (4): each hit that gets through also takes 4% of the piece's maximum durability, after a player found it too weak. Built, untested in game. | - |

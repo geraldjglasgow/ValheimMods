@@ -27,7 +27,7 @@ namespace EliteCreaturesReborn.Arena.Rewards
             Idols(list, state, cleared, beaten);
             if (CraftingLink.Present)
             {
-                RewardRunes.Add(list, state.StartBiome, cleared, beaten);
+                RewardRunes.Add(list, state.Span, cleared, beaten);
             }
             return list;
         }

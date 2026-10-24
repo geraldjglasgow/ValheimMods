@@ -16,9 +16,8 @@ namespace EliteCreaturesReborn.Raids
     /// <item>4 - metal Black metal; armour padded, lox and vilebone (the Plains)</item>
     /// <item>5 - Mistlands: carapace and refined eitr held; armour carapace and eitr-weave (Mage)</item>
     /// <item>6 - Flametal (new and old) held; armour flametal, Ask, Embla (Ashlands Mage)</item>
-    /// <item>7 - the Deep North: Bloodgold (<c>Gold</c>) held, or one of its three sets worn. Hel's Trial starts there
-    /// (Arena/Trial/ArenaPower); the raids' table does not reach beyond Flametal, so for a raid it counts as 6
-    /// (<see cref="GearTier.Of"/>)</item>
+    /// <item>7 - the Deep North: Bloodgold (<c>Gold</c>) held, or one of its three sets worn; the raids' table does not
+    /// reach beyond Flametal, so for a raid it counts as 6 (<see cref="GearTier.Of"/>)</item>
     /// </list>
     /// Built from ObjectDB the first time it is asked, and again when the game builds a new ObjectDB (a new world).
     /// </summary>

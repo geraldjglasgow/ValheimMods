@@ -21,10 +21,10 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [*]Compendium: pages in the game's compendium on the difficulty, stars, mutations and boss aspects, with your server's numbers.
 [*]Death recap: [b]F10[/b] replays the seconds before each death, hit by hit.
 [*]Respawning: cleared camps, dungeons and dungeon chests can refill (off by default).
-[*]Raids: stake gold in the Raiders Chest to call a raid and win it back with more (below).
+[*]Raids: stake gold or trophies in the Raiders Chest to call a raid and win them back with more (below).
 [*]Rendering Table: a narrow bench that renders creature trophies into ores or ingredients of their biome, and a boss trophy into a Forge idol of its tier; the compendium lists what each biome gives.
 [*]Horde (off by default): more creatures in the wild, each weaker; the extra creatures pay no extra loot.
-[*]Hel's Arena (off by default): an outdoor arena 130 m across, reached through Helgrind, Hel's gate, under a cavern roof and ringed by a black lake that kills; three Bat-fiends guard it on the first visit and drop runes. Endless waves starting at your gear's biome and a boss every fifth; souls for every kill, spent at Hel's Anvil to mend your gear between waves; rewarded with Forge of Potential idols, coins, skill XP and (with EliteCrafting) runes and essence by how far you get. Subject to change without warning: it works and is tested, but its final shape is still being decided.
+[*]Hel's Arena (off by default): an outdoor arena 130 m across, reached through Helgrind, Hel's gate, under a cavern roof and ringed by a black lake that kills; three Bat-fiends guard it on the first visit and drop runes. Built from wood, stone and Eikthyr's trophy; press E on it to pick a biome's trial (up to your world's latest boss) or Infinite. Waves of the biome's dead and a boss every fifth; souls for every kill, spent at Hel's Anvil to mend your gear between waves; rewarded with Forge of Potential idols, coins, skill XP and (with EliteCrafting) runes and essence by how far you get. Subject to change without warning: it works and is tested, but its final shape is still being decided.
 [*]Works with PackPanel, GrindstoneSkills' Husbandry and Elite Creatures Pack.
 [/list]
 
@@ -47,7 +47,7 @@ Creatures spawn with more stars and mutations, traits that change how a fight go
 [*]Screecher: a big hit makes it shriek, deafening you and stopping your magic.
 [*]Frostbound: a chilling aura and slippery ice trails; frost heals it.
 [*]Mudbound: leaves slowing mud where it walks.
-[*]Corrodent: wears your armour down three times as fast.
+[*]Corrodent: wears your armour down three times as fast, plus 4% of the piece per hit.
 [*]Cloning: leaves a harmless decoy and fights on unseen.
 [*]Flamebound: leaves burning ground that sets you on fire.
 [*]Piercing, Howling and Binding (off by default): hits ignore 15% of your armour; calls nearby creatures to fight you; leaves roots that hold you for a second.
@@ -77,10 +77,10 @@ The altar shows the aspect before you offer and shifts every 15 seconds; press E
 [/list]
 
 [size=4][b]Raids: the Raiders Chest[/b][/size]
-The game's own raids still come as usual. The Raiders Chest calls one on your own base, for gold.
+The game's own raids still come as usual. The Raiders Chest calls one on your own base, for gold or trophies.
 [list]
-[*][b]Build it:[/b] hammer, Misc tab, at a workbench: 10 Wood, 4 Leather Scraps, 1 Hard Antler. It holds only coins.
-[*][b]Sound the raid:[/b] fill it with coins and press [b]Shift + E[/b]. Its hover shows what the coins would make of a raid now, for example "1,000 coins - Deadly raid (coins back x2, drops x5)".
+[*][b]Build it:[/b] hammer, Misc tab, at a workbench: 10 Wood, 4 Leather Scraps, 1 Hard Antler. It holds only coins and trophies.
+[*][b]Sound the raid:[/b] fill it with coins or trophies and press [b]Shift + E[/b]. Its hover shows what they would make of a raid now, for example "1,000 coins and 12 trophies - Deadly raid (stake back x2, drops x5)". A trophy counts as coins by its biome (a boar's 10 ... a Deep North creature's 180, a boss's five times that); won raids put the trophies back in the chest, times the coins back.
 [*][b]Where and when:[/b] the chest must stand in a base (3 base pieces such as a workbench, fire or bed within 20 m). One raid a day per chest (chests within 100 m share the wait), and none within 200 m of another raid, the game's or a chest's.
 [*][b]Gold against gear:[/b] sounding takes every coin in the chest. The raid's heat is those coins against a fair stake for the strongest player within 96 m (the best metal they have ever held or the armour they wear, whichever is higher): 100 coins for leather and bone, 200 bronze, 400 iron, 600 silver, 900 black metal, 1,300 Mistlands, 1,800 Flametal.
 [/list]

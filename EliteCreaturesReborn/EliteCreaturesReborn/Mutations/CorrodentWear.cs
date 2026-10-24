@@ -8,14 +8,15 @@ using UnityEngine;
 namespace EliteCreaturesReborn.Mutations
 {
     /// <summary>
-    /// Corrodent: a player's armour wears `durability` times as fast under its hits. The game wears one worn armour piece
-    /// by what a hit dealt through the armour, on the hit player's own machine, where their gear lives
-    /// (<c>CorrodentPatch</c>): before it does, the durability of every worn piece is noted, and after, whatever was lost
-    /// is lost `durability` times over, never below 0. Only its own hits count - its melee, its thrown and shot
-    /// projectiles, its area attacks - told apart by the attacker the hit carries, which the hit player's machine has
-    /// loaded and reads the traits of from the creature's ZDO. Shields are not armour and wear as usual. The player sees
-    /// it: at most every few seconds a line names the piece that corroded and how much of it is left. Event-shaped: no
-    /// component.
+    /// Corrodent: a player's armour wears `durability` times as fast under its hits, and each hit that gets through takes
+    /// a further `wear` percent of the piece's maximum durability. The game wears one worn armour piece by what a hit dealt
+    /// through the armour, on the hit player's own machine, where their gear lives (<c>CorrodentPatch</c>): before it does,
+    /// the durability of every worn piece is noted, and after, whatever was lost is lost `durability` times over plus the
+    /// fixed share, never below 0. A hit fully blocked wears no armour, so it adds nothing. Only its own hits count - its
+    /// melee, its thrown and shot projectiles, its area attacks - told apart by the attacker the hit carries, which the
+    /// hit player's machine has loaded and reads the traits of from the creature's ZDO. Shields are not armour and wear
+    /// as usual. The player sees it: at most every few seconds a line names the piece that corroded and how much of it is
+    /// left. Event-shaped: no component.
     /// </summary>
     public static class CorrodentWear
     {
@@ -29,6 +30,7 @@ namespace EliteCreaturesReborn.Mutations
         {
             public bool Active;
             public float Factor;
+            public float Share;
             public float Chest;
             public float Legs;
             public float Helmet;
@@ -38,57 +40,63 @@ namespace EliteCreaturesReborn.Mutations
         /// <summary>The worn pieces' durability before the hit, when a Corrodent creature dealt it; inactive otherwise.</summary>
         public static Before Capture(Player player, HitData hit)
         {
-            float factor = Factor(hit.GetAttacker());
-            if (factor == 1f)
+            EliteController? controller = Corrodent(hit.GetAttacker());
+            if (controller == null)
             {
                 return default;
             }
             return new Before
             {
-                Active = true, Factor = factor,
+                Active = true, Factor = Factor(controller), Share = Share(controller),
                 Chest = Durability(player.m_chestItem), Legs = Durability(player.m_legItem),
                 Helmet = Durability(player.m_helmetItem), Shoulder = Durability(player.m_shoulderItem),
             };
         }
 
-        /// <summary>Whatever the game took from a piece is taken `durability` times over; the player is told.</summary>
+        /// <summary>Whatever the game took from a piece is taken `durability` times over, plus `wear`; the player is told.</summary>
         public static void Apply(Player player, Before before)
         {
             ItemDrop.ItemData? worn = null;
-            worn = Wear(player.m_chestItem, before.Chest, before.Factor) ?? worn;
-            worn = Wear(player.m_legItem, before.Legs, before.Factor) ?? worn;
-            worn = Wear(player.m_helmetItem, before.Helmet, before.Factor) ?? worn;
-            worn = Wear(player.m_shoulderItem, before.Shoulder, before.Factor) ?? worn;
+            worn = Wear(player.m_chestItem, before.Chest, before) ?? worn;
+            worn = Wear(player.m_legItem, before.Legs, before) ?? worn;
+            worn = Wear(player.m_helmetItem, before.Helmet, before) ?? worn;
+            worn = Wear(player.m_shoulderItem, before.Shoulder, before) ?? worn;
             if (worn != null)
             {
                 Tell(player, worn);
             }
         }
 
-        // The wear is its gain, so a large star enhances it, as a `1 + bonus` multiplier; never negative.
-        private static float Factor(Character? attacker)
+        /// <summary>The attacker when it is a ready creature with Corrodent; null otherwise.</summary>
+        private static EliteController? Corrodent(Character? attacker)
         {
             if (attacker == null || attacker.IsPlayer())
             {
-                return 1f;
+                return null;
             }
             EliteController controller = attacker.GetComponent<EliteController>();
-            if (controller == null || !controller.Ready || !controller.Traits.Has(Mutation.Corrodent))
-            {
-                return 1f;
-            }
-            return Mathf.Max(0f, Enhance.Stat(controller.Rules, controller.Traits, Mutation.Corrodent, Fields.Durability));
+            return controller != null && controller.Ready && controller.Traits.Has(Mutation.Corrodent) ? controller : null;
         }
+
+        // The multiplied wear is its gain, so a large star enhances it, as a `1 + bonus` multiplier; never negative.
+        private static float Factor(EliteController c) =>
+            Mathf.Max(0f, Enhance.Stat(c.Rules, c.Traits, Mutation.Corrodent, Fields.Durability));
+
+        // The fixed wear is a raw percent of the piece's maximum, enhanced whole; never negative.
+        private static float Share(EliteController c) =>
+            Mathf.Max(0f, Enhance.Magnitude(c.Rules, c.Traits, Mutation.Corrodent, Fields.Wear)) / 100f;
 
         private static float Durability(ItemDrop.ItemData? item) => item != null ? item.m_durability : 0f;
 
-        private static ItemDrop.ItemData? Wear(ItemDrop.ItemData? item, float before, float factor)
+        // Only the piece the game wore lost anything, so only it corrodes.
+        private static ItemDrop.ItemData? Wear(ItemDrop.ItemData? item, float durability, Before before)
         {
-            if (item == null || item.m_durability >= before)
+            if (item == null || item.m_durability >= durability)
             {
                 return null;
             }
-            item.m_durability = Mathf.Max(0f, before - (before - item.m_durability) * factor);
+            float lost = (durability - item.m_durability) * before.Factor + item.GetMaxDurability() * before.Share;
+            item.m_durability = Mathf.Max(0f, durability - lost);
             return item;
         }
 

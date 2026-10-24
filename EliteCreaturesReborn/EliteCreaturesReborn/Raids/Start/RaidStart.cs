@@ -33,15 +33,16 @@ namespace EliteCreaturesReborn.Raids
             return RaidSpacing.Refusal(runner.Position, runner.HostId);
         }
 
-        /// <summary>Sounds the raid; null on success, else why not as a message (and nothing was written).</summary>
-        public static string? Start(ZNetView host, int coins, int tierOverride)
+        /// <summary>Sounds the raid; null on success, else why not as a message (and nothing was written).
+        /// <paramref name="trophyWorth"/> is what the staked trophies count as, in coins, toward the heat.</summary>
+        public static string? Start(ZNetView host, int coins, int tierOverride, int trophyWorth = 0)
         {
             string? refusal = Refusal(host);
             if (refusal != null)
             {
                 return refusal;
             }
-            if (coins <= 0)
+            if (coins + trophyWorth <= 0)
             {
                 return LangWire.Message(RaidWords.NoGold);
             }
@@ -51,21 +52,22 @@ namespace EliteCreaturesReborn.Raids
             {
                 return LangWire.Message(RaidWords.NoneUnlocked);
             }
-            Begin(runner, choice, coins, tierOverride);
+            Begin(runner, choice, coins, tierOverride, trophyWorth);
             return null;
         }
 
-        private static void Begin(RaidRunner runner, RaidChoice choice, int coins, int tierOverride)
+        private static void Begin(RaidRunner runner, RaidChoice choice, int coins, int tierOverride, int trophyWorth)
         {
             RaidPresence.Count near = RaidPresence.Of(runner);
             runner.Remember(near);
-            RaidHeat heat = RaidHeat.For(coins, tierOverride >= 0 ? tierOverride : near.StrongestTier);
+            RaidHeat heat = RaidHeat.For(coins + trophyWorth, tierOverride >= 0 ? tierOverride : near.StrongestTier);
             RaidState state = runner.State;
             state.Begin(heat, choice, coins, NetTime.NowMs());
             RaidPresence.Claim(state, near);
             RaidNet.Tell(runner, RaidText.Started(choice.Face, heat.Band));
             RaidHorn.Sound(runner);
-            Log.Info($"raid at {runner.Position:F0}: {state.DisplayName} ({choice.EventName}), {coins} coins against "
+            Log.Info($"raid at {runner.Position:F0}: {state.DisplayName} ({choice.EventName}), {coins} coins and trophies "
+                + $"worth {trophyWorth} against "
                 + $"tier {heat.Tier}, heat {heat.Heat:0.##} - {heat.Band.Name}");
         }
     }

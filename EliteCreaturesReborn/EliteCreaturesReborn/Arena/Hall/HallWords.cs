@@ -10,8 +10,8 @@ namespace EliteCreaturesReborn.Arena.Hall
         /// <summary>Hel's name on her hover.</summary>
         public const string Hel = "ecr_arena_hel";
 
-        /// <summary>E's action on Hel, "Begin the trial".</summary>
-        public const string Begin = "hud_ecr_arena_begin";
+        /// <summary>E's action on Hel, "Begin the trial: $1" ($1 the trial brought from Helgrind).</summary>
+        public const string Begin = "hud_ecr_arena_begin_trial";
 
         /// <summary>The centre message of a death in Hel's river, "Hel's river takes you."</summary>
         public const string River = "msg_ecr_arena_river";

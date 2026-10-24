@@ -55,18 +55,21 @@ namespace EliteCreaturesReborn.Raids
         private static void Idle(RaidChest chest)
         {
             int coins = ChestCoins.Count(chest.Container.GetInventory());
+            int trophies = ChestTrophies.Count(chest.Container.GetInventory(), out int worth);
+            bool any = coins > 0 || trophies > 0;
             if (!RaidSettings.ChestEnabled)
             {
-                Text.Append('\n').Append(coins > 0 ? ChestText.Coins(coins) : "( $piece_container_empty )");
+                Text.Append('\n').Append(any ? ChestText.Amount(coins, trophies) : "( $piece_container_empty )");
                 Text.Append('\n').Append(ChestText.Keys(false, false));
                 return;
             }
             string? refusal = ChestRules.Refusal(chest);
-            if (coins > 0)
+            if (any)
             {
-                Text.Append('\n').Append(ChestText.Stake(coins, RaidHeat.Measure(chest.transform.position, coins)));
+                RaidHeat heat = RaidHeat.Measure(chest.transform.position, coins + worth);
+                Text.Append('\n').Append(ChestText.Stake(coins, trophies, heat));
             }
-            refusal ??= coins > 0 ? null : LangWire.Message(RaidWords.Empty);
+            refusal ??= any ? null : LangWire.Message(RaidWords.Empty);
             if (refusal != null)
             {
                 Text.Append('\n').Append(LangWire.Read(refusal));

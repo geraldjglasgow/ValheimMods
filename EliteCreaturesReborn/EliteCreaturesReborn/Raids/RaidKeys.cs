@@ -31,6 +31,10 @@ namespace EliteCreaturesReborn.Raids
         /// <summary>The coins the raid cost: every coin taken out of the chest, or the command's amount.</summary>
         public const string Stake = "ecr_raid_stake";
 
+        /// <summary>The trophies the raid cost, "TrophyBoar:3,TrophyNeck:2" (<see cref="ChestTrophies"/>): a won raid puts
+        /// them back into the chest times the band's coins back. Empty for a raid of coins alone.</summary>
+        public const string Trophies = "ecr_raid_trophies";
+
         /// <summary>Every coin the raiders carry between them: the stake times the band's coins back.</summary>
         public const string CoinsBack = "ecr_raid_coins_back";
 
