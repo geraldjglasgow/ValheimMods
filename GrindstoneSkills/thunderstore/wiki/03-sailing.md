@@ -38,4 +38,12 @@ Perks grow evenly from 0 at level 0 to the value at 100.
 | Lookout Cooldown | 60 | Seconds between pulses, per player. |
 | Lookout Key | O | The key. Per player. |
 
-Keys take modifiers (`K + LeftShift`), work while you walk, never while you type. Below the level or on cooldown a message says why. Away from the helm K does nothing; O works anywhere aboard. With Sailing off or a level above 100 both keys do nothing. Cooldowns are not saved: restarting the game clears them. With ShipConfig, its ship health replaces Sailing's bonus.
+## Fog Lift, level 75 (8 - Sailing)
+
+**N** aboard thins the fog by 80% and parts the Mistlands mist 20 m around the ship, for everyone aboard, for 2 minutes; once every 5 minutes.
+
+| Setting | Default | Meaning |
+| --- | --- | --- |
+| Fog Lift Key | N | The key. Per player. |
+
+Keys take modifiers (`K + LeftShift`), work while you walk, never while you type. Below the level or on cooldown a message says why. Away from the helm K does nothing; O and N work anywhere aboard. With Sailing off or a level above 100 the keys do nothing. Cooldowns are not saved: restarting the game clears them. With ShipConfig, its ship health replaces Sailing's bonus.

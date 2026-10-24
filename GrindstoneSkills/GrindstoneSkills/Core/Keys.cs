@@ -37,6 +37,10 @@ namespace GrindstoneSkills
         public const string WindCallDirection = "grindstone_wind_dir";
         /// <summary>long on a ship's ZDO, written by its owner: world time (ticks) when the called wind ends.</summary>
         public const string WindCallUntil = "grindstone_wind_until";
+        /// <summary>On a ship, to everybody who has it loaded: (long callerPlayerId) - a player aboard lifted the fog; the owner stores it, the crew are told.</summary>
+        public const string RpcFogLift = "grindstone_FogLift";
+        /// <summary>long on a ship's ZDO, written by its owner: world time (ticks) when the lifted fog closes in again.</summary>
+        public const string FogLiftUntil = "grindstone_foglift_until";
 
         /// <summary>The Sailing skill's identity: its SkillType number is this name's stable hash.</summary>
         public const string SailingSkillName = "grindstone_sailing";

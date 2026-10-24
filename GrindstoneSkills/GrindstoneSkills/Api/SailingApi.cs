@@ -15,7 +15,7 @@ namespace GrindstoneSkills.Api
         /// <summary>The factor on the local player's map exploration radius while aboard a ship: 2 doubles it; 1 with Sailing off.</summary>
         public static float GetExploreRadiusFactor() => SeaExploration.RadiusFactor();
 
-        /// <summary>The ids of the Sailing actives the local player has unlocked ("windcall", "lookout").</summary>
+        /// <summary>The ids of the Sailing actives the local player has unlocked ("windcall", "lookout", "foglift").</summary>
         public static string[] GetAbilities() => SailingAbilities.Unlocked();
 
         public static string GetAbilityName(string id) => SailingAbilities.Name(id);

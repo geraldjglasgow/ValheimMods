@@ -4,14 +4,12 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// Swim's page in the info pane: what the Swimming perks (section 39) add at the player's level, each always on
-    /// (<see cref="QuickDry"/>, <see cref="LongBreath"/>, <see cref="Salvage"/>), with the numbers they use. Written on the
+    /// (<see cref="QuickDry"/>, <see cref="LongBreath"/>, <see cref="Salvage"/>, <see cref="Diving"/> with its
+    /// <see cref="Breath"/>), and the <see cref="WaterBuilder"/> milestone, with the numbers they use. Written on the
     /// local player's client as the page opens; nothing while the server has Swimming off.
     /// </summary>
     public static class SwimmingPage
     {
-        /// <summary>The game's drowning hit, as a share of max health, once a second.</summary>
-        private const float DrownShare = 0.05f;
-
         public static void Write(SkillPage page)
         {
             if (!GameSkillSettings.Swimming.Value)
@@ -20,6 +18,9 @@ namespace GrindstoneSkills
             page.Perk(Lang.Get("gs_perk_quickdry"), 0f, QuickDryTip(factor));
             page.Perk(Lang.Get("gs_perk_longbreath"), 0f, LongBreathTip(factor));
             page.Perk(Lang.Get("gs_perk_salvage"), 0f, SalvageTip(page.Player, factor));
+            page.Perk(Lang.Get("gs_perk_diving"), 0f, Lang.Format("gs_swim_diving_tip", SkillPage.Number(Breath.Seconds(factor)),
+                SkillPage.Number(Breath.Seconds(0f)), SkillPage.Number(Breath.Seconds(1f))));
+            page.Perk(Lang.Get("gs_perk_waterbuilder"), WaterBuilder.Level, Lang.Get("gs_swim_waterbuilder_tip"));
         }
 
         private static string QuickDryTip(float factor)
@@ -34,9 +35,9 @@ namespace GrindstoneSkills
 
         private static string LongBreathTip(float factor)
         {
-            float hurt = DrownShare * LongBreath.Kept(factor);
+            float hurt = Breath.DrownShare * LongBreath.Kept(factor);
             return Lang.Format("gs_swim_longbreath_tip", SkillPage.Number(LongBreath.Delay(factor)), SkillPage.Percent(1f - LongBreath.Kept(factor)),
-                SkillPage.Percent(hurt), SkillPage.Percent(DrownShare), SkillPage.Number(LongBreath.Delay(1f)), SkillPage.Percent(1f - LongBreath.Kept(1f)));
+                SkillPage.Percent(hurt), SkillPage.Percent(Breath.DrownShare), SkillPage.Number(LongBreath.Delay(1f)), SkillPage.Percent(1f - LongBreath.Kept(1f)));
         }
 
         private static string SalvageTip(Player player, float factor)

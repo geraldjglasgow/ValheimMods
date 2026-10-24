@@ -423,6 +423,7 @@ gs_page_sailing_xp_tip_crew: "For the distance a ship moves while you steer it. 
 gs_page_sailing_xp_tip_nocrew: "For the distance a ship moves while you steer it. Crew aboard earn none; a ship nobody steers earns nothing."
 gs_page_sailing_windcall_tip: "Press $1 while steering a ship: the wind turns to blow the way you look, for everyone aboard, for $2."
 gs_page_sailing_lookout_tip: "Press $1 aboard a ship: everyone aboard sees the name tags of enemies (not bosses) within $2 m for $3."
+gs_page_sailing_foglift_tip: "Press $1 aboard a ship: the fog thins by $2 and the Mistlands mist parts $3 m around the ship, for everyone aboard, for $4."
 gs_page_sailing_again: "Once every $1."
 gs_page_sailing_key_unset: "the $1 (not set)"
 
@@ -658,11 +659,13 @@ gs_kitchen_saved: "Saved: 1 $1"
 # Sailing: the skill's description (skills panel and skill book)
 gs_sail_skill_description: "Health of the ships you build, speed of the ships you steer, and how far you explore at sea."
 
-# Sailing: the abilities, also shown by ShipConfig's ship panel (windcall: $1 seconds, $2 cooldown; lookout: $1 metres, $2 seconds, $3 cooldown)
+# Sailing: the abilities, also shown by ShipConfig's ship panel (windcall: $1 seconds, $2 cooldown; lookout: $1 metres, $2 seconds, $3 cooldown; foglift: $1 percent, $2 metres, $3 time, $4 cooldown)
 gs_sail_ability_windcall: "Wind Call"
 gs_sail_ability_lookout: "Lookout"
+gs_sail_ability_foglift: "Fog Lift"
 gs_sail_ability_windcall_description: "Turns the wind to blow the way you look for $1 s, for everyone aboard. Use it while you steer. Cooldown $2."
 gs_sail_ability_lookout_description: "Sends a pulse $1 m out from the ship: everyone aboard sees the name tags of the enemies it reaches for $2 s. Cooldown $3."
+gs_sail_ability_foglift_description: "Thins the fog by $1 and parts the Mistlands mist $2 m around the ship, for everyone aboard, for $3. Cooldown $4."
 gs_sail_seconds: "$1 s"
 gs_sail_minutes: "$1 min"
 
@@ -680,6 +683,14 @@ gs_sail_compass_south: "south"
 gs_sail_compass_south_west: "south-west"
 gs_sail_compass_west: "west"
 gs_sail_compass_north_west: "north-west"
+
+# Sailing: Fog Lift ($1 the level or seconds; announcements: the duration, other: $1 the player)
+gs_sail_foglift_needs: "Fog Lift needs Sailing $1"
+gs_sail_foglift_aboard: "Fog Lift works aboard a ship"
+gs_sail_foglift_wait: "Fog Lift ready in $1 s"
+gs_sail_foglift_you: "You lift the fog for $1"
+gs_sail_foglift_other: "$1 lifts the fog for $2"
+gs_sail_foglift_nobody: "The fog lifts for $1"
 
 # Sailing: the lookout ($1 the level, seconds or metres; many: $1 how many, $2 metres)
 gs_sail_lookout_needs: "The lookout needs Sailing $1"
@@ -810,10 +821,16 @@ gs_jump_roll_tip: "Land from a fall that would hurt while moving forward and you
 gs_perk_quickdry: "Quick Dry"
 gs_perk_longbreath: "Long Breath"
 gs_perk_salvage: "Salvage"
+gs_perk_diving: "Diving"
+gs_perk_waterbuilder: "Water Builder"
 gs_swim_quickdry_tip: "Wet ends $1 sooner after you leave the water or the rain. $2 at level 100."
 gs_swim_quickdry_tip_times: "Wet ends $1 sooner after you leave the water or the rain: $2 at your level, $3 untrained, $4 at level 100."
 gs_swim_longbreath_tip: "Out of stamina in water, drowning starts $1 s later and hurts $2 less: $3 of max health a second instead of $4. $5 s later and $6 less at level 100."
 gs_swim_salvage_tip: "While you swim, loose items are picked up from $1 m instead of $2 m. $3 m at level 100."
+gs_swim_diving_tip: "Hold Crouch to dive and Jump to swim up; under water you swim where you look. Breath lasts $1 s at your level ($2 s untrained, $3 s at level 100), then you drown until you come up for air."
+gs_swim_waterbuilder_tip: "The hammer, hoe and cultivator stay in your hands while you swim: build from the water, or on the bottom while you dive."
+gs_swim_breath: "Breath"
+gs_swim_breath_tooltip: "Seconds of breath left under water."
 
 # Sneaking
 gs_perk_prowl: "Prowl"

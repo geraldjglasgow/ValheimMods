@@ -6,8 +6,8 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// Sailing's page in the info pane: ship health, helm speed and the map reveal at the player's level, how the skill
-    /// trains, and the Wind Call and lookout milestones. The numbers are the synced settings scaled by the level exactly as the
-    /// features scale them (<see cref="ShipwrightHealth.Factor"/>, <see cref="SailingSkill.Share"/>). The two abilities'
+    /// trains, and the Wind Call, lookout and Fog Lift milestones. The numbers are the synced settings scaled by the level exactly as the
+    /// features scale them (<see cref="ShipwrightHealth.Factor"/>, <see cref="SailingSkill.Share"/>). The abilities'
     /// names are the Sailing feature's own words (gs_sail_ability_*).
     /// </summary>
     public static class SailingPage
@@ -27,6 +27,7 @@ namespace GrindstoneSkills
             Training(page);
             WindCall(page);
             Lookout(page);
+            FogLift(page);
         }
 
         private static void Ships(SkillPage page)
@@ -70,6 +71,13 @@ namespace GrindstoneSkills
             string tip = Lang.Format("gs_page_sailing_lookout_tip", KeyText(LookoutSettings.Key),
                 LookoutSettings.Radius.Value.ToString("0"), SkillPage.Duration(LookoutSettings.Duration.Value));
             page.Perk(Lang.Get("gs_sail_ability_lookout"), LookoutSettings.Level.Value, tip + Again(LookoutSettings.Cooldown.Value));
+        }
+
+        private static void FogLift(SkillPage page)
+        {
+            string tip = Lang.Format("gs_page_sailing_foglift_tip", KeyText(SailingSettings.FogLiftKey), SkillPage.Percent(FogLiftView.Thinner),
+                FogLiftMist.Radius.ToString("0"), SkillPage.Duration(FogLiftInput.Duration));
+            page.Perk(Lang.Get("gs_sail_ability_foglift"), FogLiftInput.Level, tip + Again(FogLiftInput.Cooldown));
         }
 
         /// <summary>" Once every 5 min." after a tip, or "" without a cooldown.</summary>

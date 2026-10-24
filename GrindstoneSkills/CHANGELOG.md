@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.20.0
+
+- Ukrainian translation, used while the game's language is Ukrainian.
+- Sailing 75: Fog Lift (`Fog Lift Key`, N) thins the fog and parts the Mistlands mist around your ship for 2 minutes.
+- Swimming: dive with Crouch, swim up with Jump, swim where you look; breath lasts 20 s, up to 60 s at level 100.
+- Swimming 50: Water Builder keeps the hammer, hoe and cultivator in hand while swimming.
+- Update the server and every client together.
+
 ## 0.19.2
 
 - Brazilian Portuguese translation by Yoroshiro, used while the game's language is Portuguese (Brazilian).

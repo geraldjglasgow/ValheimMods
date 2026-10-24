@@ -1,0 +1,879 @@
+# GrindstoneSkills - Ukrainian words (Українська)
+#
+# To translate: copy this file as GrindstoneSkills.translations.<Language>.yml and translate the text in quotes.
+# <Language> is the game's name for the language set in its settings (English, German, Portuguese_Brazilian ...);
+# the log names it on start: "<Language>: no translation, English shown (a translation is ...)".
+# Put the file in BepInEx/config, or ship it in your own mod under BepInEx/plugins; it is read on start and whenever the
+# language changes. A key you leave out stays English.
+# Keep each key as it is, keep $1, $2 ... (filled in by the game), keep \n (a line break), and keep each text on one line
+# between double quotes (write \" for a quote inside it). In the skills window a word you can hover (a "term") is its own
+# key and goes into its line as $1: translate the term once and the line keeps it.
+
+# GrindstoneSkills: the skills window (sort bar, info pane, page helpers) and the names of the mod's own skills.
+# One line per word, the text double-quoted; $1, $2 ... are values filled in by the mod.
+
+# The mod's own skills, named the way the game names a skill: skill_ + its type number (the stable hash of its identity)
+skill_2060925741: "Мореплавство"
+skill_585068027: "Дарозбірництво"
+skill_1869457860: "Тваринництво"
+skill_1650628550: "Захист"
+
+# Sort bar above the skills list
+gs_book_sort_by: "Сортувати за"
+gs_book_sort_default: "За замовчуванням"
+gs_book_sort_name: "Назвою"
+gs_book_sort_level: "Рівнем"
+
+# Info pane: the level line under the skill's name
+gs_book_level: "Рівень $1"
+gs_book_level_progress: "$1% до рівня $2"
+gs_book_level_highest: "найвищий рівень"
+
+# Info pane: the perks
+gs_book_perks: "Навички"
+gs_book_perk_unlocked: "відкрито"
+gs_book_perk_at_level: "на рівні $1"
+
+# Times on the pages ($1 is the number)
+gs_book_seconds: "$1 с"
+gs_book_minutes: "$1 хв"
+gs_book_hours: "$1 год"
+
+# The skills window's info pages: Cooking, Fishing and Husbandry, and the names of their perks.
+# A line's hovered word is its own key, filled into the line as $1, so the hover finds it in every language.
+
+# Cooking page
+gs_page_cooking_about: "Ви вправляєтесь на кухні швидше, а всі ваші страви виходять смачнішими та ситнішими. Вправність зростає з кожною стравою, що вийшла з-під вашої руки."
+gs_page_cooking_heading_kitchen: "Кухня"
+gs_page_cooking_speed: "Швидкість приготування"
+gs_page_cooking_speed_line: "$1 +$2"
+gs_page_cooking_speed_tip: "Діє на рожнах і в кам'яній печі: їжа, яку ви туди поклали, готується швидше."
+gs_page_cooking_burn: "Затримка підгорання"
+gs_page_cooking_burn_line: "$1 +$2"
+gs_page_cooking_burn_tip: "Готова страва довше лишається неспаленою на цей відсоток. У грі страва підгорає, коли після готовності мине стільки ж часу, скільки її готували."
+gs_page_cooking_craft: "Час приготування"
+gs_page_cooking_craft_line: "$1 -$2"
+gs_page_cooking_craft_tip: "Діє в казані, казані для медовиці та на столі приготування їжі. Цей бонус за Кухарство дає сама гра."
+gs_page_cooking_ferment: "Швидкість бродіння"
+gs_page_cooking_ferment_line: "$1 +$2"
+gs_page_cooking_ferment_tip: "Діє на основи медовиці, які ви кладете в бродильну бочку: вони бродять швидше."
+gs_page_cooking_extra_food: "Додаткова порція"
+gs_page_cooking_extra_food_line: "$1: шанс $2 на +$3"
+gs_page_cooking_extra_food_tip: "Діє на кожній кухонній станції: рожнах, кам'яній печі, казані, казані для медовиці та столі приготування їжі. Замінює власний шанс гри на додаткову їжу."
+gs_page_cooking_ingredient: "Збережений інгредієнт"
+gs_page_cooking_ingredient_line: "$1: $2"
+gs_page_cooking_ingredient_tip: "Щоразу, коли ви готуєте в казані, казані для медовиці чи на столі приготування їжі, є шанс залишити один із інгредієнтів невикористаним."
+gs_page_cooking_heading_experience: "Досвід"
+gs_page_cooking_rich: "Ситні страви"
+gs_page_cooking_rich_line: "$1: до x$2"
+gs_page_cooking_rich_tip: "Досвід Кухарства за страву росте з її поживністю, тобто сумою здоров'я, витривалості й ейтиру: до $1 це x1, від $3 x$2."
+gs_page_cooking_new_dish: "Нова страва"
+gs_page_cooking_new_dish_line: "$1: x$2"
+gs_page_cooking_new_dish_tip: "Коли ви вперше готуєте нову страву."
+gs_page_cooking_experience_line: "Досвід кухарства x$1"
+
+# Fishing page
+gs_page_fishing_about: "Підсікайте частіше й витягуйте справжніх велетнів. Вправність зростає з кожною рибою, яку ви здолали в боротьбі."
+gs_page_fishing_off: "Риболовля GrindstoneSkills вимкнена на цьому сервері."
+gs_page_fishing_reel_speed: "Швидкість змотування"
+gs_page_fishing_reel_speed_line: "$1 $2 м/с"
+gs_page_fishing_reel_speed_tip: "Власний показник гри: як швидко змотується волосінь, поки ви її змотуєте (утримуйте блок). Коли риба б'ється, удвічі повільніше."
+gs_page_fishing_reel_stamina: "Витрати витривалості при змотуванні"
+gs_page_fishing_reel_stamina_line: "$1 -$2"
+gs_page_fishing_reel_stamina_tip: "Власний показник гри: змотування вимагає менше сил. Але риба на волосіні й сама виснажує вас на $1 витривалості щосекунди."
+gs_page_fishing_bite: "Шанс клювання"
+gs_page_fishing_bite_line: "$1 +$2"
+gs_page_fishing_bite_tip: "Шанс, що риба клюне на ваш поплавець. Клювання також частішає на $1% на світанку й у присмерку та на $2% під дощем."
+gs_page_fishing_bite_tip_chum: "Шанс, що риба клюне на ваш поплавець. Клювання також частішає на $1% на світанку й у присмерку, на $2% під дощем і на $3% у межах $4 м від принади ($5), що плаває у воді."
+gs_page_fishing_heading_fight: "Боротьба"
+gs_page_fishing_strike: "Вікно підсікання"
+gs_page_fishing_strike_line: "$1 $2 с"
+gs_page_fishing_strike_tip: "Ви можете встигнути підсікти рибу, якщо почнете змотувати протягом цього часу після поклювання. У грі за замовчуванням 0,5 с."
+gs_page_fishing_tension: "Натяг волосіні"
+gs_page_fishing_tension_line: "$1 $2/с"
+gs_page_fishing_tension_tip: "Коли ви змотуєте волосінь поки риба б'ється, заповнення шкали під прицілом відбувається з такою швидкістю, при повному заповненні шкали - волосінь рветься. Якщо послабити, вона спадає на $1/с."
+gs_page_fishing_tension_tip_spent: "Після $1 ривків риба вимотується й витягається на $2% швидше."
+gs_page_fishing_heading_catch: "Улов"
+gs_page_fishing_big_one: "Велика риба"
+gs_page_fishing_big_one_line: "$1 $2"
+gs_page_fishing_big_one_tip: "Шанс, що підсічена риба виявиться на рівень більшою. Перевірка повторюється, поки не дійде до рівня $1. Вночі шанс більший на $2%."
+gs_page_fishing_bonus: "Бонусний предмет"
+gs_page_fishing_bonus_line: "$1 $2"
+gs_page_fishing_bonus_range: "$1-$2"
+gs_page_fishing_bonus_tip: "Шанс, що витягнута риба принесе ще й власний бонусний предмет. Легендарна риба приносить його завжди."
+gs_page_fishing_bait: "Збереження наживки"
+gs_page_fishing_bait_line: "$1 $2"
+gs_page_fishing_bait_tip: "Шанс, що після вилову риби ви отримаєте наживку назад."
+gs_page_fishing_snag: "Зачеп"
+gs_page_fishing_snag_line: "$1 $2"
+gs_page_fishing_snag_tip: "Раз за закидання: якщо $1 у воді риба не клює, на волосінь може зачепитися знахідка, яка залежить від біому. Вона тягнеться повільно й важко та не дає досвіду."
+gs_page_fishing_line: "волосінь"
+gs_page_fishing_cast_line: "Закидання +$2, $1 +$3"
+gs_page_fishing_line_tip: "Вудка закидається далі, а волосінь рветься на більшій відстані від неї."
+gs_page_fishing_line_tip_reach: "Вудка закидається далі, а волосінь рветься, лише коли поплавець віддалиться від неї на $1 м."
+gs_page_fishing_perfect_tip: "Почніть змотувати протягом $1 с після поклювання, якщо ще не змотували, — і риба пропустить свій перший ривок."
+gs_page_fishing_log_tip: "Журнал записує кожен вид і розмір виловленої риби та ваш найважчий улов. Введіть $1 у чаті або наведіть на рибу, щоб побачити підказку."
+gs_page_fishing_log_tip_bonus: "Кожен новий вид чи розмір дарує бонусний досвід."
+gs_page_fishing_species_tip: "Коли риба клює, видно, що це за риба, а вдале закидання показує умови лову: світанок, присмерк, дощ чи ніч."
+gs_page_fishing_size_tip: "Поклювання також видає рівень риби, так само як і погляд на неї у воді."
+gs_page_fishing_double_tip: "Бонусний предмет із витягнутої риби може випасти подвійним: два замість одного."
+gs_page_fishing_legendary_tip_tire: "Легендарною виявляється $1% риби, що з'являється у воді: рівень $2, світиться й вимотується після $3 ривків."
+gs_page_fishing_legendary_tip_never: "Легендарною виявляється $1% риби, що з'являється у воді: рівень $2, світиться й ніколи не вимотується."
+gs_page_fishing_legendary_tip_bait: "З цього рівня легендарна риба забирає вашу наживку, але завжди приносить бонусний предмет."
+gs_page_fishing_grace_tip: "Якщо під час боротьби з рибою у вас закінчиться витривалість, вона не зірветься одразу: $1 ви ще тягнете волосінь, поки сили відновлюються. Це працює один раз на рибу. Якщо сил досі немає, риба зривається."
+gs_page_fishing_water_tip: "Вдале закидання показує, яка риба в межах досяжності клюне на вашу наживку і чи не ховається неподалік легендарна."
+
+# Husbandry page
+gs_page_husbandry_about: "Звірі довіряються вам охочіше, а їхнє потомство виросте сильнішим. Вправність зростає, коли ви приборкуєте, годуєте або розводите тварин."
+gs_page_husbandry_off: "Вимкнено на цьому сервері."
+gs_page_husbandry_heading_taming: "Приборкання"
+gs_page_husbandry_taming: "Швидкість приборкання"
+gs_page_husbandry_taming_line: "$1 +$2"
+gs_page_husbandry_taming_tip: "Враховується найвищий рівень у межах діапазону приборкання істоти. Додається до бонусу гри на приборкання."
+gs_page_husbandry_taming_tip_boar: "Враховується найвищий рівень у межах діапазону приборкання істоти. Приборкання кабана скоротиться із $1 до $2. Додається до бонусу гри на приборкання."
+gs_page_husbandry_gates: "Пороги рівня"
+gs_page_husbandry_gates_line: "$1: ви проходите $2 із $3"
+gs_page_husbandry_gates_tip: "Приборкання просувається, лише коли поруч, у межах діапазону приборкання, є гравець потрібного рівня: $1."
+gs_page_husbandry_gate: "$1 $2"
+gs_page_husbandry_fed: "Час ситості"
+gs_page_husbandry_fed_line: "$1 +$2"
+gs_page_husbandry_fed_tip: "Для тварин, що їдять у межах $1 м від вас. Вони приборкуються, розмножуються й лікуються лише поки ситі."
+gs_page_husbandry_fed_tip_boar: "Для тварин, що їдять у межах $1 м від вас: час ситості кабана збільшиться із $2 до $3. Вони приборкуються, розмножуються й лікуються лише поки ситі."
+gs_page_husbandry_pack: "Ватажок зграї"
+gs_page_husbandry_pack_line: "$1: шкода +$2, отримана -$3"
+gs_page_husbandry_pack_tip: "Приборканий вовк, що йде за вами, завдає на стільки більше шкоди й отримує на стільки менше."
+gs_page_husbandry_heading_breeding: "Розведення"
+gs_page_husbandry_breeding: "Швидкість розведення"
+gs_page_husbandry_breeding_line: "$1 +$2"
+gs_page_husbandry_breeding_tip: "Коротша вагітність і частіше настає кохання в тварин у межах $1 м від вас. Враховується найвищий рівень поруч із ними."
+gs_page_husbandry_herd: "Розмір стада"
+gs_page_husbandry_herd_line: "$1 +$2"
+gs_page_husbandry_herd_tip: "Скільки тварин одного виду можуть тіснитися разом, поки розмноження не припиниться. Гра дозволяє від 4 до 10 залежно від виду."
+gs_page_husbandry_offspring: "Краще потомство"
+gs_page_husbandry_offspring_line: "$1 $2"
+gs_page_husbandry_offspring_tip_ecr: "Шанс, що новонароджений отримає на одну зірку більше, ніж випадає в Elite Creatures Reborn, але не більше ніж на одну зірку вище за сильнішого з батьків."
+gs_page_husbandry_offspring_tip_one: "Шанс, що новонароджений або знесене яйце матиме на одну зірку більше, ніж батьки, до $1 зірки."
+gs_page_husbandry_offspring_tip_many: "Шанс, що новонароджений або знесене яйце матиме на одну зірку більше, ніж батьки, до $1 зірок."
+gs_page_husbandry_twins: "Двійнята"
+gs_page_husbandry_twins_line: "$1 $2"
+gs_page_husbandry_twins_tip: "Шанс, що слідом за пологами ще за пів хвилини народиться друге маля (у курей знесеться друге яйце). Двійнята двійнят не мають."
+gs_page_husbandry_growth: "Швидкість росту"
+gs_page_husbandry_growth_line: "$1 +$2"
+gs_page_husbandry_growth_tip: "Приборкані малята дорослішають, а теплі яйця вилуплюються швидше, якщо ви в межах $1 м від них."
+gs_page_husbandry_growth_tip_piglet: "Приборкані малята дорослішають, а теплі яйця вилуплюються швидше, якщо ви в межах $1 м від них. Час дорослішання порося скоротиться із $2 до $3."
+gs_page_husbandry_heading_yield: "Видобуток"
+gs_page_husbandry_butcher: "Вихід із туші"
+gs_page_husbandry_butcher_line: "$1 +$2"
+gs_page_husbandry_butcher_tip: "Більше м'яса, шкур і пір'я з приборканих тварин, яких ви вбиваєте (трофеїв це не стосується). Дробова частина — це шанс на ще одну одиницю."
+gs_page_husbandry_produce: "Продукція"
+gs_page_husbandry_produce_line: "$1 $2 кожні $3"
+gs_page_husbandry_produce_tip: "Шанс, що сита приборкана тварина в межах $1 м від вас сама скине пір'я, обрізки, хутро чи шкури, і вбивати її не доведеться. Враховується найвищий рівень поруч із нею."
+gs_page_husbandry_honey: "Додатковий мед"
+gs_page_husbandry_honey_line: "$1 $2 за мед"
+gs_page_husbandry_honey_tip: "Шанс отримати ще один мед за кожен, який ви забираєте з вулика."
+gs_page_husbandry_petting_tip: "Погладьте приборкану тварину, якій не можна віддавати наказів (не вовка): вона буде задоволена $1. Уміння зростає лише від погладжування тієї, що ще не задоволена."
+gs_page_husbandry_petting_tip_breeds: "Погладьте приборкану тварину, якій не можна віддавати наказів (не вовка): вона буде задоволена $1 і розмножується на $2% швидше. Уміння зростає лише від погладжування тієї, що ще не задоволена."
+gs_page_husbandry_eggs_tip: "Яйця зберігають зірки своєї курки: показують їх, складаються окремо й виводять зіркових курчат."
+gs_page_husbandry_lore_tip: "Наведіть курсор на тварину чи яйце, щоб побачити таймери: ситість, приборкання, кохання чи вагітність, місце в стаді, задоволеність, дорослішання й виведення."
+gs_page_husbandry_feeder_build: "Молот, Різне, біля верстака."
+gs_page_husbandry_feeder_build_cost: "Молот, Різне, біля верстака: $1."
+gs_page_husbandry_feeder_cost_item: "$1 $2"
+gs_page_husbandry_feeder_walk: "Голодні приборкані тварини та ті, яких зараз приборкують, у межах $1 м підходять до годівниці й їдять із неї."
+gs_page_husbandry_calm_tip: "Тварина, яку ви почали приборкувати, не тікає й не нападає, тож приборкання триває поруч із вами. Якщо ви поранили її, вона битиметься з вами $1."
+
+# Perk names (also used by the features' messages)
+gs_perk_perfectstrike: "Ідеальна Підсічка"
+gs_perk_anglerslog: "Журнал Риболовлі"
+gs_perk_speciessense: "Чуття Видів"
+gs_perk_sizesense: "Чуття Розміру"
+gs_perk_doublebonus: "Багатий Улов"
+gs_perk_legendaryfish: "Легендарна Риба"
+gs_perk_grace: "Поблажка"
+gs_perk_watersense: "Чуття Води"
+gs_perk_petting: "Погладжування"
+gs_perk_starredeggs: "Зіркові Яйця"
+gs_perk_animallore: "Знання про Тварин"
+gs_perk_animalfeeder: "Годівниця"
+gs_perk_calm: "Спокій"
+
+# GrindstoneSkills - English words: the skills window's pages for Farming, Woodcutting and Pickaxes
+#
+# A line's hovered word (Bonus crop, Chop damage ...) is its own key and goes into the line's sentence (the key ending
+# in _line) as $1: keep $1 in that sentence, in the order your language puts it. Perk names are the gs_perk_ keys; the
+# messages that name a perk use them too. Keep $1, $2 ... and each text on one line between double quotes.
+
+# Perk names (the info pane's Perks list, and the messages that name a perk)
+gs_perk_tending: "Догляд"
+gs_perk_compostbin: "Компостна Скриня"
+gs_perk_rowofthree: "Ряд із Трьох"
+gs_perk_rowoffive: "Ряд із П'яти"
+gs_perk_autoreplant: "Пересів"
+gs_perk_heattolerance: "Жаростійкість"
+gs_perk_coldtolerance: "Морозостійкість"
+gs_perk_readtherock: "Читання Скель"
+gs_perk_echo: "Відлуння"
+gs_perk_unbroken: "Ланцюг Ударів"
+
+# Farming page
+gs_page_farming_about: "Земля віддячить щедрим врожаєм і скоріше. Уміння зростає, коли ви садите й збираєте плоди своєї праці."
+gs_page_farming_off: "Фермерство GrindstoneSkills вимкнене на цьому сервері."
+gs_page_farming_stamina: "Витривалість при садінні"
+gs_page_farming_stamina_line: "$1 -$2"
+gs_page_farming_stamina_tip: "Власний показник гри: кожне використання розпушувача забирає менше витривалості, а на рівні 100 лише половину."
+gs_page_farming_scythe: "Коса"
+gs_page_farming_scythe_line: "$1: радіус росте з рівнем"
+gs_page_farming_scythe_tip: "Власний показник гри: один змах коси збирає всі стиглі рослини в радіусі, що росте разом із вашим рівнем."
+gs_page_farming_reach_line: "$1: радіус $2 м"
+gs_page_farming_reach_tip: "Власний показник гри: один змах збирає всі стиглі рослини в цьому радіусі."
+gs_page_farming_bonus: "Бонусний врожай"
+gs_page_farming_bonus_game_line: "$1: шанс росте з рівнем"
+gs_page_farming_bonus_game_tip: "Власний показник гри: зібрана рослина іноді дає бонус."
+gs_page_farming_bonus_line: "$1 $2"
+gs_page_farming_bonus_tip: "Шанс, що кожна зібрана рослина додатково дасть свій бонусний врожай."
+gs_page_farming_seed: "Повернення насіння"
+gs_page_farming_seed_line: "$1 $2"
+gs_page_farming_seed_tip: "Шанс, що під час збору ви отримаєте назад ще й насіння, з якого виросла рослина."
+gs_page_farming_growth: "Ріст"
+gs_page_farming_growth_line: "$1 +$2"
+gs_page_farming_growth_tip: "Усе, що ви садите, росте швидше на цей відсоток, і саджанці теж."
+gs_page_farming_growth_tip_rain: "Усе, що ви садите, росте швидше на цей відсоток, і саджанці теж. Дощ додає $1%, поки йде."
+gs_page_farming_growth_tip_compost: "Усе, що ви садите, росте швидше на цей відсоток, і саджанці теж. Компост додає $1%."
+gs_page_farming_growth_tip_both: "Усе, що ви садите, росте швидше на цей відсоток, і саджанці теж. Дощ додає $1%, поки йде, а компост $2%."
+gs_page_farming_spacing: "Відстань між рослинами"
+gs_page_farming_spacing_line: "$1 -$2"
+gs_page_farming_spacing_tip: "Рослинам, які ви садите, потрібно на цю величину менше місця навколо, тож їх можна садити ближче одна до одної."
+gs_page_farming_ripening: "Дозрівання"
+gs_page_farming_giant: "Гігантська рослина"
+gs_page_farming_giant_line: "$1 $2"
+gs_page_farming_giant_tip: "Посаджена вами рослина може дозріти гігантською: розміром у x$1 і з урожаєм x$2. Збір такої рослини дає x$3 досвіду."
+gs_page_farming_tending_tip: "Натисніть $1 на рослині, що росте: вона отримає $2% часу росту. Раз на ігрову добу."
+gs_page_farming_tending_tip_area: "Натисніть $1 на рослині, що росте: вона та кожна рослина, що росте в межах $2 м, отримають $3% часу росту. Раз на ігрову добу."
+gs_page_farming_compost_tip: "Бочка в меню розпушувача. Залишки їжі й зайвий врожай у ній щоразу через $1 стають одиницею компосту, і кожна рослина, що росте в межах $2 м, бере по одній: +$3% росту."
+gs_page_farming_row_tip: "Поставивши насіння, ви садите ряд із $1 рослин упоперек вашого погляду, кожна за своє насіння. Утримуйте $2, щоб посадити лише одну."
+gs_page_farming_replant_tip: "Коли ви збираєте врожай, рослина одразу повертається на те саме місце, а насіння береться з вашого інвентарю."
+gs_page_farming_heat_tip: "Рослини, які ви садите, ростуть у Попелистих землях і без щита."
+gs_page_farming_cold_tip: "Рослини, які ви садите на Левадах, ростуть також у біомі Гора та в Далекій півночі."
+# After a perk's tip when the player switched it off in their own .cfg; $1 is the setting's name as the .cfg writes it
+gs_page_farming_own_off: "Вимкнено у вашому конфігу ($1)."
+
+# Woodcutting page
+gs_page_woodcutting_about: "Валіть дерева скоріше й добувайте з кожного більше деревини. Вправність зростає, коли ви рубаєте сокирою дерева й колоди."
+gs_page_woodcutting_off: "Додатки GrindstoneSkills вимкнені на цьому сервері."
+gs_page_woodcutting_felling: "Валка"
+gs_page_woodcutting_damage: "Шкода рубки"
+gs_page_woodcutting_damage_line: "$1 $2"
+gs_page_woodcutting_damage_tip: "Власний показник гри: кожен удар сокири по деревині завдає цю частку шкоди сокири, випадково для кожного удару (на рівні 100 це 85–100%). Витрати витривалості на змах залежать від уміння Сокири."
+gs_page_woodcutting_refund: "Повернення витривалості"
+gs_page_woodcutting_refund_line: "$1 $2, знос сокири -$3"
+gs_page_woodcutting_refund_tip: "Змах, що влучив у деревину, повертає вам цю частку витривалості й на стільки ж менше зношує сокиру. На рівні 100: $1 і -$2."
+gs_page_woodcutting_split: "Миттєвий розкол"
+gs_page_woodcutting_split_line: "$1 $2, +$3 деревини"
+gs_page_woodcutting_split_tip: "Шанс, що удар сокири по колоді одразу розколе її, якщо сокира здатна рубати цю деревину. Така колода дасть на $1 більше деревини. На рівні 100: $2."
+gs_page_woodcutting_oldgrowth: "Старий ліс"
+gs_page_woodcutting_oldgrowth_line: "$1 до +$2 деревини"
+gs_page_woodcutting_oldgrowth_tip: "Колоди великих дерев дають більше деревини залежно від розміру дерева серед його власного виду: нічого, якщо розмір не доходить до $1% свого діапазону, і максимум від $2%. Залежить від рівня того, хто розбиває колоду. На рівні 100: +$3."
+gs_page_woodcutting_xp: "Досвід"
+gs_page_woodcutting_xp_line: "$1 +$2 за дерево, +$3 за колоду"
+gs_page_woodcutting_xp_tip: "Досвід нараховується за кожне зрубане дерево й кожну колоду, розбиту на деревину, а також $1 за кожен змах, що влучив у деревину."
+gs_page_woodcutting_xp_tip_tiers: "Береза й дуб дають ×$1 досвіду, Іґґдрасіль ×$2."
+gs_page_woodcutting_xp_tip_small: "Саджанці й малі дерева (менш ніж $1 здоров'я) дають $2 досвіду."
+gs_page_woodcutting_xp_tip_discovery: "Перше дерево кожного виду дає ×$1 досвіду."
+gs_page_woodcutting_timber: "Бережись!"
+gs_page_woodcutting_timber_line: "$1 поштовх +$2, безпека від колод $3"
+gs_page_woodcutting_timber_tip: "Зрубане вами дерево падає від вас із поштовхом ×$1 сильнішим, ніж у грі, а його колоди завдають вам на стільки менше шкоди (іншим гравцям як зазвичай у грі). На рівні 100: ×$2 і $3."
+gs_page_woodcutting_domino: "Доміно"
+gs_page_woodcutting_domino_line: "$1 удар +$2"
+gs_page_woodcutting_domino_tip: "Колоди зрубаних вами дерев б'ють по інших деревах, колодах і пеньках ×$1 дужче, тож одне дерево може повалити наступне, і так до $2 дерев у ланцюжку. На рівні 100: ×$3."
+gs_page_woodcutting_cleanfell: "Чиста валка"
+gs_page_woodcutting_cleanfell_line: "$1 $2"
+gs_page_woodcutting_cleanfell_tip: "Шанс, що зрубане вами дерево забере з собою пеньок: з пенька випаде його деревина. На рівні 100: $1."
+gs_page_woodcutting_replanting: "Пересадка"
+gs_page_woodcutting_replanting_line: "$1 $2"
+gs_page_woodcutting_replanting_tip: "Шанс, що на місці зрубаного вами дерева пустить корінь вільний саджанець того ж виду, якщо він може там рости. Не в кожного дерева є саджанець. На рівні 100: $1."
+gs_page_woodcutting_finds: "Знахідки"
+gs_page_woodcutting_finds_line: "$1 $2 за дерево"
+gs_page_woodcutting_finds_tip: "Шанс, що зрубане вами дерево ховає знахідку, наприклад пташине гніздо чи дике бджолине гніздо. На рівні 100: $1."
+
+# Pickaxes page
+gs_page_pickaxes_about: "Гора піддається скоріше й віддає більше. Вправність зростає, коли ви б'єте кайлом по скелі."
+gs_page_pickaxes_off: "Додатки GrindstoneSkills вимкнені на цьому сервері."
+gs_page_pickaxes_damage: "Шкода видобутку"
+gs_page_pickaxes_damage_line: "$1 $2"
+gs_page_pickaxes_damage_tip: "Власний показник гри: кожен удар кайла завдає цю частку його шкоди, випадково для кожного удару (на рівні 100 це 85–100%)."
+gs_page_pickaxes_stamina: "Витривалість на змах"
+gs_page_pickaxes_stamina_line: "$1 -$2"
+gs_page_pickaxes_stamina_tip: "Власний показник гри для кожного маху кайла: -$1 на рівні 100."
+gs_page_pickaxes_seams: "Жили"
+gs_page_pickaxes_seams_line: "$1 $2, відкрито $3"
+gs_page_pickaxes_seams_tip: "Шанс, що змах по скелі з багатьох шматків підсвітить один із шматків поруч: він світиться лише для вас упродовж вказаного часу. Влучіть у нього вчасно, і вийде чистий удар."
+gs_page_pickaxes_clean: "Чистий удар"
+gs_page_pickaxes_clean_line: "$1 ×$2 шкоди"
+gs_page_pickaxes_clean_tip: "Удар по підсвіченому шматку завдає цю шкоду, дає ще один шанс на здобич, коли шматок руди ламається, і одразу відкриває наступну жилу. Удар у будь-яке інше місце скелі перериває ланцюжок."
+gs_page_pickaxes_clean_tip_xp: "Удар по підсвіченому шматку завдає цю шкоду, дає ще один шанс на здобич, коли шматок руди ламається, приносить +$1 досвіду (більше в пізніших біомах і на руді) та одразу відкриває наступну жилу. Удар у будь-яке інше місце скелі перериває ланцюжок."
+gs_page_pickaxes_splash: "Розліт"
+gs_page_pickaxes_splash_line: "$1 $2 шкоди"
+gs_page_pickaxes_splash_tip: "Перший удар кожного маху по шматку завдає цю шкоду й сусіднім шматкам: вони діляться нею між собою. Зростає кожні 10 рівнів, до $1 на рівні 100."
+gs_page_pickaxes_ore: "Додаткова руда"
+gs_page_pickaxes_ore_line: "$1 $2"
+gs_page_pickaxes_ore_tip: "Шанс, що кожен розбитий вами шматок рудного покладу скине здобич ще раз. На рівні 100: $1."
+gs_page_pickaxes_wear: "Знос кайла"
+gs_page_pickaxes_wear_line: "$1 -$2 на камені"
+gs_page_pickaxes_wear_tip: "Удари по каменю зношують кайло менше: -$1 на рівні 100."
+gs_page_pickaxes_finds: "Знахідки"
+gs_page_pickaxes_finds_line: "$1 $2 за шматок"
+gs_page_pickaxes_finds_tip: "Шанс, що розбитий вами шматок ховає коштовність, наприклад бурштин чи рубін. Шматки з менш ніж 50 здоров'я отримують лише частину цього шансу, купа бруду десяту. На рівні 100: $1."
+gs_page_pickaxes_xp: "Досвід"
+gs_page_pickaxes_xp_line: "$1 +$2% за біом, ×$3 на руді"
+gs_page_pickaxes_xp_tip: "Змахи, що влучають у камінь, дають більше досвіду в пізніших біомах: від ×$1 у Чорноліссі до ×$2 у Попелистих землях."
+gs_page_pickaxes_xp_tip_discovery: "Перший удар по кожному виду рудного покладу дає +$1 досвіду, а далі множиться за тією самою шкалою біомів."
+gs_page_pickaxes_xp_tip_server: "Усе це ×$1 на цьому сервері."
+gs_page_pickaxes_readtherock_tip: "Наведіть курсор на рудний поклад, щоб побачити зірки жили й шматки, що лишилися. Багаті жили: 1 зірка у $1 покладів, 2 зірки у $2, 3 зірки у $3. Кожна зірка дає тому, хто копає, додаткові кидки здобичі: +$4."
+gs_page_pickaxes_echo_tip: "Змах по каменю відшукує найближчий рудний поклад у межах $1 м: звук лунає з його боку, а ви дізнаєтесь його назву й відстань. Не частіше ніж раз на $2; поклади, які знаходить Вилочка, лишаються їй."
+gs_page_pickaxes_unbroken_tip: "Чисті удари поспіль б'ють дедалі дужче: другий ×$1, кожен наступний ще +$2, до ×$3."
+
+# GrindstoneSkills - the skills window's info pages: staff summons and shields, the movement skills, Sailing, Crafting.
+# $1, $2 ... are values filled in by the code (numbers, names, the hovered term).
+# A line's hovered term is its own key and goes into the line as $1: a translation keeps $1 in the line.
+# The Sailing abilities' names (the Wind Call and Lookout perks) are the Sailing feature's gs_sail_ability_* words.
+
+# Staff lines (magic skills)
+gs_page_staff_shield: "Щит"
+gs_page_staff_shield_line: "$1 поглинає $2 шкоди"
+gs_page_staff_shield_tip: "Щит від $1 приймає удари, доки не вбере $2 шкоди плюс $3 за кожен рівень. На вашому рівні: +$4."
+
+# Summon line (magic skills)
+gs_page_summon_no_stars: "$1: зірок поки немає"
+gs_page_summon_stars: "$1 $2★"
+gs_page_summon_damage: "$1, шкода +$2"
+gs_page_summon_stars_damage: "$1 $2★, шкода +$3"
+gs_page_summon_with: "Викликається за допомогою $1."
+gs_page_summon_star_step: "$1★ з рівня $2"
+gs_page_summon_star_steps: "$1. Кожна зірка знову додає базове здоров'я та половину шкоди."
+gs_page_summon_damage_at100: "Шкода +$1 на рівні 100."
+gs_page_summon_follow_quality: "За вами одночасно йде стільки істот, який рівень якості посоха; нова відсилає найстарішу."
+gs_page_summon_follow_max: "За вами йде щонайбільше $1 одночасно; нова відсилає найстарішу."
+gs_page_summon_fallback: "Виклик"
+
+# Movement skills
+gs_page_movement_rate: "$1 витривалості/с"
+
+# Movement: Run
+gs_page_movement_run_about: "Бігайте швидше й довше, не збиваючи подиху. Вправність зростає кожен раз коли ви біжите."
+gs_page_movement_run_stamina: "Витривалість при бігу"
+gs_page_movement_run_stamina_line: "$1 -$2"
+gs_page_movement_run_stamina_tip: "$1 на вашому рівні, $2 без тренування (до врахування спорядження). На рівні 100: -$3."
+gs_page_movement_run_speed: "Швидкість бігу"
+gs_page_movement_run_speed_line: "$1 +$2"
+gs_page_movement_run_speed_tip: "$1 м/с на вашому рівні, $2 без тренування (до врахування спорядження). На рівні 100: +$3."
+
+# Movement: Swim
+gs_page_movement_swim_about: "Плавання виснажує менше. Уміння зростає з кожним запливом."
+gs_page_movement_swim_stamina: "Витривалість при плаванні"
+gs_page_movement_swim_stamina_line: "$1 -$2"
+gs_page_movement_swim_stamina_tip: "$1 на вашому рівні, $2 без тренування, $3 на рівні 100 (до врахування спорядження). Коли витривалість закінчується, ви тонете: 5% макс. здоров'я за секунду."
+
+# Movement: Jump
+gs_page_movement_jump_about: "Стрибайте вище й далі, ніж раніше. Вправність зростає з кожним стрибком."
+gs_page_movement_jump_force: "Сила стрибка"
+gs_page_movement_jump_force_line: "$1 +$2"
+gs_page_movement_jump_force_tip: "Додає до поштовху стрибка і вгору, і вперед. На рівні 100: +$1. Витривалість на стрибок не змінюється."
+
+# Movement: Sneak
+gs_page_movement_sneak_about: "Залишайтесь непомітними для ворогів. Уміння зростає, коли ви скрадаєтесь поблизу ворогів, які вас ще не помітили."
+gs_page_movement_sneak_stamina: "Витривалість при скраданні"
+gs_page_movement_sneak_stamina_line: "$1 -$2"
+gs_page_movement_sneak_stamina_tip: "$1 на вашому рівні, $2 без тренування (до врахування спорядження). На рівні 100: -$3; найбільше допомагають перші рівні."
+gs_page_movement_sneak_sight: "Зір ворога"
+gs_page_movement_sneak_sight_line: "$1 від $2 до $3"
+gs_page_movement_sneak_sight_tip: "Поки ви скрадаєтесь, вороги бачать вас і помічають лише в межах цієї частки їхньої дальності огляду: нижня межа в темряві, верхня при повному світлі. На рівні 100: від $1 до $2."
+
+# Movement: Dodge
+gs_page_movement_dodge_about: "Ухилення виснажує менше. Гартується з кожним ухиленням, а найбільше — коли ви ухиляєтесь крізь удар."
+gs_page_movement_dodge_stamina: "Витривалість при ухиленні"
+gs_page_movement_dodge_stamina_line: "$1 -$2"
+gs_page_movement_dodge_stamina_tip: "$1 за ухилення на вашому рівні, $2 без тренування (до врахування спорядження). На рівні 100: -$3."
+gs_page_movement_dodge_perfect: "Ідеальне ухилення"
+gs_page_movement_dodge_perfect_line: "$1: повернення $2 витривалості"
+gs_page_movement_dodge_perfect_tip: "Ухилення крізь атаку повертає $1 витривалості, витраченої на ухилення, і дає $2 адреналіну."
+
+# Movement: Ride
+gs_page_movement_ride_about: "Ваш скакун галопує швидше й довше. Вправність зростає, коли ви мчите галопом."
+gs_page_movement_ride_gallop: "Швидкість галопу"
+gs_page_movement_ride_gallop_line: "$1 +$2"
+gs_page_movement_ride_gallop_tip: "Наскільки швидше біжить скакун, якого ви осідлали. На рівні 100: +$1."
+gs_page_movement_ride_stamina: "Витривалість скакуна"
+gs_page_movement_ride_stamina_line: "$1 -$2"
+gs_page_movement_ride_stamina_tip: "Ваш скакун витрачає менше витривалості на галоп і плавання. На рівні 100: -$1."
+
+# Sailing
+gs_page_sailing_about: "Кораблі стають тривкішими під вашою рукою, ходять скоріше, а обрій розсувається ширше перед вашим поглядом. Майстерність зростає, коли ви ведете корабель морем."
+gs_page_sailing_off: "Вимкнено на цьому сервері."
+gs_page_sailing_built: "Кораблі побудовані вами"
+gs_page_sailing_built_line: "$1: здоров'я +$2"
+gs_page_sailing_built_tip: "Визначається вашим рівнем у мить, коли ви ставите корабель. Раніше збудовані кораблі лишаються з тим здоров'ям, яке мали."
+gs_page_sailing_helm: "за стерном"
+gs_page_sailing_helm_line: "Швидкість корабля $1 +$2"
+gs_page_sailing_helm_tip: "Максимальна швидкість будь-якого корабля, яким керуєте особисто ви, під вітрилом і на веслах."
+gs_page_sailing_reveal: "Відкриття мапи"
+gs_page_sailing_reveal_line: "$1 на борту $2 м (+$3)"
+gs_page_sailing_reveal_tip: "Як далеко навколо вас відкривається мапа, поки ви на борту корабля. На суші це $1 м."
+gs_page_sailing_xp: "Досвід"
+gs_page_sailing_xp_line: "$1 $2 за км за кермом"
+gs_page_sailing_xp_tip_crew: "За відстань, яку проходить корабель, поки ви ним керуєте. Екіпаж на борту отримує $1 від цього; корабель без керманича не дає нічого."
+gs_page_sailing_xp_tip_nocrew: "За відстань, яку проходить корабель, поки ви ним керуєте. Екіпаж на борту не отримує нічого; корабель без керманича не дає нічого."
+gs_page_sailing_windcall_tip: "Натисніть $1 за кермом: вітер повертає й дме туди, куди ви дивитеся, для всіх на борту протягом $2."
+gs_page_sailing_lookout_tip: "Натисніть $1 на борту корабля: усі на борту побачать імена ворогів (не босів) у межах $2 м протягом $3."
+gs_page_sailing_again: "Раз на $1."
+gs_page_sailing_key_unset: "$1 (не задано)"
+
+# Crafting
+gs_page_crafting_about: "Руки працюють спритніше, а справа йде скоріше. Майстерність вдосконалюється від виготовлення й ремонту спорядження."
+gs_page_crafting_about_build: "Руки працюють спритніше, справа йде скоріше, а будівництво дешевшає. Майстерність вдосконалюється від виготовлення, ремонту спорядження та будівництва."
+gs_page_crafting_time: "Час виготовлення"
+gs_page_crafting_time_line: "$1 -$2"
+gs_page_crafting_time_tip: "На станціях, що розвивають Ремісництво: $1 за виготовлення замість $2, $3 за $4 одразу. На рівні 100: -$5."
+gs_page_crafting_extra: "Додатковий предмет"
+gs_page_crafting_extra_line: "$1 $2"
+gs_page_crafting_extra_tip: "Кожне виготовлення предмета, що складається в стоси (наприклад, стріл), з цим шансом дає на $1 більше. На рівні 100: $2."
+gs_page_crafting_tool_line: "$1: витривалість -$2"
+gs_page_crafting_tool_tip: "Для будівництва, видалення та ремонту предметів цим інструментом. На рівні 100: -$1."
+gs_page_crafting_tool_wear_line: "$1: витривалість -$2, знос -$3"
+gs_page_crafting_tool_wear_tip: "Витривалість на будівництво, видалення й ремонт предметів цим інструментом, знос на будівництво та видалення. На рівні 100: -$1 і -$2."
+
+# GrindstoneSkills: the skills window's pages for Defense, Foraging, Blocking and the game's weapon and magic skills.
+# A line with a hover word: key = the word, key_line = the line ($1 is the word), key_tip = the hover.
+
+# Defense
+gs_page_defense_about: "Ви стоїте міцніше й витримуєте більше. Гартується від блоків і від ударів, які ви прийняли на себе."
+gs_page_defense_off: "Вимкнено на цьому сервері."
+gs_page_defense_health: "Макс. здоров'я +$1"
+gs_page_defense_food: "Здоров'я від їжі +$1"
+gs_page_defense_damage: "Отримана шкода -$1"
+gs_page_defense_outofcombat: "Поза боєм"
+gs_page_defense_outofcombat_line: "$1: лікування $2 макс. здоров'я кожні $3"
+gs_page_defense_outofcombat_tip: "Після $1 без атак, блокування чи отриманої шкоди."
+gs_page_defense_poise: "Стійкість"
+gs_page_defense_poise_line: "$1 +$2"
+gs_page_defense_poise_tip: "Потрібно на стільки більше шкоди оглушення, щоб оглушити вас або пробити вашу оборону, поки ви блокуєте."
+gs_page_defense_parry: "Вікно відбиття"
+gs_page_defense_parry_line: "$1 +$2 с"
+gs_page_defense_parry_tip: "Додається до 0,25 с гри: навіть блок, піднятий трохи завчасно, все одно відіб'є удар."
+gs_page_defense_stamina: "Витривалість на блок -$1, на ухилення -$2"
+
+# Defense: guard
+gs_page_defense_guard: "Оборона"
+gs_page_defense_reflex: "Рефлекс"
+gs_page_defense_reflex_line: "$1 $2"
+gs_page_defense_reflex_tip: "Шанс, що щит сам прийме удар спереду, хоча ви не блокували. Витрачає витривалість, як звичайний блок, але ніколи не дає відбиття."
+gs_page_defense_bash: "Удар щитом"
+gs_page_defense_bash_line: "$1 $2"
+gs_page_defense_bash_tip: "Шанс, що звичайний блок щитом оглушить нападника так само, як відбиття."
+gs_page_defense_thorns: "Шипи"
+gs_page_defense_thorns_line: "$1 $2"
+gs_page_defense_thorns_tip: "Частка шкоди, зупиненої вашим блоком, що повертається нападнику в ближньому бою."
+gs_page_defense_adrenaline: "Адреналін"
+gs_page_defense_adrenaline_line: "$1 +$2"
+gs_page_defense_adrenaline_tip: "Блоки й відбиття дають більше адреналіну, а удари, які ви не заблокували, забирають його на стільки менше."
+gs_page_defense_wear: "Знос при блокуванні -$1, відкидання при блоках -$2"
+gs_page_defense_desperation: "Відчай: нижче $1% здоров'я зниження шкоди x$2"
+
+# Defense: perks (the names are used by the Defense features too)
+gs_perk_riposte: "Рипост"
+gs_page_defense_riposte_tip: "Відбийте удар — і протягом $1 ваша наступна атака ближнього бою завдасть на $2% більше шкоди."
+gs_perk_shieldwall: "Стіна Щитів"
+gs_page_defense_shieldwall_tip: "Поки ви тримаєте блок щитом, гравці в межах $1 м позаду вас отримують на $2% менше шкоди. Кілька щитоносців не сумуються."
+gs_perk_hardened: "Загартування"
+gs_page_defense_hardened_tip: "Кожен удар, що вас ранить, робить вас міцнішим: $1% менше шкоди за кожен такий удар, до $2 ударів (разом $3%). Ефект триває $4 після останнього удару."
+gs_perk_laststand: "Останній Рубіж"
+gs_page_defense_laststand_tip: "Удар, що мав би вас убити, лишає вам 1 здоров'я, а ще $1 ви не отримуєте шкоди. Спрацьовує раз на $2."
+
+# Foraging
+gs_page_foraging_about: "Дика природа віддає вам більше. Вправність зростає, коли ви збираєте ягоди, гриби й трави."
+gs_page_foraging_off: "Вимкнено на цьому сервері."
+gs_page_foraging_yield: "Додатковий збір"
+gs_page_foraging_yield_line: "$1 $2"
+gs_page_foraging_yield_tip: "Шанс отримати ще одну одиницю за один збір. На рівні 100 він сягає $1."
+gs_page_foraging_xp: "Досвід"
+gs_page_foraging_xp_line: "$1 $2 за збір"
+gs_page_foraging_xp_range_line: "$1 від $2 до $3 за збір"
+gs_page_foraging_xp_tip: "Досвід за збір: $1 на Левадах, +$2 за кожен наступний біом, до $3 у Попелистих землях. Посіви, навіть дикорослі, розвивають і Фермерство."
+
+# Foraging: perks
+gs_perk_discovery: "Перша знахідка"
+gs_page_foraging_discovery_tip: "Перший збір кожного виду здобичі дає x$1 досвіду. Діє один раз для кожного персонажа."
+gs_perk_sweep: "Прочісування"
+gs_page_foraging_sweep_tip: "Зриваючи рослину, ви збираєте й усі рослини того ж виду в межах $1 м навколо неї. На рівні 100 радіус сягає $2 м."
+gs_page_foraging_sweep_locked_tip: "Зриваючи рослину, ви збираєте й усі рослини того ж виду в межах $1 м навколо неї, з рівня $2. На рівні 100 радіус сягає $3 м."
+
+# Blocking ($1 of the held lines is the blocker's or the parry effect's name from the game)
+gs_page_blocking_about: "Ваші блоки стають міцнішими. Гартується з кожним заблокованим ударом, а відбиття рахується вдвічі."
+gs_page_blocking_armor: "Блок-броня"
+gs_page_blocking_armor_line: "$1 +$2"
+gs_page_blocking_armor_tip: "Скільки шкоди зупиняє блок: це число в дужках на підказці щита. Блок забирає витривалість залежно від частки використаної блок-броні, тож сильніший блок коштує менше. На рівні 100: +$1."
+gs_page_blocking_held_line: "$1: блок-броня $2"
+gs_page_blocking_held_tip: "$1 без тренування, $2 на рівні 100."
+gs_page_blocking_parry: "Відбиття"
+gs_page_blocking_parry_line: "$1: блок-броня $2"
+gs_page_blocking_parry_tip: "Блок, піднятий менш ніж за $1 с до удару, множить блок-броню на бонус відбиття (x$2) і може оглушити нападника."
+gs_page_blocking_shield: "Щит відбиття"
+gs_page_blocking_shield_line: "$1: поглинає $2 шкоди"
+gs_page_blocking_shield_tip: "Дається за відбиття. Поглинає на $1 більше шкоди за кожен рівень Блокування."
+
+# Weapon skills: the lines they share ($1 of a cost line is the cost's name, $2 of its tip the cost's own sentence)
+gs_page_weapon_damage: "Шкода"
+gs_page_weapon_damage_line: "$1 $2 від шкоди зброї"
+gs_page_weapon_damage_tip: "Шкода й відкидання кожного удару випадають у цій частці від повного значення (жовтий діапазон на підказці зброї). На рівні 100: 85–100%."
+gs_page_weapon_cost_line: "$1 -$2"
+gs_page_weapon_cost_tip: "На 100: -$1. $2"
+gs_page_weapon_stamina: "Витривалість на атаку"
+gs_page_weapon_stamina_tip: "Ейтир або здоров'я, які коштує атака, зменшуються на ту саму частку."
+gs_page_weapon_seconds: "$1 с"
+
+# Melee skills
+gs_page_swords_about: "Мечі б'ють дужче й менше виснажують. Гартується з кожним ударом меча по противниках."
+gs_page_knives_about: "Ножі ранять глибше й менше виснажують. Гартується з кожним ударом ножа по противнику."
+gs_page_clubs_about: "Палиці, молоти й кувалди гупають важче й менше виснажують. Гартується з кожним їхнім ударом по противнику."
+gs_page_polearms_about: "Атгейри б'ють дужче й менше виснажують. Гартується з кожним ударом атгейра по противнику."
+gs_page_spears_about: "Списи, кинуті чи в руках, б'ють дужче й менше виснажують. Гартується з кожним влучанням списа по противнику."
+gs_page_axes_about: "Сокири й бойові сокири рубають дужче й менше виснажують. Гартується з кожним ударом сокири по противнику."
+gs_page_axes_woodcutting: "Рубання дерев"
+gs_page_axes_trees_line: "Дерева натомість використовують $1"
+gs_page_axes_trees_tip: "Більшість сокир наносять шкоду деревам, колодам і пенькам за рівнем уміння Рубання дерев і розвивають саме його, а не Сокири. Сокири все одно зменшують витривалість маху."
+gs_page_unarmed_about: "Кулаки б'ють дужче, а ви менше втомлюєтесь. Гартується з кожним ударом по противнику."
+gs_page_unarmed_fists: "Кулаки"
+gs_page_unarmed_fists_line: "$1: удар на $2–$3"
+gs_page_unarmed_fists_tip: "Шкода удару до урахування броні та стійкостей цілі."
+
+# Ranged skills ($1 of the held sentence is the tip before it, $2 the weapon in hand)
+gs_page_ranged_held: "$1 Ваш $2: $3 (від $4)."
+gs_page_bows_about: "Тетива натягується скоріше, а стріли б'ють дужче. Вдосконалюється з кожної стріли, що влучила в яблучко."
+gs_page_bows_damage_line: "$1 $2 від лука й стріли"
+gs_page_bows_damage_tip: "$1 При повному натягу. Неповний натяг зменшує цю шкоду."
+gs_page_bows_draw: "Час натягу"
+gs_page_bows_draw_line: "$1 -$2"
+gs_page_bows_draw_tip: "Час до повного натягу: постріл, що б'є найсильніше, летить найшвидше й відхиляється найменше. На рівні 100: п'ята частина власного часу лука."
+gs_page_bows_stamina: "Витривалість на натяг"
+gs_page_bows_stamina_tip: "Витрачається, поки ви тримаєте натяг, а при повному натягу вдвічі повільніше. Будь-які витрати самого пострілу знижуються так само."
+gs_page_crossbows_about: "Арбалети заряджаються швидше, а болти б'ють дужче. Вдосконалюється з кожного болта, що влучив у яблучко."
+gs_page_crossbows_damage_line: "$1 $2 від арбалета й болта"
+gs_page_crossbows_reload: "Час перезарядки"
+gs_page_crossbows_reload_line: "$1 -$2"
+gs_page_crossbows_reload_tip: "На рівні 100: половина власного часу арбалета, а отже й половина витривалості, яку забирає перезарядка."
+
+# Magic skills
+gs_page_magic_elemental_about: "Стихійні посохи б'ють дужче й споживають менше ейтиру. Вдосконалюється з кожного заклинання, що досягло цілі."
+gs_page_magic_damage_line: "$1 $2 від шкоди посоха"
+gs_page_magic_eitr: "Вартість ейтиру"
+gs_page_magic_eitr_tip: "Також ейтир, що витрачається, поки ви тримаєте заряд, і будь-яка витривалість чи здоров'я, які коштує заклинання."
+gs_page_magic_blood_about: "Заклинання стають могутнішими та потребують менших сил на створення. Вдосконалюється, коли ви послуговуєтесь кровними чарами."
+gs_page_magic_bloodcost: "Вартість ейтиру й здоров'я"
+gs_page_magic_bloodcost_tip: "Зменшує витрати ресурсів на заклинання."
+gs_page_magic_grow: "ростуть з рівнем"
+gs_page_magic_grow_line: "Виклики та щити $1"
+gs_page_magic_grow_tip: "Один раз потримайте в інвентарі посох кровних чар, щоб побачити тут його числа."
+
+# GrindstoneSkills words: Fishing, Crafting, Kitchen, Sailing and Woodcutting.
+# One line per word, key: "text". $1, $2 ... are values the code fills in (numbers, names); keep them in the text.
+
+# Fishing: callouts floating over the water
+gs_fish_big_one: "Велика риба!"
+gs_fish_monster: "Оце чудовисько!"
+gs_fish_perfect_strike: "Ідеальна підсічка!"
+gs_fish_spent: "Виснажена!"
+gs_fish_snag_found: "Знайдено: $1!"
+
+# Fishing: a legendary catch, top left for every player ($1 the angler, $2 the fish, $3 its weight)
+gs_fish_legendary_announce: "$1 витягує легендарну рибу: $2 ($3 кг)!"
+
+# Fishing: the angler's senses (fishing conditions; $1 is the list of conditions)
+gs_fish_conditions_quiet: "Тиха вода."
+gs_fish_conditions_good: "Гарна риболовля: $1."
+gs_fish_condition_dawn: "світанок"
+gs_fish_condition_dusk: "присмерк"
+gs_fish_condition_rain: "дощ"
+gs_fish_condition_night: "ніч, коли годується велика риба"
+
+# Fishing: what nibbles ($1 the fish; English picks "A" or "An" by the name's first letter; level: $1 level, $2 fish)
+gs_fish_nibble_a: "Клює $1!"
+gs_fish_nibble_an: "Клює $1!"
+gs_fish_nibble_level: "Клює $2 $1-го рівня!"
+gs_fish_nibble_legendary: "Клює легендарна риба — $1!"
+
+# Fishing: a fish in the water, looked at ($1 the game's hover text, $2 the level)
+gs_fish_hover_legendary: "$1 (легендарна)"
+gs_fish_hover_level: "$1 (рівень $2)"
+
+# Fishing: the fish in reach of a cast ($1 of reach_some is a list of reach_count: $1 how many, $2 the fish)
+gs_fish_reach_none: "У межах досяжності ніхто не бере цю наживку."
+gs_fish_reach_some: "У межах досяжності для цієї наживки: $1."
+gs_fish_reach_count: "$1 $2"
+gs_fish_reach_lurks: "$1 Тут ховається щось велике..."
+
+# Fishing: the fight and the tension bar
+gs_fish_grace: "Тягне волосінь — віддихайтеся!"
+gs_fish_bar_line: "Волосінь"
+gs_fish_bar_thrashing: "Б'ється! Послабте"
+gs_fish_bar_spent: "Вимотана! Тягніть"
+gs_fish_bar_breath: "Віддихайтеся $1"
+
+# Fishing: the catch ($1 the game's catch message, $2 the weight) and the angler's log
+gs_fish_catch_weight: "$1 ($2 кг)"
+gs_fish_catch_record: "$1 ($2 кг, новий рекорд!)"
+gs_fish_bait_saved: "Наживку збережено"
+gs_fish_log_new_species: "Нове в журналі риболовлі: $1 ($2 з $3 видів)"
+gs_fish_log_new_size_level: "Новий розмір у журналі риболовлі: $2, рівень $1"
+gs_fish_log_new_size_legendary: "Новий розмір у журналі риболовлі: легендарна риба — $1"
+
+# Fishing: a fish's tooltip ($1 the levels landed; record: $1 weight, $2 level)
+gs_fish_tip_legendary: "Легендарна"
+gs_fish_tip_not_logged: "Ще немає у вашому журналі риболовлі"
+gs_fish_tip_levels: "Витягнуті рівні: $1"
+gs_fish_tip_record: "Ваш рекорд: $1 кг (рівень $2)"
+
+# Fishing: snags ($1 the find's name, from the snags file)
+gs_fish_snagged: "Зачепили щось важке!"
+gs_fish_snag_weeds: "Лише водорості."
+gs_fish_snag_landed: "Витягнуто: $1!"
+
+# Crafting: perk names (skills window, tooltips, messages)
+gs_perk_makersmark: "Клеймо Майстра"
+gs_perk_sturdybuild: "Міцна Споруда"
+gs_perk_thrifty: "Ощадливість"
+gs_perk_journeyman: "Підмайстер"
+
+# Crafting: perk tips in the skills window ($1 at your level, $2 at level 100)
+gs_craft_makersmark_tip: "Зброя, броня, щити й інструменти, які ви виготовляєте чи покращуєте на станції, що розвиває Ремісництво, отримують +$1 макс. міцності (+$2 на рівні 100). Клеймо лишається на виробі для будь-кого, хто ним користується; покращення ставить нове клеймо з рівнем того, хто покращує."
+gs_craft_sturdybuild_tip: "Споруди, які ви ставите молотом, отримують +$1 макс. здоров'я (на рівні 100: +$2), і воно лишається з ними для всіх. Кораблі зберігають здоров'я від Мореплавства."
+gs_craft_thrifty_tip: "Кожне виготовлення чи покращення на верстаку, в ковальні або на іншій станції, що розвиває Ремісництво, з шансом $1 (на рівні 100: $2) повертає один із витрачених матеріалів. Будівництво не рахується: розібрана споруда й так повертає повну вартість."
+gs_craft_journeyman_tip: "Верстак і ковальня вважаються для вас на рівень вищими: виготовляйте, покращуйте й лагодьте те, для чого потрібна станція на рівень вище за вашу. Нові рецепти все одно з'являються на тих рівнях станцій, які ви вже бачили."
+
+# Crafting: the Maker's Mark tooltip line ($1 the perk's name, $2 the coloured bonus) and Thrifty's message ($1 the perk, $2 the item)
+gs_craft_mark_line: "$1: $2"
+gs_craft_mark_durability: "+$1% міцності"
+gs_craft_thrifty_saved: "$1: збережено 1 $2"
+
+# Kitchen: an ingredient saved ($1 the item)
+gs_kitchen_saved: "Збережено: 1 $1"
+
+# Sailing: the skill's description (skills panel and skill book)
+gs_sail_skill_description: "Тривкіші кораблі, які ви будуєте, швидший хід кораблів під вашим стерном і ширші морські обрії."
+
+# Sailing: the abilities, also shown by ShipConfig's ship panel (windcall: $1 seconds, $2 cooldown; lookout: $1 metres, $2 seconds, $3 cooldown)
+gs_sail_ability_windcall: "Поклик Вітру"
+gs_sail_ability_lookout: "Дозорний"
+gs_sail_ability_windcall_description: "Вітер слухняно повертає й дме туди, куди ви дивитеся, $1 с — для всіх на борту. Діє за кермом. Перезарядка $2."
+gs_sail_ability_lookout_description: "Хвиля чуйності розходиться на $1 м навколо корабля: $2 с усі на борту бачать імена ворогів, яких вона торкнулась. Перезарядка $3."
+gs_sail_seconds: "$1 с"
+gs_sail_minutes: "$1 хв"
+
+# Sailing: Wind Call ($1 the level or seconds; announcements: the compass point and the duration, other: $1 the player)
+gs_sail_windcall_needs: "Поклик Вітру вимагає Мореплавство $1"
+gs_sail_windcall_wait: "Поклик Вітру буде готовий через $1 с"
+gs_sail_windcall_you: "Ви змінюєте вітер: він дме на $1 протягом $2"
+gs_sail_windcall_other: "$1 змінює вітер: він дме на $2 протягом $3"
+gs_sail_windcall_nobody: "Вітер повертає на $1 і дме протягом $2"
+gs_sail_compass_north: "північ"
+gs_sail_compass_north_east: "північний схід"
+gs_sail_compass_east: "схід"
+gs_sail_compass_south_east: "південний схід"
+gs_sail_compass_south: "південь"
+gs_sail_compass_south_west: "південний захід"
+gs_sail_compass_west: "захід"
+gs_sail_compass_north_west: "північний захід"
+
+# Sailing: the lookout ($1 the level, seconds or metres; many: $1 how many, $2 metres)
+gs_sail_lookout_needs: "Дозорний вимагає Мореплавство $1"
+gs_sail_lookout_aboard: "Дозорний працює на борту корабля"
+gs_sail_lookout_wait: "Дозорний буде готовий через $1 с"
+gs_sail_lookout_none: "Дозорний: ворогів у межах $1 м немає"
+gs_sail_lookout_one: "Дозорний: 1 ворог у межах $1 м"
+gs_sail_lookout_many: "Дозорний: ворогів у межах $2 м: $1"
+
+# Woodcutting: callouts floating over a tree or a log ($1 the find's name, from the finds file)
+gs_wood_timber: "Бережись!"
+gs_wood_clean_split: "Миттєвий розкол!"
+gs_wood_found: "Знайдено: $1!"
+gs_wood_find_something: "щось"
+
+# Woodcutting: a domino chain ($1 how many trees)
+gs_wood_chain: "Ланцюжок ×$1!"
+
+# GrindstoneSkills: Farming, Foraging, Husbandry, Pickaxes and Defense (messages, callouts, hovers, pieces, status effects)
+
+# Farming: the compost bin piece and its hover
+gs_farm_compost_bin: "Компостна скриня"
+gs_farm_compost_bin_desc: "Перетворює залишки їжі та зайвий врожай на компост, що живить рослини довкола: вони ростуть швидше."
+gs_farm_compost_points: "Компост $1 / $2"
+gs_farm_compost_resting: "Компост $1 / $2 (спочиває)"
+
+# Farming: a plant's hover
+gs_farm_fertilized: "Удобрено"
+gs_farm_ripe_soon: "Скоро дозріє"
+gs_farm_ripe_under_minute: "Дозріє менш ніж за хвилину"
+gs_farm_ripe_minutes: "Дозріє за $1 хв"
+gs_farm_ripe_hours: "Дозріє за $1 год $2 хв"
+gs_farm_tended_today: "Доглянуто сьогодні"
+gs_farm_tend: "Доглянути"
+
+# Farming: tending messages
+gs_farm_already_tended: "Сьогодні вже доглянуто"
+gs_farm_tended_one: "Доглянуто 1 рослину"
+gs_farm_tended_many: "Доглянуто рослин: $1"
+
+# Farming: giant crops ($1 the crop's hover name) and callouts ($1 the crop in lower case, $2 as the game writes it)
+gs_farm_giant_name: "Гігантська рослина: $1"
+gs_farm_giant_callout: "Гігантська рослина: $1!"
+gs_farm_seed_return: "+1 $1"
+
+# Foraging
+gs_forage_skill_desc: "Дикі ягоди, гриби, трави й каміння: щедріший збір і прочісування цілих галявин."
+gs_forage_discovered: "Нова знахідка: $1!"
+
+# Husbandry: the skill and the Animal Feeder piece
+gs_herd_skill_desc: "Приборкуйте, розводьте й доглядайте тварин: скоріше приборкання, спокійні істоти, міцніше потомство й більше користі від вашого стада."
+gs_herd_feeder: "Годівниця"
+gs_herd_feeder_desc: "Голодні приборкані тварини й ті, яких приборкують, приходять поїсти того, що ви в неї кладете."
+
+# Husbandry: callouts over animals
+gs_herd_strong_offspring: "Сильне потомство!"
+gs_herd_twins: "Двійнята!"
+
+# Husbandry: how a time span reads in the animal lore lines
+gs_herd_seconds: "$1 с"
+gs_herd_minutes: "$1 хв"
+gs_herd_hours: "$1 год $2 хв"
+
+# Husbandry: animal lore lines ($1 a time span where there is one)
+gs_herd_needs_keeper: "Щоб приборкати, поруч (до $2 м) має бути гравець із Тваринництвом $1"
+gs_herd_tamed_in: "Приборкається приблизно за $1, якщо буде ситою й спокійною"
+gs_herd_fed_for: "Сита протягом $1"
+gs_herd_content_for: "Задоволена протягом $1"
+gs_herd_love: "Кохання $1 з $2"
+gs_herd_pregnant_due: "Вагітна, пологи через $1"
+gs_herd_pregnant_any_moment: "Вагітна, пологи будь-якої миті"
+gs_herd_full: "Стадо повне ($1 з $2 у межах $3 м)"
+gs_herd_count: "Стадо $1 з $2"
+gs_herd_grows_up_in: "Дорослішає через $1"
+gs_herd_grows_up_any_moment: "Дорослішає будь-якої миті"
+gs_herd_hatches_in: "Вилупиться через $1"
+gs_herd_hatches_any_moment: "Вилупиться будь-якої миті"
+
+# Pickaxes: callouts ($1 a deposit's or a find's name)
+gs_mine_discovered: "Відкрито: $1!"
+gs_mine_found: "Знайдено: $1!"
+gs_mine_echo: "$1, $2 м"
+gs_mine_clean_strike: "Чистий удар!"
+gs_mine_clean_strike_chain: "Чистий удар ×$1!"
+
+# Pickaxes: Read the rock, under an ore deposit's hover ($1 the gold stars)
+gs_mine_rich_vein: "Багата жила $1"
+gs_mine_plain_vein: "Проста жила"
+gs_mine_chunks_left: "Шматків лишилося: $1 з $2"
+
+# Defense: the skill
+gs_defense_skill_desc: "Більше здоров'я й користі від їжі, менше отриманої шкоди; відновлення поза боєм, стійкість, ширше вікно відбиття, дешевші блоки й ухилення. Гартується від блоків і від ударів, які ви прийняли."
+
+# Defense: status effects in the HUD (the others are named by their perk's name)
+gs_defense_laststand_recovering: "Останній Рубіж відновлюється"
+gs_defense_desperation: "Відчай"
+gs_defense_seconds: "$1с"
+gs_defense_stacks: "$1x"
+
+# Defense: callouts and messages ($1 a perk's name, or the creature's name)
+gs_defense_perk_callout: "$1!"
+gs_defense_reflex: "Рефлекс!"
+gs_defense_bash: "Удар щитом!"
+gs_defense_first_block: "Перший блок: $1"
+
+# GrindstoneSkills: the movement skills' perks (Running, Jumping, Swimming, Sneaking, Dodging, Riding) and Weapon Mastery
+# with Catch Up: perk names (gs_perk_), their tips, callouts and lines.
+
+# Running
+gs_perk_packmule: "В'ючний Мул"
+gs_perk_burden: "Звична Ноша"
+gs_perk_secondwind: "Друге Дихання"
+gs_run_secondwind_callout: "Друге Дихання!"
+gs_run_packmule_tip: "Ви можете нести на $1 більше на вашому рівні, а на рівні 100 на $2."
+gs_run_burden_tip: "При перевантаженні рух забирає $1 витривалості за секунду замість $2."
+gs_run_secondwind_tip: "Коли витривалість закінчується під час бігу, до вас одразу повертається $1 витривалості, і ви біжите далі. Раз на $2."
+gs_run_secondwind_ready: "Знову готово через $1."
+
+# Jumping
+gs_perk_lightfeet: "Пружні Ноги"
+gs_perk_softlanding: "М'яке Приземлення"
+gs_perk_roll: "Акробатика"
+gs_jump_lightfeet_tip: "Стрибок коштує $1 витривалості на вашому рівні замість $2 (до врахування спорядження): -$3. На рівні 100: -$4."
+gs_jump_softlanding_tip: "Падіння з висоти до $1 м вам не шкодять на вашому рівні ($2 м без тренування, $3 м на рівні 100). Довші падіння б'ють на $4 слабше (на рівні 100 на $5): щонайбільше $6 шкоди, від $7 м."
+gs_jump_roll_tip: "Якщо ви приземляєтесь, рухаючись уперед, після падіння, що завдало б шкоди, то перекочуєтесь: падіння до $1 м (на рівні 100 до $2 м) не шкодять взагалі, а понад це ви отримуєте $3 шкоди. Перекат не коштує витривалості й не захищає від ударів."
+
+# Swimming
+gs_perk_quickdry: "Швидке Обсихання"
+gs_perk_longbreath: "Довгий Подих"
+gs_perk_salvage: "Навпомацки"
+gs_swim_quickdry_tip: "Вогкість минає на $1 швидше після виходу з води чи дощу. На рівні 100: $2."
+gs_swim_quickdry_tip_times: "Вогкість минає на $1 швидше після виходу з води чи дощу: $2 на вашому рівні, $3 без тренування, $4 на рівні 100."
+gs_swim_longbreath_tip: "Коли у воді закінчується витривалість, утоплення починається на $1 с пізніше й болить на $2 менше: $3 макс. здоров'я за секунду замість $4. На рівні 100: на $5 с пізніше й на $6 менше."
+gs_swim_salvage_tip: "Поки ви пливете, розсипані речі підбираються з відстані $1 м замість $2 м. На рівні 100: $3 м."
+
+# Sneaking
+gs_perk_prowl: "Крадькома"
+gs_perk_softsteps: "М'які Кроки"
+gs_perk_assassin: "Вбивця"
+gs_perk_vanish: "Притаїтись"
+gs_sneak_vanish_callout: "Зникли"
+gs_sneak_prowl_tip: "Хода навпочіпки $1 м/с на вашому рівні (+$2), $3 без тренування, до врахування спорядження. На рівні 100: +$4. Не діє при перевантаженні."
+gs_sneak_softsteps_tip: "Атаки, ухилення, видобуток і будівництво з положення навпочіпки шумлять на $1 менше на вашому рівні й на $2 менше на рівні 100. Істоти чують вас лише в межах вашого шуму, а хода навпочіпки не шумить зовсім."
+gs_sneak_assassin_tip: "Підлий удар по цілі, яка вас не помітила, завдає на $1 більше шкоди на вашому рівні й на $2 більше на рівні 100, понад власний бонус зброї, і дає $3 досвіду до Скрадання. Один удар на ціль раз на $4, як у грі."
+gs_sneak_vanish_tip: "Присядьте на $1, коли ворогів у межах $2 м немає, а істоти вас вистежують: кожна в межах $3 м втрачає ваш слід. На босів не діє. Спрацьовує раз на $4."
+
+# Dodging
+gs_perk_longroll: "Довгий Перекат"
+gs_perk_counter: "Контрудар"
+gs_perk_heavyroll: "Важкий Перекат"
+gs_dodge_counter_callout: "Контрудар!"
+gs_dodge_longroll_tip: "Перекат робить вас невразливим на $1 довше на вашому рівні й на $2 довше на рівні 100."
+gs_dodge_longroll_last: "Ваш останній перекат: $1 с невразливості без цього, $2 с з ним."
+gs_dodge_counter_tip: "Ухилення крізь атаку готує контрудар на $1: наступний ваш удар ближнього бою завдає на $2 більше шкоди за кожне влучання. Луки, посохи й кидки його не витрачають і бонусу від нього не отримують."
+gs_dodge_heavyroll_tip: "Ви можете ухилятися й при перевантаженні, за x$1 витривалості: тепер $2 за перекат проти $3 за звичайний."
+
+# Riding
+gs_perk_gallop: "Галоп"
+gs_perk_steadyseat: "Міцна Посадка"
+gs_ride_gallop_tip: "Скакун, якого ви осідлали, біжить на $1 швидше, понад швидкість галопу гри (вказана вище). На рівні 100: +$2."
+gs_ride_steadyseat_tip: "Скакун отримує на $1 менше шкоди, поки ви в сідлі, і від утоплення теж. На рівні 100: $2."
+
+# Weapon Mastery: Catch Up and Weapon Switch lines on every skill's page
+gs_mastery_catchup_term: "Надолуження"
+gs_mastery_catchup_line: "$1: x$2 до рівня $3"
+gs_mastery_catchup_tip: "Надолуження: ви втратили колишній рівень у цьому умінні після смерті (він був $1), тому воно буде отримувати x$2 досвіду, доки ваше тіло не згадає колишню вправність. Найвищий рівень який колись був досягнутий кожним умінням зберігається разом із збереженням персонажа."
+gs_mastery_switch_term: "Рука бувальця"
+gs_mastery_switch_line: "$1: +$2 досвіду"
+gs_mastery_switch_tip: "Уміння зброї, що відстає від вашого найкращого, яким ви володієте, буде здобувати на $1 більше досвіду, доки не дожене його — рівня $2."
+
+# Weapon Mastery: melee milestones
+gs_perk_edge: "Вправний Клинок"
+gs_perk_bleed: "Кровопускання"
+gs_perk_crush: "Важка Рука"
+gs_perk_polearmsweep: "Змах"
+gs_perk_longthrow: "Далекий Кидок"
+gs_perk_rend: "Шал Сокири"
+gs_perk_brawler: "Кулачний Боєць"
+gs_mastery_edge_tip: "Удари мечем по оглушеному ворогу завдають на $1 більше шкоди, понад подвійну шкоду, яку гра вже дає оглушеній істоті."
+gs_mastery_bleed_tip: "Удари ножем ще й отруюють ворога: отрута завдає $1 від шкоди удару (до урахування стійкостей ворога). Вороги з імунітетом до отрути її не отримують. Отрути не сумуються: нова доза замінює ту, що діє, лише коли вона більша."
+gs_mastery_crush_tip: "Удари палицею накопичують на $1 більше оглушення, тож вороги втрачають рівновагу швидше."
+gs_mastery_sweep_tip: "Удари атгейра відкидають ворогів на $1 сильніше. Важких ворогів зрушити навряд чи вдасться."
+gs_mastery_longthrow_tip: "Кинуті списи завдають на $1 більше шкоди. Удари списом у руках не змінюються."
+gs_mastery_rend_tip: "Кожен удар сокири по тому самому ворогу протягом $1 після попереднього завдає на $2 більше за попередній, до $3 після $4 ударів поспіль."
+gs_mastery_brawler_tip: "Удари без зброї, як кулаками, так і кігтями, завдають на $1 більше шкоди."
+
+# Weapon Mastery: ranged and magic milestones
+gs_perk_recover: "Вціліла Стріла"
+gs_perk_steadyreload: "Перезаряджання в Русі"
+gs_perk_attunement: "Стихійний Лад"
+gs_perk_lifetap: "Життєоберт"
+gs_perk_shieldtraining: "Школа Щита"
+gs_mastery_recover_tip: "Кожен постріл з лука з шансом $1 не витрачає стрілу: вона лишається у вашому інвентарі."
+gs_mastery_steadyreload_tip: "Спринт, стрибок чи ухилення ставлять перезарядку арбалета на паузу, а не скидають її: щойно ви зупинитеся, вона триває з того місця, де перервалась."
+gs_mastery_attunement_tip: "+$1 до відновлення ейтиру, поки ви тримаєте посох Стихійних чар. Додається до бонусів від медовиць і спорядження."
+gs_mastery_lifetap_tip: "Заклинання кровних чар, що коштують здоров'я, забирають на $1 менше, понад власне зниження від уміння."
+gs_mastery_shieldtraining_tip: "Щит кровних чар, який ви накладаєте — на себе чи на когось іншого, — розвиває ваші Кровні чари, поки поглинає удари істот: 1 досвіду за $1 шкоди (заклинання, що влучило, дає 1), щонайбільше $2 за удар. Падіння, вогонь та удари гравців нічого не розвивають. Власний досвід гри, коли щит ламається, усе одно йде тому, хто його носить."

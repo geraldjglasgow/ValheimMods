@@ -366,11 +366,32 @@ The request: "active ability for sailing: changes the wind direction level 25. 3
   (`wind` command) and the world-edge push-back wind are left alone. Players ashore or on other ships keep the
   weather's wind, as with Moder.
 
+### Fog Lift (the level 75 active, requested by the user 2026-10-23)
+
+The request: "need a hotkey that is unlocked at some level that can reduce fog around ship".
+
+- **What the game does with fog:** every client sets its fog from the weather each frame (`EnvMan.SetEnv`,
+  `RenderSettings.fogDensity`). The Mistlands mist is something else: local particles (`ParticleMist`) that are never
+  emitted inside a `Demister`'s range and are pushed out by its force field, which is how the wisp clears it.
+- **Key:** N by default, each player's own, through the Hotkeys library (`Fog Lift Key` in section 8; N is unbound in
+  the game and in this workspace). Level 75, 2 minutes, a 5 minute cooldown per player, fog 80% thinner and the mist
+  parted 20 m around the ship: constants, under `Sailing Enabled` (the one-setting rule; no Level/Duration/Cooldown
+  settings as Wind Call and the lookout have).
+- **Conditions:** Sailing on, Sailing 75, aboard a ship (anywhere, like the lookout), cooldown over. Each refusal says
+  why; with Sailing off the key does nothing.
+- **The lift (`FogLiftInput`, `FogLiftReceive`, `FogLiftState`):** an RPC on the ship to everybody with the caller's
+  player ID; the ship's owner writes the end time into the ship's ZDO (`grindstone_foglift_until`), so a player who
+  boards mid-lift gets it and it outlives an owner change; everyone aboard is told who lifted it.
+- **The view (`FogLiftView`, `FogLiftMist`, one `EnvMan.SetEnv` postfix in `Core/EnvFogPass.cs`):** on every client
+  whose player is aboard that ship, the game's fresh fog density is scaled down, easing over 3 s, and the ship carries
+  a local Demister (a force field copied from the wisp ball's, never networked) while it lasts. Players ashore and on
+  other ships keep the weather's fog; the weather itself never changes.
+
 ### Public API (2026-10-05)
 
 `GrindstoneSkills.Api.SailingApi` (`Api/SailingApi.cs`), plain types only, read by ShipConfig's ship panel through
 reflection: `GetApiVersion` (1), `GetShipSpeedFactor(Ship)` (the helmsman's top speed factor), `GetExploreRadiusFactor`,
-`GetAbilities` (unlocked ids: `windcall`, `lookout`), and per id `GetAbilityName`, `GetAbilityKey`,
+`GetAbilities` (unlocked ids: `windcall`, `lookout`, `foglift` since 2026-10-23), and per id `GetAbilityName`, `GetAbilityKey`,
 `GetAbilityDescription`, `GetAbilityCooldown` (seconds left), `GetAbilityCooldownLength`. Later versions only add endpoints.
 
 Two more for Hearthhold (2026-10-06), both version 1, same rules: `SkillsApi` (`GetLocalLevel(skill)`,
@@ -381,7 +402,7 @@ game's for the local player only) and `StarsApi` (`GetMaxStars`, `AddStarItem(Ga
 ### Settings
 
 - **8 - Sailing (synced):** Sailing Enabled, Ship Health At 100, Ship Speed At 100, Exploration Radius At 100, Helm
-  Experience Per Kilometre, Crew Experience Share.
+  Experience Per Kilometre, Crew Experience Share; Fog Lift Key (each player's own).
 - **9 - Lookout:** Lookout Level, Lookout Radius, Lookout Duration, Lookout Cooldown (synced); Lookout Key (each
   player's own).
 - **35 - Wind Call:** Wind Call Level (25), Wind Call Duration (60 s), Wind Call Cooldown (180 s) (synced); Wind Call
@@ -437,6 +458,10 @@ game's for the local player only) and `StarsApi` (`GetMaxStars`, `AddStarItem(Ga
 - [ ] Wind Call in multiplayer: when a passenger calls it and the helmsman owns the ship (and the other way round),
       the ship sails with the called wind and both see the same HUD arrow; a player boarding mid-call gets it; a
       player on the shore nearby keeps the weather's wind; a dedicated server shows nothing wrong in its log.
+- [ ] Fog Lift: refused below level 75, ashore and on cooldown, with a message; N aboard in fog thins it over a few
+      seconds for everyone aboard (a second client aboard sees it too, a player on the shore does not); in the
+      Mistlands the mist clears about 20 m around the ship and closes in again after 2 minutes or on leaving the ship;
+      a player boarding mid-lift gets it; ShipConfig's panel lists it; a dedicated server's log stays clean.
 
 ## Woodcutting
 
@@ -1897,7 +1922,7 @@ Fall damage starts above 4 m and reaches 100 at 20 m (`Character.UpdateGroundCon
 - **Other mods are not designed around (user, 2026-10-11):** "if someone is using another mod they should uninstall
   it to use this mod". Prowl is built although SNEAKer and ImpactfulSkills also speed up sneaking. Swim speed, swim
   stamina, diving, gear in water, mount attacks, flying and path speed were left out of this plan and stay out unless
-  the user asks.
+  the user asks. (The user asked for diving and building in water on 2026-10-23: see Swimming.)
 - **Add, never replace.** Postfix the game's own methods and multiply after the game; the game's effects stay as they
   are, so another mod's change to the same formula still applies.
 - **One switch per skill** (`Running Enabled`, ...), on by default; every number below is a constant in the setting's
@@ -1932,14 +1957,37 @@ Fall damage starts above 4 m and reaches 100 at 20 m (`Character.UpdateGroundCon
 - **Vanish (75):** while crouched and unseen for 3 s, creatures hunting the player lose the target; once a minute. Sent
   to each creature's owner (`BaseAI`) as a `NearbyRpc`.
 
-### Swimming (section 39), kept small on purpose
+### Swimming (section 39)
 
-None of these touch what the swim mods change (speed, stamina, diving, gear in water):
+Swim speed and swim stamina stay the game's. Diving and building in water were added on 2026-10-23 at the user's
+request ("make swimming maybe skill based and breath to swim under water and at certain level allow building while
+swimming"), all under `Swimming Enabled` (no new setting: new logic in an existing feature gets no switch):
 
 - **Quick Dry:** Wet lasts -50% at 100 (the status effect's time when added, the player's client).
 - **Long Breath:** out of stamina in water, drowning starts 3 s later and hurts 50% less at 100 (`Player.OnSwimming`'s
   drown timer).
 - **Salvage:** floating items are picked up from twice as far while swimming (`m_autoPickupRange`, only in water).
+- **Diving (`Diving`):** a postfix on `Character.UpdateSwimming` (local player, physics step) writes the vertical
+  speed after the game's: hold Crouch to dive, Jump to swim up, swimming forward under water follows the camera's pitch,
+  idle drifts up at 0.4 m/s (stays put on the bottom). Only Crouch starts a dive. Speed is the game's swim speed;
+  stamina, swim experience and animation stay the game's (it counts the player as swimming at any depth).
+- **Breath (`Breath`, `BreathIcon`, `BreathEffect`):** while diving with the eyes under water, 20 s untrained, 60 s
+  at Swim 100; then the game's drowning hit (1/20 of max health a second, `HitType.Drowning`, so Long Breath softens
+  it). Refills in 3 s above water. Shown as a local status effect icon with the seconds left (the Swim skill's icon,
+  never networked or saved). A swimmer at the surface never loses breath.
+- **Under water view (`DiveCamera`, `UnderwaterView`):** while diving, the game's camera floor at the water
+  (`GameCamera.m_minWaterDistance`) is lifted for the call, and with the camera below the surface the fog turns thick
+  and sea-green (darker at night and deeper down) in the shared `EnvMan.SetEnv` postfix.
+- **Water Builder at 50 (`WaterBuilder`):** the game hides hand items while swimming (`Humanoid.UpdateEquipment`)
+  and refuses to equip there (`Humanoid.EquipItem`); for a build tool (any item with build pieces) the local
+  player's swim timer reads "dry" for those two calls, so the hammer, hoe and cultivator work from the water and on
+  the bottom. Weapons, shields and torches are still put away; the game's placement rules stay.
+- **Multiplayer:** all of it runs on the player's own client, which owns the player; others see the diver through
+  the game's own position sync, pieces are placed through the game's own placement.
+- **Test checklist:** Crouch at the surface dives, Jump rises, looking up or down while swimming forward climbs or
+  sinks, idle drifts up; the camera goes under and the world turns green; breath counts down from 20 s (60 s at 100),
+  then drowning ticks, refilling at the surface; at Swim 50 the hammer stays in hand in water and pieces place on the
+  bottom; a second client sees the diver under water; nothing wrong on a dedicated server.
 
 ### Dodging (section 40)
 

@@ -1,11 +1,12 @@
 using BepInEx.Configuration;
 using SyncedConfig;
+using UnityEngine;
 
 namespace GrindstoneSkills
 {
     /// <summary>
     /// Section 8: the Sailing skill's perks and experience. Each perk grows linearly from nothing at level 0 to its
-    /// value at level 100. Synced.
+    /// value at level 100. Synced, except the Fog Lift key, which is each player's own.
     /// </summary>
     public static class SailingSettings
     {
@@ -17,11 +18,12 @@ namespace GrindstoneSkills
         public static ConfigEntry<float> ExploreRadius { get; private set; }
         public static ConfigEntry<float> HelmExperience { get; private set; }
         public static ConfigEntry<float> CrewShare { get; private set; }
+        public static ConfigEntry<KeyboardShortcut> FogLiftKey { get; private set; }
 
         public static void Initialize(SyncedConfiguration config)
         {
             Enabled = config.Bind(Section, "Sailing Enabled", true,
-                "Turns every Sailing perk, Wind Call, the lookout and Sailing experience on or off. Levels are kept either way.");
+                "Turns every Sailing perk, Wind Call, the lookout, Fog Lift and Sailing experience on or off. Levels are kept either way.");
             ShipHealth = config.Bind(Section, "Ship Health At 100", 50f,
                 "Percent more health for a ship built by a level 100 sailor. Fixed by the builder's level when the ship is placed.",
                 acceptableValues: Settings.UpTo(500f));
@@ -37,6 +39,9 @@ namespace GrindstoneSkills
             CrewShare = config.Bind(Section, "Crew Experience Share", 25f,
                 "Percent of the helm's experience earned by everyone else aboard while someone steers. 0 turns it off.",
                 acceptableValues: Settings.UpTo(100f));
+            FogLiftKey = config.Bind(Section, "Fog Lift Key", new KeyboardShortcut(KeyCode.N),
+                "Fog Lift, Sailing level 75: pressed aboard a ship, the fog thins by 80% and the Mistlands mist parts 20 m around the ship for everyone aboard, for 2 minutes; once every 5 minutes. Each player's own.",
+                synced: false);
         }
     }
 }

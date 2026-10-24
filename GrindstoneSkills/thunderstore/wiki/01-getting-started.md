@@ -7,7 +7,7 @@ GrindstoneSkills deepens five of the game's skills (your levels count) and adds 
 | Skill | Kind | Adds |
 | --- | --- | --- |
 | [Cooking](wiki:Cooking Skill) | game | faster cooking, slower burning, extra food, saved ingredients |
-| [Sailing](wiki:Sailing Skill) | new | tougher, faster ships, wider map reveal, Wind Call, Lookout |
+| [Sailing](wiki:Sailing Skill) | new | tougher, faster ships, wider map reveal, Wind Call, Lookout, Fog Lift |
 | [Woodcutting](wiki:Woodcutting Skill) | game | aimed falls, domino felling, clean splits, old growth, replanting, finds |
 | [Pickaxes](wiki:Pickaxes Skill) | game | seams, splash, rich veins, extra ore, Echo, finds |
 | [Foraging](wiki:Foraging Skill) | new | wild picks: extra yield, sweep picking |
@@ -28,6 +28,7 @@ GrindstoneSkills deepens five of the game's skills (your levels count) and adds 
 | --- | --- | --- |
 | K | at the helm, Sailing 25 | Wind Call |
 | O | aboard, Sailing 50 | Lookout |
+| N | aboard, Sailing 75 | Fog Lift |
 | E | a growing crop someone planted | tend it, once a day |
 | E | a tamed animal you cannot command | pet it |
 | Shift (held) | placing a seed | plant one, not a row |
