@@ -97,6 +97,12 @@ namespace Translations
 
         internal static void Setup(global::Localization game, string language)
         {
+            if (!GameTable.IsGames(game))
+            {
+                // Another mod's spare table gets our words in its language; the player's language stays as it is.
+                GameTable.Write(game, English, sources?.Translation(language, English) ?? English);
+                return;
+            }
             Language = language;
             translated = sources?.Translation(language, English) ?? new Dictionary<string, string>(StringComparer.Ordinal);
             GameTable.Write(game, English, translated);

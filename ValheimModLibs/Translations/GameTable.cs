@@ -25,6 +25,17 @@ namespace Translations
         /// <summary>The game's localization if it exists yet; never creates it.</summary>
         public static global::Localization? Current => InstanceField?.GetValue(null) as global::Localization;
 
+        /// <summary>
+        /// Whether a table is the game's own: the one it shows, or the first, still being made (its constructor sets
+        /// languages up before <c>m_instance</c> is assigned). Some mods make spare tables of their own, set up in
+        /// English to name their items in config files; those are not the player's language.
+        /// </summary>
+        public static bool IsGames(global::Localization table)
+        {
+            global::Localization? current = Current;
+            return current == null || ReferenceEquals(current, table);
+        }
+
         public static void Install(Harmony harmony, Action<global::Localization, string> onSetup, ManualLogSource logSource)
         {
             setup = onSetup;

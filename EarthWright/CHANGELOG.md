@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.2
+
+- Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.
+
 ## 0.5.1
 
 - Russian translation, used while the game's language is Russian.

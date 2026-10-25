@@ -34,6 +34,11 @@ word is then written into the game's word table and its cache of localized texts
 status effects, hover texts and messages translate as the game's own words do. The log names the files used and how
 many words they translated.
 
+Only the game's own word table (`Localization.instance`, or the first one while the game is still making it) sets
+`Lang.Language`. Some mods make spare tables set up in English to name their items in config files (OdinHorse and
+others); a spare table gets our words in its language and leaves the player's language alone, so it cannot turn every
+other mod's text back to English.
+
 ## Rules for the words
 
 - Keys: lowercase `[a-z0-9_]`. The game ends a `$key` token at any of ` (){}[]+-!?/\&%,.:-=<>`.
