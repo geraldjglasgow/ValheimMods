@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.20.2
+
+- Defense and Swimming breath icons moved onto a shared library; no change in play.
+
 ## 0.20.1
 
 - Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.

@@ -1,4 +1,5 @@
 using System;
+using StatusTemplates;
 using Translations;
 using UnityEngine;
 
@@ -51,11 +52,10 @@ namespace GrindstoneSkills
             Player player = Player.m_localPlayer;
             if (player == null || player.IsDead() || !DefenseSkill.Active)
                 return;
-            SEMan seman = player.GetSEMan();
             foreach (DefenseEffect effect in Effects)
             {
-                if (effect.Showing() && !seman.HaveStatusEffect(effect.Hash))
-                    seman.AddStatusEffect(effect.Template());
+                if (effect.Showing() && !effect.Status.Has(player))
+                    effect.Status.Add(player);
             }
         }
 
@@ -63,48 +63,22 @@ namespace GrindstoneSkills
 
         private sealed class DefenseEffect
         {
-            private readonly string id;
-            private readonly string title;
-            private readonly string iconItem;
-            private readonly Func<string> label;
-            private readonly bool cooldown;
-            private DefenseStatus template;
-
             public DefenseEffect(string id, string title, string iconItem, Func<bool> showing, Func<string> label, bool cooldown = false)
             {
-                this.id = id;
-                this.title = title;
-                this.iconItem = iconItem;
                 Showing = showing;
-                this.label = label;
-                this.cooldown = cooldown;
-                Hash = id.GetStableHashCode();
+                Status = new StatusTemplate<DefenseStatus>(id, se =>
+                {
+                    se.m_name = title;
+                    se.m_cooldownIcon = cooldown;
+                    se.Showing = showing;
+                    se.Label = label;
+                }, () => GameIcons.Item(iconItem) ?? DefenseIcon.Find());
             }
 
             public Func<bool> Showing { get; }
-            public int Hash { get; }
 
             /// <summary>The effect SEMan clones, made once; ScriptableObjects outlive scene loads.</summary>
-            public DefenseStatus Template()
-            {
-                if (template != null)
-                    return template;
-                template = ScriptableObject.CreateInstance<DefenseStatus>();
-                template.name = id;
-                template.m_name = title;
-                template.m_icon = Icon();
-                template.m_cooldownIcon = cooldown;
-                template.Showing = Showing;
-                template.Label = label;
-                return template;
-            }
-
-            private Sprite Icon()
-            {
-                GameObject prefab = ObjectDB.instance != null ? ObjectDB.instance.GetItemPrefab(iconItem) : null;
-                Sprite[] icons = prefab != null ? prefab.GetComponent<ItemDrop>()?.m_itemData?.m_shared?.m_icons : null;
-                return icons != null && icons.Length > 0 && icons[0] != null ? icons[0] : DefenseIcon.Find();
-            }
+            public StatusTemplate<DefenseStatus> Status { get; }
         }
     }
 }

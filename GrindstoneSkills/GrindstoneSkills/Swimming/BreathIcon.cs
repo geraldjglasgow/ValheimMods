@@ -1,5 +1,5 @@
+using StatusTemplates;
 using Translations;
-using UnityEngine;
 
 namespace GrindstoneSkills
 {
@@ -11,17 +11,17 @@ namespace GrindstoneSkills
     /// </summary>
     public static class BreathIcon
     {
-        private const string EffectName = "grindstone_breath";
-        private static readonly int Hash = EffectName.GetStableHashCode();
+        private static readonly StatusTemplate<BreathEffect> Breath = new StatusTemplate<BreathEffect>("grindstone_breath");
 
-        private static BreathEffect template;
         private static BreathEffect shown;
 
         public static void Show(Player player, float left)
         {
-            SEMan seman = player.GetSEMan();
-            if (shown == null || !seman.HaveStatusEffect(Hash))
-                shown = seman.AddStatusEffect(Template(player)) as BreathEffect;
+            if (shown == null || !Breath.Has(player))
+            {
+                Dress(player);
+                shown = Breath.Hold(player);
+            }
             if (shown != null)
                 shown.Left = left;
         }
@@ -29,21 +29,17 @@ namespace GrindstoneSkills
         public static void Hide(Player player)
         {
             shown = null;
-            player.GetSEMan().RemoveStatusEffect(Hash, true);
+            Breath.Drop(player);
         }
 
-        private static BreathEffect Template(Player player)
+        // The words and icon again before each new copy: the language may have changed since the last one.
+        private static void Dress(Player player)
         {
-            if (template == null)
-            {
-                template = ScriptableObject.CreateInstance<BreathEffect>();
-                template.name = EffectName;
-            }
+            BreathEffect template = Breath.Get();
             template.m_name = Lang.Get("gs_swim_breath");
             template.m_tooltip = Lang.Get("gs_swim_breath_tooltip");
             Skills.SkillDef swim = player.GetSkills().GetSkillDef(Skills.SkillType.Swim);
             template.m_icon = swim != null ? swim.m_icon : null;
-            return template;
         }
     }
 }
