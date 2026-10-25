@@ -13,7 +13,7 @@ namespace Hearthhold
     {
         public const string PluginGuid = "com.Hearthhold";
         public const string PluginName = "Hearthhold";
-        public const string PluginVersion = "0.2.0";
+        public const string PluginVersion = "0.2.1";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
