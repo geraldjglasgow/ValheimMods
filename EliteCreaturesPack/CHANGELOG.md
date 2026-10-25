@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.7
+
+- Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.
+
 ## 0.12.6
 
 - Russian translation updated.
