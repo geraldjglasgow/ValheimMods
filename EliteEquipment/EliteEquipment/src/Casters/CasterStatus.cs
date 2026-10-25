@@ -1,7 +1,7 @@
 using System;
 using System.Collections.Generic;
+using StatusTemplates;
 using Translations;
-using UnityEngine;
 
 namespace EliteEquipment.Casters
 {
@@ -32,10 +32,7 @@ namespace EliteEquipment.Casters
                 return;
             Build();
             foreach (StatusEffect effect in made)
-            {
-                if (!effects.Contains(effect))
-                    effects.Add(effect);
-            }
+                StatusTable.Put(effects, effect);
         }
 
         private static void Build()
@@ -78,8 +75,7 @@ namespace EliteEquipment.Casters
 
         private static SE_Stats Make(string name, string word, string tooltip, string icon, float seconds)
         {
-            SE_Stats effect = ScriptableObject.CreateInstance<SE_Stats>();
-            effect.name = name;
+            SE_Stats effect = StatusTemplate.Make<SE_Stats>(name);
             effect.m_name = word;
             effect.m_tooltip = tooltip;
             effect.m_icon = icon != null ? CasterBundles.Sprite(CasterBundles.Spells, icon) : null;

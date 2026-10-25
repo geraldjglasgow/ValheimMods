@@ -420,7 +420,7 @@ and key), `2. Shields` (`Shields` true), `3. Weapons` (`Weapons` true), `4. Cast
 
 Never run in game as EliteEquipment (the boots ran in game as OpenKeep's section 16). With PackPanel for the Feet slot:
 
-1. Log shows `Loading [EliteEquipment 0.4.3]` without failed patches; `milkyteam.eliteequipment.cfg` has `1. Boots /
+1. Log shows `Loading [EliteEquipment 0.4.4]` without failed patches; `milkyteam.eliteequipment.cfg` has `1. Boots /
    Separate Boots = true`. With OpenKeep too, neither log mentions the other's boots.
 2. At a workbench Leather Boots sit beside Leather Trousers; Iron Greaves cost 16 iron and Iron Boots 4 at the forge (the
    game: 20); upgrades split the same. Iron Greaves show 80% of their armour, the boots 20%.

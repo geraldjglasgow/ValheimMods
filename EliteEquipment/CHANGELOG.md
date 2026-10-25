@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.4
+
+- Caster spell effects moved onto a shared library; no change in play.
+
 ## 0.4.3
 
 - Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.
