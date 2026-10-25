@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.1
+
+- Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.
+
 ## 0.17.0
 
 - Translations: every word you read is in `translations/English.yml`; a `PackPanel.translations.<Language>.yml` in `BepInEx/config` translates it.
