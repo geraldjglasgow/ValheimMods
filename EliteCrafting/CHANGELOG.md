@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.11.4
+
+- Hamstring, Numbing Blow and the rune effect icons moved onto a shared library; no change in play.
+
 ## 0.11.3
 
 - Russian translation, used while the game's language is Russian.

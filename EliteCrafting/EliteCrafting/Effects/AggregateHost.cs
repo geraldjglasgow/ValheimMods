@@ -1,4 +1,4 @@
-using UnityEngine;
+using StatusTemplates;
 
 namespace EliteCrafting.Effects
 {
@@ -8,17 +8,19 @@ namespace EliteCrafting.Effects
     /// are switched off, and pushes the active value set into it. Local player only; never on a dedicated server.
     /// <para>
     /// The game adds a shallow clone of the template; we never keep a reference to that clone across frames but look it
-    /// up by name hash when needed (one hash-set check), because death and logout destroy it under us.
+    /// up by name hash when needed (one hash-set check), because death and logout destroy it under us. The template is
+    /// never registered in ObjectDB.
     /// </para>
     /// </summary>
     internal static class AggregateHost
     {
-        private static EcfAggregate? _template;
+        private static readonly StatusTemplate<EcfAggregate> Aggregate = new StatusTemplate<EcfAggregate>(
+            EcfAggregate.EffectName, se => (se.m_name, se.m_hidden) = ("EliteCrafting", true));
 
         /// <summary>The value set the overrides read: <see cref="AggregateBuilder.Values"/>.</summary>
         public static AggregateValues Current => AggregateBuilder.Values;
 
-        public static bool IsPresent(Player player) => player.GetSEMan().HaveStatusEffect(EcfAggregate.Hash);
+        public static bool IsPresent(Player player) => Aggregate.Has(player);
 
         /// <summary>After a rebuild: make sure the effect is on the player and holds the current values.</summary>
         public static void Apply(Player player)
@@ -28,36 +30,10 @@ namespace EliteCrafting.Effects
                 // Death removed every status effect; the respawned Player gets a fresh one.
                 return;
             }
-            EcfAggregate? effect = Find(player) ?? player.GetSEMan().AddStatusEffect(Template) as EcfAggregate;
-            effect?.ApplyFields(Current);
+            Aggregate.Hold(player)?.ApplyFields(Current);
         }
 
         /// <summary>Effects switched off: take the status effect away (quietly).</summary>
-        public static void Remove(Player player) => player.GetSEMan().RemoveStatusEffect(EcfAggregate.Hash, quiet: true);
-
-        private static EcfAggregate? Find(Player player) =>
-            player.GetSEMan().GetStatusEffect(EcfAggregate.Hash) as EcfAggregate;
-
-        // Built once per process and kept alive: every clone the game makes shares the template's native object
-        // (MemberwiseClone), so it must never be unloaded or destroyed. Never registered in ObjectDB.
-        private static EcfAggregate Template
-        {
-            get
-            {
-                if (_template == null)
-                {
-                    _template = ScriptableObject.CreateInstance<EcfAggregate>();
-                    _template.name = EcfAggregate.EffectName;
-                    _template.hideFlags = HideFlags.HideAndDontSave;
-                    _template.m_name = "EliteCrafting";
-                    _template.m_hidden = true;
-                    _template.m_icon = null;
-                    _template.m_ttl = 0f;
-                    _template.m_startMessage = "";
-                    _template.m_stopMessage = "";
-                }
-                return _template;
-            }
-        }
+        public static void Remove(Player player) => Aggregate.Drop(player);
     }
 }

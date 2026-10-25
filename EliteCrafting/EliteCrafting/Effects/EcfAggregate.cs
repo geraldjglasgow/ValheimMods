@@ -18,8 +18,6 @@ namespace EliteCrafting.Effects
         /// <summary>The ScriptableObject name; the game identifies status effects by its hash (not by <c>m_name</c>).</summary>
         public const string EffectName = "ECF_Aggregate";
 
-        public static readonly int Hash = EffectName.GetStableHashCode();
-
         public override void ModifySkillLevel(Skills.SkillType skill, ref float level)
         {
             level += AggregateHost.Current.SkillLevelFor(skill);

@@ -1,3 +1,6 @@
+using HarmonyLib;
+using StatusTemplates;
+
 namespace EliteCrafting.Effects
 {
     /// <summary>
@@ -29,5 +32,12 @@ namespace EliteCrafting.Effects
             EffectKinds.VerifyCatalog();
             EffectRuntime.Install();
         }
+
+        /// <summary>
+        /// The status effects hits carry (Hamstring, Numbing Blow) in every object database, on every peer: the target's
+        /// owner looks the hit's status hash up there.
+        /// </summary>
+        public static void Register(Harmony harmony) =>
+            StatusTable.Register(harmony, CreatureSlow.Template.Get, Combat3.Paralysis.Registered);
     }
 }

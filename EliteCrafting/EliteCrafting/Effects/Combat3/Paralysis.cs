@@ -1,5 +1,5 @@
-using System.Collections.Generic;
 using HarmonyLib;
+using StatusTemplates;
 using UnityEngine;
 
 namespace EliteCrafting.Effects.Combat3
@@ -57,7 +57,7 @@ namespace EliteCrafting.Effects.Combat3
         }
     }
 
-    /// <summary>Attacker side of Numbing Blow, the owner-side checks, and the ObjectDB registration of <see cref="EcfParalyze"/> (every peer).</summary>
+    /// <summary>Attacker side of Numbing Blow, the owner-side checks, and <see cref="EcfParalyze"/>'s template (in every ObjectDB, on every peer).</summary>
     internal static class Paralysis
     {
         private const double ImmuneSeconds = 6.0;
@@ -65,7 +65,8 @@ namespace EliteCrafting.Effects.Combat3
         /// <summary>Creature ZDO: network time (ticks) until which it cannot be paralysed again; written by its owner.</summary>
         private static readonly int ImmuneKey = "ecf_para_immune".GetStableHashCode();
 
-        private static EcfParalyze? _template;
+        private static readonly StatusTemplate<EcfParalyze> Template = new StatusTemplate<EcfParalyze>(EcfParalyze.EffectName,
+            se => (se.m_name, se.m_ttl) = ("$ecf_fx_paralyze", 1f));
 
         /// <summary>No paralysis on this peer lasts past this time: until then the checks look; after it they cost one compare.</summary>
         private static float _until;
@@ -112,62 +113,29 @@ namespace EliteCrafting.Effects.Combat3
         public static bool Has(Character character) =>
             Time.time <= _until && character.GetSEMan() != null && character.GetSEMan().HaveStatusEffect(EcfParalyze.Hash);
 
-        /// <summary>Adds the template to an ObjectDB's status effects unless one of that name is there.</summary>
-        public static void Register(ObjectDB db)
+        /// <summary>
+        /// The template as registered in every ObjectDB (<see cref="EffectsFeature.Register"/>), wearing the look of the
+        /// game's own shock (the Lightning status a lightning hit gives) once the database has it: its start effects are
+        /// networked and attached to the character, so every client near the paralysed creature sees the crackle, removed
+        /// on its end.
+        /// </summary>
+        public static StatusEffect Registered()
         {
-            BorrowLook(db);
-            List<StatusEffect> list = db.m_StatusEffects;
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i] != null && list[i].NameHash() == EcfParalyze.Hash)
-                {
-                    return;
-                }
-            }
-            list.Add(Template);
-        }
-
-        // The look of the game's own shock (the Lightning status a lightning hit gives): its start effects are networked
-        // and attached to the character, so every client near the paralysed creature sees the crackle, removed on its end.
-        private static void BorrowLook(ObjectDB db)
-        {
-            StatusEffect? shock = Template.m_startEffects.m_effectPrefabs.Length == 0 ? db.GetStatusEffect(SEMan.s_statusEffectLightning) : null;
+            EcfParalyze template = Template.Get();
+            ObjectDB db = ObjectDB.instance;
+            StatusEffect? shock = template.m_startEffects.m_effectPrefabs.Length == 0 && db != null
+                ? db.GetStatusEffect(SEMan.s_statusEffectLightning) : null;
             if (shock != null)
             {
-                Template.m_startEffects = shock.m_startEffects;
+                template.m_startEffects = shock.m_startEffects;
             }
-        }
-
-        private static EcfParalyze Template
-        {
-            get
-            {
-                if (_template == null)
-                {
-                    _template = ScriptableObject.CreateInstance<EcfParalyze>();
-                    _template.name = EcfParalyze.EffectName;
-                    _template.hideFlags = HideFlags.HideAndDontSave;
-                    _template.m_name = "$ecf_fx_paralyze";
-                    _template.m_ttl = 1f;
-                    _template.m_startMessage = "";
-                    _template.m_stopMessage = "";
-                }
-                return _template;
-            }
+            return template;
         }
     }
 
     [HarmonyPatch]
     internal static class ParalysisPatches
     {
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.Awake))]
-        private static void Awake(ObjectDB __instance) => Paralysis.Register(__instance);
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.CopyOtherDB))]
-        private static void Copy(ObjectDB __instance) => Paralysis.Register(__instance);
-
         // MonsterAI starts every attack here, on the creature's owner.
         [HarmonyPrefix]
         [HarmonyPatch(typeof(Humanoid), nameof(Humanoid.StartAttack))]

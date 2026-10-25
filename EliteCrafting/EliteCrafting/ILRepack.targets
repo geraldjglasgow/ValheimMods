@@ -11,6 +11,7 @@
       <InputAssemblies Include="$(OutDir)ConfigReload.dll" />
       <InputAssemblies Include="$(OutDir)PatchGuard.dll" />
       <InputAssemblies Include="$(OutDir)BundlePrefabs.dll" />
+      <InputAssemblies Include="$(OutDir)StatusTemplates.dll" />
       <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
     </ItemGroup>
     <ItemGroup>

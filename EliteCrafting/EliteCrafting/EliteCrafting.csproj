@@ -6,7 +6,7 @@
     <RootNamespace>EliteCrafting</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.11.3</Version>
+    <Version>0.11.4</Version>
     <Product>EliteCrafting</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -43,6 +43,8 @@
     <ProjectReference Include="$(ModLibsPath)\ConfigReload\ConfigReload.csproj" />
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
     <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
+    <!-- StatusTemplates: its own status effects made, held on characters and registered in every ObjectDB. -->
+    <ProjectReference Include="$(ModLibsPath)\StatusTemplates\StatusTemplates.csproj" />
   </ItemGroup>
 
   <ItemGroup>

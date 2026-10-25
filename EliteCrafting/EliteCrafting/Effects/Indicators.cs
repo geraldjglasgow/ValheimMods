@@ -1,3 +1,4 @@
+using StatusTemplates;
 using UnityEngine;
 
 namespace EliteCrafting.Effects
@@ -12,11 +13,13 @@ namespace EliteCrafting.Effects
     {
         public const int Fury = 0, Rhythm = 1, Ward = 2;
 
-        private static readonly string[] Names = { "ECF_Indicator_Fury", "ECF_Indicator_Rhythm", "ECF_Indicator_Ward" };
-        private static readonly string[] Titles = { "$ecf_fx_fury", "$ecf_fx_rhythm", "$ecf_fx_ward" };
         private static readonly EffectKind[] Kinds = { EffectKind.DodgeFury, EffectKind.ComboFinisher, EffectKind.CalmWard };
-        private static readonly int[] Hashes = { Names[0].GetStableHashCode(), Names[1].GetStableHashCode(), Names[2].GetStableHashCode() };
-        private static readonly StatusEffect?[] Templates = new StatusEffect?[3];
+        private static readonly StatusTemplate<StatusEffect>[] Templates =
+        {
+            Indicator("ECF_Indicator_Fury", "$ecf_fx_fury"),
+            Indicator("ECF_Indicator_Rhythm", "$ecf_fx_rhythm"),
+            Indicator("ECF_Indicator_Ward", "$ecf_fx_ward"),
+        };
         private static readonly Sprite?[] Icons = new Sprite?[3];
 
         /// <summary>Rebuild: forget the icons before the equipped affixes are walked again.</summary>
@@ -45,8 +48,7 @@ namespace EliteCrafting.Effects
             {
                 return;
             }
-            SEMan seman = player.GetSEMan();
-            StatusEffect? effect = seman.GetStatusEffect(Hashes[indicator]) ?? seman.AddStatusEffect(Template(indicator));
+            StatusEffect? effect = Templates[indicator].Hold(player);
             if (effect != null)
             {
                 effect.m_ttl = Mathf.Max(0f, seconds);
@@ -55,30 +57,9 @@ namespace EliteCrafting.Effects
             }
         }
 
-        public static void Hide(int indicator)
-        {
-            Player? player = Player.m_localPlayer;
-            if (player != null)
-            {
-                player.GetSEMan().RemoveStatusEffect(Hashes[indicator], quiet: true);
-            }
-        }
+        public static void Hide(int indicator) => Templates[indicator].Drop(Player.m_localPlayer);
 
-        // Built once per process and kept alive (the game's clones share its native object).
-        private static StatusEffect Template(int indicator)
-        {
-            StatusEffect? template = Templates[indicator];
-            if (template == null)
-            {
-                template = ScriptableObject.CreateInstance<StatusEffect>();
-                template.name = Names[indicator];
-                template.hideFlags = HideFlags.HideAndDontSave;
-                template.m_name = Titles[indicator];
-                template.m_startMessage = "";
-                template.m_stopMessage = "";
-                Templates[indicator] = template;
-            }
-            return template;
-        }
+        private static StatusTemplate<StatusEffect> Indicator(string name, string title) =>
+            new StatusTemplate<StatusEffect>(name, se => se.m_name = title);
     }
 }

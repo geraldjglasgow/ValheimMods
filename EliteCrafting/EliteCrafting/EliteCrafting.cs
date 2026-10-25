@@ -23,7 +23,7 @@ namespace EliteCrafting
     {
         public const string PluginGuid = "com.EliteCrafting";
         public const string PluginName = "EliteCrafting";
-        public const string PluginVersion = "0.11.3";
+        public const string PluginVersion = "0.11.4";
 
         private void Awake()
         {
@@ -36,6 +36,7 @@ namespace EliteCrafting
             InitFeatures();
             Harmony harmony = new Harmony(PluginGuid);
             PatchEach(harmony);
+            InitArea("EffectsFeature.Register", () => Effects.EffectsFeature.Register(harmony));
             Charter.Charter.Install(harmony);
             Guard.Install(harmony, Logger, Assembly.GetExecutingAssembly());
             Words.InstallNow();

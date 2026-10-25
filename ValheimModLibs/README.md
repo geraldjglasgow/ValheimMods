@@ -17,6 +17,7 @@ Small, focused libraries for Valheim BepInEx mods, extracted from Elite Creature
 | [Hotkeys](Hotkeys/) | A mod's hotkeys read one way: shortcuts fire while W is held, only their own modifiers count, nothing fires while the player types | BepInEx, game, Unity |
 | [WindowInput](WindowInput/) | A mod's own window treated like the game's while open: free cursor, no attacks or mouse look or zoom, Esc closes it | Harmony, game, Unity |
 | [Translations](Translations/) | A mod's player-facing words in the game's language: English embedded as YAML, translations embedded or dropped in as files, written into the game's word table on every language setup; text for other peers sent as keys | YamlDotNet, BepInEx, Harmony, game |
+| [StatusTemplates](StatusTemplates/) | A mod's own status effects: the template made once and kept loaded, the copy on a character found, held or dropped, icons borrowed from the game's items and effects, and the effects a hit carries in every object database on every peer | Harmony, game, Unity |
 
 ## Building
 

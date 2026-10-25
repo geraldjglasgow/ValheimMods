@@ -1,5 +1,4 @@
-using System.Collections.Generic;
-using HarmonyLib;
+using StatusTemplates;
 using UnityEngine;
 
 namespace EliteCrafting.Effects
@@ -42,10 +41,11 @@ namespace EliteCrafting.Effects
         }
     }
 
-    /// <summary>Attacker side of Hamstring and the ObjectDB registration of <see cref="EcfSlow"/> (every peer).</summary>
+    /// <summary>Attacker side of Hamstring, and <see cref="EcfSlow"/>'s template (in every ObjectDB: <see cref="EffectsFeature.Register"/>).</summary>
     internal static class CreatureSlow
     {
-        private static EcfSlow? _template;
+        public static readonly StatusTemplate<EcfSlow> Template = new StatusTemplate<EcfSlow>(EcfSlow.EffectName,
+            se => (se.m_name, se.m_ttl) = ("$ecf_fx_hamstring", EcfSlow.Seconds));
 
         /// <summary>From the local player's outgoing hit (<see cref="OutgoingHits"/>).</summary>
         public static void Carry(AggregateValues v, Character target, HitData hit)
@@ -57,49 +57,5 @@ namespace EliteCrafting.Effects
                 hit.m_skillLevel = slow * 100f;
             }
         }
-
-        /// <summary>Adds the template to an ObjectDB's status effects unless one of that name is there (the main-menu DB shares the asset's list).</summary>
-        public static void Register(ObjectDB db)
-        {
-            List<StatusEffect> list = db.m_StatusEffects;
-            for (int i = 0; i < list.Count; i++)
-            {
-                if (list[i] != null && list[i].NameHash() == EcfSlow.Hash)
-                {
-                    return;
-                }
-            }
-            list.Add(Template);
-        }
-
-        private static EcfSlow Template
-        {
-            get
-            {
-                if (_template == null)
-                {
-                    _template = ScriptableObject.CreateInstance<EcfSlow>();
-                    _template.name = EcfSlow.EffectName;
-                    _template.hideFlags = HideFlags.HideAndDontSave;
-                    _template.m_name = "$ecf_fx_hamstring";
-                    _template.m_ttl = EcfSlow.Seconds;
-                    _template.m_startMessage = "";
-                    _template.m_stopMessage = "";
-                }
-                return _template;
-            }
-        }
-    }
-
-    [HarmonyPatch]
-    internal static class SlowRegistrationPatch
-    {
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.Awake))]
-        private static void Awake(ObjectDB __instance) => CreatureSlow.Register(__instance);
-
-        [HarmonyPostfix]
-        [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.CopyOtherDB))]
-        private static void Copy(ObjectDB __instance) => CreatureSlow.Register(__instance);
     }
 }
