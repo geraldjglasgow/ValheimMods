@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.34.1
+
+- Russian translation updated.
+
 ## 3.34.0
 
 - Rendering Table: a decorated model of its own, half the workbench's width and as tall.
