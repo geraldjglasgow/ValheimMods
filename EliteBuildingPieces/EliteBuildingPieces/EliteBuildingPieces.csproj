@@ -6,7 +6,7 @@
     <RootNamespace>EliteBuildingPieces</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>0.2.1</Version>
+    <Version>0.2.2</Version>
     <Product>EliteBuildingPieces</Product>
     <Description>EliteBuildingPieces: new building pieces, starting with core wood walls and doors</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
