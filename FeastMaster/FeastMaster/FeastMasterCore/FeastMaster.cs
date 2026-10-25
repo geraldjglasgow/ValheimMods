@@ -12,7 +12,7 @@ namespace FeastMaster
     {
         public const string PluginGuid = "com.FeastMaster";
         public const string PluginName = "FeastMaster";
-        public const string PluginVersion = "4.8.0";
+        public const string PluginVersion = "4.8.1";
 
         public static ManualLogSource Log { get; private set; }
         public static SyncedConfiguration Synced { get; private set; }
