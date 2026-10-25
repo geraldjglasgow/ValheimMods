@@ -1,5 +1,9 @@
 # Changelog
 
+## 5.1.3
+
+- Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.
+
 ## 5.1.2
 
 - Fixed: breaking a destroyed Mímir's Chest no longer throws an error.
