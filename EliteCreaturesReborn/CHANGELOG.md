@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.34.3
+
+- Vietnamese translation updated by QuânKha (Zono) [VLHM], now every line including the Rendering Table and Hel's Arena.
+
 ## 3.34.2
 
 - Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.

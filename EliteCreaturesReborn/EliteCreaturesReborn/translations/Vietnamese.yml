@@ -1,496 +1,909 @@
-# Elite Creatures Reborn - Vietnamese words (Tiếng Việt), translated by QuânKha (Zono) [VLHM], 2026-10-19, updated 2026-10-20
+# Elite Creatures Reborn - Vietnamese words (Tiếng Việt), translated by QuânKha (Zono) [VLHM], 2026-10-19, updated 2026-10-20 and 2026-10-25
 #
 # Used while the game's language is Vietnamese, which a language mod adds (the game ships no Vietnamese). A language
 # mod that writes Vietnamese into the game's English instead needs this file copied as
 # BepInEx/config/EliteCreaturesReborn.translations.English.yml.
 # The keys are the ones in English.yml beside this file; a key left out stays English. "$1 $2" patterns set the word
 # order (ecr_name_decorated: $1 the mutation and aspect words, $2 the creature's name).
-# The Rendering Table lines (piece_ecr_renderingtable*, ecr_render_*, ecr_book_render_*) were added 2026-10-22, not by the translator; corrections welcome.
 
 # Mutation names: the word before a creature's name ("Mad Greydwarf"), also used by the compendium and eggs
+# Mutation name: adjective before a creature's name ("Mad Greydwarf"), one form for every creature, also alone in compendium and egg tooltips. Far faster.
 ecr_mut_mad: "Điên Cuồng"
-ecr_mut_bloated: "Trương Phình"
-ecr_mut_cloaked: "Ẩn Thân"
+# Mutation name: adjective before a creature's name ("Bloated Boar"); also alone in compendium, egg tooltips. Double health, explodes after death.
+ecr_mut_bloated: "Phình Trướng"
+# Mutation name: adjective before a creature's name ("Cloaked Wolf"); also alone in compendium, egg tooltips. Invisible beyond 10 m.
+ecr_mut_cloaked: "Tàng Hình"
+# Mutation name: adjective before a creature's name ("Splintering Troll"); also alone in compendium, egg tooltips. Splits into weaker copies when killed.
 ecr_mut_splintering: "Phân Tách"
+# Mutation name: adjective before a creature's name ("Leeching Draugr"); also alone in compendium, egg tooltips. Heals from the damage it deals.
 ecr_mut_leeching: "Hút Máu"
-ecr_mut_warding: "Hộ Thể"
+# Mutation name: adjective before a creature's name ("Warding Troll"); also alone in compendium, egg tooltips. Reflects part of each hit back.
+ecr_mut_warding: "Phản Đòn"
+# Mutation name: adjective before a creature's name ("Plated Boar"); also alone in compendium, egg tooltips. Armoured while healthy.
 ecr_mut_plated: "Bọc Giáp"
+# Mutation name: adjective before a creature's name ("Miasmic Draugr"); also alone in compendium, egg tooltips. Trails poison clouds.
 ecr_mut_miasmic: "Chướng Khí"
+# Mutation name: adjective before a creature's name ("Devouring Wolf"); also alone in compendium, egg tooltips. Eats other creatures and grows stronger.
 ecr_mut_devouring: "Thôn Phệ"
-ecr_mut_thieving: "Đạo Tặc"
+# Mutation name: adjective before a creature's name ("Thieving Greydwarf"); also alone in compendium, egg tooltips. Steals items from you with its hits.
+ecr_mut_thieving: "Trộm Cắp"
+# Mutation name: adjective before a creature's name ("Gilded Boar"); also alone in compendium, egg tooltips. Glitters gold, flees, drops rich loot.
 ecr_mut_gilded: "Mạ Vàng"
-ecr_mut_blinking: "Tốc Biến"
-ecr_mut_relentless: "Ngoan Cường"
-ecr_mut_juggernaut: "Bá Vương"
-ecr_mut_screecher: "Rú Rít"
-ecr_mut_frostbound: "Hàn Băng"
+# Mutation name: adjective before a creature's name ("Blinking Wolf"); also alone in compendium, egg tooltips. Teleports behind its target.
+ecr_mut_blinking: "Dịch Chuyển"
+# Mutation name: adjective before a creature's name ("Relentless Draugr"); also alone in compendium, egg tooltips. Never stops chasing you.
+ecr_mut_relentless: "Truy Sát"
+# Mutation name: a noun put before a creature's name ("Juggernaut Troll"); also alone in compendium, egg tooltips. Never staggers or is knocked back.
+ecr_mut_juggernaut: "Bất Khuất"
+# Mutation name: a noun put before a creature's name ("Screecher Greydwarf"); also alone in compendium, egg tooltips. One who screeches; deafens.
+ecr_mut_screecher: "Rít Gào"
+# Mutation name: adjective before a creature's name ("Frostbound Wolf"); also alone in compendium, egg tooltips. Freezing aura, ice trail, frost heals it.
+ecr_mut_frostbound: "Băng Giá"
+# Mutation name: adjective before a creature's name ("Mudbound Troll"); also alone in compendium, egg tooltips. Leaves deep mud where it walks.
 ecr_mut_mudbound: "Bùn Lầy"
+# Mutation name: adjective before a creature's name ("Corrodent Draugr"); also alone in compendium, egg tooltips. Its hits corrode your armour.
 ecr_mut_corrodent: "Ăn Mòn"
-ecr_mut_cloning: "Thế Thân"
+# Mutation name: adjective before a creature's name ("Cloning Greydwarf"); also alone in compendium, egg tooltips. Leaves a decoy copy and fights unseen.
+ecr_mut_cloning: "Phân Thân"
+# Mutation name: adjective before a creature's name ("Piercing Draugr"); also alone in compendium, egg tooltips. Ignores part of your armour. Off by default.
 ecr_mut_piercing: "Xuyên Giáp"
-ecr_mut_howling: "Gầm Hú"
-ecr_mut_binding: "Trói Rễ"
-ecr_mut_flamebound: "Hỏa Diệm"
+# Mutation name: adjective before a creature's name ("Howling Wolf"); also alone in compendium, egg tooltips. Howls to call creatures on you. Off by default.
+ecr_mut_howling: "Hú Gọi"
+# Mutation name: adjective before a creature's name ("Binding Greydwarf"); also alone in compendium, egg tooltips. Roots that hold your feet. Off by default.
+ecr_mut_binding: "Trói Buộc"
+# Mutation name: adjective before a creature's name ("Flamebound Surtling"); also alone in compendium, egg tooltips. Leaves burning ground where it walks.
+ecr_mut_flamebound: "Rực Lửa"
 
 # Creature names: $1 its mutation and aspect words, $2 its own name ("Mad Greydwarf")
+# Full creature/boss name on nameplate, hover, boss bar, messages, death recap. $1 = its mutation/aspect words ("Bloated Warding"), $2 = its name ("Troll").
 ecr_name_decorated: "$2 $1"
 # Two words of a creature's name side by side, joined left to right ("Bloated Warding", then "Bloated Warding Miasmic")
+# Creature names: joins two mutation/aspect words, repeated for 3+. $1 = words so far ("Bloated"), $2 = next word ("Warding"). Usually just a space.
 ecr_name_words: "$1 $2"
 
 # Mutations, told to the player they happen to
 # $1 the creature, $2 the item, $3 how many
+# Thieving mutation: top-left message to the robbed player. $1 = the creature's full name ("Thieving Greydwarf"), $2 = item name ("Wood"), $3 = count (20).
 ecr_mut_msg_stole: "$1 đã trộm $2 x$3"
 # $1 the item, $2 how many
+# Thieving: top-left message when a steal does not go through and the item is given back. $1 = item name ("Wood"), $2 = count (20). Rare.
 ecr_mut_msg_not_stolen: "$1 x$2 không bị trộm"
-ecr_mut_msg_stolen_late: "$1 x$2 cuối cùng vẫn bị trộm"
+# Thieving: top-left message when a steal confirmed late takes back an item already given back. $1 = item name ("Wood"), $2 = count (20). Rare.
+ecr_mut_msg_stolen_late: "$1 x$2 vẫn bị trộm mất"
 # $1 the armour piece, $2 the percent of it left
+# Corrodent mutation: top-left message, with the item's icon, when its hit wears your armour. $1 = armour piece ("Bronze helmet"), $2 = percent left (63).
 ecr_mut_msg_corrodes: "$1 của bạn bị ăn mòn (còn $2%)"
 
 # Over a creature, where damage numbers show
-ecr_display_unstoppable: "Không Thể Cản Phá"
+# Juggernaut mutation: grey floating word over the creature, like a damage number, where it would have staggered. Alone; describes the creature.
+ecr_display_unstoppable: "Không thể cản"
 # A Frostbound creature healed by frost: $1 the health it healed (the game puts + before it)
+# Frostbound: green floating heal number over the creature when frost heals it; game adds + before. $1 = health healed (12.5) -> "+12.5 frost".
 ecr_display_frost_heal: "$1 băng"
 
 # Status effects
-ecr_se_chilled: "Lạnh Giá"
-ecr_se_chilled_tooltip: "Hào quang đóng băng của sinh vật Hàn Băng: thể lực của bạn hồi phục chậm khi ở gần nó."
-ecr_se_ringing_ears: "Ù Tai"
-ecr_se_ringing_ears_tooltip: "Tiếng rú khiến tai bạn ù đi: thế giới trở nên mờ mịt và không thể thi triển phép thuật."
-ecr_se_ringing_ears_start: "Tai bạn ù đi - thế giới trở nên tĩnh lặng"
-ecr_se_ringing_ears_no_cast: "Tai bạn ù đi - không thể thi triển phép"
-ecr_se_slick_ice: "Băng Trơn"
-ecr_se_slick_ice_tooltip: "Băng do sinh vật Hàn Băng tạo ra dưới chân: chân bạn bị trượt, khiến việc bắt đầu, quay người và dừng lại mất nhiều thời gian hơn."
-ecr_se_deep_mud: "Bùn Sâu"
-ecr_se_deep_mud_tooltip: "Bùn lầy do sinh vật Bùn Lầy tạo ra dưới chân: dày và sâu, níu kéo từng bước chân và bám chặt một lúc sau đó."
-ecr_se_rooted: "Bị Trói Rễ"
-ecr_se_rooted_tooltip: "Rễ cây giữ chặt chân bạn: bạn không thể đi, chạy, nhảy hoặc lăn cho đến khi chúng buông ra."
+# Status effect name on the HUD beside its icon, while near a Frostbound creature's freezing aura. A state of the player (adjective).
+ecr_se_chilled: "Lạnh cóng"
+# Tooltip (description) of the Chilled status effect, from a Frostbound creature's aura.
+ecr_se_chilled_tooltip: "Hào quang băng giá của một sinh vật Băng Giá: thể lực của bạn hồi chậm khi ở gần nó."
+# Status effect name on the HUD beside its icon and countdown, after a Screecher's (or Bat-fiend's) shriek deafens you. Noun phrase.
+ecr_se_ringing_ears: "Ù tai"
+# Tooltip (description) of the Ringing ears status effect.
+ecr_se_ringing_ears_tooltip: "Một tiếng rít khiến tai bạn ù đi: mọi âm thanh bị bóp nghẹt và không thể thi triển phép."
+# Ringing ears: the status effect's start message, top-left, the moment a shriek deafens you.
+ecr_se_ringing_ears_start: "Tai bạn ù đi - thế giới trở nên im lặng"
+# Ringing ears: centre-of-screen message when you try to cast with an Elemental or Blood Magic weapon while deafened.
+ecr_se_ringing_ears_no_cast: "Tai bạn ù đi - bạn không thể thi triển phép"
+# Status effect name on the HUD while you stand on a Frostbound creature's ice trail. Noun phrase (the ground).
+ecr_se_slick_ice: "Băng trơn"
+# Tooltip (description) of the Slick ice status effect.
+ecr_se_slick_ice_tooltip: "Băng của sinh vật Băng Giá dưới chân: chân bạn trượt, nên bắt đầu chạy, xoay người và dừng lại đều lâu hơn."
+# Status effect name on the HUD while you are in a Mudbound creature's mud trail (and a moment after). Noun phrase (the ground).
+ecr_se_deep_mud: "Bùn sâu"
+# Tooltip (description) of the Deep mud status effect.
+ecr_se_deep_mud_tooltip: "Bùn của sinh vật Bùn Lầy dưới chân: dày và sâu, nó níu từng bước chân và còn bám thêm một lúc sau đó."
+# Status effect name on the HUD while a Binding creature's roots hold you (about 1 s). A state of the player (adjective).
+ecr_se_rooted: "Bị trói chân"
+# Tooltip (description) of the Rooted status effect.
+ecr_se_rooted_tooltip: "Rễ Trói Buộc giữ chặt chân bạn: bạn không thể đi, chạy, nhảy hay lăn cho đến khi rễ buông ra."
 
 # Eggs: what an egg will hatch. $1 the number of stars, $2 its mutations (each in its star colour)
-ecr_egg_plain: "Nở ra sinh vật thường"
-ecr_egg_stars_one: "Nở ra sinh vật $1 sao"
-ecr_egg_stars_many: "Nở ra sinh vật $1 sao"
-ecr_egg_stars_one_mutations: "Nở ra sinh vật $1 sao, $2"
-ecr_egg_stars_many_mutations: "Nở ra sinh vật $1 sao, $2"
+# Eggs: last line of an egg's hover text (on the ground) and inventory tooltip, when it will hatch a creature with no stars and no mutations.
+ecr_egg_plain: "Nở ra con thường"
+# Eggs: egg hover/tooltip line, it will hatch a 1-star creature with no mutations. $1 = the number of stars (1).
+ecr_egg_stars_one: "Nở ra con $1 sao"
+# Eggs: egg hover/tooltip line, hatches with 2+ stars and no mutations. $1 = number of stars (2).
+ecr_egg_stars_many: "Nở ra con $1 sao"
+# Eggs: hover/tooltip line, 1 star plus mutations. $1 = 1, $2 = the mutation names, coloured, joined by ecr_egg_list ("Leeching, Mad").
+ecr_egg_stars_one_mutations: "Nở ra con $1 sao, $2"
+# Eggs: hover/tooltip line, 2+ stars (or 0) plus mutations. $1 = stars (2), $2 = the coloured mutation names ("Leeching, Mad").
+ecr_egg_stars_many_mutations: "Nở ra con $1 sao, $2"
 # Two mutations in an egg's list, joined left to right ("Leeching, Mad", then "Leeching, Mad, Gilded")
+# Eggs: joins two mutation names in an egg's line, repeated for 3+. $1 = list so far ("Leeching"), $2 = next name ("Mad").
 ecr_egg_list: "$1, $2"
 
 # World tier: the inventory plate's tooltip ($1 the number of tiers) and the message when it rises
-ecr_tier_topic: "Cấp độ thế giới"
-ecr_tier_tip: "Có tổng cộng $1 cấp độ thế giới. Cấp độ tăng lên lần đầu tiên khi mỗi trùm bị đánh bại, và mỗi cấp độ khiến sao và đột biến xuất hiện phổ biến hơn trong mọi vùng đất."
+# World tier: heading of the tooltip on the world tier plate in the inventory (only with PackPanel installed). Alone, as a title.
+ecr_tier_topic: "Cấp thế giới"
+# World tier: body of the inventory plate's tooltip. $1 = total number of tiers (7).
+ecr_tier_tip: "Có tổng cộng $1 cấp thế giới. Cấp tăng lên khi mỗi boss bị đánh bại lần đầu, và mỗi cấp khiến sao và đột biến xuất hiện nhiều hơn ở mọi vùng đất."
 # $1 the new tier, $2 the number of tiers
-ecr_tier_risen: "Thế giới trở nên khắc nghiệt hơn: cấp độ $1/$2"
+# World tier: centre-of-screen message to every player when the tier rises (a boss's first defeat). $1 = new tier (3), $2 = number of tiers (7).
+ecr_tier_risen: "Thế giới trở nên khắc nghiệt hơn: cấp $1 trên $2"
 
 # Boss hints: a defeated boss points toward a place. $1 one of the directions below
-ecr_hint_pull: "Bạn cảm thấy một thế lực đang kéo bạn về phía... $1"
+# Boss hints: centre-of-screen message to players near a defeated Elder, Bonemass, Moder or Yagluth. $1 = a direction word below ("north").
+ecr_hint_pull: "Bạn cảm thấy một sự hiện diện đang kéo bạn về phía... $1"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... north"); lower case, the last word of the message.
 ecr_hint_north: "bắc"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... northeast"); lower case, the last word of the message.
 ecr_hint_northeast: "đông bắc"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... east"); lower case, the last word of the message.
 ecr_hint_east: "đông"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... southeast"); lower case, the last word of the message.
 ecr_hint_southeast: "đông nam"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... south"); lower case, the last word of the message.
 ecr_hint_south: "nam"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... southwest"); lower case, the last word of the message.
 ecr_hint_southwest: "tây nam"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... west"); lower case, the last word of the message.
 ecr_hint_west: "tây"
+# Boss hints: compass direction filled into ecr_hint_pull ("pulling you... northwest"); lower case, the last word of the message.
 ecr_hint_northwest: "tây bắc"
 
 # Boss rewards, on a boss altar's hover: $1-$2 the amount, $3 the item
-ecr_loot_altar_reward: "Phần thưởng: $1-$2 $3 cho mỗi người chơi"
+# Boss altar hover text: the extra reward the fight pays. $1-$2 = amount range (10-20), $3 = item name ("Iron scrap"), each player.
+ecr_loot_altar_reward: "Phần thưởng: $1-$2 $3 mỗi người chơi"
 
-# The Bat-fiend: its name and its attacks' names (the death recap and the damage log)
-enemy_ecr_batfiend: "Ác Dơi"
-item_ecr_batfiend_pounce: "Vồ Xé"
-item_ecr_batfiend_bite: "Cắn Rút Máu"
-item_ecr_batfiend_wing: "Cánh Chém"
+# The Bat-fiend: its name and its attacks' names
+# Bat-fiend creature's name: nameplate, hover, death recap killer, sound captions; mutation words may go before it. Hel's Arena guardian or console.
+enemy_ecr_batfiend: "Dơi Quỷ"
+# Name of a Bat-fiend attack (a leap with claws), set as its attack item's name. Not shown in ECR's own windows; other mods may. Rare.
+item_ecr_batfiend_pounce: "Vồ Cào Xé"
+# Name of a Bat-fiend attack (a lunging bite that heals it), set as its attack item's name. Not shown in ECR's own windows. Rare.
+item_ecr_batfiend_bite: "Cắn Hút Máu"
+# Name of a Bat-fiend attack (a sideways wing slash), set as its attack item's name. Not shown in ECR's own windows. Rare.
+item_ecr_batfiend_wing: "Cánh Chém Đầu"
+# Name of a Bat-fiend attack (a freezing gust), set as its attack item's name. Not shown in ECR's own windows. Rare.
 item_ecr_batfiend_gravewind: "Gió Mộ Địa"
-item_ecr_batfiend_screech: "Tiếng Rú Vỡ Sọ"
+# Name of a Bat-fiend attack (a shriek that deafens and staggers), set as its attack item's name. Not shown in ECR's own windows. Rare.
+item_ecr_batfiend_screech: "Tiếng Rít Xé Tai"
 
 # Elite Creatures Reborn: the compendium pages, boss aspects, boss altars and the boss damage board.
 # $1, $2 ... are values the mod fills in (numbers, names). Colours and layout stay in the code.
 
 # Boss aspects: each aspect's name, put before a boss's own name ("none" is the fight as the game ships it)
-ecr_aspect_none: "Không"
-ecr_aspect_reflective: "Phản Đòn"
-ecr_aspect_shielded: "Khiên Chắn"
-ecr_aspect_mending: "Trị Liệu"
-ecr_aspect_summoner: "Triệu Hồi Sư"
-ecr_aspect_elementalist: "Thuật Sĩ Nguyên Tố"
+# Boss aspects: the plain fight, no aspect. Altar hover "Aspect: none" (lower case after a colon); altar window list item, capitalised ("None").
+ecr_aspect_none: "không có"
+# Boss aspect: adjective before a boss's name ("Reflective Eikthyr"); also alone on its altar, altar window, compendium. Reflects your hits back.
+ecr_aspect_reflective: "Phản Chiếu"
+# Boss aspect: adjective before a boss's name ("Shielded Bonemass"); also alone on its altar, altar window, compendium. Less damage from arrows.
+ecr_aspect_shielded: "Hộ Thuẫn"
+# Boss aspect: adjective before a boss's name ("Mending Moder"); also alone on its altar, altar window, compendium. Regenerates health.
+ecr_aspect_mending: "Hồi Phục"
+# Boss aspect: a noun before a boss's name ("Summoner Bonemass"); also alone on its altar, altar window, compendium. Calls creatures.
+ecr_aspect_summoner: "Triệu Hồi"
+# Boss aspect: a noun before a boss's name ("Elementalist Yagluth"); also alone on its altar, altar window, compendium. More elemental damage.
+ecr_aspect_elementalist: "Nguyên Tố"
+# Boss aspect: adjective before a boss's name ("Enraged Eikthyr"); also alone on its altar, altar window, compendium. More physical damage.
 ecr_aspect_enraged: "Cuồng Nộ"
+# Boss aspect: a noun before a boss's name ("Twin Bonemass"); also alone on its altar, altar window, compendium. Comes as two sharing health.
 ecr_aspect_twin: "Song Sinh"
-ecr_aspect_phantom: "Ảo Ảnh"
-ecr_aspect_adaptive: "Thích Ứng"
-ecr_aspect_fixated: "Mục Tiêu Cố Định"
+# Boss aspect: a noun before a boss's name ("Phantom Moder"); also alone on its altar, altar window, compendium. Splits off phantom copies.
+ecr_aspect_phantom: "Bóng Ma"
+# Boss aspect: adjective before a boss's name ("Adaptive Yagluth"); also alone on its altar, altar window, compendium. Resists the damage type hitting it most.
+ecr_aspect_adaptive: "Thích Nghi"
+# Boss aspect name: adjective before a boss's name ("Fixated Bonemass"), also alone as a label on the altar/compendium. The boss fixes on one player.
+ecr_aspect_fixated: "Truy Kích"
+# Boss aspect name: adjective before a boss's name ("Stormbound Moder"), also alone as a label on the altar/compendium. Calls lightning on players.
 ecr_aspect_stormbound: "Bão Tố"
+# Boss aspect name: adjective before a boss's name ("Gravitic Yagluth"), also alone as a label on the altar/compendium. Pulls players in (gravity).
 ecr_aspect_gravitic: "Trọng Lực"
+# Boss aspect name: adjective before a boss's name ("Colossal Eikthyr"), also alone as a label on the altar/compendium. The boss is bigger.
 ecr_aspect_colossal: "Khổng Lồ"
-ecr_aspect_tethered: "Ràng Buộc"
-ecr_aspect_bountiful: "Dồi Dào"
-ecr_aspect_portalbound: "Cổng Dịch Chuyển"
-ecr_aspect_nightfall: "Bóng Đêm Hạ Xuống"
+# Boss aspect name: adjective before a boss's name ("Tethered Bonemass"), also alone as a label. Two bosses joined by a tether (a link).
+ecr_aspect_tethered: "Liên Kết"
+# Boss aspect name: adjective before a boss's name, first of several ("Bountiful Enraged Mending Eikthyr"), also alone as a label. Extra aspects, more loot.
+ecr_aspect_bountiful: "Hội Tụ"
+# Boss aspect name: adjective before a boss's name ("Portalbound Bonemass"), also alone as a label on the altar/compendium. Throws through portals.
+ecr_aspect_portalbound: "Cổng Không Gian"
+# Boss aspect name: adjective before a boss's name ("Nightfall Moder"), also alone as a label. Brings a stormy night; an English noun used as an adjective.
+ecr_aspect_nightfall: "Màn Đêm"
+# Boss aspect name: adjective before a boss's name ("Brutal Eikthyr"), also alone as a label on the altar/compendium. Throws players far away.
 ecr_aspect_brutal: "Tàn Bạo"
+# Boss aspect name: adjective before a boss's name ("Echoing Eikthyr"), also alone as a label. A ghost of the boss repeats its moves later.
 ecr_aspect_echoing: "Vang Vọng"
 
 # Boss aspects: what each does. Lower case and no full stop: the altar shows it on the line under the aspect's name,
 # the compendium and the altar window give it a capital and ecr_aspect_sentence.
-ecr_aspect_does_none: "trận chiến như mặc định của trò chơi"
-ecr_aspect_does_reflective: "$1% mỗi đòn đánh bạn gây ra cho nó sẽ phản lại bạn"
-ecr_aspect_does_shielded: "chịu ít hơn $1% sát thương từ mũi tên và tên nỏ"
-ecr_aspect_does_mending: "hồi phục $1% máu hiện tại mỗi giây"
-ecr_aspect_does_summoner: "triệu hồi $1 sinh vật mỗi khi mất $2% máu"
+# Boss altar hover: line under "Aspect: none" for a plain fight; capitalised + full stop in the altar window. Also in the elite inspect console reply.
+ecr_aspect_does_none: "trận đấu như bản gốc của game"
+# Boss aspect effect ('it' = the boss): altar hover line under its name; capitalised as a sentence in compendium and altar window. $1 = percent (15).
+ecr_aspect_does_reflective: "$1% sát thương mỗi đòn bạn đánh trúng nó sẽ dội ngược lại bạn"
+# Boss aspect effect ('it'/subject = the boss): altar hover line under its name; capitalised as a sentence in compendium/altar window. $1 = percent (30).
+ecr_aspect_does_shielded: "nhận ít hơn $1% sát thương từ mũi tên và tên nỏ"
+# Boss aspect effect (subject = the boss): altar hover line under its name; capitalised as a sentence in compendium/altar window. $1 = percent (0.2).
+ecr_aspect_does_mending: "hồi $1% máu hiện tại mỗi giây"
+# Boss aspect effect (subject = the boss): altar hover line; sentence in compendium/altar window. $1 = creatures per wave (2), $2 = percent of health (33).
+ecr_aspect_does_summoner: "gọi $1 sinh vật mỗi khi mất $2% máu"
+# Boss aspect effect (subject = the boss): altar hover line under its name; capitalised as a sentence in compendium/altar window. $1 = percent (20).
 ecr_aspect_does_elementalist: "gây thêm $1% sát thương nguyên tố"
+# Boss aspect effect (subject = the boss): altar hover line under its name; capitalised as a sentence in compendium/altar window. $1 = percent (20).
 ecr_aspect_does_enraged: "gây thêm $1% sát thương vật lý"
-ecr_aspect_does_twin: "xuất hiện thành hai thể chia sẻ chung một bể máu, mỗi thể chịu giảm $1% máu và $2% sát thương"
-ecr_aspect_does_phantom: "khi còn $1 máu sẽ tách ra các bản sao ảo ảnh, $2 bản sao cho mỗi người chơi trực tuyến, với $3 máu và giảm $4% sát thương"
-ecr_aspect_does_adaptive: "chịu ít hơn $1% loại sát thương gây ra cho nó nhiều nhất trong $2 giây qua"
-ecr_aspect_does_fixated: "đánh dấu một người chơi và đánh họ mạnh hơn $1%, những người khác nhẹ hơn $2%; dấu ấn chuyển sang người gây sát thương nhiều nhất mỗi $3 giây"
-ecr_aspect_does_stormbound: "mỗi $1 giây gọi sét xuống một vòng tròn dưới chân mỗi người chơi, $2 giây sau khi vòng tròn xuất hiện"
-ecr_aspect_does_gravitic: "mỗi $1 giây kéo mọi người chơi trong bán kính $2 m về phía nó, sau đó nện xuống: $3% máu tối đa cho người chơi trong bán kính $4 m"
-ecr_aspect_does_colossal: "to hơn $1%, thêm $2% máu, chậm hơn $3%; các đòn đánh nặng tạo ra sóng xung kích $4 m làm ngã người chơi (lăn né hoặc nhảy qua)"
-ecr_aspect_does_tethered: "xuất hiện thành hai thể liên kết với nhau, mỗi thể giảm $1% máu; mức chênh lệch máu giữa hai thể càng lớn, cả hai tấn công càng nhanh (lên đến $2%) và thể yếu hơn chịu ít sát thương hơn (lên đến $3%)"
-ecr_aspect_does_bountiful: "mang thêm $1 thuộc tính cùng lúc"
-ecr_aspect_does_portalbound: "ném đòn qua các cổng dịch chuyển (Elder dùng rễ cây, Bonemass dùng chất nhầy): một cổng mở ra ở tay nó, cổng còn lại mở ra đâu đó phía trên bạn"
-ecr_aspect_does_nightfall: "biến bầu trời thành đêm bão bùng trong bán kính $1 m xung quanh nó; mỗi $2-$3 giây một lốc xoáy nổi lên cạnh mỗi người chơi ở đó và đuổi theo họ trong $4 giây: gây $5 sát thương mỗi giây bên trong lốc"
-ecr_aspect_does_brutal: "các đòn đánh nặng văng người chơi bị trúng ra xa $1 m; đỡ đòn thành công hoặc đỡ đòn chuẩn xác (parry) sẽ giúp bạn đứng vững, và khi rơi xuống không bao giờ bị thương"
-ecr_aspect_does_echoing: "$1 giây sau khi bắt đầu trận chiến, một bóng ma màu trắng của nó nổi lên và làm lại mọi thứ nó đã làm $1 giây trước, bao gồm cả các đòn đánh và ném, cho đến khi nó chết"
+# Boss aspect effect (boss comes as two): altar hover line; sentence in compendium/altar window. $1 = percent less health (25), $2 = percent less damage (25).
+ecr_aspect_does_twin: "xuất hiện hai con dùng chung một thanh máu, mỗi con ít hơn $1% máu và $2% sát thương"
+# Boss aspect effect: altar line; compendium sentence. $1 = health marks ("66% and 33%" or "no"), $2 = copies per player (1), $3 = copy health (50), $4 = % (50).
+ecr_aspect_does_phantom: "khi còn $1 máu sẽ tách ra các bản sao bóng ma, $2 bản mỗi người chơi đang online, với $3 máu và ít hơn $4% sát thương"
+# Boss aspect effect (subject = the boss): altar hover line; sentence in compendium/altar window. $1 = percent (50), $2 = seconds (15).
+ecr_aspect_does_adaptive: "nhận ít hơn $1% loại sát thương đã đánh trúng nó nhiều nhất trong $2 giây vừa qua"
+# Boss aspect effect (subject = the boss): altar line; compendium sentence. $1 = percent harder (50), $2 = percent softer (30), $3 = seconds (30).
+ecr_aspect_does_fixated: "đánh dấu một người chơi và đánh người đó mạnh hơn $1%, những người khác nhẹ hơn $2%; cứ mỗi $3 giây dấu chuyển sang người gây sát thương lên nó nhiều nhất"
+# Boss aspect effect (subject = the boss): altar hover line; sentence in compendium/altar window. $1 = seconds between strikes (20), $2 = seconds (2).
+ecr_aspect_does_stormbound: "cứ mỗi $1 giây gọi sét đánh xuống một vòng tròn dưới chân mỗi người chơi, $2 giây sau khi vòng xuất hiện"
+# Boss aspect effect: altar line; compendium sentence. $1 = seconds (20), $2 = metres pull range (30), $3 = percent of max health (10), $4 = metres (6).
+ecr_aspect_does_gravitic: "cứ mỗi $1 giây kéo mọi người chơi trong phạm vi $2 m về phía nó, rồi dậm xuống: gây $3% máu tối đa cho người chơi trong phạm vi $4 m quanh nó"
+# Boss aspect effect: altar line; compendium sentence. $1 = percent bigger (40), $2 = percent more health (15), $3 = percent slower (15), $4 = metres (8).
+ecr_aspect_does_colossal: "to hơn $1%, nhiều hơn $2% máu, chậm hơn $3%; đòn nặng của nó tạo sóng chấn động $4 m hất ngã người chơi (lăn qua hoặc nhảy qua để né)"
+# Boss aspect effect (two bosses): altar line; compendium sentence. $1 = percent less health (25), $2 = percent faster (50), $3 = percent less damage (50).
+ecr_aspect_does_tethered: "xuất hiện hai con bị nối với nhau bằng một sợi xích, mỗi con ít hơn $1% máu; máu hai con càng chênh lệch thì cả hai đánh càng nhanh (tối đa $2%) và con yếu hơn càng nhận ít sát thương (tối đa $3%)"
+# Boss aspect effect (subject = the boss): altar hover line; sentence in compendium/altar window. $1 = number of extra aspects (2).
+ecr_aspect_does_bountiful: "mang thêm $1 đặc tính cùng lúc"
+# Boss aspect effect (subject = the boss, the Elder or Bonemass only): altar hover line; sentence in compendium/altar window. No values.
+ecr_aspect_does_portalbound: "ném đòn qua cổng không gian (Elder ném dây leo, Bonemass ném chất nhầy): một cổng mở ở tay nó, cổng kia ở đâu đó phía trên bạn"
+# Boss aspect effect: altar line; compendium sentence. $1 = metres (60), $2-$3 = seconds range (18-28), $4 = seconds (10), $5 = damage per second (25).
+ecr_aspect_does_nightfall: "biến bầu trời trong phạm vi $1 m quanh nó thành nửa đêm giông bão; cứ mỗi $2-$3 giây một cơn lốc xoáy nổi lên cạnh mỗi người chơi ở đó và đuổi theo họ trong $4 giây: $5 sát thương mỗi giây khi ở trong lốc"
+# Boss aspect effect (subject = the boss's heavy blows): altar hover line; sentence in compendium/altar window. $1 = metres thrown (20).
+ecr_aspect_does_brutal: "đòn nặng của nó hất người chơi trúng đòn văng xa $1 m; đỡ được đòn hoặc đỡ phản giúp bạn đứng vững, và tiếp đất không bao giờ mất máu"
+# Boss aspect effect: altar hover line; sentence in compendium/altar window. $1 = seconds (15), used twice; 'it' = the boss.
+ecr_aspect_does_echoing: "sau $1 giây giao chiến, một bóng ma trắng của nó hiện lên và lặp lại mọi thứ nó đã làm $1 giây trước, kể cả đòn đánh và đòn ném, cho đến khi bóng ma chết"
 # What an aspect does as a sentence of its own ($1 already starts with a capital)
+# Wraps a boss aspect's effect line as a full sentence (compendium Boss aspects page, altar window). $1 = the effect text, already capitalised.
 ecr_aspect_sentence: "$1."
 # Phantom splits at no health marks at all ("at no health splits off ...")
-ecr_aspect_marks_none: "không còn"
+# Phantom aspect: fills $1 of its effect line when it never splits ("at no health splits off ..."). Only when the rule file sets no split marks. Rare.
+ecr_aspect_marks_none: "không"
 
 # Fixated: the chat line when its mark lands ($1 the boss, $2 a player)
-ecr_aspect_fixates_on: "$1 nhắm cố định vào $2!"
-ecr_aspect_fixates_you: "$1 nhắm cố định vào bạn!"
+# Fixated boss: red chat line to nearby players when the mark lands on another player. $1 = the boss's name (Bonemass), $2 = a player's name.
+ecr_aspect_fixates_on: "$1 nhắm vào $2!"
+# Fixated boss: red chat line to the marked player when the mark lands on them. $1 = the boss's name (Bonemass).
+ecr_aspect_fixates_you: "$1 nhắm vào bạn!"
+# Fixated boss: stands in for the player's name ($2 of ecr_aspect_fixates_on) when the marked player has left the game. Rare.
 ecr_aspect_fixated_gone: "một người chơi đã rời đi"
 
 # Boss altar: the bowl's hover lines
-ecr_altar_choose: "Chọn trận chiến"
-ecr_altar_stars_line: "Số sao: $1"
-ecr_altar_stars_none: "không"
-ecr_altar_aspect_line: "Thuộc tính: $1"
+# Boss altar hover: action after the key prompt, "[E] Choose the fight"; opens the altar window. Imperative, like a button label.
+ecr_altar_choose: "Chọn trận đấu"
+# Boss altar hover (also the altar window's "On the altar now" box): the boss's stars. $1 = star symbols (★★) or "none".
+ecr_altar_stars_line: "Sao: $1"
+# Boss altar hover: $1 of "Stars: $1" when the boss has no stars; also the 0-star row in the compendium boss stars table. Means no stars.
+ecr_altar_stars_none: "không có"
+# Boss altar hover and altar window heading: the current or chosen aspect. $1 = an aspect name (Enraged, none) or "Random" in the window.
+ecr_altar_aspect_line: "Đặc tính: $1"
+# Boss altar hover: grey mark after the Stars or Aspect line when a player picked it in the altar window (not rolled). Past participle, in brackets.
 ecr_altar_chosen: "(đã chọn)"
-ecr_altar_loot_paren: "(vật phẩm rơi x$1)"
+# Boss altar hover: grey note after the Aspect line, what the aspects multiply the loot by. $1 = multiplier (1.4).
+ecr_altar_loot_paren: "(đồ rơi x$1)"
+# Boss altar hover, Bountiful only: one line per extra aspect. $1 = "+ " and the aspect name (+ Enraged), $2 = its lower-case effect line.
 ecr_altar_extra_line: "$1: $2"
+# Boss altar hover: grey line at the moment the altar re-rolls its stars and aspect (countdown at zero).
 ecr_altar_shifting: "Đang thay đổi..."
+# Boss altar hover: grey countdown until the altar re-rolls its stars and aspect. $1 = minutes:seconds (0:15).
 ecr_altar_shifts_in: "Thay đổi sau $1"
-ecr_altar_defeated_once: "Đã đánh bại 1 lần: dễ có nhiều sao hơn"
-ecr_altar_defeated_many: "Đã đánh bại $1 lần: dễ có nhiều sao hơn"
-ecr_altar_defeated_most: "Đã đánh bại $1+ lần: dễ có nhiều sao hơn"
+# Boss altar hover: grey line after the boss was killed once in this world; its next star roll leans higher. Only with "harder each kill" on.
+ecr_altar_defeated_once: "Đã bị đánh bại 1 lần: dễ có nhiều sao hơn"
+# Boss altar hover: grey line, how often this boss was killed in this world; its star roll leans higher. $1 = kills (2 to 9).
+ecr_altar_defeated_many: "Đã bị đánh bại $1 lần: dễ có nhiều sao hơn"
+# Boss altar hover: grey line once the kill count reaches its cap; "$1+" means that many or more. $1 = 10.
+ecr_altar_defeated_most: "Đã bị đánh bại $1+ lần: dễ có nhiều sao hơn"
 
 # Boss altar: the window where a player chooses the fight
-ecr_altar_title: "Chọn Trận Chiến"
-ecr_altar_now: "Đang có trên bàn thờ"
-ecr_altar_stars: "Số sao"
-ecr_altar_stars_off: "Số sao: đã tắt trong tệp quy tắc"
-ecr_altar_aspect_off: "Thuộc tính: đã tắt trong tệp quy tắc"
+# Boss altar window: the window's title at the top. Opened with E on the altar to pick the boss's stars and aspect.
+ecr_altar_title: "Chọn Trận Đấu"
+# Boss altar window: orange heading over the box that repeats the altar's current hover lines (stars, aspect, countdown).
+ecr_altar_now: "Trên bệ thờ hiện tại"
+# Boss altar window: orange heading over the row of star-count buttons (Random, None, ★, ★★ ...). Noun, plural.
+ecr_altar_stars: "Sao"
+# Boss altar window: replaces the Stars heading when boss stars are switched off by the server's rule file. Rare.
+ecr_altar_stars_off: "Sao: đã tắt trong file quy tắc"
+# Boss altar window: replaces the aspect heading when boss aspects are switched off by the server's rule file. Rare.
+ecr_altar_aspect_off: "Đặc tính: đã tắt trong file quy tắc"
+# Boss altar window: button label in the star row, first row of the aspect list, and $1 of "Aspect: $1". Let the altar roll it.
 ecr_altar_random: "Ngẫu nhiên"
+# Boss altar window: button label in the star row for 0 stars (no stars). Short.
 ecr_altar_none: "Không có"
-ecr_altar_random_text: "Được xoay ngẫu nhiên từ các thuộc tính của trùm này mỗi khi bàn thờ thay đổi."
-ecr_altar_bountiful_text: "Các thuộc tính bổ sung được xoay ngẫu nhiên mỗi khi bàn thờ thay đổi."
-ecr_altar_loot: "Vật phẩm rơi x$1"
+# Boss altar window: description under "Aspect: Random" when the player leaves the aspect on Random.
+ecr_altar_random_text: "Được chọn ngẫu nhiên từ các đặc tính của boss này mỗi lần bệ thờ thay đổi."
+# Boss altar window: added after the Bountiful aspect's description sentence. 'Its' = the boss's.
+ecr_altar_bountiful_text: "Các đặc tính thêm của nó được chọn ngẫu nhiên mỗi lần bệ thờ thay đổi."
+# Boss altar window: grey line under the chosen aspect's description, its loot multiplier. $1 = multiplier (1.4).
+ecr_altar_loot: "Đồ rơi x$1"
 
 # Boss damage board ($1 the boss)
+# Boss damage board: bold title at the left of the screen after a boss dies, above each player's damage. $1 = the boss's name (Eikthyr).
 ecr_tally_defeated: "Đã đánh bại $1"
 
 # Difficulties, as a player reads them
+# Difficulty name, compendium World difficulty page: in "Difficulty: $1" and starting a sentence ("Custom: this server sets..."). Adjective/label.
 ecr_difficulty_custom: "Tùy chỉnh"
+# Difficulty name, compendium World difficulty page: in "Difficulty: $1" and as a list label ("Easy: 1 star..."). Adjective/label.
 ecr_difficulty_easy: "Dễ"
+# Difficulty name, compendium World difficulty page: in "Difficulty: $1" and as a list label ("Medium: 2 stars..."). Adjective/label.
 ecr_difficulty_medium: "Trung bình"
+# Difficulty name, compendium: in "Difficulty: $1", as a list label, and inside the Very Hard line ("halfway between Hard and Extreme").
 ecr_difficulty_hard: "Khó"
+# Difficulty name, compendium World difficulty page: in "Difficulty: $1" and as a list label ("Very Hard: 4 stars..."). Adjective/label.
 ecr_difficulty_veryhard: "Rất khó"
-ecr_difficulty_extreme: "Cực khó"
+# Difficulty name, compendium: in "Difficulty: $1", as a list label, and inside the Very Hard line ("halfway between Hard and Extreme").
+ecr_difficulty_extreme: "Cực hạn"
 
 # Compendium: shared words
+# Compendium Mutations page: a duration filled into mutation descriptions ("each patch lasts $2") when the number is exactly 1. $1 = 1.
 ecr_book_seconds_one: "$1 giây"
+# Compendium Mutations page: a duration filled into mutation descriptions ("each patch lasts $2"). $1 = seconds, any number but 1 (1.5, 10).
 ecr_book_seconds_many: "$1 giây"
+# List separator (comma and space) between names in compendium lists (ores, trophies, mutations off) and Phantom's health marks.
 ecr_book_list_comma: ", "
+# Joins the last two items of a list: Phantom aspect's health marks ("66% and 33%"). $1 = earlier items, comma-joined, $2 = the last item.
 ecr_book_list_and: "$1 và $2"
 
 # Compendium: World difficulty page
+# Compendium: title of the World difficulty page, as listed in the game's lore compendium. "Elite:" prefixes every ECR page.
 ecr_book_difficulty_topic: "Elite: Độ khó thế giới"
+# Compendium World difficulty page: orange heading at the top. $1 = the server's difficulty name (Hard).
 ecr_book_difficulty: "Độ khó: $1"
-ecr_book_tier: "Cấp độ thế giới $1/$2: một cấp độ cho mỗi trùm bên dưới đã gục ngã. Mỗi cấp độ làm sinh vật mạnh hơn."
-ecr_book_tier_off: "Cấp độ thế giới đã tắt trên máy chủ này: thế giới duy trì ở cấp độ 0."
-ecr_book_creature_stars_off: "Số sao của sinh vật đã tắt trên máy chủ này: sinh vật giữ nguyên số sao gốc của game, và chỉ có đột biến đến từ Elite Creatures."
-ecr_book_bosses: "Trùm"
-ecr_book_boss_defeated: "đã đánh bại"
-ecr_book_boss_not_yet: "chưa đánh bại"
+# Compendium World difficulty page: under the heading. $1 = current world tier (2), $2 = highest tier, the number of bosses counted (7).
+ecr_book_tier: "Cấp thế giới $1 trên $2: mỗi boss bên dưới đã bị hạ tăng một cấp. Mỗi cấp khiến sinh vật mạnh hơn."
+# Compendium World difficulty page: under the heading, instead of the tier line, when the server turned world tiers off.
+ecr_book_tier_off: "Cấp thế giới đã tắt trên máy chủ này: thế giới luôn ở cấp 0."
+# Compendium World difficulty page: under the tier line when the server lets the game, not ECR, give creature stars.
+ecr_book_creature_stars_off: "Sao của sinh vật đã tắt trên máy chủ này: sinh vật giữ sao của game, chỉ có đột biến là do Elite Creatures tạo ra."
+# Compendium World difficulty page: orange heading over a table of bosses, each with "defeated" or "not yet".
+ecr_book_bosses: "Boss"
+# Compendium World difficulty page, Bosses table: green status in the column after a boss's name. The boss has been killed.
+ecr_book_boss_defeated: "đã bị hạ"
+# Compendium World difficulty page, Bosses table: grey status after a boss's name; the boss is not defeated yet.
+ecr_book_boss_not_yet: "chưa"
+# Compendium World difficulty page: orange heading over the explanation of the current difficulty.
 ecr_book_meaning: "Ý nghĩa"
-ecr_book_meaning_custom: "$1: máy chủ này tự thiết lập tỷ lệ sao và đột biến cho từng vùng đất. Mỗi cấp độ thế giới gia tăng chúng; hiện tại sao x$2 và đột biến x$3."
-ecr_book_meaning_preset: "Độ khó quyết định sinh vật nhận được bao nhiêu sao và đột biến khi các trùm của thế giới bị hạ gục. Vùng đất bạn mới bước vào là nhẹ nhàng nhất. Vùng đất bạn đã dọn dẹp sẽ trở nên khó hơn với mỗi trùm bị tiêu diệt sau đó, vì vậy đến cuối game Đồng Cỏ sẽ là nơi khó nhất. Các vùng đất bạn chưa tới sẽ tương ứng với vùng đất bạn đang bước vào.\nDưới mức sao tối đa cho phép, hầu hết sinh vật là bình thường và mỗi sao bổ sung sẽ hiếm hơn sao trước đó. Mỗi sao sinh vật sở hữu sẽ cộng thêm một phần tư vào tỷ lệ xuất hiện đột biến."
-ecr_book_biomes: "Mỗi vùng đất ở cấp độ thế giới $1"
+# Compendium World difficulty page, under "What it means" on a Custom server. $1 = "Custom", $2 = star multiplier (1.2), $3 = mutation multiplier (1.3).
+ecr_book_meaning_custom: "$1: máy chủ này tự đặt tỉ lệ sao và đột biến cho từng vùng đất. Mỗi cấp thế giới tăng các tỉ lệ đó; hiện tại sao x$2 và đột biến x$3."
+# Compendium, World difficulty page: paragraph under the 'What it means' heading when the server uses a preset difficulty (not Custom). \n = line break.
+ecr_book_meaning_preset: "Độ khó quyết định sinh vật có bao nhiêu sao và đột biến khi các boss của thế giới lần lượt gục ngã. Vùng đất bạn đang tiến vào là vùng dễ nhất. Một vùng bạn đã chinh phục sẽ khó hơn với mỗi boss bị hạ sau nó, nên đến cuối game Đồng Cỏ lại là nơi khó nhất. Các vùng bạn chưa đến có độ khó bằng vùng bạn đang tiến vào.\nDưới mức sao tối đa cho phép, phần lớn sinh vật là con thường và mỗi sao thêm hiếm hơn sao trước. Mỗi sao của sinh vật tăng thêm một phần tư cơ hội có đột biến."
+# Compendium, World difficulty page: heading above the table of biomes. $1 = the current world tier number (2).
+ecr_book_biomes: "Mỗi vùng đất ở cấp thế giới $1"
+# Compendium, World difficulty page: column heading of the biome table; the cells below are biome names. A noun alone, short.
 ecr_book_col_biome: "Vùng đất"
-ecr_book_col_most_stars: "Số sao tối đa"
+# Compendium, World difficulty page: column heading; cells are a number, the most stars a creature can have in that biome (4). Short label, narrow column.
+ecr_book_col_most_stars: "Sao tối đa"
+# Compendium, World difficulty page: column heading; cells are the percent of creatures that have any star (27%). Short label, narrow column.
 ecr_book_col_with_stars: "Có sao"
+# Compendium, World difficulty page: column heading; cells are the percent of creatures with no stars that carry a mutation (10%). Adjective, short.
 ecr_book_col_mutated: "Đột biến"
-ecr_book_biomes_note: "Vùng đất của bạn có màu cam. Đột biến: sinh vật không có sao nhưng mang đột biến."
-ecr_book_ladder: "Cấp độ khó"
+# Compendium, World difficulty page: grey note under the biome table. 'Mutated' is the column heading ecr_book_col_mutated: use the same word.
+ecr_book_biomes_note: "Vùng đất của bạn tô màu cam. Đột biến: sinh vật không có sao nhưng mang một đột biến."
+# Compendium, World difficulty page: heading above the list of the five difficulties (Easy to Extreme), one line each. Heading alone.
+ecr_book_ladder: "Các mức độ khó"
+# Compendium, World difficulty page: one line of the difficulty list. $1 = the difficulty's name (Easy), $2 = its description (ecr_book_ladder_easy etc.).
 ecr_book_ladder_line: "$1: $2"
-ecr_book_ladder_easy: "1 sao ở vùng đất khởi đầu, thêm 1 sao cho mỗi trùm bị tiêu diệt sau vùng đất đó, tối đa 4; 10% đột biến, tăng lên 35% khi trùm gục ngã"
+# Compendium, difficulty list: Easy's description, after 'Easy: ' (lower-case phrase): stars per biome and how they climb; share of creatures mutated.
+ecr_book_ladder_easy: "1 sao ở vùng bạn đang tiến vào, thêm một sao cho mỗi boss bị hạ sau một vùng, tối đa 4; 10% đột biến, tăng lên 35% khi các boss bị hạ sau một vùng"
+# Compendium, difficulty list: Medium's description after 'Medium: ', shortened from Easy's pattern (stars where you enter, up to 5; mutated share rising).
 ecr_book_ladder_medium: "2 sao, tối đa 5; 25% đột biến, tăng lên 55%"
+# Compendium, difficulty list: Hard's description after 'Hard: ', shortened from Easy's pattern (stars where you enter, up to 5; mutated share rising).
 ecr_book_ladder_hard: "3 sao, tối đa 5; 30% đột biến, tăng lên 65%"
-ecr_book_ladder_veryhard: "4 sao, tối đa 5; đột biến ở mức giữa $1 và $2"
-ecr_book_ladder_extreme: "5 sao ở mọi vùng đất bạn đã tới, 6 đến 8 sao khi có thêm trùm gục ngã; 45% đột biến, tăng lên 98%"
-ecr_book_ladder_custom: "$1: tỷ lệ riêng của máy chủ cho từng vùng đất, được nâng lên bởi mỗi cấp độ thế giới."
-ecr_book_ladder_note: "Số sao: số sao tối đa một sinh vật có thể có. Đột biến: sinh vật không có sao nhưng mang đột biến."
-ecr_book_game: "Độ khó thế giới gốc của game"
-ecr_book_game_rates: "Tách biệt với tất cả những điều này, và nó cộng dồn: trên thế giới này kẻ thù gây $1% sát thương bình thường của chúng và bạn gây $2% sát thương của bạn."
-ecr_book_game_stars_ours: "Tỷ lệ sao bổ sung của nó không có hiệu lực khi Elite Creatures cung cấp sao."
-ecr_book_game_stars_game: "Tỷ lệ sao bổ sung của nó áp dụng như bình thường, vì game cung cấp sao ở đây."
+# Compendium, difficulty list: Very Hard's description after 'Very Hard: '. $1 = the Hard difficulty's name (Hard), $2 = the Extreme difficulty's name (Extreme).
+ecr_book_ladder_veryhard: "4 sao, tối đa 5; tỉ lệ đột biến ở giữa $1 và $2"
+# Compendium, difficulty list: Extreme's description after 'Extreme: ' (lower-case phrase, same pattern as Easy's).
+ecr_book_ladder_extreme: "5 sao ở mọi vùng bạn đã đến, 6 đến 8 sao khi càng nhiều boss bị hạ; 45% đột biến, tăng lên 98%"
+# Compendium, World difficulty page: line under the difficulty list, only when the server uses Custom. $1 = the Custom difficulty's name (Custom).
+ecr_book_ladder_custom: "$1: tỉ lệ riêng của máy chủ cho từng vùng đất, tăng theo mỗi cấp thế giới."
+# Compendium, World difficulty page: grey note under the difficulty list (preset difficulties), explaining 'stars' and 'mutated' in those lines.
+ecr_book_ladder_note: "Sao: số sao tối đa một sinh vật có thể có. Đột biến: sinh vật không có sao nhưng mang một đột biến."
+# Compendium, World difficulty page: heading for the game's own world difficulty setting (the world modifiers' damage rates). Heading alone.
+ecr_book_game: "Độ khó thế giới của chính game"
+# Compendium, World difficulty page: text under that heading. $1 = percent of normal damage enemies deal (100), $2 = percent the player deals (100).
+ecr_book_game_rates: "Tách biệt với tất cả những điều trên và được cộng dồn: trong thế giới này kẻ địch gây $1% sát thương bình thường của chúng và bạn gây $2% sát thương của bạn."
+# Compendium, World difficulty page: sentence right after ecr_book_game_rates when Elite Creatures gives the stars. 'Its' = the game's World Difficulty.
+ecr_book_game_stars_ours: "Tỉ lệ sao thêm của game không có tác dụng khi Elite Creatures cho sao."
+# Compendium, World difficulty page: sentence right after ecr_book_game_rates when creature stars are off on the server. 'Its' = the game's World Difficulty.
+ecr_book_game_stars_game: "Tỉ lệ sao thêm của game vẫn áp dụng như bình thường, vì ở đây game cho sao."
 
 # Compendium: Stars page
-ecr_book_stars_topic: "Elite: Số sao"
-ecr_book_stars_off_heading: "Số sao của sinh vật đã tắt"
-ecr_book_stars_off: "Sinh vật giữ nguyên số sao gốc của game trên máy chủ này, với chỉ số gốc của game."
-ecr_book_stars_here: "Số sao ở $1 (nơi bạn đang ở)"
-ecr_book_stars_in: "Số sao ở $1"
-ecr_book_col_stars: "Số sao"
+# Compendium: title of the mod's Stars page in the compendium's list of topics (inventory, Compendium button), like the other 'Elite:' pages.
+ecr_book_stars_topic: "Elite: Sao"
+# Compendium, Stars page: heading shown instead of the creature star tables when creature stars are off on the server.
+ecr_book_stars_off_heading: "Sao của sinh vật đã tắt"
+# Compendium, Stars page: text under that heading when creature stars are off on the server.
+ecr_book_stars_off: "Trên máy chủ này sinh vật giữ sao của game, với chỉ số của game cho các sao đó."
+# Compendium, Stars page: heading above the star table for the player's current biome. $1 = the biome's name as the game shows it (Black Forest).
+ecr_book_stars_here: "Sao ở $1 (nơi bạn đang đứng)"
+# Compendium, Stars page: heading above the star table of another biome whose numbers differ. $1 = the biome's name (Swamp).
+ecr_book_stars_in: "Sao ở $1"
+# Compendium, Stars page: column heading in the creature and boss star tables; cells are none, 1★, 2★... Noun alone, narrow column.
+ecr_book_col_stars: "Sao"
+# Compendium, Stars page: column heading in both star tables; cells are health multipliers (x1.5). Noun alone, narrow column.
 ecr_book_col_health: "Máu"
+# Compendium, Stars page: column heading in both star tables; cells are multipliers of the damage it deals (x1.2). Noun alone, narrow column.
 ecr_book_col_damage: "Sát thương"
-ecr_book_col_attack: "Tốc độ đánh"
-ecr_book_col_speed: "Tốc độ di chuyển"
+# Compendium, Stars page: column heading in the creature star table; cells are attack (swing) speed multipliers (x1.1). Noun alone, narrow column.
+ecr_book_col_attack: "Tấn công"
+# Compendium, Stars page: column heading in the creature star table; cells are movement speed multipliers (x1.1). Noun alone, narrow column.
+ecr_book_col_speed: "Tốc độ"
+# Compendium, Stars page: column heading in both star tables; cells are size multipliers (x1.1). Noun alone, narrow column.
 ecr_book_col_size: "Kích thước"
-ecr_book_col_loot: "Vật phẩm rơi"
-ecr_book_col_chance: "Tỷ lệ"
-ecr_book_stars_note: "Mỗi chỉ số nhân với sinh vật gốc của game. Tốc độ di chuyển là tốc độ nó di chuyển, tốc độ đánh là tốc độ nó ra đòn. Một sao lớn trên bảng tên được tính là 5 sao."
-ecr_book_boss_stars: "Số sao của trùm"
-ecr_book_boss_stars_off: "Đã tắt trên máy chủ này: trùm giữ nguyên cấp độ gốc của game."
-ecr_book_boss_stars_note: "Bàn thờ hiển thị số sao của trùm trước khi bạn triệu hồi. Số sao của trùm không bao giờ nhân thêm vật phẩm rơi ra."
-ecr_book_boss_stars_again: "Mỗi lần trùm bị tiêu diệt, trận chiến tiếp theo của nó sẽ nghiêng về nhiều sao hơn."
+# Compendium, Stars page: column heading in the creature star table; cells are multipliers of its drops (x2). Noun alone, narrow column.
+ecr_book_col_loot: "Đồ rơi"
+# Compendium, Stars page: column heading in the boss star table; cells are the percent chance a boss rolls that many stars (25%). Noun alone.
+ecr_book_col_chance: "Tỉ lệ"
+# Compendium, Stars page: grey note under the creature star tables. 'Speed' and 'attack' are the column headings: use the same words.
+ecr_book_stars_note: "Mỗi con số nhân với chỉ số gốc của sinh vật trong game. Tốc độ là tốc độ di chuyển, tấn công là tốc độ ra đòn. Một ngôi sao lớn trên bảng tên tính bằng năm sao."
+# Compendium, Stars page: heading above the boss star table. Heading alone.
+ecr_book_boss_stars: "Sao của boss"
+# Compendium, Stars page: text under the 'Boss stars' heading when boss stars are off on the server.
+ecr_book_boss_stars_off: "Đã tắt trên máy chủ này: boss giữ cấp độ gốc của game."
+# Compendium, Stars page: grey note under the boss star table.
+ecr_book_boss_stars_note: "Bệ thờ hiển thị số sao của boss trước khi bạn triệu hồi. Sao của boss không bao giờ nhân đồ rơi của nó."
+# Compendium, Stars page: sentence added to the end of the boss star note when the server makes each kill lean a boss's next fight toward more stars.
+ecr_book_boss_stars_again: "Mỗi lần một boss bị hạ, trận đấu tiếp theo của nó dễ có nhiều sao hơn."
 
 # Compendium: Mutations page ($1 in the intro is the Gilded mutation's name)
-ecr_book_mutations_topic: "Elite: Các đột biến"
-ecr_book_mutations_intro: "Sinh vật đột biến mang tên đột biến sau tên của nó, và các sao của nó có màu của đột biến (màu của sao đứng trước mỗi tên bên dưới). $1 là đột biến hiếm nhất và là đột biến duy nhất có lợi cho bạn."
-ecr_book_mutations_numbers: "Chỉ số cho một sinh vật không có sao ở $1, nơi bạn đang ở."
-ecr_book_mutations_large: "Đột biến trên một sao lớn sẽ mạnh hơn: những gì nó nhận được là x$1."
+# Compendium: title of the mod's Mutations page in the compendium's list of topics, like the other 'Elite:' pages.
+ecr_book_mutations_topic: "Elite: Đột biến"
+# Compendium, Mutations page: opening paragraph. $1 = the Gilded mutation's name (Gilded). A mutation's name goes before the creature's: 'Mad Boar'.
+ecr_book_mutations_intro: "Sinh vật đột biến mang tên đột biến sau tên của nó, và các sao của nó có màu của đột biến, chính là màu ngôi sao trước mỗi tên bên dưới. $1 là đột biến hiếm nhất và là đột biến duy nhất có lợi cho bạn."
+# Compendium, Mutations page: grey line under the intro. $1 = the biome the player stands in, by the game's name (Meadows).
+ecr_book_mutations_numbers: "Chỉ số cho sinh vật không có sao ở $1, nơi bạn đang đứng."
+# Compendium, Mutations page: sentence added to that grey line only when the server's large star power isn't 1. $1 = a multiplier (2).
+ecr_book_mutations_large: "Đột biến trên một ngôi sao lớn mạnh hơn: phần nó nhận được x$1."
+# Compendium, Mutations page: heading above a comma list of the mutation names switched off on this server. Heading alone.
 ecr_book_mutations_off: "Đã tắt trên máy chủ này"
 
 # Compendium: what each mutation does (a $n that names a mutation is that mutation's own name)
-ecr_book_mut_mad: "Di chuyển nhanh hơn $1 và tấn công nhanh hơn $2, nhưng chịu ít hơn $3 máu. Không bao giờ xuất hiện trên dơi."
-ecr_book_mut_bloated: "Máu gấp $1 lần bình thường. $2 sau khi chết nó sẽ phát nổ: gây $3 sát thương trong bán kính $4 m, nhiều hơn theo từng sao."
-ecr_book_mut_cloaked: "Tàng hình cho đến khi bạn ở trong bán kính $1 m. Drake, dơi, gjall và muỗi tử thần không bao giờ bị $2."
-ecr_book_mut_splintering: "Tách thành các bản sao yếu hơn khi bị tiêu diệt, mỗi bản sao gây $1% sát thương của nó, và chúng có thể tiếp tục phân tách. Oozer không bao giờ bị $2."
-ecr_book_mut_leeching: "Hồi phục $1% máu mỗi giây (tối đa $2 mỗi giây) sau khi trôi qua $3 không bị trúng đòn, và hồi máu bằng $4% sát thương nó gây ra."
-ecr_book_mut_warding: "Phản lại $1% mỗi đòn đánh về phía bạn và đẩy lùi bạn, không bao giờ vượt quá $2% máu tối đa của bạn trong bất kỳ giây nào."
-ecr_book_mut_plated: "Bỏ qua $1% sát thương nhận vào khi đầy máu, giảm dần khi bị thương, và đánh mạnh hơn lên đến $2% khi lớp giáp đó mất đi."
-ecr_book_mut_miasmic: "Để lại các đám mây độc đằng sau, rộng $1 m, mỗi đám tồn tại $2. Chúng làm độc người chơi, không bao giờ tác động đến sinh vật."
-ecr_book_mut_devouring: "Tiêu diệt các sinh vật nhỏ hơn trong một vết cắn và giữ lại $1% máu cùng $2% sát thương của chúng, chậm dần khi lớn lên: một bữa ăn cho mỗi sao trong đời nó (ít nhất $3), một bữa ăn mỗi $4, không bao giờ nuốt trùm hoặc sinh vật lớn. Bảng tên của nó hiển thị những gì nó đã ăn."
-ecr_book_mut_thieving: "Trộm một vật phẩm với mỗi đòn cận chiến trúng đích, tối đa một vật phẩm mỗi sao (ít nhất $1), và mang chúng trên bảng tên. Tiêu diệt nó để lấy lại mọi thứ."
-ecr_book_mut_gilded: "Lấp lánh ánh vàng, không bao giờ tấn công người chơi và bỏ chạy khỏi bất kỳ ai trong bán kính $1 m. Rơi ra $2 lần vật phẩm cùng $3 $4, nhiều hơn theo từng sao. Không bao giờ xuất hiện trên sinh vật khổng lồ."
-ecr_book_mut_blinking: "Mỗi $1 trong trận chiến, nó xuất hiện lại $2 m phía sau mục tiêu, sau một luồng sáng và tiếng chuông tại điểm đó. Chịu ít hơn $3 máu."
-ecr_book_mut_blinking_never: "Chịu ít hơn $1 máu. Nó không bao giờ tốc biến trên máy chủ này."
-ecr_book_mut_relentless: "Một khi đã nhắm vào bạn, nó sẽ tiếp tục lao tới, dù nhìn thấy hay không, cho đến khi bạn ở cách xa $1 m; lén lút không thể giấu bạn. Không bao giờ di chuyển nhanh hơn tốc độ bình thường, không bao giờ xuất hiện trên sinh vật khổng lồ."
-ecr_book_mut_juggernaut: "Không bao giờ bị choáng hoặc bị đẩy lùi: đòn đánh, đỡ đòn chuẩn xác, vụ nổ và bẫy không thể cản nó. Chữ \"Không Thể Cản Phá\" sẽ hiển thị trên đầu nó."
-ecr_book_mut_screecher: "Khi một đòn đánh lấy đi $1% máu của nó, nó sẽ rú lên: người chơi trong bán kính $2 m bị điếc trong $3, và vũ khí phép nguyên tố và huyết thuật sẽ không thể thi triển. Tối đa một lần mỗi $4; đòn kết liễu không tạo ra tiếng rú."
-ecr_book_mut_frostbound: "Người chơi trong bán kính $1 m hồi phục thể lực chậm hơn $2% (\"Lạnh Giá\"). Sát thương Băng $3 sẽ hồi máu cho nó thay vì làm nó bị thương."
-ecr_book_mut_frostbound_ice: "Để lại băng trơn nơi nó đi qua: đứng trên đó bạn bị trượt và di chuyển chậm hơn $1%; mỗi mảng tồn tại $2."
+# Compendium, Mutations page: Mad's description under its name. $1 = move speed gain (60%), $2 = attack speed gain (50%), $3 = health lost (50%); % included.
+ecr_book_mut_mad: "Di chuyển nhanh hơn $1 và tấn công nhanh hơn $2, nhưng ít hơn $3 máu. Không bao giờ có ở dơi."
+# Compendium, Mutations page: Bloated's description. $1 = health multiplier (2), $2 = a duration with its unit (1.5 seconds), $3 = damage (40), $4 = metres (4).
+ecr_book_mut_bloated: "Gấp $1 lần máu bình thường. $2 sau khi chết nó phát nổ: $3 sát thương trong phạm vi $4 m, nhiều hơn theo mỗi sao."
+# Compendium, Mutations page: Cloaked's description. $1 = metres (10), $2 = this mutation's own name (Cloaked), used as an adjective after 'are never'.
+ecr_book_mut_cloaked: "Vô hình cho đến khi bạn ở trong phạm vi $1 m. Drake, dơi, gjall và muỗi tử thần không bao giờ bị $2."
+# Compendium, Mutations page: Splintering's description. $1 = a percent number (60), $2 = this mutation's own name (Splintering), as an adjective.
+ecr_book_mut_splintering: "Khi bị giết sẽ tách thành các bản sao yếu hơn, mỗi bản gây $1% sát thương của nó, và các bản sao có thể tách tiếp. Oozer không bao giờ bị $2."
+# Compendium, Mutations page: Leeching's description. $1 = percent (0.5), $2 = health points (20), $3 = a duration with unit (5 seconds), $4 = percent (10).
+ecr_book_mut_leeching: "Hồi $1% máu mỗi giây (tối đa $2 mỗi giây) khi $3 trôi qua mà không trúng đòn, và hồi $4% sát thương nó gây ra."
+# Compendium, Mutations page: Warding's description. $1 = percent of each hit reflected (30), $2 = percent of max health (7.5).
+ecr_book_mut_warding: "Dội lại $1% mỗi đòn đánh vào bạn và đẩy lùi bạn, không bao giờ quá $2% máu tối đa của bạn trong mỗi giây."
+# Compendium, Mutations page: Plated's description. $1 = percent of damage shrugged off (40), $2 = percent harder hits (60).
+ecr_book_mut_plated: "Bỏ qua $1% sát thương nhận vào khi đầy máu, giảm dần khi bị thương, và đánh mạnh hơn tối đa $2% khi lớp giáp đó mất dần."
+# Compendium, Mutations page: Miasmic's description. $1 = metres (4), $2 = a duration with its unit (6 seconds).
+ecr_book_mut_miasmic: "Để lại những đám khí độc phía sau, rộng $1 m, mỗi đám kéo dài $2. Chúng gây độc cho người chơi, không bao giờ cho sinh vật."
+# Compendium, Mutations page: Devouring's description. $1 = percent (50), $2 = percent (25), $3 = number of meals (1), $4 = a duration with unit (60 seconds).
+ecr_book_mut_devouring: "Giết sinh vật nhỏ hơn chỉ bằng một miếng cắn và giữ lại $1% máu cùng $2% sát thương của chúng, chậm dần khi lớn lên: mỗi sao một bữa trong đời (ít nhất $3), mỗi bữa cách nhau $4, không bao giờ ăn boss hay sinh vật lớn. Khi đủ lớn nó săn cả người chơi. Bảng tên của nó hiện những gì nó đã ăn."
+# Compendium, Mutations page: Thieving's description. $1 = number of items (1).
+ecr_book_mut_thieving: "Trộm một vật phẩm với mỗi đòn cận chiến đánh trúng, tối đa một món mỗi sao (ít nhất $1), và mang chúng trên bảng tên. Giết nó để lấy lại tất cả."
+# Compendium, Mutations page: Gilded's description. $1 = metres (30), $2 = loot multiplier (3), $3 = a count (20), $4 = an item's name in lower case (coins).
+ecr_book_mut_gilded: "Lấp lánh ánh vàng, không bao giờ tấn công người chơi và bỏ chạy khỏi bất kỳ ai trong phạm vi $1 m. Rơi đồ gấp $2 lần cộng thêm $3 $4, nhiều hơn theo mỗi sao. Không bao giờ có ở sinh vật lớn."
+# Compendium, Mutations page: Blinking's description. $1 = a duration with unit (30 seconds), $2 = metres (4), $3 = health lost (25%, % included).
+ecr_book_mut_blinking: "Cứ mỗi $1 trong trận đấu nó lại hiện ra cách $2 m phía sau mục tiêu, sau một tia sáng và tiếng chuông ở chỗ đó. Ít hơn $3 máu."
+# Compendium, Mutations page: Blinking's description instead, when the server turns its blinks off. $1 = health lost (25%, % included). Rare.
+ecr_book_mut_blinking_never: "Ít hơn $1 máu. Nó không bao giờ dịch chuyển trên máy chủ này."
+# Compendium, Mutations page: Relentless's description. $1 = metres (150).
+ecr_book_mut_relentless: "Một khi đã chọn bạn, nó cứ đuổi theo, dù thấy bạn hay không, cho đến khi bạn cách xa $1 m; lén lút không giúp bạn ẩn nấp. Không bao giờ nhanh hơn tốc độ bình thường của nó, không bao giờ có ở sinh vật lớn."
+# Compendium, Mutations page: Juggernaut's description, no $n. 'Unstoppable' is the word shown over the creature (ecr_display_unstoppable): same word.
+ecr_book_mut_juggernaut: "Không bao giờ bị choáng hay bị đẩy lùi: đòn đánh, đỡ phản, vụ nổ và bẫy đều không cản được nó. Thay vào đó chữ \"Không thể cản\" hiện trên đầu nó."
+# Compendium, Mutations page: Screecher's description. $1 = percent (15), $2 = metres (20), $3 = a duration (4 seconds), $4 = a duration (15 seconds).
+ecr_book_mut_screecher: "Khi một đòn lấy đi $1% máu của nó, nó sẽ rít lên: người chơi trong phạm vi $2 m bị ù tai trong $3, và vũ khí Nguyên tố và Huyết thuật không thể thi triển phép. Tối đa một lần mỗi $4; đòn kết liễu không gây tiếng rít."
+# Compendium, Mutations page: Frostbound's description. $1 = metres (6), $2 = percent (50), $3 = a whole sentence (ecr_book_mut_frostbound_ice or _no_ice).
+ecr_book_mut_frostbound: "Người chơi trong phạm vi $1 m hồi thể lực chậm hơn $2% (\"Lạnh cóng\"). $3 Sát thương băng hồi máu cho nó thay vì gây hại."
+# Compendium, Mutations page: the sentence put in $3 of Frostbound's description when it lays ice. $1 = percent (15), $2 = a duration with unit (10 seconds).
+ecr_book_mut_frostbound_ice: "Để lại băng trơn nơi nó đi qua: trên đó bạn bị trượt và di chuyển chậm hơn $1%; mỗi mảng kéo dài $2."
+# Compendium, Mutations page: the sentence put in $3 of Frostbound's description when the server turns its ice trail off. Rare.
 ecr_book_mut_frostbound_no_ice: "Nó không tạo băng trên máy chủ này."
-ecr_book_mut_mudbound: "Để lại bùn dày nơi nó đi qua: đứng trong đó bạn di chuyển chậm hơn $1%, và duy trì $2 sau khi bước ra ngoài. Mỗi mảng tồn tại $3."
+# Compendium, Mutations page: Mudbound's description. $1 = percent (40), $2 = a duration with unit (1 second), $3 = a duration (10 seconds).
+ecr_book_mut_mudbound: "Để lại bùn dày nơi nó đi qua: trong bùn bạn di chuyển chậm hơn $1%, và thêm $2 sau khi bước ra. Mỗi mảng kéo dài $3."
+# Compendium, Mutations page: Mudbound's whole description instead, when the server turns its mud trail off. Rare.
 ecr_book_mut_mudbound_none: "Nó không tạo bùn trên máy chủ này."
-ecr_book_mut_corrodent: "Trang bị giáp của bạn giảm độ bền nhanh gấp $1 lần dưới các đòn đánh của nó, và mỗi đòn xuyên qua còn lấy thêm $2% độ bền tối đa của món giáp. Khiên giảm độ bền như bình thường."
-ecr_book_mut_cloning: "Khi nó đối đầu với bạn trong bán kính $1 m, nó để lại một hình nhân thế thân vô hại tại chỗ và tiếp tục chiến đấu tàng hình. Đòn đánh đầu tiên trúng đích sẽ làm lộ diện nó, tiêu diệt hình nhân thế thân cũng vậy. $2"
-ecr_book_mut_cloning_late: "Khi nó đối đầu với bạn trong bán kính $1 m, nó để lại một hình nhân thế thân vô hại tại chỗ và tiếp tục chiến đấu tàng hình. Đòn đánh đầu tiên trúng đích sẽ làm lộ diện nó, tiêu diệt hình nhân thế thân cũng vậy, và sau $2 nó cũng sẽ tự hiện hình. $3"
+# Compendium, Mutations page: Corrodent's description. $1 = a multiplier, how many times as fast (3), $2 = percent of the piece's maximum durability each hit takes on top (4).
+ecr_book_mut_corrodent: "Giáp của bạn mất độ bền nhanh gấp $1 lần khi trúng đòn của nó, và mỗi đòn xuyên qua lấy thêm $2% độ bền tối đa của món đó. Khiên mòn như bình thường."
+# Compendium, Mutations page: Cloning's description when the server gives the decoy no time limit. $1 = metres (12), $2 = a sentence (cloning_once/_times). Rare.
+ecr_book_mut_cloning: "Khi đối mặt với bạn trong phạm vi $1 m, nó để lại một hình nhân vô hại tại chỗ và tiếp tục chiến đấu trong vô hình. Đòn đầu tiên nó đánh trúng sẽ làm lộ nó, giết hình nhân cũng vậy. $2"
+# Compendium, Mutations page: Cloning's usual description. $1 = metres (12), $2 = a duration with unit (20 seconds), $3 = a sentence (cloning_once/_times).
+ecr_book_mut_cloning_late: "Khi đối mặt với bạn trong phạm vi $1 m, nó để lại một hình nhân vô hại tại chỗ và tiếp tục chiến đấu trong vô hình. Đòn đầu tiên nó đánh trúng sẽ làm lộ nó, giết hình nhân cũng vậy, và sau $2 nó cũng tự lộ diện. $3"
+# Compendium, Mutations page: sentence that ends Cloning's description when it does it once in its life (the default).
 ecr_book_mut_cloning_once: "Một lần trong đời."
+# Compendium, Mutations page: sentence that ends Cloning's description when it does it more than once. $1 = number of times (2).
 ecr_book_mut_cloning_times: "$1 lần trong đời."
-ecr_book_mut_piercing: "Các đòn đánh của nó bỏ qua $1% giáp của bạn."
-ecr_book_mut_howling: "Khi nó quay sang bạn, nó gầm hú, và $1 sinh vật đồng minh gần nhất trong bán kính $2 m sẽ lao đến chỗ bạn; lặp lại mỗi $3 khi nó chiến đấu với bạn. Không bao giờ gọi trùm."
-ecr_book_mut_binding: "Để lại các mảng rễ cây chằng chịt nơi nó đi qua, một mảng mỗi $1 m, mỗi mảng tồn tại $2. Bước vào đó và rễ cây sẽ giữ bạn lại trong $3 (\"Bị Trói Rễ\": bạn vẫn có thể xoay người, đỡ đòn và đánh), sau đó thả bạn ra trong $4."
-ecr_book_mut_flamebound: "Để lại mặt đất rực cháy nơi nó đi qua, mỗi mảng tồn tại $1. Đứng trong đó khiến bạn bị bốc cháy: $2 sát thương lửa mỗi giây, nhiều hơn theo từng sao. Kháng lửa và bị ướt sẽ giúp giảm sát thương; giáp không có tác dụng."
+# Compendium, Mutations page: Piercing's description, only if the server switches it on (off by default). $1 = percent of armour ignored (15).
+ecr_book_mut_piercing: "Đòn đánh của nó bỏ qua $1% giáp của bạn."
+# Compendium, Mutations page: Howling's description, if switched on (off by default). $1 = creatures (4), $2 = metres (30), $3 = a duration (45 seconds).
+ecr_book_mut_howling: "Khi nhắm vào bạn, nó hú lên, và $1 sinh vật cùng phe gần nhất trong phạm vi $2 m sẽ lao đến bạn; lặp lại mỗi $3 khi nó còn đánh bạn. Không bao giờ gọi boss."
+# Compendium, Mutations page: Binding's description, if on (off by default). $1 = metres (3), $2-$4 = durations (10 seconds, 1 second, 3 seconds).
+ecr_book_mut_binding: "Để lại những mảng rễ cây chằng chịt nơi nó đi qua, mỗi $1 m một mảng, mỗi mảng kéo dài $2. Bước vào một mảng thì rễ giữ bạn trong $3 (\"Bị trói chân\": bạn vẫn có thể xoay người, đỡ đòn và tấn công), rồi thả bạn ra trong $4."
+# Compendium, Mutations page: Flamebound's description. $1 = a duration with its unit (7 seconds), $2 = fire damage a second (6).
+ecr_book_mut_flamebound: "Để lại mặt đất bốc cháy nơi nó đi qua, mỗi mảng kéo dài $1. Đứng trong đó sẽ bị bắt lửa: $2 sát thương lửa mỗi giây, nhiều hơn theo sao. Kháng lửa và bị ướt giúp ích; giáp thì không."
 
 # Compendium: Boss aspects page
-ecr_book_aspects_topic: "Elite: Thuộc tính trùm"
-ecr_book_aspects_off: "Thuộc tính trùm đã tắt trên máy chủ này: mọi trùm chiến đấu theo mặc định của game."
-ecr_book_aspects_intro: "Trùm được triệu hồi tại bàn thờ có thể đi kèm với một thuộc tính: một điểm biến tấu trong trận chiến, ghi sau tên của trùm. Bàn thờ hiển thị thuộc tính trước khi bạn triệu hồi, và nó thay đổi theo thời gian. Thuộc tính làm trận chiến khó hơn và phần thưởng phong phú hơn."
-ecr_book_loot: "vật phẩm rơi x$1"
-ecr_book_render_topic: "Elite: Bàn chế biến chiến lợi phẩm"
-ecr_book_render_how: "Cách chế biến"
-ecr_book_render_rolls: "Mỗi chiến lợi phẩm cho $1-$2 một loại quặng hoặc nguyên liệu của vùng đất của nó, chọn ngẫu nhiên từ các danh sách bên dưới; có thể chuyển bàn giữa quặng và nguyên liệu. Chiến lợi phẩm của trùm, dùng lên bàn từ thanh phím tắt, cho $3 lượt như vậy."
-ecr_book_render_idols: "Chỉ chiến lợi phẩm của trùm mới tạo ra tượng thần Lò rèn: một tượng thần của vùng đất đó, ngẫu nhiên Chiến đấu hoặc Bảo vệ."
+# Compendium: title of the mod's Boss aspects page in the compendium's list of topics, like the other 'Elite:' pages.
+ecr_book_aspects_topic: "Elite: Đặc tính của boss"
+# Compendium, Boss aspects page: the page's only text when boss aspects are off on the server.
+ecr_book_aspects_off: "Đặc tính của boss đã tắt trên máy chủ này: mọi boss chiến đấu như bản gốc của game."
+# Compendium, Boss aspects page: opening paragraph, above the list of aspects (each one's name, then what it does).
+ecr_book_aspects_intro: "Boss được triệu hồi ở bệ thờ có thể mang một đặc tính: một biến tấu cho trận đấu, ghi sau tên của boss. Bệ thờ hiển thị nó trước khi bạn triệu hồi, và thỉnh thoảng nó lại thay đổi. Đặc tính khiến trận đấu khó hơn và đồ rơi giàu hơn."
+# Compendium, Boss aspects page: grey tag after an aspect's name ('Enraged loot x1.2') when its loot is not x1. $1 = the multiplier (1.2). Lower-case noun.
+ecr_book_loot: "đồ rơi x$1"
+
+# Compendium: Rendering Table page ($1 of each list line is the items, by the game's names)
+# Compendium: title of the Rendering Table page in the list of topics, only while the table is on. 'Rendering Table' = the piece's name (piece_ecr_renderingtable).
+ecr_book_render_topic: "Elite: Bàn Luyện Hóa"
+# Compendium, Rendering Table page: the first orange heading, alone on its line, above how a trophy renders. A heading, not a question.
+ecr_book_render_how: "Cách luyện hóa"
+# Compendium, Rendering Table page: paragraph under the heading. $1 = least per roll (2), $2 = most per roll (4), $3 = draws from a boss trophy (5).
+ecr_book_render_rolls: "Một chiến lợi phẩm cho $1-$2 của một loại quặng hoặc nguyên liệu thuộc vùng đất của nó, rút ngẫu nhiên từ các danh sách bên dưới; bàn có thể chuyển giữa quặng và nguyên liệu. Chiến lợi phẩm boss, dùng lên bàn từ thanh nhanh, cho $3 lần rút như vậy."
+# Compendium, Rendering Table page: sentence right after the rolls paragraph, before the per-biome lists.
+ecr_book_render_idols: "Chỉ chiến lợi phẩm boss mới tạo ra tượng Lò Rèn: một tượng của vùng đất đó, Chiến Đấu hoặc Bảo Hộ ngẫu nhiên."
+# Compendium, Rendering Table page: a line under each biome's heading. $1 = that biome's trophies by the game's names, comma separated.
 ecr_book_render_trophies: "Chiến lợi phẩm: $1"
+# Compendium, Rendering Table page: a line under each biome's heading. $1 = its ores by the game's names, comma separated (Copper ore, Tin ore).
 ecr_book_render_ores: "Quặng: $1"
+# Compendium, Rendering Table page: a line under each biome's heading. $1 = its creature parts and plants by the game's names, comma separated.
 ecr_book_render_ingredients: "Nguyên liệu: $1"
-ecr_book_render_idol: "Tượng thần: $1"
+# Compendium, Rendering Table page: a line under a biome with a boss. $1 = its two Forge idols by the game's names, comma separated.
+ecr_book_render_idol: "Tượng: $1"
 
 # Hel's hall
+# Hel's hall: the name on the hover of Hel, the goddess seated on her throne in the arena. Proper name, alone on the line.
 ecr_arena_hel: "Hel"
-msg_ecr_arena_river: "Dòng sông của Hel cuốn lấy bạn."
+# Hel's hall: action on Hel's hover after the key, "[E] Begin the trial: Swamp", when no trial runs. Imperative, like a button label. $1 = the trial chosen at Helgrind: a biome name (Swamp) or ecr_arena_mode_infinite.
+hud_ecr_arena_begin_trial: "Bắt đầu thử thách: $1"
+# Hel's hall: centre message to a player who falls past the arena into the black river below, just as it kills them.
+msg_ecr_arena_river: "Dòng sông của Hel cuốn bạn đi."
 
 # Helgrind, Hel's gate
+# Helgrind: the gate piece's name in the hammer's build menu and on its hover. Proper name of Hel's gate.
 piece_ecr_helgrind: "Helgrind"
-piece_ecr_helgrind_description: "Cổng của Hel, dẫn đến đại sảnh và thử thách của bà. Bước qua đó để đi vào; luồng xoáy ở cuối hành lang cổng đại sảnh sẽ đưa bạn trở lại đây."
-ecr_helgrind_open: "Bước qua để vào đại sảnh của Hel"
+# Helgrind: the gate piece's description in the hammer's build menu.
+piece_ecr_helgrind_description: "Cổng của Hel, dẫn đến đại sảnh và thử thách của bà ta. Đi xuyên qua để vào; vòng xoáy ở cuối lối đi cổng của đại sảnh đưa bạn trở lại đây."
+# Helgrind: the gate's hover line after the key, "[E] Trial: Swamp": the trial the gate is set to; E picks the next one. $1 = a biome name (Meadows) or ecr_arena_mode_infinite.
+hud_ecr_helgrind_trial: "Thử thách: $1"
+# Hel's Trial: the name of the endless trial, chosen at Helgrind after the biomes: the highest biome again and again, harder each round.
+ecr_arena_mode_infinite: "Vô tận"
+# Helgrind: last line of the gate's hover, while the arena is on. An instruction to the player.
+ecr_helgrind_open: "Đi xuyên qua để vào đại sảnh của Hel"
+# Helgrind: hover line while the arena is off on the server, and centre message when a player walks into the gate then.
 ecr_helgrind_closed: "Cổng của Hel đã đóng."
 
 # Hel's Trial: the line under the minimap ($1 the biome, $2 the wave, then creatures left or seconds, then souls)
-ecr_arena_name: "Thử Thách Của Hel"
-ecr_arena_line: "Thử Thách Của Hel - $1, đợt $2 - còn lại $3 - $4 linh hồn"
-ecr_arena_countdown: "Thử Thách Của Hel - $1 - đợt đầu tiên sau $2"
-ecr_arena_break_line: "Thử Thách Của Hel - $1, đợt $2 hoàn thành - đợt tiếp theo sau $3 - $4 linh hồn"
-ecr_arena_recall_line: "Thử Thách Của Hel - $1, đợt $2 - còn lại $3, thu hồi sau $4 - $5 linh hồn"
+# Hel's Trial: the trial's name, coloured, put before the end and reward messages in the chat window (as $1 of ecr_arena_chat_line).
+ecr_arena_name: "Thử Thách của Hel"
+# Hel's Trial: event bar under the minimap during a wave. $1 = biome (Ashlands), $2 = wave number, $3 = creatures left, $4 = the player's souls (342).
+ecr_arena_line: "Thử Thách của Hel - $1, đợt $2 - còn $3 - $4 linh hồn"
+# Hel's Trial: the biome part ($1 of the event bar lines) in the Infinite trial, with its level. $1 = biome (Meadows), $2 = level, 1 to 5.
+ecr_arena_level_line: "$1, cấp $2"
+# Hel's Trial: event bar under the minimap before wave 1. $1 = biome name (Meadows), $2 = time left as m:ss (0:07).
+ecr_arena_countdown: "Thử Thách của Hel - $1 - đợt đầu tiên sau $2"
+# Hel's Trial: event bar during a break. $1 = biome, $2 = wave just cleared, $3 = seconds to the next wave (14), $4 = the player's souls.
+ecr_arena_break_line: "Thử Thách của Hel - $1, đã xong đợt $2 - đợt tiếp theo sau $3 - $4 linh hồn"
+# Hel's Trial: event bar while Hel's recall runs. $1 = biome, $2 = wave, $3 = creatures left, $4 = time to recall as m:ss (0:45), $5 = souls.
+ecr_arena_recall_line: "Thử Thách của Hel - $1, đợt $2 - còn $3, triệu hồi lại sau $4 - $5 linh hồn"
 # A rest's line ($1) with who is ready after it ($2: ecr_arena_ready_hint or ecr_arena_ready_mine)
+# Hel's Trial: event bar in the countdown or a break. $1 = the countdown or break line, $2 = ecr_arena_ready_hint or ecr_arena_ready_mine.
 ecr_arena_line_ready: "$1 - $2"
+# Hel's Trial: end of the event bar in the countdown or a break; F is the fixed key to vote ready. $1 = players ready (1), $2 = players alive in the arena (3).
 ecr_arena_ready_hint: "F: sẵn sàng ($1/$2)"
+# Hel's Trial: end of the event bar once this player pressed F to vote ready. $1 = players ready (1), $2 = players alive in the arena (3).
 ecr_arena_ready_mine: "(sẵn sàng) $1/$2"
 
 # Hel's Trial: centre messages
-ecr_arena_started: "Hel thức giấc. Thử thách của bà bắt đầu!"
-ecr_arena_boss: "Hel cử $1 đến!"
-ecr_arena_ended: "Thử Thách Của Hel kết thúc ở đợt $1: tiêu diệt $2, $3 linh hồn."
-ecr_arena_cleared: "Đợt $1 đã dọn dẹp. Đợt tiếp theo bắt đầu sau $2 giây."
-ecr_arena_cleared_first: "Đợt $1 đã dọn dẹp. Đợt tiếp theo bắt đầu sau $2 giây. Hel trao phần thưởng khi thử thách kết thúc."
-ecr_arena_wave_done: "Đợt $1 đã dọn dẹp."
-ecr_arena_recall: "Hel đánh dấu những kẻ đã chết cuối cùng trên bản đồ. Bà sẽ thu hồi chúng sau $1 giây."
-ecr_arena_spared: "Hel miễn trừ tổn thất kỹ năng và trang bị của bạn."
-ecr_arena_ready_vote: "Sẵn sàng: $1/$2"
-ecr_arena_all_ready: "Tất cả đã sẵn sàng - quân đoàn cõi chết đang kéo đến!"
+# Hel's Trial: centre message to every player of the trial when a player starts it at Hel. $1 = the trial: a biome name (Swamp) or ecr_arena_mode_infinite.
+ecr_arena_started: "Hel thức giấc. Thử thách của bà ta bắt đầu: $1!"
+# Hel's Trial: centre message to the trial's players as a boss wave begins. $1 = the boss's name (Moder).
+ecr_arena_boss: "Hel phái $1 đến!"
+# Hel's Trial: centre message and chat line to each player when the trial ends. $1 = wave reached (12), $2 = kills (340), $3 = their souls (18,420).
+ecr_arena_ended: "Thử Thách của Hel kết thúc ở đợt $1: $2 lần hạ gục, $3 linh hồn."
+# Hel's Trial: centre message and chat line to each player when they beat the boss that ends a biome's trial. $1 = the biome (Swamp), $2 = kills (40), $3 = their souls (1,250).
+ecr_arena_won: "Bạn đã chiến thắng thử thách $1 của Hel: $2 lần hạ gục, $3 linh hồn."
+# Hel's Trial: centre message when the wave(s) fighting are over and a break begins. $1 = wave number, $2 = break in seconds (20).
+ecr_arena_cleared: "Đã xong đợt $1. Đợt tiếp theo đến sau $2 giây."
+# Hel's Trial: as ecr_arena_cleared, but for the trial's first cleared wave, adding the reward note. $1 = wave number, $2 = break seconds (20).
+ecr_arena_cleared_first: "Đã xong đợt $1. Đợt tiếp theo đến sau $2 giây. Hel trao thưởng cho bạn khi thử thách kết thúc."
+# Hel's Trial: centre message when one wave is cleared while a wave called early still fights. $1 = wave number (6).
+ecr_arena_wave_done: "Đã xong đợt $1."
+# Hel's Trial: centre message when only the last quarter of a wave is left; they are marked on the map. $1 = seconds until they vanish (60).
+ecr_arena_recall: "Hel đánh dấu những kẻ chết còn lại trên bản đồ của bạn. Bà ta sẽ triệu hồi chúng về sau $1 giây."
+# Hel's Trial: centre message after respawning from a death in Hel's hall (no skill loss, no tombstone).
+ecr_arena_spared: "Hel tha cho kỹ năng và trang bị của bạn."
+# Hel's Trial: centre message to the trial's players each time someone votes ready with F. $1 = players ready (2), $2 = players alive in the arena (3).
+ecr_arena_ready_vote: "Sẵn sàng: $1 trên $2"
+# Hel's Trial: centre message when every player alive in the arena has voted ready: the break ends and the next wave comes at once.
+ecr_arena_all_ready: "Tất cả đã sẵn sàng - lũ người chết đang đến!"
+# Hel's Trial: action on Hel's hover after the key, "[E] Call the next wave", during a wave whose creatures are all out. Imperative, button label.
 ecr_arena_call_hint: "Gọi đợt tiếp theo"
+# Hel's Trial: centre message to the trial's players when someone calls the next wave early at Hel. $1 = that player's name.
 ecr_arena_called: "$1 gọi đợt tiếp theo!"
+# Hel's Trial: centre message to a player who tried to call the next wave while a boss still lives. $1 = the boss's name (Moder).
 ecr_arena_boss_waits: "Hel chờ cho đến khi $1 gục ngã."
 # The end and the reward again in the chat window: $1 the trial's name (coloured), $2 the message
+# Hel's Trial: a line in the chat window repeating the end and reward messages. $1 = ecr_arena_name (coloured), $2 = the message.
 ecr_arena_chat_line: "$1: $2"
 
 # Hel's Trial: the reward (the end message and Hel's hover while a trial runs)
+# Hel's Trial: centre message and chat line a few seconds after the end. $1 = the reward list (Bronze Battle Idol, 412 coins, +18% skill XP).
 ecr_arena_reward: "Hel ban thưởng cho bạn: $1."
+# Hel's Trial: line on Hel's hover while a trial runs: what it would pay now. $1 = the reward list, or ecr_arena_reward_none.
 ecr_arena_reward_now: "Phần thưởng hiện tại: $1"
+# Hel's Trial: fills $1 of ecr_arena_reward_now on Hel's hover when nothing is earned yet. Lowercase, after "Current rewards:".
 ecr_arena_reward_none: "chưa có"
 # A named item given more than once: $1 the item, $2 how many
+# Hel's Trial: one item in the reward list when there is more than one of it. $1 = item's game name (Bronze Battle Idol), $2 = how many (2).
 ecr_arena_reward_item: "$1 x$2"
 # The reward's parts one after another: $1 the parts so far, $2 the next
+# Hel's Trial: joins reward list parts one by one. $1 = the parts so far, $2 = the next part. Only the separator matters (", " in English).
 ecr_arena_reward_list: "$1, $2"
-ecr_arena_reward_coins: "$1 đồng xu"
+# Hel's Trial: a part of the reward list. $1 = number of coins (412), always this one form, even for 1.
+ecr_arena_reward_coins: "$1 đồng vàng"
+# Hel's Trial: a part of the reward list, only with the EliteCrafting mod. $1 = number of runes (6), always this one form.
 ecr_arena_reward_runes: "$1 rune"
+# Hel's Trial: a part of the reward list, only with the EliteCrafting mod. $1 = amount of essence (3); essence is a mass noun.
 ecr_arena_reward_essence: "$1 tinh chất"
+# Hel's Trial: the last part of the reward list: bonus on the skill experience earned in the trial. $1 = a percentage (18).
 ecr_arena_reward_xp: "+$1% kinh nghiệm kỹ năng"
 
 # Hel's Anvil
-ecr_arena_anvil: "Đe Của Hel"
-ecr_arena_anvil_repair: "Sửa chữa trang bị ($1 linh hồn)"
+# Hel's Anvil: the name on the hover of the two anvils beside Hel's throne in the arena. Proper name, alone on the line.
+ecr_arena_anvil: "Đe của Hel"
+# Hel's Anvil: hover action after "[E]" in the countdown or a break. $1 = cost in souls (30). Imperative, button label.
+ecr_arena_anvil_repair: "Sửa trang bị ($1 linh hồn)"
+# Hel's Anvil: hover line, and centre message on E, when the player's souls do not cover the repair. $1 = the cost in souls (30).
 ecr_arena_anvil_poor: "Không đủ linh hồn ($1)"
-ecr_arena_anvil_cold: "Đe nguội đi khi quân đoàn cõi chết kéo đến"
-ecr_arena_anvil_done: "Đe Của Hel sửa chữa trang bị của bạn với giá $1 linh hồn."
-ecr_arena_anvil_nothing: "Không có trang bị nào bạn mang theo cần sửa chữa."
+# Hel's Anvil: hover line during a wave, when the anvil cannot be used (only in the countdown and breaks).
+ecr_arena_anvil_cold: "Cái đe nguội lạnh khi lũ người chết đang đến"
+# Hel's Anvil: centre message after the anvil repairs all the player's damaged gear. $1 = souls spent (30).
+ecr_arena_anvil_done: "Đe của Hel sửa trang bị cho bạn với giá $1 linh hồn."
+# Hel's Anvil: centre message on E when no item the player carries is damaged.
+ecr_arena_anvil_nothing: "Không có món nào bạn mang cần sửa."
 
 # Raids: the Raiders Chest, the messages as a raid starts and ends, the line under the minimap, and the death recap.
 # $1, $2 ... are values the mod fills in (names, numbers, key hints). "$1 raid" names a raid after its creature.
 
 # The Raiders Chest
-piece_ecr_raiderschest: "Rương Kẻ Cướp"
-piece_ecr_raiderschest_description: "Thùng rương bọc sắt có tù và chiến tranh trên nắp. Bỏ đầy vàng vào và thổi tù và: kẻ cướp sẽ kéo đến vì vàng, đánh bại chúng sẽ thu lại vàng cùng nhiều lợi lộc hơn. Càng nhiều vàng đặt cược, cuộc đột kích càng khó và phần thưởng càng dồi dào. Chỉ sử dụng tại căn cứ, mỗi ngày một lần."
-hud_ecr_raid_sound: "Thổi tù và mở cuộc đột kích"
-ecr_raid_horn: "Tù và chiến tranh"
+# Raids: the Raiders Chest's name in the hammer's build menu, on its hover and as the chest window's title. A noun (a chest).
+piece_ecr_raiderschest: "Rương Đột Kích"
+# Raids: the Raiders Chest's description in the hammer's build menu.
+piece_ecr_raiderschest_description: "Một chiếc rương bọc sắt có tù và chiến trận trên nắp. Bỏ vàng hoặc chiến lợi phẩm vào rồi thổi tù và: quân đột kích sẽ đến cướp chúng, và đánh bại chúng sẽ mang về nhiều hơn. Tiền cược càng lớn so với trang bị của bạn, đột kích càng khó và đồ rơi càng giàu. Chỉ dùng trong căn cứ, mỗi ngày một lần."
+# Raids: action on the Raiders Chest's hover after "[Shift + E]", next to the game's "[E] Open". Imperative, button label.
+hud_ecr_raid_sound: "Thổi tù và đột kích"
+# Raids: the on-screen caption (the game's closed captions option) of the war horn sound as a raid starts. A noun, alone.
+ecr_raid_horn: "Tù và chiến trận"
 
 # The Raiders Chest's hover ($1 of the stake line is the coins, $2 the difficulty)
-ecr_raid_coins_one: "$1 đồng xu"
-ecr_raid_coins_many: "$1 đồng xu"
-ecr_raid_stake_line: "$1 - Cuộc đột kích $2 (hoàn vàng x$3, vật phẩm rơi x$4)"
-ecr_raid_empty: "Bỏ đồng xu vào để khởi động cuộc đột kích."
-ecr_raid_hold_to_stop: "Giữ $1 để dừng cuộc đột kích (vàng cược sẽ bị mất)"
-ecr_raid_stopping: "Đang dừng cuộc đột kích... $1%"
-ecr_raid_locked: "Rương Kẻ Cướp bị khóa khi cuộc đột kích đang diễn ra. Giữ để dừng cuộc đột kích."
+# Raids: the coin count on the Raiders Chest's hover when it holds exactly one coin. $1 = 1. Also $1 of ecr_raid_stake_line.
+ecr_raid_coins_one: "$1 đồng vàng"
+# Raids: the coin count on the Raiders Chest's hover for any other number. $1 = number of coins (1,000). Also $1 of ecr_raid_stake_line.
+ecr_raid_coins_many: "$1 đồng vàng"
+# Raids: the trophy count on the Raiders Chest's hover when it holds exactly one trophy. $1 = 1.
+ecr_raid_trophies_one: "$1 chiến lợi phẩm"
+# Raids: the trophy count on the Raiders Chest's hover for any other number. $1 = number of trophies (12).
+ecr_raid_trophies_many: "$1 chiến lợi phẩm"
+# Raids: coins and trophies together on the Raiders Chest's hover. $1 = ecr_raid_coins_many (1,000 coins), $2 = ecr_raid_trophies_many (12 trophies).
+ecr_raid_coins_and_trophies: "$1 và $2"
+# Raids: chest hover line. $1 = the stake (1,000 coins, 12 trophies, or ecr_raid_coins_and_trophies), $2 = difficulty before "raid" (Deadly), $3 = how many times the stake comes back (2), $4 = loot multiplier (5).
+ecr_raid_stake_line: "$1 - đột kích $2 (hoàn cược x$3, đồ rơi x$4)"
+# Raids: line on the Raiders Chest's hover when it holds no coins.
+ecr_raid_empty: "Bỏ đồng vàng hoặc chiến lợi phẩm vào để thổi tù và đột kích."
+# Raids: line on the Raiders Chest's hover during a raid. $1 = the use key in brackets ([E]).
+ecr_raid_hold_to_stop: "Giữ $1 để dừng đột kích (số vàng đã cược sẽ mất)"
+# Raids: line on the Raiders Chest's hover while the player holds E to stop the raid. $1 = progress as a percentage (0-100, by tens).
+ecr_raid_stopping: "Đang dừng đột kích... $1%"
+# Raids: centre message when a player presses E on the Raiders Chest during its raid.
+ecr_raid_locked: "Rương Đột Kích bị khóa khi đang đột kích. Giữ phím để dừng đột kích."
 
 # Why no raid is sounded
-ecr_raid_off: "Các cuộc đột kích từ Rương Kẻ Cướp đã bị tắt trên máy chủ này."
-ecr_raid_not_in_base: "Không ở trong căn cứ: cuộc đột kích cần một căn cứ để tấn công."
-ecr_raid_resting: "Tù và cần nghỉ ngơi: sẵn sàng sau $1"
-ecr_raid_game_raid_near: "Một cuộc đột kích khác đang diễn ra gần đây."
-ecr_raid_chest_raid_near: "Một cuộc đột kích khác đang diễn ra trong bán kính 200 m."
-ecr_raid_in_use: "Có người đang mở Rương Kẻ Cướp."
-ecr_raid_no_gold: "Không có vàng, không có đột kích."
-ecr_raid_moved: "Rương Kẻ Cướp vừa đổi chủ: hãy thử lại."
+# Raids: centre message refusing a raid when the Raiders Chest setting is off on the server. Rare.
+ecr_raid_off: "Đột kích từ Rương Đột Kích đã tắt trên máy chủ này."
+# Raids: Raiders Chest hover line, and centre message on Shift+E, when the chest has no base around it (workbench, fire, bed within 20 m).
+ecr_raid_not_in_base: "Không ở trong căn cứ: đột kích cần một căn cứ để tấn công."
+# Raids: Raiders Chest hover line, and centre message on Shift+E, while the horn's once-a-day wait runs. $1 = time left as m:ss (18:05).
+ecr_raid_resting: "Tù và cần nghỉ: sẵn sàng sau $1"
+# Raids: Raiders Chest hover line, and centre message on Shift+E, when one of the game's own raids is on within 200 m.
+ecr_raid_game_raid_near: "Đang có một cuộc đột kích khác ở gần đây."
+# Raids: Raiders Chest hover line, and centre message on Shift+E, when another Raiders Chest's raid is on within 200 m.
+ecr_raid_chest_raid_near: "Đang có một cuộc đột kích khác trong phạm vi 200 m."
+# Raids: centre message refusing Shift+E on the Raiders Chest while another player has it open.
+ecr_raid_in_use: "Có người đang mở Rương Đột Kích."
+# Raids: centre message refusing a raid when the chest turns out to hold no coins as it is sounded; also an admin console reply. Rare.
+ecr_raid_no_gold: "Không có vàng hay chiến lợi phẩm thì không có đột kích."
+# Raids: centre message refusing Shift+E when the Raiders Chest's owning machine changed during the request. Rare.
+ecr_raid_moved: "Rương Đột Kích vừa đổi chủ: hãy thử lại."
+# Raids: refusal when the object cannot host a raid, an internal check; seen in the admin console's elite raid start reply. Rare.
 ecr_raid_no_host: "Nơi này không thể tổ chức đột kích."
-ecr_raid_not_owner: "Chỉ máy đang quản lý rương này mới thổi được tù và đột kích tại đây."
-ecr_raid_already_on: "Một cuộc đột kích đang diễn ra tại đây."
-ecr_raid_none_unlocked: "Chưa có cuộc đột kích nào được mở khóa trong thế giới này."
+# Raids: refusal when this machine does not own the raid's object; seen in the admin console's elite raid start reply. Rare.
+ecr_raid_not_owner: "Chỉ máy đang sở hữu nó mới có thể thổi tù và đột kích ở đây."
+# Raids: refusal when a raid already runs at this chest or marker; centre message or admin console reply. Rare.
+ecr_raid_already_on: "Ở đây đang có đột kích rồi."
+# Raids: centre message refusing Shift+E (also a console reply) when the world has no raid unlocked yet (e.g. no boss beaten).
+ecr_raid_none_unlocked: "Thế giới này chưa mở khóa cuộc đột kích nào."
 
 # A raid starts and ends ($1 the raid's creature, $2 the difficulty)
-ecr_raid_started: "Kẻ cướp đang kéo đến vì vàng của bạn!\nĐột kích $1 ($2)"
-ecr_raid_won: "Cuộc đột kích $1 đã bị đánh bại! Vàng của bạn lại thuộc về bạn."
-ecr_raid_robbed: "Rương Kẻ Cướp đã bị phá hủy: kẻ cướp tẩu thoát cùng số vàng của bạn."
-ecr_raid_stopped: "Cuộc đột kích $1 đã bị hủy. Kẻ cướp gục ngã, và vàng của bạn cũng mất theo."
-ecr_raid_abandoned: "Cuộc đột kích bị bỏ dở: kẻ cướp bỏ đi cùng số vàng của bạn."
-ecr_raid_timed_out: "Đã hết thời gian: kẻ cướp bỏ đi cùng số vàng của bạn."
+# Raids: centre message, two lines, to players within 100 m when a raid is sounded. $1 = raid's creature (Fuling), $2 = difficulty (Brutal).
+ecr_raid_started: "Quân đột kích đang đến cướp vàng của bạn!\nĐột kích $1 ($2)"
+# Raids: centre message to players near when the raid's last wave is dead. $1 = the raid's creature (Fuling), as in "Fuling raid".
+ecr_raid_won: "Đã đánh bại đột kích $1! Vàng lại là của bạn."
+# Raids: centre message to the players near when a raid staked with trophies is won, in place of ecr_raid_won. $1 = the raid's name before "raid" (Fuling), $2 = how many trophies were put back (24).
+ecr_raid_won_trophies: "Đã đánh bại đột kích $1! Vàng lại là của bạn, và $2 chiến lợi phẩm đã trở lại Rương Đột Kích."
+# Raids: centre message to players near when the Raiders Chest is broken during its raid.
+ecr_raid_robbed: "Rương Đột Kích bị phá: quân đột kích cuỗm mất vàng của bạn."
+# Raids: centre message when a raid is stopped (E held on the chest, or a console command). $1 = the raid's creature (Fuling).
+ecr_raid_stopped: "Đã hủy đột kích $1. Quân đột kích gục ngã, vàng của bạn cũng mất theo."
+# Raids: centre message to players within 100 m when a raid is abandoned (nobody within 96 m for 60 s, last player logged out, or server restart).
+ecr_raid_abandoned: "Đột kích bị bỏ dở: quân đột kích mang vàng của bạn đi."
+# Raids: centre message to players within 100 m when the raid's 15 minutes run out before the last wave is beaten.
+ecr_raid_timed_out: "Hết giờ: quân đột kích mang vàng của bạn đi."
 
 # The raid's line under the minimap ($1 the raid's creature, $2 the difficulty; times as m:ss)
+# Raids: the event line under the minimap (also in the Raiders Chest hover) before wave 1. $1 = raid's creature (Fuling), $2 = difficulty (Brutal), $3 = m:ss (0:20).
 ecr_raid_line_countdown: "Đột kích $1 ($2) - đợt đầu tiên sau $3"
+# Raids: line under the minimap between waves. $1 = creature (Fuling), $2 = difficulty, $3 = next wave (2), $4 = waves (3), $5 = time to it (0:20), $6 = raid time left (12:40).
 ecr_raid_line_break: "Đột kích $1 ($2) - đợt $3/$4 sau $5 - $6"
-ecr_raid_line_wave: "Đột kích $1 ($2) - đợt $3/$4 - còn lại $5 - $6"
+# Raids: line under the minimap during a wave. $1 = creature (Fuling), $2 = difficulty, $3 = wave (2), $4 = waves (3), $5 = raiders still alive in it (5), $6 = time left (8:40).
+ecr_raid_line_wave: "Đột kích $1 ($2) - đợt $3/$4 - còn $5 - $6"
 
 # Raid difficulty
-ecr_raid_band_trivial: "Không đáng kể"
+# Raids: difficulty name (lowest of five). In brackets after the raid name ('Fuling raid (Trivial)') and before 'raid' in the Raiders Chest hover ('Trivial raid').
+ecr_raid_band_trivial: "Nhẹ nhàng"
+# Raids: difficulty name (2nd of five). In brackets after the raid name ('Fuling raid (Fair)') and before 'raid' in the Raiders Chest hover ('Fair raid').
 ecr_raid_band_fair: "Vừa sức"
-ecr_raid_band_hard: "Thử thách"
-ecr_raid_band_brutal: "Tàn khốc"
+# Raids: difficulty name (3rd of five). In brackets after the raid name ('Fuling raid (Hard)') and before 'raid' in the Raiders Chest hover ('Hard raid').
+ecr_raid_band_hard: "Khó"
+# Raids: difficulty name (4th of five). In brackets after the raid name ('Fuling raid (Brutal)') and before 'raid' in the Raiders Chest hover ('Brutal raid').
+ecr_raid_band_brutal: "Tàn bạo"
+# Raids: difficulty name (highest). In brackets after the raid name ('Fuling raid (Deadly)') and before 'raid' in the Raiders Chest hover ('Deadly raid').
 ecr_raid_band_deadly: "Chết chóc"
 
 # Death recap: the window
-ecr_recap_topic: "Nhật Ký Tử Vong"
+# Death recap: the window's title (window opened with F10 or /deaths). Heading.
+ecr_recap_topic: "Xem lại cái chết"
+# Death recap window: button label (narrow, about 130 px) that plays the death video; it turns into Pause while playing. Imperative verb.
 ecr_recap_play: "Phát"
+# Death recap window: the Play button's label while the video plays; pressing it pauses. Imperative verb.
 ecr_recap_pause: "Tạm dừng"
-ecr_recap_none: "Chưa có lượt tử vong nào"
-ecr_recap_none_help: "Nhật ký tử vong được lưu tại đây cho đến khi thoát game. Bấm $1 để mở và đóng cửa sổ này."
-ecr_recap_no_video: "Không có video về lượt tử vong này: tính năng ghi hình đã tắt ($1 trong tệp .cfg) hoặc không thể thực hiện."
+# Death recap window: big title in the right pane when no death has been recorded since the game started.
+ecr_recap_none: "Chưa có cái chết nào"
+# Death recap window: line under 'No deaths yet'. $1 = the recap key (F10), or the chat command /deaths when no key is set.
+ecr_recap_none_help: "Các lần chết được lưu ở đây cho đến khi tắt game. $1 mở và đóng cửa sổ này."
+# Death recap window: text in the empty video box for a death without video. $1 = the .cfg setting's name, left in English ('Record deaths').
+ecr_recap_no_video: "Không có video của lần chết này: tính năng ghi hình đã tắt ($1 trong file .cfg) hoặc không thể ghi."
 
 # Death recap: the killer, the summary and the hit rows
-ecr_recap_died: "Tử vong: $1"
-ecr_recap_killed_by: "Bị tiêu diệt bởi $1"
-ecr_recap_killed_by_how: "Bị tiêu diệt bởi $1 $2"
+# Death recap: window title of a death no creature or player dealt. $1 = the cause, capitalised (Fall, Drowning, Edge of the world).
+ecr_recap_died: "Đã chết: $1"
+# Death recap: window title of the selected death. $1 = the killer's name, a creature with its stars (Mad Greydwarf 2★).
+ecr_recap_killed_by: "Bị giết bởi $1"
+# Death recap: window title. $1 = the killer's name (Greydwarf 2★), $2 = how, in grey brackets: '(ranged)', '(burning)', '(poison)'.
+ecr_recap_killed_by_how: "Bị giết bởi $1 $2"
+# Death recap: a death's date in the summary line and the death list. $1 = in-game day (96), $2 = real clock time HH:mm (14:32).
 ecr_recap_when: "Ngày $1, $2"
-ecr_recap_no_hits: "không có đòn đánh nào được ghi lại"
+# Death recap summary, after 'Day 96, 14:32 · ': no hits were logged before the death. Lower-case phrase.
+ecr_recap_no_hits: "không ghi nhận đòn đánh nào"
+# Death recap summary, after the date and ' · '. $1 = total damage taken (312), $2 = seconds from first to last hit (8.4); 's' = seconds.
 ecr_recap_damage: "$1 sát thương trong $2 giây"
+# Death recap summary, as above. $1 = total damage (312), $2 = seconds (8.4), $3 = up to four shares joined by ', ' ('slash 62%, frost 30%').
 ecr_recap_damage_shares: "$1 sát thương trong $2 giây: $3"
+# Death recap summary: one damage share in the list. $1 = damage type word (slash), $2 = whole percent (62); '%' follows $2.
 ecr_recap_share: "$1 $2%"
+# Death recap hit row: one part of a hit's damage, parts joined by ' · '. $1 = damage type word (slash), $2 = damage amount (34).
 ecr_recap_part: "$1 $2"
+# Death recap hit row, right column: the player's health after that hit. $1 = health left (51), $2 = max health (158).
 ecr_recap_hp: "Máu $1/$2"
 
 # Death recap: the line at the top left after a death ($2 the recap key)
-ecr_recap_notice_killed: "Bị tiêu diệt bởi $1. $2: nhật ký tử vong"
-ecr_recap_notice_died: "Tử vong: $1. $2: nhật ký tử vong"
+# Death recap: the game's top-left message after dying. $1 = killer's name (Greydwarf 2★), $2 = recap key (F10) or /deaths, then how to open the recap.
+ecr_recap_notice_killed: "Bị giết bởi $1. $2: xem lại cái chết"
+# Death recap: top-left message after a death nobody dealt. $1 = the cause, capitalised (Fall, Drowning), $2 = recap key (F10) or /deaths.
+ecr_recap_notice_died: "Đã chết: $1. $2: xem lại cái chết"
 
 # Death recap: how a hit came
+# Death recap: a plain melee hit. Shown only capitalised, alone, as a hit row's dealer or 'Died: Hit' when the attacker is unknown. Rare.
 ecr_recap_type_hit: "đòn đánh"
+# Death recap: a ranged hit (arrow, thrown). In grey brackets after 'Killed by X (ranged)'; capitalised alone when the attacker is unknown.
 ecr_recap_type_ranged: "tầm xa"
-ecr_recap_type_burning: "thiêu đốt"
-ecr_recap_type_poison: "trúng độc"
+# Death recap cause: burning (fire over time). In brackets after 'Killed by X (burning)'; capitalised alone ('Died: Burning') as a hit row's source.
+ecr_recap_type_burning: "bỏng"
+# Death recap: poison, as a cause ('Killed by X (poison)', 'Died: Poison') and as a damage-type label before a number or % ('poison 34', 'poison 20%').
+ecr_recap_type_poison: "độc"
+# Death recap cause: freezing (cold over time). In brackets after 'Killed by X (freezing)'; capitalised alone ('Died: Freezing') as a hit row's source.
 ecr_recap_type_freezing: "đóng băng"
-ecr_recap_type_fall: "rơi từ trên cao"
-ecr_recap_type_drowning: "đuối nước"
+# Death recap cause: falling. Capitalised alone ('Died: Fall') and as a hit row's source; lower case as a damage label ('fall 34', 'fall 100%').
+ecr_recap_type_fall: "rơi"
+# Death recap cause: drowning. Capitalised alone ('Died: Drowning') and as a hit row's source; lower case as a damage label ('drowning 10').
+ecr_recap_type_drowning: "chết đuối"
+# Death recap cause: the world's edge. Capitalised, first letter only ('Died: Edge of the world'); lower case as a damage label.
 ecr_recap_type_edge_of_world: "rìa thế giới"
+# Death recap cause: hit by a falling tree. Capitalised alone ('Died: Falling tree') and as a hit row's source; lower case as a damage label.
 ecr_recap_type_falling_tree: "cây đổ"
+# Death recap cause: hit by a collapsing building piece. Capitalised alone ('Died: Falling building'); lower case as a damage label.
 ecr_recap_type_falling_building: "công trình sập"
+# Death recap cause: hurt by a ship (the game's Boat hit type). Capitalised alone ('Died: Ship'); lower case as a damage label. Rare.
 ecr_recap_type_ship: "thuyền"
+# Death recap cause: the Ashlands' boiling sea. Capitalised alone ('Died: Boiling sea'); lower case as a damage label ('boiling sea 20').
 ecr_recap_type_boiling_sea: "biển sôi"
+# Death recap cause: Ashlands lava. Capitalised alone ('Died: Lava') and as a hit row's source; lower case as a damage label ('lava 30').
 ecr_recap_type_lava: "dung nham"
-ecr_recap_type_cinder_fire: "cháy tàn tro"
+# Death recap cause: the Ashlands' cinder fire on the ground. Capitalised alone ('Died: Cinder fire'); lower case as a damage label.
+ecr_recap_type_cinder_fire: "lửa than hồng"
+# Death recap cause: the game's 'Water' hit type. Capitalised alone ('Died: Water'); lower case as a damage label. Rare.
 ecr_recap_type_water: "nước"
-ecr_recap_type_smoke: "khói độc"
-ecr_recap_type_impact: "va đập"
+# Death recap cause: smoke (the game's Smoke hit type). Capitalised alone ('Died: Smoke'); lower case as a damage label. Rare.
+ecr_recap_type_smoke: "khói"
+# Death recap cause: an impact (the game's Impact hit type, struck by a heavy object). Capitalised alone ('Died: Impact'); also a damage label. Rare.
+ecr_recap_type_impact: "va chạm"
+# Death recap cause: hit by a cart. Capitalised alone ('Died: Cart') and as a hit row's source; lower case as a damage label. Rare.
 ecr_recap_type_cart: "xe kéo"
-ecr_recap_type_self: "tự gây ra"
-ecr_recap_type_turret: "tháp pháo"
-ecr_recap_type_stalagtite: "nhũ đá rơi"
+# Death recap cause: damage the player did to themselves (the game's Self hit type). Capitalised alone ('Died: Self'). Rare.
+ecr_recap_type_self: "Tự gây"
+# Death recap cause: hit by a turret (a ballista). Capitalised alone ('Died: Turret') when nobody is named; lower case as a damage label. Rare.
+ecr_recap_type_turret: "tháp phòng thủ"
+# Death recap cause: a falling stalactite (the game's own spelling). Capitalised alone ('Died: Stalagtite'); lower case as a damage label. Rare.
+ecr_recap_type_stalagtite: "nhũ đá"
+# Death recap cause: hit by a catapult. Capitalised alone ('Died: Catapult'); lower case as a damage label. Rare.
 ecr_recap_type_catapult: "máy bắn đá"
-ecr_recap_type_incinerator: "lò đốt"
-ecr_recap_type_drawbridge: "cầu nâng"
-ecr_recap_type_unknown: "không xác định"
+# Death recap cause: the game's incinerator (the Obliterator piece). Capitalised alone ('Died: Incinerator'); lower case as a damage label. Rare.
+ecr_recap_type_incinerator: "lò thiêu"
+# Death recap cause: crushed by a drawbridge. Capitalised alone ('Died: Drawbridge'); lower case as a damage label. Rare.
+ecr_recap_type_drawbridge: "cầu kéo"
+# Death recap: cause not known. Capitalised alone as the cause of death ('Died: Unknown') in the window, death list and top-left notice. Rare.
+ecr_recap_type_unknown: "không rõ"
 
 # Death recap: damage types
-ecr_recap_type_true: "sát thương chuẩn"
-ecr_recap_type_blunt: "sát thương đập"
-ecr_recap_type_slash: "sát thương chém"
-ecr_recap_type_pierce: "sát thương xuyên"
-ecr_recap_type_chop: "sát thương đốn"
-ecr_recap_type_pickaxe: "sát thương cuốc"
-ecr_recap_type_fire: "sát thương lửa"
-ecr_recap_type_frost: "sát thương băng giá"
-ecr_recap_type_lightning: "sát thương sét"
-ecr_recap_type_spirit: "sát thương linh hồn"
-piece_ecr_renderingtable: "Bàn chế biến chiến lợi phẩm"
-piece_ecr_renderingtable_description: "Một chiếc bàn hẹp để chế biến chiến lợi phẩm. Mỗi chiến lợi phẩm cho quặng hoặc nguyên liệu của vùng đất của nó. Chiến lợi phẩm của trùm, dùng từ thanh phím tắt, cho gấp năm lần hoặc một tượng thần Lò rèn cùng cấp. Cẩm nang liệt kê những gì mỗi vùng đất cho."
+# Death recap damage type: untyped (direct) damage of a creature's hit. Label before a number in hit rows ('true 34') and a % in the summary.
+ecr_recap_type_true: "trực tiếp"
+# Death recap damage type label, lower case: before a number in hit rows ('blunt 34') and a percentage in the summary ('blunt 62%').
+ecr_recap_type_blunt: "đập"
+# Death recap damage type label, lower case: before a number in hit rows ('slash 34') and a percentage in the summary ('slash 62%').
+ecr_recap_type_slash: "chém"
+# Death recap damage type label, lower case: before a number in hit rows ('pierce 34') and a percentage in the summary ('pierce 62%').
+ecr_recap_type_pierce: "xuyên"
+# Death recap damage type label (the game's chop damage), lower case: before a number in hit rows ('chop 34') and a % in the summary. Rare.
+ecr_recap_type_chop: "chặt"
+# Death recap damage type label (the game's pickaxe damage), lower case: before a number in hit rows ('pickaxe 34') and a % in the summary. Rare.
+ecr_recap_type_pickaxe: "cuốc chim"
+# Death recap damage type label, lower case: before a number in hit rows ('fire 34') and a percentage in the summary ('fire 62%').
+ecr_recap_type_fire: "lửa"
+# Death recap damage type label, lower case: before a number in hit rows ('frost 34') and a percentage in the summary ('frost 30%').
+ecr_recap_type_frost: "băng"
+# Death recap damage type label, lower case: before a number in hit rows ('lightning 34') and a percentage in the summary ('lightning 62%').
+ecr_recap_type_lightning: "sét"
+# Death recap damage type label, lower case: before a number in hit rows ('spirit 34') and a percentage in the summary ('spirit 62%').
+ecr_recap_type_spirit: "linh hồn"
+
+# The Rendering Table: renders trophies into ores, ingredients or a Forge idol of the trophy's biome
+# Rendering Table: the piece's name in the hammer's Crafting tab and the first line of its hover. Noun (a narrow bench where trophies are rendered down).
+piece_ecr_renderingtable: "Bàn Luyện Hóa"
+# Rendering Table: the piece's description in the hammer's build menu. 'Hotbar' = the game's quick slots 1-8; a Forge idol is an ECR item.
+piece_ecr_renderingtable_description: "Một chiếc bàn hẹp để luyện hóa chiến lợi phẩm. Mỗi chiến lợi phẩm cho quặng hoặc nguyên liệu thuộc vùng đất của nó. Chiến lợi phẩm boss, dùng từ thanh nhanh, cho gấp năm lần hoặc một tượng Lò Rèn ở cấp của nó. Sách hướng dẫn liệt kê những gì mỗi vùng đất cho."
+# Rendering Table: one of its three modes, after 'Makes:' in its hover. Plural noun, alone (ores of the trophy's biome).
 ecr_render_ores: "Quặng"
+# Rendering Table: one of its three modes, after 'Makes:' in its hover. Plural noun, alone (ingredients of the trophy's biome).
 ecr_render_ingredients: "Nguyên liệu"
-ecr_render_idols: "Tượng thần"
+# Rendering Table: one of its three modes, after 'Makes:' in its hover. Plural noun, alone (Forge idols, from boss trophies).
+ecr_render_idols: "Tượng"
+
+# The Rendering Table's hover ($1 of the first line is Ores, Ingredients or Idols)
+# Rendering Table hover, second line. $1 = the current mode: Ores, Ingredients or Idols.
 ecr_render_makes: "Tạo ra: $1"
-ecr_render_one: "Chế biến một chiến lợi phẩm (giữ để chế biến thêm)"
-ecr_render_idol_hint: "Dùng chiến lợi phẩm của trùm lên bàn từ thanh phím tắt để tạo tượng thần"
-ecr_render_change: "Đổi thứ được tạo ra"
-ecr_render_off: "Bàn chế biến chiến lợi phẩm đang bị tắt."
-ecr_render_none: "Không có chiến lợi phẩm để chế biến. Chiến lợi phẩm của trùm chỉ chế biến được từ thanh phím tắt."
-ecr_render_need_boss: "Chỉ chiến lợi phẩm của trùm mới tạo ra tượng thần: hãy dùng nó lên bàn từ thanh phím tắt."
-ecr_render_unknown: "Bàn chế biến không thể chế biến chiến lợi phẩm này."
-ecr_render_nothing_made: "Trò chơi này không có gì của vùng đất đó để tạo ra."
+# Rendering Table hover: action after the [E] key label (Ores and Ingredients modes). Holding E keeps rendering trophies one by one.
+ecr_render_one: "Luyện hóa một chiến lợi phẩm (giữ để luyện nhiều hơn)"
+# Rendering Table hover in Idols mode, in place of the [E] action line: a boss trophy must be used on it from the hotbar.
+ecr_render_idol_hint: "Dùng chiến lợi phẩm boss lên bàn từ thanh nhanh để tạo tượng"
+# Rendering Table hover: action after the [Shift + E] key label; switches the mode (Ores, Ingredients, Idols) for everyone.
+ecr_render_change: "Đổi thứ nó tạo ra"
+
+# Why the Rendering Table renders nothing
+# Rendering Table: hover line and centre message on a table already built after the admin switched the table off in the .cfg. Rare.
+ecr_render_off: "Bàn Luyện Hóa đã bị tắt."
+# Rendering Table: centre message on pressing E with no ordinary trophy in the inventory (E never takes boss trophies).
+ecr_render_none: "Không có chiến lợi phẩm để luyện hóa. Chiến lợi phẩm boss chỉ luyện hóa được từ thanh nhanh."
+# Rendering Table, Idols mode: centre message on pressing E, or on using an ordinary (non-boss) trophy on it from the hotbar.
+ecr_render_need_boss: "Chỉ chiến lợi phẩm boss mới tạo ra tượng: hãy dùng nó lên bàn từ thanh nhanh."
+# Rendering Table: centre message when a trophy that is in none of its biome lists (e.g. another mod's) is used on it from the hotbar. Rare.
+ecr_render_unknown: "Bàn Luyện Hóa không thể luyện hóa chiến lợi phẩm này."
+# Rendering Table: centre message when none of the items that trophy's biome should give exist in this game. Rare.
+ecr_render_nothing_made: "Game này không có thứ gì của vùng đất đó để tạo ra."
