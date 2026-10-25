@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.20.1
+
+- Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.
+
 ## 0.20.0
 
 - Ukrainian translation, used while the game's language is Ukrainian.
