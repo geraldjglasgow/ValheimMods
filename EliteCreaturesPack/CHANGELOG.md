@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.8
+
+- The Kraken's ink moved onto a shared library; no change in play.
+
 ## 0.12.7
 
 - Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.

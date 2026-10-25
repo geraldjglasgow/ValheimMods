@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesPack</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.12.7</Version>
+    <Version>0.12.8</Version>
     <Product>Elite Creatures Pack</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -49,6 +49,8 @@
     <ProjectReference Include="$(ModLibsPath)\EliteCreaturesLink\EliteCreaturesLink.csproj" />
     <!-- Translations: the player-facing words, English embedded from translations\, other languages from files. -->
     <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
+    <!-- StatusTemplates: its own status effects made, held on characters and registered in every ObjectDB. -->
+    <ProjectReference Include="$(ModLibsPath)\StatusTemplates\StatusTemplates.csproj" />
   </ItemGroup>
 
   <ItemGroup>
