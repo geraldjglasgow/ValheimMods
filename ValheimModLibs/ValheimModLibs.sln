@@ -39,6 +39,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "RecipeCounts", "RecipeCount
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Translations", "Translations\Translations.csproj", "{20859C34-6762-468F-84CF-82D48E52606A}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BlueprintShelf", "BlueprintShelf\BlueprintShelf.csproj", "{9F9C8D2D-6C1F-4E3B-9432-B146BAD80E6C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "BuildCamera", "BuildCamera\BuildCamera.csproj", "{DB3680DD-B5A2-42D2-8F5C-0F48CFF572A4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -120,5 +124,13 @@ Global
 		{20859C34-6762-468F-84CF-82D48E52606A}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{20859C34-6762-468F-84CF-82D48E52606A}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{20859C34-6762-468F-84CF-82D48E52606A}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9F9C8D2D-6C1F-4E3B-9432-B146BAD80E6C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9F9C8D2D-6C1F-4E3B-9432-B146BAD80E6C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9F9C8D2D-6C1F-4E3B-9432-B146BAD80E6C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9F9C8D2D-6C1F-4E3B-9432-B146BAD80E6C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{DB3680DD-B5A2-42D2-8F5C-0F48CFF572A4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{DB3680DD-B5A2-42D2-8F5C-0F48CFF572A4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{DB3680DD-B5A2-42D2-8F5C-0F48CFF572A4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{DB3680DD-B5A2-42D2-8F5C-0F48CFF572A4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

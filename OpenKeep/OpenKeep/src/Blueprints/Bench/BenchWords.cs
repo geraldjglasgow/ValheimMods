@@ -1,48 +1,41 @@
+using System.Collections.Generic;
+using BlueprintShelf;
+
 namespace OpenKeep.Blueprints.Bench
 {
     /// <summary>
-    /// The keys of the Blueprint Bench's words (<c>ok_bench_*</c>). Their English is in
-    /// <c>translations/English.blueprints.yml</c>; texts with values carry $1, $2 for <c>Lang.Format</c>. A word the
-    /// server answers with travels as its token and its values (<see cref="BenchRpc.Tell"/>), read in the player's language.
+    /// The keys of the Blueprint Bench's words (<c>ok_bench_*</c>), English in <c>translations/English.yml</c>. The bench
+    /// window's words are the library's (<see cref="ShelfWord"/>), each read from OpenKeep's key (<see cref="Key"/>):
+    /// <c>ok_bench_</c> and the word, except those it shares with the Blueprints tab (folders, names, messages), which are
+    /// the tab's own <c>ok_bp_*</c>. A word the server answers with travels as its token and its values, read in the
+    /// player's language.
     /// </summary>
     public static class BenchWords
     {
         public const string Name = "ok_bench";
         public const string Description = "ok_bench_desc";
-        public const string Yours = "ok_bench_yours";
-        public const string Pool = "ok_bench_pool";
-        public const string Players = "ok_bench_players";
-        public const string Share = "ok_bench_share";
-        public const string ShareAll = "ok_bench_shareall";
-        public const string Take = "ok_bench_take";
-        public const string Rename = "ok_bench_rename";
-        public const string Delete = "ok_bench_delete";
-        public const string Remove = "ok_bench_remove";
-        public const string Close = "ok_bench_close";
-        public const string You = "ok_bench_you";
 
-        public const string Asking = "ok_bench_asking";
-        public const string Hint = "ok_bench_hint";
-        public const string Sharing = "ok_bench_sharing";
-        public const string Taking = "ok_bench_taking";
-        public const string DeleteAsk = "ok_bench_deleteask";
-        public const string RemoveAsk = "ok_bench_removeask";
-        public const string Deleted = "ok_bench_deleted";
-        public const string OnlyOwn = "ok_bench_onlyown";
-        public const string NothingToShare = "ok_bench_nothing";
+        private const string Prefix = "ok_bench_";
 
-        public const string Shared = "ok_bench_shared";
-        public const string MoreRefused = "ok_bench_morerefused";
-        public const string Took = "ok_bench_took";
-        public const string NotTaken = "ok_bench_nottaken";
-        public const string TooBig = "ok_bench_toobig";
-        public const string NotBlueprint = "ok_bench_notblueprint";
-        public const string Full = "ok_bench_full";
-        public const string NotYours = "ok_bench_notyours";
-        public const string Gone = "ok_bench_gone";
-        public const string Removed = "ok_bench_removed";
-        public const string Unknown = "ok_bench_unknown";
-        public const string Failed = "ok_bench_failed";
-        public const string NoAnswer = "ok_bench_noanswer";
+        private static readonly Dictionary<string, string> TabWords = new Dictionary<string, string>
+        {
+            [ShelfWord.Title] = Name,
+            [ShelfWord.Home] = BlueprintWords.Tab,
+            [ShelfWord.Top] = BlueprintWords.TopFolder,
+            [ShelfWord.NewFolder] = BlueprintWords.NewFolderName,
+            [ShelfWord.NewFolderTopic] = BlueprintWords.NewFolderTopic,
+            [ShelfWord.RenameTopic] = BlueprintWords.RenameTopic,
+            [ShelfWord.FolderMade] = BlueprintWords.FolderMade,
+            [ShelfWord.Renamed] = BlueprintWords.Renamed,
+            [ShelfWord.Moved] = BlueprintWords.Moved,
+            [ShelfWord.MoveRefused] = BlueprintWords.MoveRefused,
+            [ShelfWord.BadName] = BlueprintWords.BadName,
+            [ShelfWord.Exists] = BlueprintWords.Exists,
+            [ShelfWord.IntoItself] = BlueprintWords.IntoItself,
+            [ShelfWord.Disabled] = BlueprintWords.Disabled,
+        };
+
+        /// <summary>A bench word's key in OpenKeep's words.</summary>
+        public static string Key(string word) => TabWords.TryGetValue(word, out string key) ? key : Prefix + word;
     }
 }

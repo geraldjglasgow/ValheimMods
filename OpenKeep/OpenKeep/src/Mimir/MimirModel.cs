@@ -95,7 +95,8 @@ namespace OpenKeep.Mimir
                 SetLayer(child, layer);
         }
 
-        // One model for every wear state and no open/closed swap: the lid is moved by MimirLid instead.
+        // One model for every wear state and no open/closed swap: the lid is moved by MimirLid instead. No fragment roots:
+        // they were the stripped models, and breaking a destroyed one threw before the chest was removed.
         private static void Point(WearNTear wear, Container container, GameObject placed)
         {
             container.m_open = null;
@@ -106,6 +107,7 @@ namespace OpenKeep.Mimir
             wear.m_worn = placed;
             wear.m_broken = placed;
             wear.m_wet = null;
+            wear.m_fragmentRoots = null;
         }
     }
 }

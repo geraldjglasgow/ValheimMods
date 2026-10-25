@@ -6,7 +6,7 @@
     <RootNamespace>OpenKeep</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>disable</Nullable>
-    <Version>5.1.1</Version>
+    <Version>5.1.2</Version>
     <Product>OpenKeep</Product>
     <Description>OpenKeep: storage and inventory for Valheim</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -51,6 +51,8 @@
     <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
     <!-- Translations: the player-facing words, English embedded from translations\, other languages from files -->
     <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
+    <!-- BlueprintShelf: the Blueprint Bench's window and sharing (the player's blueprints beside the world's shared pool) -->
+    <ProjectReference Include="$(ModLibsPath)\BlueprintShelf\BlueprintShelf.csproj" />
   </ItemGroup>
 
   <ItemGroup>

@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.1.2
+
+- Fixed: breaking a destroyed Mímir's Chest no longer throws an error.
+- Blueprints: the Blueprint Bench's window and sharing were rebuilt; they work as before.
+
 ## 5.1.1
 
 - Brazilian Portuguese translation by Yoroshiro, used while the game's language is Portuguese (Brazilian).

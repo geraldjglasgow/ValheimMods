@@ -408,7 +408,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StoreModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings and registers its YAML set), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 5.1.1]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings and registers its YAML set), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 5.1.2]` line, `Guard.Install` last.
   Blueprints/               section 14 (moved from EarthWright 2026-10-05; design in ../SPEC-Blueprints.md), off by default
     BlueprintsModule.cs     binds the settings, the Sites, Planner and Copy modules, adds BlueprintRunner
     BlueprintSettings.cs    14. Blueprints / Enabled and Build Without Materials, and BlueprintRules (numbers, fixed keys)
@@ -493,19 +493,17 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
                             prefab; Shift + G: every one in the building), CopyFootprint, CopyHud, CopyGlow + CopyGlowPatches (the game's piece tint through
                             MaterialMan, held), CopySave (Enter: name, BlueprintCapture.Of, BlueprintLibrary.SaveNew),
                             ChatEnter (one Chat.Update prefix any tool claims Enter through), CopyWords
-    Bench/                  the Blueprint Bench (2026-10-08, namespace OpenKeep.Blueprints.Bench): BenchModule (+ BenchSession,
-                            the per-frame work), BenchPrefab (OpenKeep_BlueprintBench: a workbench copy without its station,
-                            ZNetScene.Awake prefix), BenchModel (the bundle ok_blueprintbench: drafting desk, glowing plan,
-                            icon), BenchHammer (5 Wood, in the hammer while Blueprints is on), BlueprintBench
-                            (hover, E opens), BenchWindow (open, close, keys), BenchUi + BenchCopies (the window: an own
-                            canvas, copies of the crafting panel's wood, title, list, rows and buttons), BenchPaneView +
-                            BenchRowView + BenchListDrop + BenchDrag (one file explorer side, its rows, drag and drop),
-                            BenchEntry (lines, buttons, IBenchPane) + BenchSelection, LibraryPane / PoolPane (the two
-                            sides' contents and actions), BenchConfirm (the game's yes / no box), BenchPool (the
-                            listing on a player's machine), BenchShare / BenchTake (files out and in, in parts), BenchRpc
-                            (the RPCs, ZNet.Awake), BenchServer + BenchRights + BenchStore (the server: checks, rights, the
-                            pool on its disk), BenchZip + BenchInbox (gzip, parts), BenchOwner + BenchListing, BenchPaths +
-                            BenchLimits, BenchWords
+    Bench/                  the Blueprint Bench (2026-10-08, namespace OpenKeep.Blueprints.Bench); its window and sharing
+                            are the BlueprintShelf library's since 2026-10-23 (ValheimModLibs/BlueprintShelf: panes,
+                            folders, drag, share / take in parts, the server's pool, rights, RPCs, ZNet.Awake): BenchModule
+                            (makes the shelf), BenchWindow (the shelf with OpenKeep's settings: RPC prefix OpenKeep_Bench,
+                            pool folder OpenKeep.SharedBlueprints, canvas OpenKeep_BlueprintBench, the tab's icons, F2,
+                            on while Blueprints is on; IsOpen, Open), BenchFiles (the left side as BlueprintLibrary +
+                            BlueprintFiles, BlueprintMenu.Moved), BenchWords (Name, Description, the library's words
+                            mapped to ok_bench_* and the tab's ok_bp_*), BenchPrefab (OpenKeep_BlueprintBench: a
+                            workbench copy without its station, ZNetScene.Awake prefix), BenchModel (the bundle
+                            ok_blueprintbench: drafting desk, glowing plan, icon), BenchHammer (5 Wood, in the hammer
+                            while Blueprints is on), BlueprintBench (hover, E opens)
   Mimir/                    section 15, Mímir's Chest (2026-10-06): a chest that never fills, with a search
     MimirModule.cs, MimirSettings.cs   15. Custom Storage Chests / Custom Storage Chests (off by default), the ok_mimir_* words
     MimirPrefab.cs          OpenKeep_MimirChest: a copy of piece_chest, 8 wide, before ZNetScene.Awake (prefix)
@@ -650,8 +648,10 @@ prefix `Chat.Update()` again (`ChatEnterPatch`: skipped for a frame a Copy save 
 `WearNTear.ResetHighlight()` (private: a piece the Copy tool lights gets its glow back);
 WindowInput's own patches (its Harmony id `milkyteam.openkeep.planner`) while the planner's panel is open.
 Blueprint Bench: prefix `ZNetScene.Awake` (the prefab joins the scene's list before the game registers it); postfix
-`ObjectDB.Awake` (`Priority.Last`) and `ZNetScene.Awake` (cost and hammer); postfix `ZNet.Awake` (the bench RPCs);
-WindowInput's patches while its window is open (installed once, by whichever asks first).
+`ObjectDB.Awake` (`Priority.Last`) and `ZNetScene.Awake` (cost and hammer); BlueprintShelf's own, by hand under the
+Harmony id `milkyteam.openkeep.bench`: postfix `ZNet.Awake` (private: the bench RPCs), prefix and postfix
+`ConnectPanel.Update` (F2 while the window is open), and WindowInput's patches while its window is open (installed
+once, by whichever asks first).
 Mímir's Chest: prefix `ZNetScene.Awake` (the prefab joins the scene's list before the game registers it); postfix
 `ObjectDB.Awake` (`Priority.Last`) and `ZNetScene.Awake` (cost and hammer); postfix `Inventory.Changed` (private: a
 Mímir inventory's height, after Core's counting prefix); postfix `InventoryGrid.UpdateGui` (the container grid only:
@@ -2351,7 +2351,7 @@ Mímir's Chest (2026-10-06, never run in game yet):
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 5.1.1]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 5.1.2]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` is written and `OpenKeep.Containers.yml`
    lists every container prefab commented out (chests, `VikingShip`, `Cart`); with an edited file, a container of a
    mod installed afterwards is appended at its end on the next world load, and nothing else in the file changes.
