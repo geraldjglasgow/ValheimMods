@@ -1,3 +1,4 @@
+using StatusTemplates;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Mutations
@@ -15,11 +16,10 @@ namespace EliteCreaturesReborn.Mutations
     /// </summary>
     internal static class TrailStatus
     {
-        private static readonly SE_Stats?[] Templates = new SE_Stats?[TrailKind.All.Length];
+        private static readonly StatusTemplate<SE_Stats>?[] Templates = new StatusTemplate<SE_Stats>?[TrailKind.All.Length];
 
         /// <summary>The kind's status on <paramref name="player"/> now, or null.</summary>
-        public static StatusEffect? On(Player player, TrailKind kind) =>
-            player.GetSEMan().GetStatusEffect(kind.StatusHash);
+        public static StatusEffect? On(Player player, TrailKind kind) => Template(kind).On(player);
 
         /// <summary>
         /// Keeps <paramref name="player"/> in the kind's status, with no timer, taking <paramref name="slow"/> of their
@@ -27,10 +27,7 @@ namespace EliteCreaturesReborn.Mutations
         /// </summary>
         public static SE_Stats? Hold(Player player, TrailKind kind, float slow)
         {
-            StatusEffect? current = On(player, kind);
-            SE_Stats? status = current != null
-                ? current as SE_Stats
-                : player.GetSEMan().AddStatusEffect(Template(kind)) as SE_Stats;
+            SE_Stats? status = Template(kind).Hold(player);
             if (status != null)
             {
                 status.m_speedModifier = -slow;
@@ -45,7 +42,7 @@ namespace EliteCreaturesReborn.Mutations
         /// </summary>
         public static SE_Stats? Root(Player player, TrailKind kind, float seconds)
         {
-            SE_Stats? status = player.GetSEMan().AddStatusEffect(Template(kind), resetTime: true) as SE_Stats;
+            SE_Stats? status = Template(kind).Add(player, resetTime: true);
             if (status != null)
             {
                 status.m_speedModifier = -1f;
@@ -56,7 +53,7 @@ namespace EliteCreaturesReborn.Mutations
         }
 
         /// <summary>True while roots hold <paramref name="player"/>.</summary>
-        public static bool Rooted(Player player) => player.GetSEMan().HaveStatusEffect(TrailKind.Roots.StatusHash);
+        public static bool Rooted(Player player) => Template(TrailKind.Roots).Has(player);
 
         /// <summary>
         /// The player stepped out (or off the ground): the status stays the kind's linger longer, then goes.
@@ -70,54 +67,9 @@ namespace EliteCreaturesReborn.Mutations
             }
         }
 
-        private static SE_Stats Template(TrailKind kind)
-        {
-            SE_Stats? template = Templates[kind.Index];
-            if (template == null)
-            {
-                template = ScriptableObject.CreateInstance<SE_Stats>();
-                template.name = kind.StatusKey;
-                template.m_name = kind.StatusName;
-                template.m_tooltip = kind.Tooltip;
-                template.hideFlags = HideFlags.DontUnloadUnusedAsset;
-                Templates[kind.Index] = template;
-            }
-            if (template.m_icon == null)
-            {
-                // asked again until the object database can answer
-                template.m_icon = EffectIcon(kind) ?? ItemIcon(kind);
-            }
-            return template;
-        }
-
-        private static Sprite? EffectIcon(TrailKind kind)
-        {
-            ObjectDB db = ObjectDB.instance;
-            foreach (string name in kind.IconEffects)
-            {
-                StatusEffect? effect = db != null ? db.GetStatusEffect(name.GetStableHashCode()) : null;
-                if (effect != null && effect.m_icon != null)
-                {
-                    return effect.m_icon;
-                }
-            }
-            return null;
-        }
-
-        private static Sprite? ItemIcon(TrailKind kind)
-        {
-            ObjectDB db = ObjectDB.instance;
-            foreach (string name in kind.IconItems)
-            {
-                GameObject? prefab = db != null ? db.GetItemPrefab(name) : null;
-                ItemDrop? item = prefab != null ? prefab.GetComponent<ItemDrop>() : null;
-                Sprite[]? icons = item != null ? item.m_itemData.m_shared.m_icons : null;
-                if (icons != null && icons.Length > 0 && icons[0] != null)
-                {
-                    return icons[0];
-                }
-            }
-            return null;
-        }
+        private static StatusTemplate<SE_Stats> Template(TrailKind kind) =>
+            Templates[kind.Index] ??= new StatusTemplate<SE_Stats>(kind.StatusKey,
+                se => (se.m_name, se.m_tooltip) = (kind.StatusName, kind.Tooltip),
+                () => GameIcons.Effect(kind.IconEffects) ?? GameIcons.Item(kind.IconItems));
     }
 }

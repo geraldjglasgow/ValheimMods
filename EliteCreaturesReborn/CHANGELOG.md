@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.34.4
+
+- Chilled, Ringing ears, trail effects and the Bat-fiend's screech and chill moved onto a shared library; no change in play.
+
 ## 3.34.3
 
 - Vietnamese translation updated by QuânKha (Zono) [VLHM], now every line including the Rendering Table and Hel's Arena.

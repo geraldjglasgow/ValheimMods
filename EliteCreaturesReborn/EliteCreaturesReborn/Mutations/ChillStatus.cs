@@ -1,5 +1,5 @@
+using StatusTemplates;
 using Translations;
-using UnityEngine;
 
 namespace EliteCreaturesReborn.Mutations
 {
@@ -12,78 +12,20 @@ namespace EliteCreaturesReborn.Mutations
     /// </summary>
     internal static class ChillStatus
     {
-        /// <summary>Its object name, from which the game takes its identity hash.</summary>
-        private const string Key = "ecr_chilled";
-
         /// <summary>Seconds it lingers after the last aura check in reach: a few checks, so leaving drops it quickly.</summary>
         private const float Linger = 1f;
 
         /// <summary>Item icons to borrow when the game's own frost and cold effects have none.</summary>
         private static readonly string[] IconItems = { "FreezeGland", "FrostCore", "Wishbone" };
 
-        private static readonly int Hash = Key.GetStableHashCode();
+        private static readonly int[] IconEffects = { SEMan.s_statusEffectFrost, SEMan.s_statusEffectCold };
 
-        private static ChillEffect? _template;
+        // Word tokens: the game words them in the player's language.
+        private static readonly StatusTemplate<ChillEffect> Chilled = new StatusTemplate<ChillEffect>("ecr_chilled",
+            se => (se.m_name, se.m_tooltip) = (Lang.Token("ecr_se_chilled"), Lang.Token("ecr_se_chilled_tooltip")),
+            () => GameIcons.Effect(IconEffects) ?? GameIcons.Item(IconItems));
 
         /// <summary>Chills <paramref name="player"/> by <paramref name="cut"/> percent stamina regeneration, for now.</summary>
-        public static void Hold(Player player, float cut)
-        {
-            SEMan seman = player.GetSEMan();
-            ChillEffect? live = seman.GetStatusEffect(Hash) as ChillEffect;
-            if (live == null)
-            {
-                live = seman.AddStatusEffect(Template()) as ChillEffect; // the game adds a copy and hands it back
-            }
-            live?.Hold(cut, Linger);
-        }
-
-        private static ChillEffect Template()
-        {
-            if (_template == null)
-            {
-                _template = ScriptableObject.CreateInstance<ChillEffect>();
-                _template.name = Key;
-                _template.m_name = Lang.Token("ecr_se_chilled"); // tokens: the game words them in the player's language
-                _template.m_tooltip = Lang.Token("ecr_se_chilled_tooltip");
-                _template.hideFlags = HideFlags.DontUnloadUnusedAsset;
-            }
-            if (_template.m_icon == null)
-            {
-                _template.m_icon = Icon(); // asked again until the object database can answer
-            }
-            return _template;
-        }
-
-        private static Sprite? Icon()
-        {
-            ObjectDB db = ObjectDB.instance;
-            if (db == null)
-            {
-                return null;
-            }
-            Sprite? own = EffectIcon(db, SEMan.s_statusEffectFrost) ?? EffectIcon(db, SEMan.s_statusEffectCold);
-            return own != null ? own : ItemIcon(db);
-        }
-
-        private static Sprite? EffectIcon(ObjectDB db, int hash)
-        {
-            StatusEffect? effect = db.GetStatusEffect(hash);
-            return effect != null && effect.m_icon != null ? effect.m_icon : null;
-        }
-
-        private static Sprite? ItemIcon(ObjectDB db)
-        {
-            foreach (string name in IconItems)
-            {
-                GameObject? prefab = db.GetItemPrefab(name);
-                ItemDrop? item = prefab != null ? prefab.GetComponent<ItemDrop>() : null;
-                Sprite[]? icons = item != null ? item.m_itemData.m_shared.m_icons : null;
-                if (icons != null && icons.Length > 0 && icons[0] != null)
-                {
-                    return icons[0];
-                }
-            }
-            return null;
-        }
+        public static void Hold(Player player, float cut) => Chilled.Hold(player)?.Hold(cut, Linger);
     }
 }

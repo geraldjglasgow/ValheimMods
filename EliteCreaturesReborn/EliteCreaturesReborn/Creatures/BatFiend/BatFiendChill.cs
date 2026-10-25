@@ -1,4 +1,5 @@
-using UnityEngine;
+using StatusTemplates;
+
 
 namespace EliteCreaturesReborn.Creatures.BatFiend
 {
@@ -12,23 +13,9 @@ namespace EliteCreaturesReborn.Creatures.BatFiend
     /// </summary>
     public sealed class BatFiendChill : StatusEffect
     {
-        private const string Key = "ecr_batfiend_chill";
-
-        private static BatFiendChill? _template;
-
-        /// <summary>The effect the gravewind item carries, made once.</summary>
-        public static StatusEffect Template()
-        {
-            if (_template == null)
-            {
-                _template = ScriptableObject.CreateInstance<BatFiendChill>();
-                _template.name = Key;
-                _template.m_name = "$enemy_ecr_batfiend";
-                _template.m_ttl = 0.1f;
-                _template.hideFlags = HideFlags.DontUnloadUnusedAsset;
-            }
-            return _template;
-        }
+        /// <summary>The effect the gravewind item carries.</summary>
+        public static readonly StatusTemplate<BatFiendChill> Template = new StatusTemplate<BatFiendChill>(
+            "ecr_batfiend_chill", se => (se.m_name, se.m_ttl) = ("$enemy_ecr_batfiend", 0.1f));
 
         public override void Setup(Character character)
         {

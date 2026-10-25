@@ -122,7 +122,7 @@ namespace EliteCreaturesReborn.Creatures.BatFiend
         {
             shared.m_damages = new HitData.DamageTypes { m_slash = shape.Slash, m_pierce = shape.Pierce, m_blunt = shape.Blunt, m_frost = shape.Frost };
             (shared.m_attackForce, shared.m_dodgeable, shared.m_blockable) = (shape.Push, true, shape.Blockable);
-            shared.m_attackStatusEffect = shape.Deafens ? BatFiendScreech.Template() : shape.Chills ? BatFiendChill.Template() : null;
+            shared.m_attackStatusEffect = shape.Deafens ? (StatusEffect)BatFiendScreech.Template.Get() : shape.Chills ? BatFiendChill.Template.Get() : null;
             shared.m_attackStatusEffectChance = 1f;
         }
 

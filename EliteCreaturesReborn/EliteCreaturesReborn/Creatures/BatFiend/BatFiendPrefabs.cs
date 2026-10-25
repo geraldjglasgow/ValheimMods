@@ -4,6 +4,7 @@ using BundlePrefabs;
 using EliteCreaturesReborn.Patches;
 using EliteCreaturesReborn.Util;
 using HarmonyLib;
+using StatusTemplates;
 using UnityEngine;
 
 namespace EliteCreaturesReborn.Creatures.BatFiend
@@ -68,7 +69,8 @@ namespace EliteCreaturesReborn.Creatures.BatFiend
         private static void Assemble(ZNetScene scene, Harmony harmony, GameObject wolf, GameObject attack)
         {
             BatFiendVoice.Build(scene, scene.GetPrefab(GameBat));
-            BatFiendStatuses.Register(harmony);
+            // In every object database on every peer: an attack item's effect reaches its victim as a name hash.
+            StatusTable.Register(harmony, BatFiendScreech.Template.Get, BatFiendChill.Template.Get);
             BatFiendAim.Install(harmony);
             GameObject[] attacks = BatFiendAttacks.Build(attack);
             BatFiendAttacks.Voice(attacks, BatFiendVoice.Of("attack") ?? BatFiendVoice.Of("alert"), BatFiendVoice.Scream);

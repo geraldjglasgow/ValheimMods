@@ -176,11 +176,7 @@ namespace EliteCreaturesReborn.Mutations
         /// </summary>
         public string[] Keywords { get; private set; } = Array.Empty<string>();
 
-        private int _statusHash;
         private int _seqHash;
-
-        /// <summary>The status effect's identity hash, worked out once.</summary>
-        public int StatusHash => _statusHash != 0 ? _statusHash : _statusHash = StatusKey.GetStableHashCode();
 
         /// <summary>The drop counter's ZDO hash, worked out once: every machine reads it every frame.</summary>
         public int SeqHash => _seqHash != 0 ? _seqHash : _seqHash = SeqKey.GetStableHashCode();

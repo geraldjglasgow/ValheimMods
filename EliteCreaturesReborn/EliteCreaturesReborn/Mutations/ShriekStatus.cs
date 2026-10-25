@@ -1,3 +1,4 @@
+using StatusTemplates;
 using Translations;
 using UnityEngine;
 
@@ -13,18 +14,21 @@ namespace EliteCreaturesReborn.Mutations
     /// </summary>
     internal static class ShriekStatus
     {
-        /// <summary>Its object name, from which the game takes its identity hash.</summary>
-        private const string Key = "ecr_ringing_ears";
-
         /// <summary>Item icons to borrow, in order: a bell for ringing ears, then items every game has.</summary>
         private static readonly string[] IconItems = { "Bell", "BellFragment", "Wishbone" };
 
-        private static readonly int Hash = Key.GetStableHashCode();
-
-        private static StatusEffect? _template;
+        // Word tokens: the game words them in the player's language.
+        private static readonly StatusTemplate<StatusEffect> Ringing = new StatusTemplate<StatusEffect>("ecr_ringing_ears",
+            se =>
+            {
+                se.m_name = Lang.Token("ecr_se_ringing_ears");
+                se.m_tooltip = Lang.Token("ecr_se_ringing_ears_tooltip");
+                se.m_startMessage = Lang.Token("ecr_se_ringing_ears_start");
+            },
+            () => GameIcons.Item(IconItems));
 
         /// <summary>The ringing on <paramref name="player"/> now, or null when they hear as normal.</summary>
-        public static StatusEffect? On(Player player) => player.GetSEMan().GetStatusEffect(Hash);
+        public static StatusEffect? On(Player player) => Ringing.On(player);
 
         /// <summary>
         /// Rings <paramref name="player"/>'s ears for <paramref name="seconds"/> from now, or keeps them ringing that long
@@ -38,43 +42,8 @@ namespace EliteCreaturesReborn.Mutations
                 current.m_ttl = Mathf.Max(current.m_ttl, current.GetDuration() + seconds);
                 return current;
             }
-            StatusEffect template = Template();
-            template.m_ttl = seconds; // the game adds a copy, which keeps this
-            return player.GetSEMan().AddStatusEffect(template);
-        }
-
-        private static StatusEffect Template()
-        {
-            if (_template == null)
-            {
-                _template = ScriptableObject.CreateInstance<StatusEffect>();
-                _template.name = Key;
-                _template.m_name = Lang.Token("ecr_se_ringing_ears"); // tokens: the game words them in the player's language
-                _template.m_tooltip = Lang.Token("ecr_se_ringing_ears_tooltip");
-                _template.m_startMessage = Lang.Token("ecr_se_ringing_ears_start");
-                _template.hideFlags = HideFlags.DontUnloadUnusedAsset;
-            }
-            if (_template.m_icon == null)
-            {
-                _template.m_icon = Icon(); // asked again until the object database can answer
-            }
-            return _template;
-        }
-
-        private static Sprite? Icon()
-        {
-            ObjectDB db = ObjectDB.instance;
-            foreach (string name in IconItems)
-            {
-                GameObject? prefab = db != null ? db.GetItemPrefab(name) : null;
-                ItemDrop? item = prefab != null ? prefab.GetComponent<ItemDrop>() : null;
-                Sprite[]? icons = item != null ? item.m_itemData.m_shared.m_icons : null;
-                if (icons != null && icons.Length > 0 && icons[0] != null)
-                {
-                    return icons[0];
-                }
-            }
-            return null;
+            Ringing.Get().m_ttl = seconds; // the game adds a copy, which keeps this
+            return Ringing.Add(player);
         }
     }
 }

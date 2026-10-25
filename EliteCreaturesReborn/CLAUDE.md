@@ -1003,7 +1003,7 @@ ObjectDB), which the game adds on the hit player's own machine; 0.45 s later, so
 for 7 s with the Shriek mutation's `ShriekDeafness` (near-silence under a ringing, "Ringing ears", no spells). The
 gravewind's item carries `ecr_batfiend_chill` instead of frost damage (whose freeze is a share of the victim's health):
 on the victim's owner it puts the game's `SE_Frost` on for 5 s, times the frost modifier's share (resistant half,
-immune none), never shortening a longer one. `BatFiendStatuses` puts both effects in every ObjectDB.
+immune none), never shortening a longer one. `BatFiendPrefabs` puts both effects in every ObjectDB (the StatusTemplates library).
 
 | File (`Creatures/BatFiend/`) | Does |
 | --- | --- |
@@ -1011,7 +1011,7 @@ immune none), never shortening a longer one. `BatFiendStatuses` puts both effect
 | `BatFiendModel.cs` | The embedded bundle; the model copied to an inactive template, animator checked (root motion off, always animated), `ecr_batfiend_skin` dressed in the Wolf's body material (`GameMaterials.Dress` + `Plain`), on the Wolf's Visual layer |
 | `BatFiendBody.cs` | The Wolf's `Visual` replaced: the model as `Visual` with `CharacterAnimEvent` (no foot IK, no head turn) and a `LevelEffects` with the Wolf's star looks, `EyePos` on `Head`, `FootStep` on `Foot.L/R` and `Hand.L/R`, the equipment joints on `Chest`, the capsule and `body_shell` box, the mass |
 | `BatFiendCreature.cs` | The Wolf copy at scale 1.2: arms, body (name, health, speeds, Undead, modifiers), mind, untamed, the locomotion floats synced (`ZSyncAnimation`), loot, voice, death (the Wolf's corpse out, ours in), `BatFiendLeap` |
-| `BatFiendAttacks.cs`, `BatFiendAim.cs`, `BatFiendLeap.cs`, `BatFiendScreech.cs`, `BatFiendChill.cs`, `BatFiendStatuses.cs` | The five attack items (the table above); the wing's turned fan; the pounce's and bite's travel; the screech's deafness; the gravewind's 5 s frost; both effects in every ObjectDB |
+| `BatFiendAttacks.cs`, `BatFiendAim.cs`, `BatFiendLeap.cs`, `BatFiendScreech.cs`, `BatFiendChill.cs` | The five attack items (the table above); the wing's turned fan; the pounce's and bite's travel; the screech's deafness; the gravewind's 5 s frost |
 | `BatFiendEffects.cs`, `BatFiendFx.cs`, `BatFiendFxParts.cs` | Cosmetic attack effects on every client from its own Animator state and clip time (no network): local copies of game effects (`LocalEffects`, ECR's effect density), tinted to Hel's palette and fitted to the hit shapes: dust on the pounce and the bite's push-off and landing, a blood wisp when the bite heals (health read from the ZDO), Morgen's swipe as a 100 deg frost arc for the wing, Moder's cold breath cut to one 6 m, 30 deg gust, Fader's roar ripple and three Eikthyr shockwave fronts along the screech's 8 m beam; off on a dedicated server, beyond 60 m |
 | `BatFiendCorpse.cs` | `ECR_BatFiend_corpse`: unsaved network object at scale 1.2, a model copy holding the death clip (`BatFiendCorpsePose`), the game's `Ragdoll` (no physics bodies) that takes the loot and tint and, after the 2.2 s fall and the Wolf corpse's wait, plays its removal puff and drops the loot |
 | `BatFiendVoice.cs`, `BatFiendLoot.cs`, `BatFiendNumbers.cs` | The voices, the drops, every number (its words `enemy_ecr_batfiend`, `item_ecr_batfiend_<key>` are in `translations/English.yml`) |

@@ -1,4 +1,4 @@
-using UnityEngine;
+using StatusTemplates;
 
 namespace EliteCreaturesReborn.Creatures.BatFiend
 {
@@ -9,29 +9,15 @@ namespace EliteCreaturesReborn.Creatures.BatFiend
     /// heard, then deafens the player the way a Screecher's shriek does (<see cref="Mutations.ShriekDeafness"/>: the game
     /// near-silent under a faint ringing, the "Ringing ears" icon and countdown, no spells) for
     /// <see cref="BatFiendNumbers.ScreechDeafSeconds"/>. It has no icon of its own, so the HUD never shows it. It sits in
-    /// every object database, on every peer (<see cref="BatFiendStatuses"/>), so the hit's status hash finds it.
+    /// every object database, on every peer (<see cref="BatFiendPrefabs"/>), so the hit's status hash finds it.
     /// </summary>
     public sealed class BatFiendScreech : StatusEffect
     {
-        private const string Key = "ecr_batfiend_screech";
-
-        private static BatFiendScreech? _template;
+        /// <summary>The effect the screech item carries.</summary>
+        public static readonly StatusTemplate<BatFiendScreech> Template = new StatusTemplate<BatFiendScreech>(
+            "ecr_batfiend_screech", se => (se.m_name, se.m_ttl) = ("$enemy_ecr_batfiend", BatFiendNumbers.ScreechDeafDelay + 0.2f));
 
         private bool _fired;
-
-        /// <summary>The effect the screech item carries, made once.</summary>
-        public static StatusEffect Template()
-        {
-            if (_template == null)
-            {
-                _template = ScriptableObject.CreateInstance<BatFiendScreech>();
-                _template.name = Key;
-                _template.m_name = "$enemy_ecr_batfiend";
-                _template.m_ttl = BatFiendNumbers.ScreechDeafDelay + 0.2f;
-                _template.hideFlags = HideFlags.DontUnloadUnusedAsset;
-            }
-            return _template;
-        }
 
         public override void UpdateStatusEffect(float dt)
         {
