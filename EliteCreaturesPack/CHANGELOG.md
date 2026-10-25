@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.12.6
+
+- Russian translation updated.
+
 ## 0.12.5
 
 - Russian translation, used while the game's language is Russian.
