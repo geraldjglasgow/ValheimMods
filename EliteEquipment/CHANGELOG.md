@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+
+- Russian translation updated.
+
 ## 0.4.1
 
 - Russian translation, used while the game's language is Russian.
