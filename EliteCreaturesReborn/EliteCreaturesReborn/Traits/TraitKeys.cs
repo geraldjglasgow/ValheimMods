@@ -250,5 +250,9 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>The level the game gave a creature before this mod's stars put it at 1, kept while it is at 1 and only
         /// when above 1, so a tame that takes the game's stars (`15 - Tamed`) gets that level back.</summary>
         public const string GameLevel = "ecr_game_level";
+
+        /// <summary>On a corpse: the level other mods' drops read as it spawns its loot - its creature's stars + 1, written
+        /// by the owner as the game sets the corpse up, only when above the game's level (<see cref="Loot.LootLevel"/>).</summary>
+        public const string LootLevel = "ecr_loot_level";
     }
 }

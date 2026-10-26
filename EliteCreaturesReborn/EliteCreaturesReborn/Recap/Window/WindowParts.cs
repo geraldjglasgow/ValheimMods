@@ -37,7 +37,11 @@ namespace EliteCreaturesReborn.Recap.Window
             {
                 return null;
             }
-            WindowParts parts = Lists(dialog);
+            WindowParts? parts = Lists(dialog);
+            if (parts == null)
+            {
+                return null;
+            }
             parts.Root = root;
             parts.Frame = (RectTransform)frame;
             parts.Topic = topic.GetComponent<TMP_Text>();
@@ -46,17 +50,29 @@ namespace EliteCreaturesReborn.Recap.Window
             return parts;
         }
 
-        private static WindowParts Lists(TextsDialog dialog) => new WindowParts
+        // The list is the scroll view holding the entries' root, inside its framed inset. Found from the entries, not from
+        // the dialog's m_leftScrollRect: the game now points that at the text area's scroll view, so the list was never
+        // placed and the text area was placed (and, in the altar window, hidden) in its stead.
+        private static WindowParts? Lists(TextsDialog dialog)
         {
-            List = (RectTransform)dialog.m_leftScrollRect.transform.parent,
-            ListScroll = dialog.m_leftScrollRect,
-            ListRoot = dialog.m_listRoot,
-            Element = dialog.m_elementPrefab,
-            Area = (RectTransform)dialog.m_rightScrollbar.transform.parent,
-            AreaScroll = dialog.m_rightScrollbar.transform.parent.GetComponentInChildren<ScrollRect>(true),
-            AreaContent = (RectTransform)dialog.m_textArea.transform.parent,
-            Text = dialog.m_textArea,
-            Inset = dialog.m_leftScrollRect.transform.parent.GetComponent<Image>(),
-        };
+            ScrollRect? list = dialog.m_listRoot != null ? dialog.m_listRoot.GetComponentInParent<ScrollRect>(true) : null;
+            if (list == null || dialog.m_rightScrollbar == null)
+            {
+                return null;
+            }
+            RectTransform inset = (RectTransform)list.transform.parent;
+            return new WindowParts
+            {
+                List = inset,
+                ListScroll = list,
+                ListRoot = dialog.m_listRoot!,
+                Element = dialog.m_elementPrefab,
+                Area = (RectTransform)dialog.m_rightScrollbar.transform.parent,
+                AreaScroll = dialog.m_rightScrollbar.transform.parent.GetComponentInChildren<ScrollRect>(true),
+                AreaContent = (RectTransform)dialog.m_textArea.transform.parent,
+                Text = dialog.m_textArea,
+                Inset = inset.GetComponent<Image>(),
+            };
+        }
     }
 }

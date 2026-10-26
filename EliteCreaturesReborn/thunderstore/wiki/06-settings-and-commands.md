@@ -45,8 +45,10 @@ creatures:
       Cloaked: [0]
 ```
 
-A new file already makes trolls, lox and Elite Creatures Pack's Rime Giant reveal Cloaked at 15 m, keeps drakes from
-being Cloaked, keeps bats from being Mad or Cloaked and keeps gjall from being Cloaked. Deathsquitos are never Cloaked, whatever the file says.
+A new file already makes trolls, lox and Elite Creatures Pack's Rime Giant reveal Cloaked at 15 m, and keeps flying
+creatures (bats, wraiths, drakes, deathsquitos, gjall, Mistiles, voltures, Fallen Valkyries, Jotun witches, frost wisps
+and Moder's aspect) from Mad, Cloaked and the trail mutations (Miasmic, Frostbound, Mudbound, Flamebound, Binding).
+Deathsquitos are never Cloaked, whatever the file says.
 
 ## Your own settings
 

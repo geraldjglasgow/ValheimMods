@@ -1,5 +1,12 @@
 # Changelog
 
+## 3.35.0
+
+- Altar window: one tidy panel; it shows what the chosen fight does and pays, and None is always a choice.
+- Boss altars: one roll in ten is the plain boss, no stars and no aspect.
+- Epic Loot's per-level drop tables now count this mod's stars.
+- A new rule file keeps flying creatures from Mad, Cloaked and the trail mutations.
+
 ## 3.34.4
 
 - Chilled, Ringing ears, trail effects and the Bat-fiend's screech and chill moved onto a shared library; no change in play.

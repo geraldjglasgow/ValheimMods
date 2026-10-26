@@ -158,6 +158,10 @@ creature's own table and rows the rule files name - so the outcome never depends
 run first. Curated replaces our table, not theirs. The one exception is a row the rule file names explicitly,
 which is the server's own words and is honoured wherever the row came from.
 
+**Another mod's tables per level see this mod's stars.** A drop mod that picks its table from the creature's
+level (Epic Loot) reads stars + 1, not the level 1 this mod keeps creatures at, once the game's own drop list is
+built, so the game's level bonus never adds to the star loot (`Loot/LootLevel.cs`).
+
 An off switch for the whole feature leaves every other feature working, as `configuration.md` requires of all of
 them - the mod with loot off still stars, mutates and scales creatures and simply never touches what they drop.
 
@@ -273,3 +277,4 @@ Newest last. One row per session that changed something: what moved, and the com
 | 2026-09-20 | Decided with the user: extra roll chance, max extra rolls, global and boss loot multipliers, the `creatures:` rule format (which is Curated's format - open decision resolved), and the generated creature reference file. Sections 5-7 rewritten; both former open decisions closed. Then built: modes, trophy separation, per-creature rules, `elite reference`; judgement calls in `DECISIONS.md`. | pending |
 | 2026-09-20 | Drop-mod compatibility: the engine now only reworks rows it owns (the creature's table plus rule-file rows), so drops another mod injects - EpicLoot was the prompt - survive every mode, strip and multiplier, whatever the Harmony patch order. | pending |
 | 2026-09-27 | 3.9.0: Gilded added as the one mutation that pays (section 3) - `loot` multiplier and coin purse in every mode, tamed ones excepted, purse capped at 100; `creatures:` entries also carry mutation keys, and duplicate entries merge (section 6). Built, not tested in game. | - |
+| 2026-10-26 | Epic Loot's tables per level read this mod's stars: a corpse's game level is raised to stars + 1 as it spawns its loot, a creature dropping at once has its level raised for the `CharacterDrop.OnDeath` postfixes only (player report: no difference between 0 and 5 stars). Built, not tested in game. | - |

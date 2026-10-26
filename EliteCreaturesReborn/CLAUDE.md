@@ -30,6 +30,13 @@ how hard enemies hit and how hard players hit them, but its extra star chance (`
 because creatures are kept at the game's level 1 and roll this mod's stars. With `Creature stars` false the game's
 stars, that star chance included, apply as usual.
 
+**Other mods' drops** that pick a table by the creature's level (Epic Loot's per-level tables) see this mod's stars:
+level stars + 1, shown only after the game's own drop list is built, so the game's level bonus never adds to the star
+loot (`Loot/LootLevel.cs`, `Patches/LootLevelPatch.cs`). A corpse keeps it in `ecr_loot_level` and takes it as its game
+level in a `Ragdoll.SpawnLoot` postfix (not sooner: a waking corpse's looks come from its game level); a creature that
+drops at once has `m_level` raised for the `CharacterDrop.OnDeath` postfixes and put back by a finalizer. A prefix that
+reads the level (Hearthhold's meat star odds) still sees 1.
+
 **Stars.** The most stars a creature can have:
 
 | Difficulty | Biome you're entering | Each boss killed after a biome | Ocean |
@@ -119,9 +126,9 @@ Howling and Binding start switched off: set them to `true` in the .cfg's `2 - Mu
 
 | Mutation | What it does |
 | --- | --- |
-| Mad | Far faster, half health; never on bats |
+| Mad | Far faster, half health; never on flying creatures |
 | Bloated | Double health, explodes 1.5 seconds after it dies |
-| Cloaked | Invisible beyond 10 metres (15 for trolls, lox and the Rime Giant); drakes, bats, gjall and deathsquitos are never Cloaked |
+| Cloaked | Invisible beyond 10 metres (15 for trolls, lox and the Rime Giant); never on flying creatures |
 | Splintering | Splits into two weaker copies when killed, which can split again. Never on a creature that releases creatures as it dies (the Oozer, into Blobs) |
 | Leeching | Regenerates, and heals from the damage it deals |
 | Warding | Reflects part of each hit back, never more than 7.5% of your maximum health in any second, and knocks you back |
@@ -142,6 +149,10 @@ Howling and Binding start switched off: set them to `true` in the .cfg's `2 - Mu
 | Howling | When it turns on you it howls (a wolf's howl), and the 4 nearest creatures on its side within 30 m that are hostile to you come for you; again every 45 seconds while it fights you. It calls creatures already there, never new ones, and never a boss. Off by default |
 | Binding | Leaves patches of tangled roots where it walks, smaller and further apart than ice or mud (one every 3 m walked, each reaching 1.2 m), so you can step between them, each lasting 10 seconds. Step into one and the roots burst up and hold you for a second ("Rooted": no walking, running, jumping or rolling; you can still turn, block and strike), then let you go for 3 seconds, long enough to walk clear. Off by default |
 | Flamebound | Leaves burning ground where it walks: flames on the ground, 2 m wide, a patch every 1.5 m, each lasting 7 seconds (with effects off, glowing embers instead). Standing in it sets you on fire, the game's own Burning: 6 fire damage a second, more with stars (its star `attack` line); fire resistance and being wet help, armour does not (as with the game's own burning ticks). Its heat clears mist around it as a Wisplight does |
+
+Flying creatures - bats, wraiths, drakes, deathsquitos, gjall, Mistiles, voltures, Fallen Valkyries, Jotun witches,
+frost wisps and Moder's aspect - are never Mad or Cloaked and lay no trail: never Miasmic, Frostbound, Mudbound,
+Flamebound or Binding (their `creatures:` entries in a new rule file, below).
 
 Gilded is the rarest, on purpose, and the only one in your favour: it runs, and pays well if you catch it.
 
@@ -246,12 +257,15 @@ Any mutation can also be switched off entirely in the .cfg's `2 - Mutations`, re
 A boss never takes a mutation. It takes an **aspect**, which is in its name - "Enraged Eikthyr" - and on its altar
 before you commit: hover the offering bowl to see the boss's stars ("Stars: ★★", or none), the current aspect, what
 it does, what it pays, and how long until it shifts. Every 15 seconds the altar shifts: the stars roll again and the
-aspect changes to a different one, so a group can wait for the fight it wants. The stars and aspect on the bowl when
+aspect changes to a different one, so a group can wait for the fight it wants. Whatever the rule file's chances, one
+roll in ten (never two running) is the plain boss, no stars and no aspect. The stars and aspect on the bowl when
 you make the offering are the ones you fight. A boss with no altar - the Queen, or a console spawn - rolls its stars
 and aspect when it first appears.
 
 Or choose the fight: **E on the bowl** (Shift+E on Fader's altar, whose E makes the offering) opens the altar window,
-with Random and every aspect the boss can roll on the left and Random and every star count it can roll on the right.
+with Random and every aspect the boss can roll on the left and Random and every star count it can roll on the right
+(None, for no stars or no aspect, is always there). Under the star buttons it describes the fight being chosen: what
+its aspect does and what it pays, "(at least)" while a part is on Random.
 A chosen part stays on the altar for everyone (marked "(chosen)") until someone changes it; a part left on Random
 rolls at every shift as before, and so do a chosen Bountiful's extras. The fight pays for what it is, chosen or rolled.
 `14 - Boss Altars` / `Altar Choice` (true) in the .cfg switches it, set by the server like the arena's switch
@@ -321,7 +335,8 @@ ecr_kills_<prefab>` resets one. It counts with the switch off too, so turning it
 ## Boss aspect power fields
 
 `shift seconds` (15) under `aspects:` is the real seconds between altar shifts. Each shift rolls the boss's stars and
-its aspect again (never the same aspect twice in a row; the stars may repeat); 0 fixes each altar once it is first
+its aspect again (never the same aspect twice in a row; the stars may repeat; one roll in ten is the plain boss, set
+in code); 0 fixes each altar once it is first
 rolled. It applies to the stars even with `enabled: false`. An older file's `shift hours` (in-game hours, 75 s each on
 the default day) still works when the file names only that; if both are named, `shift seconds` wins.
 
@@ -398,10 +413,12 @@ creatures:
 `mutation chance` replaces the creature's default curve, but any mutation with its own curve in the biome (or in
 `defaults`, like Devouring and Gilded) keeps it, so set that mutation to `[0]` under `mutation chances` to stop it.
 `2 - Mutations` still wins, the world tier still raises the chances (on Custom; on a difficulty the entry decides which mutation the creature gets), and bosses ignore these entries. Two
-entries for the same creature merge: later keys win and drop rows add up. A new rule file ships with six: Troll,
-Lox and ECP_RimeGiant (Elite Creatures Pack's Rime Giant) raise Cloaked's `reveal distance` to 15, Hatchling (the drake) sets Cloaked to `[0]`, so drakes are
-never Cloaked, Bat sets Mad and Cloaked to `[0]`, so bats are never either, and Gjall sets Cloaked to `[0]` (a
-player's report 2026-10-15: one high in the air could not be seen from the ground). A Deathsquito is never Cloaked
+entries for the same creature merge: later keys win and drop rows add up. A new rule file ships with fifteen: Troll,
+Lox and ECP_RimeGiant (Elite Creatures Pack's Rime Giant) raise Cloaked's `reveal distance` to 15, and twelve flying
+creatures (Bat, Bat_Swamp, Wraith, Hatchling, Deathsquito, Gjall, Mistile, Volture, FallenValkyrie, JotunWitch,
+FrostWisp, Aspect_Moder) set Mad, Cloaked, Miasmic, Frostbound, Mudbound, Flamebound and Binding to `[0]`: a flyer
+high in the air could not be seen from the ground (a player's report 2026-10-15, on a Gjall), and nothing flying
+leaves a trail on the ground (the user's call, 2026-10-25). A Deathsquito is never Cloaked
 whatever the file says (a rule in the mod, not the file), and one a world saved Cloaked loads without it. Likewise a
 creature that releases creatures as it dies is never Splintering (`Traits/DeathBrood.cs`, read from its prefab: a
 creature among its death effects, its ragdoll's removal effects or its drops; the Oozer, a player's report 2026-10-13),

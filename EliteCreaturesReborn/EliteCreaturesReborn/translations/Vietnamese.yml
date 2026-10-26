@@ -274,7 +274,7 @@ ecr_aspect_fixated_gone: "một người chơi đã rời đi"
 # Boss altar: the bowl's hover lines
 # Boss altar hover: action after the key prompt, "[E] Choose the fight"; opens the altar window. Imperative, like a button label.
 ecr_altar_choose: "Chọn trận đấu"
-# Boss altar hover (also the altar window's "On the altar now" box): the boss's stars. $1 = star symbols (★★) or "none".
+# Boss altar hover: the boss's stars. $1 = star symbols (★★) or "none".
 ecr_altar_stars_line: "Sao: $1"
 # Boss altar hover: $1 of "Stars: $1" when the boss has no stars; also the 0-star row in the compendium boss stars table. Means no stars.
 ecr_altar_stars_none: "không có"
@@ -300,8 +300,6 @@ ecr_altar_defeated_most: "Đã bị đánh bại $1+ lần: dễ có nhiều sao
 # Boss altar: the window where a player chooses the fight
 # Boss altar window: the window's title at the top. Opened with E on the altar to pick the boss's stars and aspect.
 ecr_altar_title: "Chọn Trận Đấu"
-# Boss altar window: orange heading over the box that repeats the altar's current hover lines (stars, aspect, countdown).
-ecr_altar_now: "Trên bệ thờ hiện tại"
 # Boss altar window: orange heading over the row of star-count buttons (Random, None, ★, ★★ ...). Noun, plural.
 ecr_altar_stars: "Sao"
 # Boss altar window: replaces the Stars heading when boss stars are switched off by the server's rule file. Rare.
@@ -318,6 +316,12 @@ ecr_altar_random_text: "Được chọn ngẫu nhiên từ các đặc tính c�
 ecr_altar_bountiful_text: "Các đặc tính thêm của nó được chọn ngẫu nhiên mỗi lần bệ thờ thay đổi."
 # Boss altar window: grey line under the chosen aspect's description, its loot multiplier. $1 = multiplier (1.4).
 ecr_altar_loot: "Đồ rơi x$1"
+# Boss altar window: grey mark after the reward line while a part is on Random; the fight pays this or more. In brackets.
+ecr_altar_at_least: "(ít nhất)"
+# Boss altar window: grey line under the reward while the stars are on Random. A shift = the altar re-rolling (every 15 s).
+ecr_altar_stars_roll: "Sao được chọn ngẫu nhiên mỗi lần bệ thờ thay đổi."
+# Boss altar window: grey line while every part is on Random; the boss as the game ships it is always one of the rolls.
+ecr_altar_plain_text: "Mỗi lần thay đổi đều có thể ra boss thường: không sao, không đặc tính."
 
 # Boss damage board ($1 the boss)
 # Boss damage board: bold title at the left of the screen after a boss dies, above each player's damage. $1 = the boss's name (Eikthyr).

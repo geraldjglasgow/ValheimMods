@@ -173,7 +173,6 @@ ecr_altar_defeated_most: "Pokonany $1+ razy: większa szansa na więcej gwiazdek
 
 # Boss altar: the window where a player chooses the fight
 ecr_altar_title: "Wybierz walkę"
-ecr_altar_now: "Aktualnie na ołtarzu"
 ecr_altar_stars: "Gwiazdki"
 ecr_altar_stars_off: "Gwiazdki: wyłączone w pliku reguł"
 ecr_altar_aspect_off: "Aspekt: wyłączony w pliku reguł"
@@ -182,6 +181,9 @@ ecr_altar_none: "Brak"
 ecr_altar_random_text: "Aspekt jest losowany spośród aspektów tego bossa przy każdej zmianie na ołtarzu."
 ecr_altar_bountiful_text: "Dodatkowe aspekty są losowane przy każdej zmianie na ołtarzu."
 ecr_altar_loot: "Łup x$1"
+ecr_altar_at_least: "(co najmniej)"
+ecr_altar_stars_roll: "Gwiazdki są losowane przy każdej zmianie na ołtarzu."
+ecr_altar_plain_text: "Każda zmiana może przynieść zwykłego bossa: bez gwiazdek i bez aspektu."
 
 # Boss damage board ($1 the boss)
 ecr_tally_defeated: "Pokonano: $1"

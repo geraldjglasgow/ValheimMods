@@ -89,19 +89,35 @@ creatures:
   - match: ECP_RimeGiant
     mutation power:
       Cloaked:     { reveal distance: 15 }
-  # Drakes are never Cloaked.
-  - match: Hatchling
-    mutation chances:
-      Cloaked:     [0]
-  # Bats are never Mad or Cloaked.
+  # Flying creatures are never Mad or Cloaked and lay no trail: never Miasmic,
+  # Frostbound, Mudbound, Flamebound or Binding.
   - match: Bat
-    mutation chances:
-      Mad:         [0]
-      Cloaked:     [0]
-  # Gjall are never Cloaked.
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
+  - match: Bat_Swamp
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
+  - match: Wraith
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
+  # The drake.
+  - match: Hatchling
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
+  - match: Deathsquito
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
   - match: Gjall
-    mutation chances:
-      Cloaked:     [0]
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
+  # The Dvergr mage's orb.
+  - match: Mistile
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
+  - match: Volture
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
+  - match: FallenValkyrie
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
+  - match: JotunWitch
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
+  - match: FrostWisp
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
+  # Moder's aspect, summoned in the Frozen King's fight.
+  - match: Aspect_Moder
+    mutation chances: { Mad: [0], Cloaked: [0], Miasmic: [0], Frostbound: [0], Mudbound: [0], Flamebound: [0], Binding: [0] }
 #  - match: Troll
 #    drops: [1, 1.5, 2, 3, 4, 5]
 #    multiply trophies: true

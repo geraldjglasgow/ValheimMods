@@ -27,7 +27,7 @@ Both are in `BepInEx/config`, created on first run; edits apply without a restar
 | PackPanel | World tier shown on the inventory and under the minimap; Thieving never steals from PackPanel's slots |
 | GrindstoneSkills | Husbandry's "better offspring" adds a star to a newborn |
 | Elite Creatures Pack | Its creatures roll stars and mutations; a sleeping mimic hides them; the Kraken never rolls Twin, Phantom, Tethered, Brutal or Echoing |
-| Epic Loot, other loot mods | Their drops pass through untouched |
+| Epic Loot, other loot mods | Their drops pass through untouched; Epic Loot's per-level tables count this mod's stars |
 | Modded creatures and biomes | Roll like any other; an unlisted biome uses the Meadows rules |
 
 ## Pages

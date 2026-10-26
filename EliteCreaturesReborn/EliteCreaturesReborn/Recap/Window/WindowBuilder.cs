@@ -72,11 +72,33 @@ namespace EliteCreaturesReborn.Recap.Window
             TextsDialog dialog = copy.GetComponent<TextsDialog>();
             WindowParts? parts = WindowParts.From(root, dialog);
             Object.DestroyImmediate(dialog);
+            Unthemed(copy);
             copy.transform.SetParent(root.transform, false);
             UiParts.Fill((RectTransform)copy.transform, 0f);
             copy.SetActive(true);
             Object.Destroy(holder);
             return parts;
+        }
+
+        /// <summary>The child PackPanel's timber look hangs on a game wood panel it dresses, the panel's own art made
+        /// see-through.</summary>
+        private const string ThemeChild = "PackPanel_timberwood";
+
+        // A copied theme child keeps none of the references it draws with, so it would draw nothing over a see-through
+        // panel: it goes, and the panel gets the game's look back, for the theme to dress the copy afresh as it is shown.
+        private static void Unthemed(GameObject copy)
+        {
+            foreach (Image image in copy.GetComponentsInChildren<Image>(true))
+            {
+                Transform? theme = image != null ? image.transform.Find(ThemeChild) : null;
+                if (theme == null)
+                {
+                    continue;
+                }
+                Object.DestroyImmediate(theme.gameObject);
+                image!.color = Color.white;
+                image.fillCenter = true;
+            }
         }
 
         // The frame grows to the recap's size; the deaths list keeps the left, the close button sits under it, the right

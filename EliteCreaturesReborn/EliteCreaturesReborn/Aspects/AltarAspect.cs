@@ -40,7 +40,6 @@ namespace EliteCreaturesReborn.Aspects
         // The hover lines as last drawn, kept while the bowl's ZDO, the whole second of the shift count-down, the rule set
         // (a reload replaces it) and the language are the ones they were drawn from: the hover is asked for every frame.
         private string _hover = "";
-        private string _state = "";
         private uint _hoverRevision = uint.MaxValue;
         private int _hoverSecond = int.MinValue;
         private int _hoverKills = -1;
@@ -107,18 +106,9 @@ namespace EliteCreaturesReborn.Aspects
         }
 
         /// <summary>Rolls the stars and the aspect, each only while it is on: both on a shift, else only a missing one. A
-        /// part a player chose is set to the choice instead (<see cref="AltarRoller"/>).</summary>
-        private void Roll(ZDO zdo, bool shift)
-        {
-            if (StarsOn)
-            {
-                AltarRoller.Stars(zdo, _boss, shift);
-            }
-            if (AspectsOn)
-            {
-                AltarRoller.Aspects(zdo, _boss, shift);
-            }
-        }
+        /// part a player chose is set to the choice instead, and a roll of every part may be the plain boss
+        /// (<see cref="AltarRoller"/>).</summary>
+        private void Roll(ZDO zdo, bool shift) => AltarRoller.Draw(zdo, _boss, shift, shift);
 
         /// <summary>From the altar window, on any machine: asks the altar's owner to keep these choices (each a value, or
         /// <see cref="AltarPicks.Random"/>). The owner checks them against its rules and shows them on the bowl at once.</summary>
@@ -149,14 +139,7 @@ namespace EliteCreaturesReborn.Aspects
             bool freshStars = keepStars == AltarPicks.Random && AspectStore.GetPickedStars(zdo) != AltarPicks.Random;
             bool freshAspect = keepAspect == AltarPicks.Random && AspectStore.GetPickedAspect(zdo) != AltarPicks.Random;
             AspectStore.SetPicks(zdo, keepStars, keepAspect);
-            if (StarsOn)
-            {
-                AltarRoller.Stars(zdo, _boss, freshStars);
-            }
-            if (AspectsOn)
-            {
-                AltarRoller.Aspects(zdo, _boss, freshAspect);
-            }
+            AltarRoller.Draw(zdo, _boss, freshStars, freshAspect);
         }
 
         /// <summary>At the offering, on the machine that will spawn the boss: fix the stars and aspects on the bowl now.</summary>
@@ -195,8 +178,7 @@ namespace EliteCreaturesReborn.Aspects
             int kills = BossKills.Count(_boss);
             if (Changed(zdo.DataRevision, second, kills, set, AltarSettings.Enabled))
             {
-                _state = DrawHover(zdo, set.Boss.Aspects, seconds) + BossLines(zdo, set, kills);
-                _hover = ChoiceHint() + _state;
+                _hover = ChoiceHint() + DrawHover(zdo, set.Boss.Aspects, seconds) + BossLines(zdo, set, kills);
             }
             return _hover;
         }
@@ -219,14 +201,6 @@ namespace EliteCreaturesReborn.Aspects
             return true;
         }
 
-        /// <summary>The hover lines without the "Choose the fight" hint, for the altar window; the same string instance
-        /// until what they show changes.</summary>
-        public string StateLines()
-        {
-            HoverLines();
-            return _state;
-        }
-
         /// <summary>"[E] Choose the fight" while players may choose; Shift+E on an altar whose E makes the offering.</summary>
         private string ChoiceHint()
         {
@@ -244,13 +218,20 @@ namespace EliteCreaturesReborn.Aspects
             int stars = StarsOn && AspectStore.AltarStarsRolled(zdo) ? AspectStore.GetAltarStars(zdo) : 0;
             BossAspects aspects = AspectsOn && AspectStore.AltarRolled(zdo) ? AspectStore.GetAltarAspects(zdo) : BossAspects.None;
             string reward = BossRewards.AltarLine(_boss, stars, AspectLoot.FactorOf(aspects, set.Boss.Aspects));
-            if (kills == 0 || !set.Boss.HarderEachKill)
+            string defeated = Defeated(kills);
+            return defeated.Length == 0 ? reward : reward + "\n<color=#A0A0A0>" + defeated + "</color>";
+        }
+
+        /// <summary>How often the world has defeated the boss, while each defeat leans its stars up; "" before the first
+        /// defeat or with that rule off. The altar window shows it too.</summary>
+        public static string Defeated(int kills)
+        {
+            if (kills == 0 || !RuleState.Active.Boss.HarderEachKill)
             {
-                return reward;
+                return "";
             }
-            string defeated = kills >= BossKills.MaxKills ? Lang.Format("ecr_altar_defeated_most", kills)
+            return kills >= BossKills.MaxKills ? Lang.Format("ecr_altar_defeated_most", kills)
                 : kills == 1 ? Lang.Get("ecr_altar_defeated_once") : Lang.Format("ecr_altar_defeated_many", kills);
-            return reward + "\n<color=#A0A0A0>" + defeated + "</color>";
         }
 
         // A part a player chose is marked so; the shift count-down is left out once the choices leave nothing to roll.

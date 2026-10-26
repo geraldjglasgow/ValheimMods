@@ -279,7 +279,7 @@ ecr_aspect_fixated_gone: "a player who has left"
 # Boss altar: the bowl's hover lines
 # Boss altar hover: action after the key prompt, "[E] Choose the fight"; opens the altar window. Imperative, like a button label.
 ecr_altar_choose: "Choose the fight"
-# Boss altar hover (also the altar window's "On the altar now" box): the boss's stars. $1 = star symbols (★★) or "none".
+# Boss altar hover: the boss's stars. $1 = star symbols (★★) or "none".
 ecr_altar_stars_line: "Stars: $1"
 # Boss altar hover: $1 of "Stars: $1" when the boss has no stars; also the 0-star row in the compendium boss stars table. Means no stars.
 ecr_altar_stars_none: "none"
@@ -305,8 +305,6 @@ ecr_altar_defeated_most: "Defeated $1+ times: more stars likelier"
 # Boss altar: the window where a player chooses the fight
 # Boss altar window: the window's title at the top. Opened with E on the altar to pick the boss's stars and aspect.
 ecr_altar_title: "Choose the Fight"
-# Boss altar window: orange heading over the box that repeats the altar's current hover lines (stars, aspect, countdown).
-ecr_altar_now: "On the altar now"
 # Boss altar window: orange heading over the row of star-count buttons (Random, None, ★, ★★ ...). Noun, plural.
 ecr_altar_stars: "Stars"
 # Boss altar window: replaces the Stars heading when boss stars are switched off by the server's rule file. Rare.
@@ -323,6 +321,12 @@ ecr_altar_random_text: "Rolled from this boss's aspects at every shift of the al
 ecr_altar_bountiful_text: "Its extra aspects roll at every shift of the altar."
 # Boss altar window: grey line under the chosen aspect's description, its loot multiplier. $1 = multiplier (1.4).
 ecr_altar_loot: "Loot x$1"
+# Boss altar window: grey mark after the reward line while a part is on Random; the fight pays this or more. In brackets.
+ecr_altar_at_least: "(at least)"
+# Boss altar window: grey line under the reward while the stars are on Random. A shift = the altar re-rolling (every 15 s).
+ecr_altar_stars_roll: "Stars roll at every shift of the altar."
+# Boss altar window: grey line while every part is on Random; the boss as the game ships it is always one of the rolls.
+ecr_altar_plain_text: "Any shift can bring the plain boss: no stars, no aspect."
 
 # Boss damage board ($1 the boss)
 # Boss damage board: bold title at the left of the screen after a boss dies, above each player's damage. $1 = the boss's name (Eikthyr).
