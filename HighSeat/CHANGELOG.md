@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.3
+
+- Fixed: a world save or one slow frame no longer makes the server leave new creatures to players.
+
 ## 0.2.2
 
 - Fixed: wild creatures spawn near players again; the server's spawner threw errors instead.
