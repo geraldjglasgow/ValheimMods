@@ -1,84 +1,45 @@
+using MannedWeapons;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace EliteCreaturesPack.Ballista
 {
     /// <summary>
-    /// Draws a Bone Ballista on every peer that draws (never a dedicated server), from its ZDO and the timeline alone,
-    /// sending nothing: the turn (the holder's own aim at once, everyone else's eased toward the last one sent), the
-    /// spine arms bending back as the string is drawn and ringing forward after a shot, the string's two halves from
-    /// each arm's tip to the string's centre, the missile laid in the groove, the sounds (the shot, the string taken,
-    /// the latch, the missile laid), the kick of a shot, and the holder's arms and lean (<see cref="BallistaHands"/>).
+    /// The Bone Ballista's own look on every peer that draws (never a dedicated server), from its ZDO and the timeline
+    /// alone, sending nothing, each frame after the library has turned it and before the holder's hands
+    /// (<see cref="BallistaControl"/>): the spine arms bending back as the string is drawn and ringing forward after a shot,
+    /// the string's two halves from each arm's tip to the string's centre, the missile laid in the groove, and the sounds
+    /// (the shot, the string taken, the latch, the missile laid).
     /// </summary>
-    public sealed class BallistaLook : MonoBehaviour
+    public sealed class BallistaLook
     {
         /// <summary>The game's effects (from <see cref="BallistaPrefabs"/>): the ballista's shot and laid missile, the crossbow's draw and latch.</summary>
         public static EffectList? Fire, Draw, Latch, Laid;
 
         /// <summary>Degrees each vertebra turns at full draw; the left arm turns the other way (each arm bends back).</summary>
-        private const float Bend = 4.5f, Kick = 3f, KickTime = 0.08f, Follow = 12f;
+        private const float Bend = 4.5f;
 
-        private BallistaControl control = null!;
-        private BallistaHands? hands;
-        private float yaw, pitch, lastActTime;
+        private float lastActTime;
         private int shots = -1;
         private Act lastAct;
 
-        private void Awake()
+        /// <summary>The string's centre this frame, where the holder's hands take it.</summary>
+        public Vector3 Centre { get; private set; }
+
+        /// <summary>A placement ghost's look: at rest, its string strung.</summary>
+        public void Rest(BallistaParts parts)
         {
-            control = GetComponent<BallistaControl>();
-            enabled = SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null;
+            Bow(parts, 0f);
+            Strings(parts, StringCentre(parts, 0f));
         }
 
-        /// <summary>A placement ghost (no ZDO) is posed at rest once, its string strung, and left still.</summary>
-        private void Start()
+        public void Show(BallistaParts parts, in WeaponState s)
         {
-            if (control.Net != null && control.Net.GetZDO() != null)
-            {
-                return;
-            }
-            if (control.Parts != null)
-            {
-                Bow(control.Parts, 0f);
-                Strings(control.Parts, Centre(control.Parts, 0f));
-            }
-            enabled = false;
-        }
-
-        private void LateUpdate()
-        {
-            BallistaParts? parts = control.Parts;
-            if (parts == null || !control.Net.IsValid())
-            {
-                return;
-            }
-            BallistaState s = control.State;
-            Turn(parts, s);
             float draw = BallistaTimeline.Draw(s);
             Bow(parts, draw);
-            Vector3 centre = Centre(parts, draw);
-            Strings(parts, centre);
+            Centre = StringCentre(parts, draw);
+            Strings(parts, Centre);
             parts.Laid?.SetActive(BallistaTimeline.MissileLaid(s));
             Cues(parts, s);
-            (hands ??= new BallistaHands()).Pose(parts, s, centre, Time.deltaTime);
-        }
-
-        /// <summary>The holder's own aim, worked out here each frame; anyone else's eased toward the ZDO's; a shot kicks the nose up.</summary>
-        private void Turn(BallistaParts parts, in BallistaState s)
-        {
-            if (Player.m_localPlayer != null && control.HeldBy(Player.m_localPlayer))
-            {
-                BallistaOperator.Aim(control, Player.m_localPlayer, Time.deltaTime);
-                (yaw, pitch) = (control.Yaw, control.Pitch);
-            }
-            else
-            {
-                float ease = 1f - Mathf.Exp(-Follow * Time.deltaTime);
-                (yaw, pitch) = (Mathf.LerpAngle(yaw, s.Yaw, ease), Mathf.LerpAngle(pitch, s.Pitch, ease));
-            }
-            float kick = s.ShotAge < 1f ? Kick * Mathf.Exp(-s.ShotAge / KickTime) : 0f;
-            parts.Yaw.localRotation = Quaternion.Euler(0f, yaw, 0f);
-            parts.Pitch.localRotation = Quaternion.Euler(-(pitch + kick), 0f, 0f);
         }
 
         /// <summary>Each vertebra a little turn about Y from its rest: the arms back as the string draws, forward as they ring.</summary>
@@ -96,7 +57,7 @@ namespace EliteCreaturesPack.Ballista
         }
 
         /// <summary>The string's centre: on the line between the tips when slack, drawn back toward the latch.</summary>
-        private static Vector3 Centre(BallistaParts parts, float draw)
+        private static Vector3 StringCentre(BallistaParts parts, float draw)
         {
             Vector3 slack = parts.Tips[0] != null && parts.Tips[1] != null ? (parts.Tips[0]!.position + parts.Tips[1]!.position) * 0.5f : parts.NockRest.position;
             return Vector3.Lerp(slack, parts.NockDrawn.position, Mathf.Clamp01(draw));
@@ -120,26 +81,27 @@ namespace EliteCreaturesPack.Ballista
         }
 
         /// <summary>The sounds, each once, at its moment: a new shot, a pull begun, the latch caught, a missile laid.</summary>
-        private void Cues(BallistaParts parts, in BallistaState s)
+        private void Cues(BallistaParts parts, in WeaponState s)
         {
             if (shots >= 0 && s.Shots > shots)
             {
                 Fire?.Create(parts.Muzzle.position, parts.Muzzle.rotation);
             }
-            bool fresh = s.Act != lastAct || s.ActTime < lastActTime - 0.05f;
-            if (shots >= 0 && s.Act == Act.Pulling)
+            Act act = BallistaTimeline.Doing(s);
+            bool fresh = act != lastAct || s.StepTime < lastActTime - 0.05f;
+            if (shots >= 0 && act == Act.Pulling)
             {
-                Play(fresh && s.ActTime < 0.5f, Draw, parts.NockRest);
+                Play(fresh && s.StepTime < 0.5f, Draw, parts.NockRest);
                 Play(Crossed(s, fresh, BallistaTimeline.DrawEnd), Latch, parts.NockDrawn);
             }
-            if (shots >= 0 && s.Act == Act.Loading)
+            if (shots >= 0 && act == Act.Loading)
             {
                 Play(Crossed(s, fresh, BallistaTimeline.Lay), Laid, parts.Seat);
             }
-            (shots, lastAct, lastActTime) = (s.Shots, s.Act, s.ActTime);
+            (shots, lastAct, lastActTime) = (s.Shots, act, s.StepTime);
         }
 
-        private bool Crossed(in BallistaState s, bool fresh, float moment) => s.ActTime >= moment && s.ActTime < moment + 0.5f && (fresh || lastActTime < moment);
+        private bool Crossed(in WeaponState s, bool fresh, float moment) => s.StepTime >= moment && s.StepTime < moment + 0.5f && (fresh || lastActTime < moment);
 
         private static void Play(bool now, EffectList? effect, Transform at)
         {

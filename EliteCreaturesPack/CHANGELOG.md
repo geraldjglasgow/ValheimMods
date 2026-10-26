@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.12.9
+
+- The Bone Ballista moved onto the shared MannedWeapons library; no change in play.
+- Fixed: the ballista holder's lean no longer drops out for a frame as it begins.
+- Fixed: on a ship's rolling deck the Bone Ballista lays its bolt on the crosshair, the deck's tilt taken off.
+- The Bone Ballista can no longer be taken while sitting or steering a ship.
+
 ## 0.12.8
 
 - The Kraken's ink moved onto a shared library; no change in play.

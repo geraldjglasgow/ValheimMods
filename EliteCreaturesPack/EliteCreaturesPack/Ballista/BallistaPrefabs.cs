@@ -1,7 +1,9 @@
+using System.Collections.Generic;
 using System.Linq;
 using BundlePrefabs;
 using EliteCreaturesPack.Core;
 using HarmonyLib;
+using MannedWeapons;
 using PatchGuard;
 using UnityEngine;
 
@@ -12,7 +14,8 @@ namespace EliteCreaturesPack.Ballista
     /// identically on the server and every client, whether the switch is on or not (ballistas already built always
     /// load). The bundle `ecp_boneballista` comes from ValheimAssets (Assets/Props/BoneBallista); the models wear the
     /// game ballista's body material. The sounds are the game's: the ballista's shot and added ammo, the crossbow's
-    /// draw and latch.
+    /// draw and latch. The holder's controls, feet, facing and view are the MannedWeapons library's patches, installed
+    /// here.
     /// </summary>
     public static class BallistaPrefabs
     {
@@ -22,6 +25,11 @@ namespace EliteCreaturesPack.Ballista
 
         public static void Install(Harmony harmony)
         {
+            IReadOnlyList<string> missing = MannedWeapon.Install(harmony);
+            if (missing.Count > 0)
+            {
+                Log.Warn($"Bone ballista: the game has no {string.Join(", ", missing)}; ballistas cannot be held.");
+            }
             NetPrefabs.OnSceneAwake(harmony, scene => Guard.Run("BallistaPrefabs.Build", () => Build(scene, harmony)));
             Settings.Changed += () => SafeCall.Run("bone ballista settings", static db => BallistaCrafting.Refresh(db), ObjectDB.instance);
         }

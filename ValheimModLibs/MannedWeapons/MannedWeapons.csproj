@@ -1,0 +1,24 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>MannedWeapons</AssemblyName>
+    <RootNamespace>MannedWeapons</RootNamespace>
+    <Version>1.0.0</Version>
+    <Description>A placed weapon a player mans with the use key, aims with the view within its arcs and fires: the hold and its hand-over, the aim synced to every peer, the operator walking round it with his hands on its grips, and a reload cycle with its ammunition.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- LimbIk: the operator's hands on the weapon's grips (two-bone IK) -->
+    <ProjectReference Include="..\LimbIk\LimbIk.csproj" />
+    <!-- PatchGuard: a failure in the operator's controls or the reload is reported under the mod's name -->
+    <ProjectReference Include="..\PatchGuard\PatchGuard.csproj" />
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="BepInEx"><HintPath>$(BepInExCore)\BepInEx.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="0Harmony"><HintPath>$(BepInExCore)\0Harmony.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="assembly_valheim"><HintPath>$(ManagedPath)\assembly_valheim.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="assembly_utils"><HintPath>$(ManagedPath)\assembly_utils.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="assembly_guiutils"><HintPath>$(ManagedPath)\assembly_guiutils.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine"><HintPath>$(ManagedPath)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.PhysicsModule"><HintPath>$(ManagedPath)\UnityEngine.PhysicsModule.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

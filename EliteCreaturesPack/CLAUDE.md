@@ -49,8 +49,10 @@ EliteCreaturesPack/
                           bone arrow, recipes, words, settings (section 8: master and spawn switches only)
   Skeletons/              the one even draw for a Black Forest skeleton's spawn: plain, arsenal or crossbowman, and its patches
   Ballista/               the Bone Ballista (features/bone-ballista.md): a player-held copy of the game's ballista, half its
-                          size, of bone, spine arms; piece, missile, crafting, hold (doodad control, ownership hand-off),
-                          the holder's aim/reload/shot, drawing (turn, bending arms, string, sounds, the holder's arms by IK)
+                          size, of bone, spine arms; piece, missile, crafting; a manned weapon of the MannedWeapons
+                          library (hold and ownership hand-off, aim within 90 degrees, the holder's walk, hands and lean,
+                          reload steps and trigger: BallistaDesign); its own: parts, look (bending arms, string, sounds),
+                          the hands' targets on the string and the missile, the shot
   Crafting/               Elite Crafting, optional: the gear's item classes and levels, the creatures' rune and gear loot
   Kraken/                 the Kraken: prefabs, settings, state, spawns, words, patches, and
     Motion/               pure Unity maths, no game types: tentacle poses (curl, deck run, swim, limp), the bone rigs, easing
@@ -137,7 +139,7 @@ server gets none): `Headsman/Greataxe/GreataxeHold` (combo override, left hand o
 the haft), `Arsenal/ArsenalAtgeirHold` (the Bone Atgeir's own attacks, left hand on the haft), `Crossbow/XbowHold` and
 `XbowPlayerRig`/`XbowPlayerHand` (the Bone Crossbow's reload clip, right hand on the stock and string, the string and
 bolts moved by the reload clip's time and the game's synced loaded flag). The override swap and the haft grip are
-shared: `Core/AnimatorSwap`, `Core/HaftGrip`, `Core/TwoBoneIk`. The workshop's player preview
+shared: `Core/AnimatorSwap`, `Core/HaftGrip`, and the LimbIk library's `TwoBoneIk`. The workshop's player preview
 (`../ValheimAssets/Tools/Unity/Assets/Editor/SkelArsenal/ArsenalPlayerBake` + `Assets/Weapons/SkeletonArsenal/ecp_skel_arsenal/player_scene.py`) plays
 the same with copies of that code.
 

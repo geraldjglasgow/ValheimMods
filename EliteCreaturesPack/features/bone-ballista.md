@@ -66,11 +66,10 @@ offline patch check passes.
 | `BallistaFrame`, `BallistaParts` | the flat bundle hung into yaw/pitch/arm chains; one instance's parts by name |
 | `BallistaMissile` | `ECP_BoneMissile` (copy of the game's unused `TurretBoltBone`) and `ECP_BoneMissile_projectile` (copy of `Turret_projectilebone`, trail kept) |
 | `BallistaCrafting` | hammer entry after `piece_turret`, piece cost, missile recipe; ObjectDB.Awake/CopyOtherDB postfixes, settings change |
-| `BallistaControl` | the piece's component: use, hover, doodad control, request/answer/release RPCs |
-| `BallistaOperator`, `BallistaShot` | the holder's aim, reload, trigger, steering, the shot |
-| `BallistaTimeline`, `BallistaState` | the reload's moments and the shot's spring; the ZDO keys and one read of them |
-| `BallistaLook`, `BallistaHands`, `BallistaRig` | the drawing; the holder's arms (two-bone IK) and lean |
-| `BallistaPatches` | `Player.SetControls` prefix (attack shoots, nothing else lets go) and postfix (steer), `Character.UpdateRotation` prefix (holder keeps facing the ballista), `Player.SetMouseLook` postfix (the view held to the ballista's turn) |
+| `BallistaControl`, `BallistaDesign` | the piece's component, a `MannedWeapon` of the MannedWeapons library (since 2026-10-26: use, hover, doodad control, request/answer/release RPCs, the holder's aim, view limit, steering and facing, hands and lean by IK, reload steps, trigger, its patches on `Player.SetControls`, `Player.SetMouseLook`, `Character.UpdateRotation`); the design holds the ballista's numbers, keys and words |
+| `BallistaShot` | the shot (`WeaponShot.Launch`) |
+| `BallistaTimeline` | the reload's moments and the shot's spring (`Spring`, `Act`: the library's stage and step) |
+| `BallistaLook`, `BallistaHands` | the drawing (arms, string, laid missile, sounds); where the holder's hands go and the missile in his fist |
 | `BallistaSettings` | section `28 - Bone Ballista`, one switch `Enabled`; the words are in `translations/English.yml` |
 
 ## Decisions made without the user (overturn freely)

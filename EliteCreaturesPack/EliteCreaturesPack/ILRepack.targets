@@ -18,6 +18,8 @@
       <InputAssemblies Include="$(OutDir)EliteCreaturesLink.dll" />
       <InputAssemblies Include="$(OutDir)Translations.dll" />
       <InputAssemblies Include="$(OutDir)StatusTemplates.dll" />
+      <InputAssemblies Include="$(OutDir)MannedWeapons.dll" />
+      <InputAssemblies Include="$(OutDir)LimbIk.dll" />
       <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
     </ItemGroup>
     <ItemGroup>

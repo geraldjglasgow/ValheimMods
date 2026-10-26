@@ -1,4 +1,5 @@
 using EliteCreaturesPack.Core;
+using LimbIk;
 using UnityEngine;
 
 namespace EliteCreaturesPack.Crossbow

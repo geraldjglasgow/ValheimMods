@@ -1,4 +1,5 @@
 using System;
+using LimbIk;
 using UnityEngine;
 
 namespace EliteCreaturesPack.Core

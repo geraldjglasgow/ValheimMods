@@ -1,0 +1,12 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <AssemblyName>LimbIk</AssemblyName>
+    <RootNamespace>LimbIk</RootNamespace>
+    <Version>1.0.0</Version>
+    <Description>Two-bone IK for a character's limbs: an arm or a leg bent so its end reaches a target, the elbow or knee pointing at a hint. Pure Unity transforms, no game types.</Description>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="UnityEngine"><HintPath>$(ManagedPath)\UnityEngine.dll</HintPath><Private>false</Private></Reference>
+    <Reference Include="UnityEngine.CoreModule"><HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath><Private>false</Private></Reference>
+  </ItemGroup>
+</Project>

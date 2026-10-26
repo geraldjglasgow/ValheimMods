@@ -6,7 +6,7 @@
     <RootNamespace>EliteCreaturesPack</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.12.8</Version>
+    <Version>0.12.9</Version>
     <Product>Elite Creatures Pack</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -51,6 +51,10 @@
     <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
     <!-- StatusTemplates: its own status effects made, held on characters and registered in every ObjectDB. -->
     <ProjectReference Include="$(ModLibsPath)\StatusTemplates\StatusTemplates.csproj" />
+    <!-- MannedWeapons: the Bone Ballista held, aimed, walked round, reloaded and fired (it brings LimbIk, also the player's
+         hands on the Bone Crossbow and the greataxe) -->
+    <ProjectReference Include="$(ModLibsPath)\MannedWeapons\MannedWeapons.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\LimbIk\LimbIk.csproj" />
   </ItemGroup>
 
   <ItemGroup>

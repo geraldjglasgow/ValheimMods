@@ -11,7 +11,7 @@ namespace EliteCreaturesPack.Ballista
     /// The Bone Ballista piece: a copy of the game's ballista (`piece_turret`), so it keeps its placement, its tab in the
     /// hammer (Misc), the workbench it is built at, its wear, hit and destroy effects and its player-base area. The
     /// game's turret brain goes (it aimed and shot by itself) and the player's hold takes its place
-    /// (<see cref="BallistaControl"/>, drawn by <see cref="BallistaLook"/>). Its look, colliders and range marker go;
+    /// (<see cref="BallistaControl"/>, a manned weapon, drawn by <see cref="BallistaLook"/>). Its look, colliders and range marker go;
     /// the bundle's ballista comes in, hung into its turning frame (<see cref="BallistaFrame"/>), dressed in the game
     /// ballista's body material, with two missiles of its own: the one laid in the groove and the one in the holder's
     /// hand. Half the game ballista's health: it is half its size, of bone. Built once, under the bench.
@@ -42,7 +42,6 @@ namespace EliteCreaturesPack.Ballista
             Describe(piece.GetComponent<Piece>(), bundle);
             Point(piece.GetComponent<WearNTear>(), model);
             piece.AddComponent<BallistaControl>();
-            piece.AddComponent<BallistaLook>();
             Prefab = piece;
         }
 

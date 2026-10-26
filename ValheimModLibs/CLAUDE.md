@@ -164,6 +164,38 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
   any mod's WindowInput window), `CameraMark` (an empty `BuildCamera_out` child under the game camera while out, so two
   mods' copies never fly at once), `GameAccess` (the private members by `AccessTools`). Consumer: Keelwright (the
   blueprint table's Build ship camera, a capsule of 30 m round the dock's keel line).
+- `LimbIk/`: two-bone IK for a character's limbs (made 2026-10-24 for Keelwright's helmsman). `TwoBoneIk.Solve(upper,
+  lower, end, target, hint)` bends a shoulder-elbow-hand (or hip-knee-foot) chain after the animator, in a `LateUpdate`:
+  the law of cosines at the middle joint, the limb turned onto the target (as far as it stretches), then rolled about the
+  root-to-end line so the middle joint points at the hint, a world point. A grip point off the end bone is reached by
+  moving the target by the same offset, two passes. Pure Unity transforms, no game types and no Harmony. Consumers:
+  Keelwright (the helmsman's fists on a tiller's peg, `Helm/KwHelmArms`), Elite Creatures Pack (through MannedWeapons,
+  and the hands on the Bone Crossbow and the greataxe's haft; its own copy `Core/TwoBoneIk` went on 2026-10-26).
+- `MannedWeapons/`: a placed weapon a player mans with the use key, aims with the view and fires (made 2026-10-26 from
+  the Bone Ballista; the AssetLab cannons moved onto it the same day; `MannedWeapons/README.md` has the API and how the
+  cannons use it). The mod derives its weapon's component from `MannedWeapon` (abstract; `Interactable`, `Hoverable`,
+  `IDoodadController`) and gives it `Design` (`WeaponDesign(name, WeaponKeys(prefix))`: `Aim` = `WeaponArcs` (yaw limit
+  each way, 180 all round; pitch; turn, tilt and view rates; the view's tilt; follow; write step; reach; stop at sea),
+  `Reload` = `ReloadCycle(step seconds...)` (rest after a shot, ammo type, the step that takes it, whether letting go
+  finishes a step or leaves it to run out), `Body` = `OperatorBody` (feet and hands numbers, facing, `ElbowHint`),
+  `Words` = `WeaponWords`, `UseRange`, `HolderRange`, `Behind`), `FindFrame` (a `WeaponFrame`: yaw, pitch, stand point,
+  grips) and `Shoot`; hooks `StandPoint`, `AimPivot`, `Kick`, `Draw`, `DrawAtRest`, `Pose` (an `OperatorPose`: lean,
+  fist targets, hold), `Gripped`, `Released`, `FindAmmo`, `TakeAmmo`, `Free`, `Refusal` (why a player may not ask now),
+  `Buttons`, `HoverText`; `Manned` (someone holds it, on any peer). `MannedWeapon.Install(harmony)` (once; by hand and
+  by name, once per merged copy: `Player.SetControls` prefix and postfix, `Player.SetMouseLook` postfix, the private
+  `Character.UpdateRotation` prefix; returns the game members `GameTargets` could not find, and then patches nothing and
+  no weapon can be manned), optional `InstallEscape` (a `Menu.Update` prefix at `Priority.First`: Esc lets go first).
+  Inside: `WeaponHold` (the use key, the owner's grant with the ZDO handed over, the answer, the release; collisions
+  off; never while sitting, steering or manning another), `WeaponAim` (the operator's yaw from the view's, pitch on the
+  crosshair's target from the plane the weapon stands on, written to the ZDO), `ViewLimit` (the view held to the arc and pace), `WeaponReload` (the steps,
+  the trigger, letting go), `OperatorFeet` (walk to the stand point by `m_moveDir`, settle, give up, face; in the
+  weapon's own space), `OperatorHands` + `OperatorRig`/`OperatorArm` (lean and LimbIk fists after the animator, on every
+  drawing peer; the lean only on a pose the animator wrote this frame, compared bit for bit), `WeaponState` (one read of
+  the ZDO), `WeaponKeys` + `WeaponClock`, `WeaponShot` (`Launch`, `Hit`, optional `InstallPassThrough`: a
+  `Projectile.OnHit` prefix letting a `FiredFrom` shot through its own body or weapon), `GameAccess` (the private look,
+  movement, model, hand items and input by `AccessTools`), `Safe` (PatchGuard reports). Depends on LimbIk and PatchGuard
+  (merge both). Consumers: Elite Creatures Pack (the Bone Ballista, `Ballista/`, keys `ecp_bal_*`) and the AssetLab
+  cannons (`AssetLab/AssetLab/Cannons/Arms`, `KwArm`, keys `al_arm_*`).
 - `StatusTemplates/`: a mod's own status effects (made 2026-10-25 from a dozen copies of the same code in five mods).
   `StatusTemplate<T>(name, setup, icon)`: `Get()` makes the template on first use (`StatusTemplate.Make<T>`: named,
   `HideFlags.DontUnloadUnusedAsset`, since every copy the game adds is a MemberwiseClone sharing its native object),
@@ -187,7 +219,7 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
 ## Rules
 
 - Public API changes must keep every consuming mod compiling (EliteCreaturesReborn, EliteCreaturesPack, FeastMaster, Lockstep, OpenKeep, PackPanel, ShipConfig, EarthWright). Build the mods after touching a library.
-- Keep game coupling minimal and explicit. `YamlGameHooks` (behind `YamlFileHub.HookGame`), `ItemCopies`, `BundlePrefabs`, `LocalEffects`, `PlayerGrid`, `Hotkeys` (`Chat`, `Console`, `TextInput`, all public), `WindowInput`, `MapClicks`, `RecipeCounts` and `BuildCamera` (private members by name) are the only places that touch game types on purpose; use reflection (`AccessTools.Field`) instead of publicized assemblies so consumers do not need a publicizer for the library's sake.
+- Keep game coupling minimal and explicit. `YamlGameHooks` (behind `YamlFileHub.HookGame`), `ItemCopies`, `BundlePrefabs`, `LocalEffects`, `PlayerGrid`, `Hotkeys` (`Chat`, `Console`, `TextInput`, all public), `WindowInput`, `MapClicks`, `RecipeCounts`, `BuildCamera` and `MannedWeapons` (private members by name) are the only places that touch game types on purpose; use reflection (`AccessTools.Field`) instead of publicized assemblies so consumers do not need a publicizer for the library's sake.
 - `YamlNode` readers are generic (scalars, lists, maps, enums): no mod vocabulary in the library, neither a consumer's domain nouns nor its setting names such as "world level"; that belongs in the consumer's `YamlModel`. Docs and examples use neutral words (rules, tags, tools).
 - `YamlModel` reports problems through `Errors` (files are rejected, the previous configuration stays) and `Warnings` (files are applied). Use the right one.
 - Consumers merge these DLLs with ILRepack `Internalize=true`; do not rely on public types being visible across mods.
