@@ -311,8 +311,16 @@ boss can roll; on the right: Random and every star count the boss table can roll
 aspect does and pays, and the altar's own lines as the bowl shows them. A click is the choice: no confirm button.
 
 - **Random is each part's default** and rolls at every shift as before. A chosen part stays on the bowl (marked
-  "(chosen)"); once both are chosen the count-down goes, unless the chosen aspect is Bountiful, whose extras nobody
-  chose and so still roll at each shift.
+  "(chosen)"); once both are chosen the count-down goes, unless the chosen aspect is Bountiful with extras left to
+  roll.
+- **Bountiful's extras can be chosen too** (the user, 2026-10-26: "that is the point of bountiful ... you have to fight
+  two different aspects on the same boss"). With Bountiful chosen, a block of small buttons under its description,
+  four to a row, holds Random and every aspect it can carry for that boss (its rotation without none and Bountiful). A
+  click picks an aspect or lets it go; a pick past `extra aspects` lets go of the oldest, and a second of Twin, Tethered
+  and Phantom replaces the first. Random lets them all roll. Extras not chosen roll at each shift; the chosen ones stay
+  and are marked "(chosen)" on the bowl. Kept in the altar ZDO (`ecr_altar_pick_extras`, one bit per aspect), sent as
+  `ECR_AltarExtras`, checked by the owner against its rules, and cleared when another aspect is chosen. The window
+  lists each chosen extra with what it does and pays for them ("(at least)" while some roll); it grows to fit.
 - **The choice belongs to the altar**, not to a player: kept in the altar ZDO (`ecr_altar_pick_stars`,
   `ecr_altar_pick_aspect`, -1 for Random), the same for everyone at the bowl and across restarts, and changed by
   whoever chooses next. It stays after the boss is summoned. Sent to the bowl's owner as `ECR_AltarPick`; the owner
@@ -757,7 +765,9 @@ seen working on a dedicated server. Tick from observed behaviour, never from the
 - [ ] E opens the altar window (Shift+E on Fader's altar of item stands; plain E still offers there); Esc, Close and
   walking away close it; nothing opens once the offering is made
 - [ ] A chosen star count and aspect show on the bowl as "(chosen)" for every player, survive a shift and a restart,
-  and are the fight; Random parts still shift; both chosen hides the count-down (not with Bountiful)
+  and are the fight; Random parts still shift; both chosen hides the count-down (not with Bountiful extras left to roll)
+- [ ] Bountiful chosen: its extras' buttons show; two picked are on the bowl "(chosen)" and in the fight, a third lets go
+  of the first, one picked leaves the other rolling, Random lets both roll; another aspect hides them and clears them
 - [ ] A client who does not own the bowl can choose (dedicated server); another player's choice shows in an open window
 - [ ] `Altar Choice` false: no hint, no window, stored choices ignored
 

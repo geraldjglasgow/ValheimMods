@@ -63,7 +63,7 @@ Each pays extra loot.
 - Nightfall: a stormy night with hunting tornadoes.
 - Echoing: a ghost repeats its moves later.
 - Portalbound: the Elder and Bonemass throw through portals.
-- Bountiful: two more aspects, and all their loot.
+- Bountiful: two more aspects, picked at the altar or rolled, and all their loot.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put

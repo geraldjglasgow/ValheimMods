@@ -14,7 +14,8 @@ Or choose the fight: press **E** on the bowl (**Shift+E** on Fader's altar, wher
 lists every aspect that boss can roll and every star count it can have, each with **Random** and **None**, and shows
 what the chosen fight does and pays ("(at least)" while a part is on Random). A part left on Random
 keeps rolling at every shift; a chosen part stays on the altar for everyone, marked "(chosen)", until someone changes
-it. A chosen Bountiful's extra aspects still roll. The fight pays for what it is, chosen or rolled. Nothing can be
+it. Choose Bountiful and a block of buttons under it picks its two extra aspects from those it can carry (only one of
+Twin, Tethered and Phantom); any left on Random roll at every shift. The fight pays for what it is, chosen or rolled. Nothing can be
 changed once the offering is made. The server's `.cfg` setting `14 - Boss Altars` / `Altar Choice` (true) switches
 choosing off for everyone with false.
 

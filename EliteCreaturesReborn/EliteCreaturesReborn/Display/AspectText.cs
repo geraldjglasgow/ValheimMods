@@ -86,12 +86,13 @@ namespace EliteCreaturesReborn.Display
 
         /// <summary>The lines under the bowl's own hover text: the boss's stars, the aspect, a Bountiful one's extras each
         /// with what it does, what the whole fight pays, and when it shifts. A part that is off (null) is left out; a part
-        /// a player chose at the altar says so.</summary>
+        /// a player chose at the altar says so, and so does each chosen extra (<paramref name="extrasChosen"/>, one bit
+        /// per aspect).</summary>
         public static string AltarLines(int? stars, BossAspects? aspects, AspectRules rules, double secondsToShift,
-            bool starsChosen = false, bool aspectChosen = false)
+            bool starsChosen = false, bool aspectChosen = false, int extrasChosen = 0)
         {
             string starLine = stars is int count ? StarLine(count) + (starsChosen ? ChosenMark() : "") : "";
-            string aspectLines = aspects is BossAspects drawn ? AspectLines(drawn, rules, aspectChosen) : "";
+            string aspectLines = aspects is BossAspects drawn ? AspectLines(drawn, rules, aspectChosen, extrasChosen) : "";
             return starLine + aspectLines + Shift(secondsToShift);
         }
 
@@ -117,23 +118,25 @@ namespace EliteCreaturesReborn.Display
             return Lang.Format("ecr_aspect_sentence", capital);
         }
 
-        private static string AspectLines(BossAspects aspects, AspectRules rules, bool chosen)
+        private static string AspectLines(BossAspects aspects, AspectRules rules, bool chosen, int extrasChosen)
         {
             Aspect aspect = aspects.Headline;
             float loot = AspectLoot.FactorOf(aspects, rules);
             string pays = Mathf.Approximately(loot, 1f) ? ""
                 : " <color=#A0A0A0>" + Lang.Format("ecr_altar_loot_paren", loot.ToString("0.##")) + "</color>";
             return "\n<color=orange>" + Lang.Format("ecr_altar_aspect_line", Name(aspect)) + "</color>"
-                + (chosen ? ChosenMark() : "") + pays + "\n" + Describe(aspect, rules) + ExtraLines(aspects, rules);
+                + (chosen ? ChosenMark() : "") + pays + "\n" + Describe(aspect, rules) + ExtraLines(aspects, rules, extrasChosen);
         }
 
-        /// <summary>One line per extra aspect a Bountiful altar will add: "+ Enraged: deals 20% more physical damage".</summary>
-        private static string ExtraLines(BossAspects aspects, AspectRules rules)
+        /// <summary>One line per extra aspect a Bountiful altar will add: "+ Enraged: deals 20% more physical damage", each
+        /// one in <paramref name="chosen"/> (one bit per aspect) marked "(chosen)". The altar window's too.</summary>
+        public static string ExtraLines(BossAspects aspects, AspectRules rules, int chosen = 0)
         {
             StringBuilder lines = new StringBuilder();
             foreach (Aspect extra in aspects.ExtrasInOrder())
             {
-                string name = "<color=orange>+ " + Name(extra) + "</color>";
+                string mark = (chosen & (1 << (int)extra)) != 0 ? ChosenMark() : "";
+                string name = "<color=orange>+ " + Name(extra) + "</color>" + mark;
                 lines.Append('\n').Append(Lang.Format("ecr_altar_extra_line", name, Describe(extra, rules)));
             }
             return lines.ToString();

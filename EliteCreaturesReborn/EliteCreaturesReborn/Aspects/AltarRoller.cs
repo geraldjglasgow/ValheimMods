@@ -8,8 +8,8 @@ namespace EliteCreaturesReborn.Aspects
     /// <summary>
     /// Writes an altar's draw on the altar's owner, with the players' choices first (<see cref="AltarPicks"/>): a chosen
     /// part is set to the choice whenever the altar shows anything else, a part on Random rolls when asked to (a shift, or
-    /// a choice just set back to Random) or when it was never rolled. A chosen Bountiful rolls its extras with each roll,
-    /// since nobody chose them. When every part that is on rolls at once, one roll in <see cref="PlainOdds"/> is the plain
+    /// a choice just set back to Random) or when it was never rolled. A chosen Bountiful keeps the extras a player chose
+    /// beside it and rolls the rest with each roll. When every part that is on rolls at once, one roll in <see cref="PlainOdds"/> is the plain
     /// boss - no stars, no aspect - whatever the rule file's chances, so Random can always land on the boss as the game
     /// ships it; never twice running, so a shift still always shows a change.
     /// </summary>
@@ -66,16 +66,37 @@ namespace EliteCreaturesReborn.Aspects
             Aspect current = AspectStore.GetAltarAspect(zdo);
             if (AltarPicks.AspectOf(zdo, boss) is Aspect chosen)
             {
-                if (!rolled || current != chosen || (roll && chosen == Aspect.Bountiful))
-                {
-                    AspectStore.SetAltarAspects(zdo, new BossAspects(chosen, chosen == Aspect.Bountiful ? AspectRoller.RollExtras(boss) : 0));
-                }
+                Chosen(zdo, boss, chosen, !rolled || current != chosen, roll);
             }
             else if (roll || !rolled)
             {
                 AspectStore.SetAltarAspects(zdo, AspectRoller.RollBoss(boss, rolled ? current : (Aspect?)null));
             }
         }
+
+        // A chosen aspect is set when the bowl shows another (or nothing yet); a chosen Bountiful also at a roll and
+        // whenever the bowl lacks an extra a player chose, keeping those and rolling the rest.
+        private static void Chosen(ZDO zdo, string boss, Aspect chosen, bool other, bool roll)
+        {
+            if (chosen != Aspect.Bountiful)
+            {
+                if (other)
+                {
+                    AspectStore.SetAltarAspects(zdo, new BossAspects(chosen, 0));
+                }
+                return;
+            }
+            int keep = AltarPicks.Extras(zdo, boss);
+            if (other || roll || (AspectStore.GetAltarAspects(zdo).Extras & keep) != keep)
+            {
+                RedrawExtras(zdo, boss, keep);
+            }
+        }
+
+        /// <summary>A chosen Bountiful on the bowl with <paramref name="keep"/>, the extras a player chose, and the rest
+        /// rolled again; owner only.</summary>
+        public static void RedrawExtras(ZDO zdo, string boss, int keep) =>
+            AspectStore.SetAltarAspects(zdo, new BossAspects(Aspect.Bountiful, AspectRoller.RollExtras(boss, keep)));
 
         // A part that is off never holds the plain boss back; one that is on must be on Random and about to roll.
         private static bool StarsRoll(ZDO zdo, bool on, bool roll) =>

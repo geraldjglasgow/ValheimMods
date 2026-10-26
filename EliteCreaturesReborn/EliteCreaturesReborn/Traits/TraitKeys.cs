@@ -101,6 +101,10 @@ namespace EliteCreaturesReborn.Traits
         /// <summary>Boss altars: the aspect a player chose at the altar, on the altar's own ZDO; -1 (absent) for Random.</summary>
         public const string AltarPickAspect = "ecr_altar_pick_aspect";
 
+        /// <summary>Boss altars: the extra aspects a player chose beside a chosen Bountiful, on the altar's own ZDO, one bit
+        /// per aspect value; 0 (absent) while they all roll.</summary>
+        public const string AltarPickExtras = "ecr_altar_pick_extras";
+
         /// <summary>Twin: the partner boss's ZDOID, on each of the two, so either can find the other to share its health.</summary>
         public const string TwinPartner = "ecr_twin";
 

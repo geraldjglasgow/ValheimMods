@@ -44,23 +44,57 @@ namespace EliteCreaturesReborn.Traits
         }
 
         /// <summary>
-        /// Bountiful's extras for this boss, one bit per aspect value: `extra aspects` distinct draws from its rotation by
-        /// weight, never `none` or Bountiful itself, and never a second aspect that brings more bodies. Fewer when the pool
-        /// runs out first.
+        /// Bountiful's extras for this boss, one bit per aspect value: <paramref name="keep"/> (extras a player chose at
+        /// the altar, already within the rules) and as many more as `extra aspects` leaves, distinct draws from its rotation
+        /// by weight, never `none` or Bountiful itself, and never a second aspect that brings more bodies. Fewer when the
+        /// pool runs out first.
         /// </summary>
-        public static int RollExtras(string bossPrefab)
+        public static int RollExtras(string bossPrefab, int keep = 0)
         {
             AspectRules rules = RuleState.Active.Boss.Aspects;
             List<KeyValuePair<Aspect, float>> pool = ExtrasPool(rules, bossPrefab);
-            int wanted = Mathf.RoundToInt(rules.PowerOf(Aspect.Bountiful, Fields.ExtraAspects));
-            int mask = 0;
-            for (int i = 0; i < wanted && pool.Count > 0; i++)
+            pool.RemoveAll(entry => !Fits(keep, entry.Key));
+            int mask = keep;
+            for (int i = Count(keep); i < ExtraCount() && pool.Count > 0; i++)
             {
                 Aspect drawn = Pick(pool);
                 mask |= 1 << (int)drawn;
                 pool.RemoveAll(entry => entry.Key == drawn || (BringsBodies(drawn) && BringsBodies(entry.Key)));
             }
             return mask;
+        }
+
+        /// <summary>How many extras a Bountiful boss carries: the rule file's `extra aspects`.</summary>
+        public static int ExtraCount() =>
+            Mathf.Max(0, Mathf.RoundToInt(RuleState.Active.Boss.Aspects.PowerOf(Aspect.Bountiful, Fields.ExtraAspects)));
+
+        /// <summary>Every aspect a Bountiful boss of this prefab can carry beside it, in catalog order: what a player may
+        /// choose as its extras at the altar.</summary>
+        public static List<Aspect> ExtraChoices(string bossPrefab)
+        {
+            AspectRules rules = RuleState.Active.Boss.Aspects;
+            return rules.Enabled ? ExtrasPool(rules, bossPrefab).ConvertAll(entry => entry.Key) : new List<Aspect>();
+        }
+
+        /// <summary>True when a Bountiful boss carrying <paramref name="keep"/> still draws more: it has fewer than `extra
+        /// aspects` and one is left that it could carry beside them.</summary>
+        public static bool CanFill(string bossPrefab, int keep) =>
+            Count(keep) < ExtraCount() && ExtraChoices(bossPrefab).Exists(aspect => Fits(keep, aspect));
+
+        /// <summary>True when <paramref name="aspect"/> can join the extras <paramref name="mask"/>: not among them yet, and
+        /// not a second aspect that brings more bodies.</summary>
+        public static bool Fits(int mask, Aspect aspect) =>
+            (mask & (1 << (int)aspect)) == 0 && !(BringsBodies(aspect) && HoldsBodies(mask));
+
+        /// <summary>How many aspects an extras mask holds.</summary>
+        public static int Count(int mask)
+        {
+            int count = 0;
+            for (int bits = mask; bits != 0; bits &= bits - 1)
+            {
+                count++;
+            }
+            return count;
         }
 
         /// <summary>True for Twin, Tethered and Phantom: one boss carries at most one of them.</summary>

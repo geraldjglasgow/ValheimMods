@@ -317,8 +317,10 @@ ecr_altar_random: "Random"
 ecr_altar_none: "None"
 # Boss altar window: description under "Aspect: Random" when the player leaves the aspect on Random.
 ecr_altar_random_text: "Rolled from this boss's aspects at every shift of the altar."
-# Boss altar window: added after the Bountiful aspect's description sentence. 'Its' = the boss's.
-ecr_altar_bountiful_text: "Its extra aspects roll at every shift of the altar."
+# Boss altar window: added after the Bountiful aspect's description sentence while some of its extra aspects are not chosen. 'Its' = the boss's; 'below' = the extra aspect buttons under it.
+ecr_altar_bountiful_text: "Choose its extra aspects below; any not chosen roll at every shift of the altar."
+# Boss altar window: orange heading over the extra aspect buttons shown when Bountiful is chosen. $1 = how many are chosen, $2 = how many it carries (2).
+ecr_altar_extras_line: "Extra aspects: $1 of $2 chosen"
 # Boss altar window: grey line under the chosen aspect's description, its loot multiplier. $1 = multiplier (1.4).
 ecr_altar_loot: "Loot x$1"
 # Boss altar window: grey mark after the reward line while a part is on Random; the fight pays this or more. In brackets.

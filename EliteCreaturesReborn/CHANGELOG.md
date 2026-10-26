@@ -1,5 +1,9 @@
 # Changelog
 
+## 3.36.0
+
+- Altar window: choosing Bountiful lets you pick its two extra aspects; any left on Random still roll.
+
 ## 3.35.0
 
 - Altar window: one tidy panel; it shows what the chosen fight does and pays, and None is always a choice.

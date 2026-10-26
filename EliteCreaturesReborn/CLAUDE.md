@@ -267,7 +267,11 @@ with Random and every aspect the boss can roll on the left and Random and every 
 (None, for no stars or no aspect, is always there). Under the star buttons it describes the fight being chosen: what
 its aspect does and what it pays, "(at least)" while a part is on Random.
 A chosen part stays on the altar for everyone (marked "(chosen)") until someone changes it; a part left on Random
-rolls at every shift as before, and so do a chosen Bountiful's extras. The fight pays for what it is, chosen or rolled.
+rolls at every shift as before. With Bountiful chosen, a block of the same buttons under its description chooses its
+extras: Random, or up to `extra aspects` (two) of the aspects it can carry, a pick past that letting go of the oldest
+and only one of Twin, Tethered and Phantom; extras not chosen roll at every shift, and the bowl marks the chosen ones
+"(chosen)" (kept in the altar's `ecr_altar_pick_extras`, sent as `ECR_AltarExtras`, cleared when another aspect is
+chosen; `Aspects/AltarChoices.cs`). The fight pays for what it is, chosen or rolled.
 `14 - Boss Altars` / `Altar Choice` (true) in the .cfg switches it, set by the server like the arena's switch
 (`Config/AltarSettings.cs`; `Aspects/AltarPicks.cs`, `AltarRoller.cs`; the window in `Altars/`).
 

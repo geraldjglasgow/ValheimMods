@@ -20,14 +20,12 @@ namespace EliteCreaturesReborn.Aspects
     /// aspects are locked on this machine - the one that will instantiate the boss - so a shift during the few seconds
     /// before the boss appears cannot change the fight that was offered for. A part that is off (boss stars or aspects)
     /// is left as it is in the ZDO, and neither shown nor locked. A part a player chose in the altar window
-    /// (<see cref="AltarPicks"/>, sent to the owner as an RPC) is kept instead of rolled; only the parts left on Random shift.
+    /// (<see cref="AltarPicks"/>, sent to the owner by <see cref="AltarChoices"/>) is kept instead of rolled; only the
+    /// parts left on Random shift, and a chosen Bountiful's extras that nobody chose.
     /// </summary>
     public sealed class AltarAspect : MonoBehaviour
     {
         private const float Interval = 1f;
-
-        /// <summary>A player's choices at the altar, sent to the altar's owner: the star count and the aspect value.</summary>
-        private const string PickRpc = "ECR_AltarPick";
 
         /// <summary>Used for an in-game hour when the environment is not up yet: 1/24 of the default 30-minute day.</summary>
         private const double FallbackHourSeconds = 75.0;
@@ -61,10 +59,7 @@ namespace EliteCreaturesReborn.Aspects
         {
             _bowl = GetComponent<OfferingBowl>();
             _boss = Utils.GetPrefabName(_bowl.m_bossPrefab);
-            if (_bowl.m_nview != null && _bowl.m_nview.IsValid())
-            {
-                _bowl.m_nview.Register<int, int>(PickRpc, RPC_Pick);
-            }
+            AltarChoices.Register(this);
         }
 
         /// <summary>The boss prefab's name, as the rules know it.</summary>
@@ -110,37 +105,8 @@ namespace EliteCreaturesReborn.Aspects
         /// (<see cref="AltarRoller"/>).</summary>
         private void Roll(ZDO zdo, bool shift) => AltarRoller.Draw(zdo, _boss, shift, shift);
 
-        /// <summary>From the altar window, on any machine: asks the altar's owner to keep these choices (each a value, or
-        /// <see cref="AltarPicks.Random"/>). The owner checks them against its rules and shows them on the bowl at once.</summary>
-        public void Choose(int stars, int aspect)
-        {
-            if (_bowl.m_nview != null && _bowl.m_nview.IsValid())
-            {
-                _bowl.m_nview.InvokeRPC(PickRpc, stars, aspect);
-            }
-        }
-
         /// <summary>True from the offering until the boss appears: the fight is locked, so nothing can be chosen.</summary>
         public bool Offered => _bowl != null && _bowl.IsBossSpawnQueued();
-
-        private void RPC_Pick(long sender, int stars, int aspect) => Guard.Run("altar choice", () => Pick(stars, aspect));
-
-        // Owner only. A choice the rules do not allow is kept as Random; a part set back to Random rolls at once, so the
-        // bowl stops showing the old choice.
-        private void Pick(int stars, int aspect)
-        {
-            ZDO? zdo = OwnedZdo();
-            if (zdo == null || !AltarSettings.Enabled || Offered)
-            {
-                return;
-            }
-            int keepStars = AltarPicks.AllowsStars(stars) ? stars : AltarPicks.Random;
-            int keepAspect = AltarPicks.AllowsAspect(_boss, aspect) ? aspect : AltarPicks.Random;
-            bool freshStars = keepStars == AltarPicks.Random && AspectStore.GetPickedStars(zdo) != AltarPicks.Random;
-            bool freshAspect = keepAspect == AltarPicks.Random && AspectStore.GetPickedAspect(zdo) != AltarPicks.Random;
-            AspectStore.SetPicks(zdo, keepStars, keepAspect);
-            AltarRoller.Draw(zdo, _boss, freshStars, freshAspect);
-        }
 
         /// <summary>At the offering, on the machine that will spawn the boss: fix the stars and aspects on the bowl now.</summary>
         public void Lock()
@@ -245,7 +211,7 @@ namespace EliteCreaturesReborn.Aspects
             }
             double shown = AltarPicks.AnyRolls(zdo, _boss) ? secondsToShift : -1.0;
             return AspectText.AltarLines(stars, aspects, rules, shown,
-                AltarPicks.Stars(zdo) != null, AltarPicks.AspectOf(zdo, _boss) != null);
+                AltarPicks.Stars(zdo) != null, AltarPicks.AspectOf(zdo, _boss) != null, AltarPicks.Extras(zdo, _boss));
         }
 
         /// <summary>Seconds until the next shift; negative when shifting is off and the altar is fixed.</summary>
@@ -263,7 +229,8 @@ namespace EliteCreaturesReborn.Aspects
             return view != null && view.IsValid() ? view.GetZDO() : null;
         }
 
-        private ZDO? OwnedZdo()
+        /// <summary>The bowl's ZDO while this machine owns it, else null.</summary>
+        internal ZDO? OwnedZdo()
         {
             ZDO? zdo = Zdo();
             return zdo != null && _bowl.m_nview.IsOwner() ? zdo : null;

@@ -73,7 +73,7 @@ The altar shows the aspect before you offer and shifts every 15 seconds; press E
 [*]Nightfall: a storming night with tornadoes that hunt you.
 [*]Echoing: a white ghost of the boss repeats its every move 15 seconds later, blows included.
 [*]Portalbound: the Elder and Bonemass throw through portals.
-[*]Bountiful: two more aspects at once, and all their loot.
+[*]Bountiful: two more aspects at once, picked at the altar or rolled, and all their loot.
 [/list]
 
 [size=4][b]Raids: the Raiders Chest[/b][/size]

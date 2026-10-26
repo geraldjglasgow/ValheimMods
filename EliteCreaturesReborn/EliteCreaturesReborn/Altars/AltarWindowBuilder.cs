@@ -14,10 +14,18 @@ namespace EliteCreaturesReborn.Altars
         public RectTransform StarRow = null!;
         public TMP_Text AspectTitle = null!;
         public TMP_Text Description = null!;
+        public TMP_Text ExtrasTitle = null!;
+        public RectTransform ExtraRow = null!;
         public TMP_Text Fight = null!;
 
-        /// <summary>The inventory's selected-slot frame, laid round the chosen star button; null when the game's
-        /// inventory slot has none (the chosen label is then coloured instead).</summary>
+        /// <summary>The frame, the aspect list, the inset and the Close button, which grow while the extras show.</summary>
+        public RectTransform Frame = null!;
+        public RectTransform List = null!;
+        public RectTransform Inset = null!;
+        public RectTransform Close = null!;
+
+        /// <summary>The inventory's selected-slot frame, laid round a chosen button; null when the game's inventory slot
+        /// has none (the chosen label is then coloured instead).</summary>
         public Image? StarFrame;
 
         /// <summary>The orange of the list's "selected" bar, which the frame is tinted to.</summary>
@@ -28,9 +36,10 @@ namespace EliteCreaturesReborn.Altars
     /// Builds the altar window from a copy of the game's own compendium window, as the death recap is built
     /// (<see cref="WindowBuilder"/>): the game's wood frame, list, buttons and fonts. One compact panel: the aspect list
     /// on the left, and on the right an inset like the list's holding the boss's name, a row of small star buttons
-    /// (copies of the compendium's Close button), what the chosen aspect does and what the chosen fight pays; the Close
-    /// button sits under the inset. Every part has its own space, so nothing covers anything else. Coordinates are from
-    /// the frame's top-left corner.
+    /// (copies of the compendium's Close button), what the chosen aspect does, beside a chosen Bountiful a block of the
+    /// same buttons for its extras, and what the chosen fight pays; the Close button sits under the inset. Every part has
+    /// its own space, so nothing covers anything else (<see cref="Layout"/>). Coordinates are from the frame's top-left
+    /// corner.
     /// </summary>
     internal static class AltarWindowBuilder
     {
@@ -42,6 +51,9 @@ namespace EliteCreaturesReborn.Altars
         private const float InsetWide = 514f;
         private const float InsetBottom = 466f;
         private const float Pad = 14f;
+        private const float TextTop = Top + 142f;
+        private const float TextHigh = 150f;
+        private const float FightHigh = InsetBottom - Top - 308f;
 
         /// <summary>The left edge and width of the inset's contents.</summary>
         public const float Left = InsetLeft + Pad;
@@ -61,29 +73,61 @@ namespace EliteCreaturesReborn.Altars
                 Object.Destroy(root.gameObject);
                 return null;
             }
-            Arrange(parts);
+            AltarPane pane = Pane(parts, Arrange(parts));
+            Layout(pane, 0f);
             AltarWindowView view = root.gameObject.AddComponent<AltarWindowView>();
-            view.Init(Pane(parts), new ElementList(parts.ListRoot, parts.Element, parts.ListScroll, 28f, 31f), parts.Close);
+            view.Init(pane, new ElementList(parts.ListRoot, parts.Element, parts.ListScroll, 28f, 31f), parts.Close);
             root.gameObject.SetActive(false);
             return view;
         }
 
-        // The frame shrinks to the picker's size; the aspect list fills the left, the inset the right, the close button
-        // sits under the inset, and the compendium's right text area is not used. The words are written as it opens.
-        private static void Arrange(WindowParts parts)
+        /// <summary>
+        /// The right side below the aspect heading, top down: what the aspect does, then beside a chosen Bountiful the
+        /// extras' heading and their buttons (<paramref name="extras"/> high; 0 while they do not show), then what the
+        /// fight pays. Without the extras every part has its fixed place; with them the description takes the height its
+        /// words need, and the frame, the aspect list, the inset and the Close button grow to hold the rest.
+        /// </summary>
+        public static void Layout(AltarPane pane, float extras)
         {
-            parts.Frame.sizeDelta = new Vector2(Width, Height);
-            UiParts.Place(parts.List, 20f, Top, InsetLeft - 36f, Bottom - Top);
+            float y = TextTop;
+            float words = extras <= 0f ? TextHigh
+                : Mathf.Max(40f, pane.Description.GetPreferredValues(pane.Description.text, Wide, 0f).y + 4f);
+            UiParts.Place(pane.Description.rectTransform, Left, y, Wide, words);
+            y += words + 8f;
+            if (extras > 0f)
+            {
+                UiParts.Place(pane.ExtrasTitle.rectTransform, Left, y, Wide, 24f);
+                UiParts.Place(pane.ExtraRow, Left, y + 28f, Wide, extras);
+                y += 28f + extras + 10f;
+            }
+            UiParts.Place(pane.Fight.rectTransform, Left, y, Wide, FightHigh);
+            Size(pane, Mathf.Max(InsetBottom, y + FightHigh + 8f));
+        }
+
+        // The frame, the list beside the inset, the inset and the Close button under it, for an inset ending at
+        // insetBottom; at InsetBottom, the window's own size.
+        private static void Size(AltarPane pane, float insetBottom)
+        {
+            float grow = insetBottom - InsetBottom;
+            pane.Frame.sizeDelta = new Vector2(Width, Height + grow);
+            UiParts.Place(pane.List, 20f, Top, InsetLeft - 36f, Bottom + grow - Top);
+            UiParts.Place(pane.Inset, InsetLeft, Top, InsetWide, insetBottom - Top);
+            UiParts.Place(pane.Close, InsetLeft + InsetWide - 160f, insetBottom + 10f, 160f, 44f);
+        }
+
+        // The inset goes just above the aspect list's background, the buttons close this window, and the compendium's
+        // right text area is not used. The sizes are set by Layout, the words as the window opens.
+        private static RectTransform Arrange(WindowParts parts)
+        {
             Image inset = UiParts.Image(parts.Inset, parts.Frame, "ecr_altar_inset");
-            UiParts.Place(inset.rectTransform, InsetLeft, Top, InsetWide, InsetBottom - Top);
             inset.transform.SetSiblingIndex(parts.List.GetSiblingIndex() + 1);
-            UiParts.Place((RectTransform)parts.Close.transform, InsetLeft + InsetWide - 160f, InsetBottom + 10f, 160f, 44f);
             UiParts.Rewire(parts.Close, AltarWindow.Close);
             UiParts.Rewire(parts.Backdrop, AltarWindow.Close);
             parts.Area.gameObject.SetActive(false);
+            return inset.rectTransform;
         }
 
-        private static AltarPane Pane(WindowParts parts)
+        private static AltarPane Pane(WindowParts parts, RectTransform inset)
         {
             AltarPane pane = new AltarPane
             {
@@ -91,16 +135,28 @@ namespace EliteCreaturesReborn.Altars
                 Boss = Line(parts, "ecr_altar_boss", Top + 8f, 32f, 24f, false),
                 StarsTitle = Line(parts, "ecr_altar_stars", Top + 44f, 24f, 18f, false),
                 AspectTitle = Line(parts, "ecr_altar_aspect", Top + 114f, 26f, 20f, false),
-                Description = Line(parts, "ecr_altar_text", Top + 142f, 150f, 16f, true),
-                Fight = Line(parts, "ecr_altar_fight", Top + 300f, InsetBottom - Top - 308f, 16f, true),
+                Description = Line(parts, "ecr_altar_text", TextTop, TextHigh, 16f, true),
+                ExtrasTitle = Line(parts, "ecr_altar_extras", TextTop, 24f, 18f, false),
+                Fight = Line(parts, "ecr_altar_fight", Top + 300f, FightHigh, 16f, true),
+                Frame = parts.Frame,
+                List = parts.List,
+                Inset = inset,
+                Close = (RectTransform)parts.Close.transform,
             };
             StarLook(pane, parts);
-            pane.StarRow = UiParts.Node("ecr_altar_star_row", parts.Frame);
-            UiParts.Place(pane.StarRow, Left, Top + 70f, Wide, 32f);
+            pane.StarRow = Row(parts, "ecr_altar_star_row", Top + 70f, 32f);
+            pane.ExtraRow = Row(parts, "ecr_altar_extra_row", TextTop, 0f);
             return pane;
         }
 
-        // The chosen star button's frame: the inventory slot's own, in the orange of the list's "selected" bar.
+        private static RectTransform Row(WindowParts parts, string name, float y, float h)
+        {
+            RectTransform row = UiParts.Node(name, parts.Frame);
+            UiParts.Place(row, Left, y, Wide, h);
+            return row;
+        }
+
+        // The chosen button's frame: the inventory slot's own, in the orange of the list's "selected" bar.
         private static void StarLook(AltarPane pane, WindowParts parts)
         {
             InventoryGrid grid = InventoryGui.instance.m_playerGrid;

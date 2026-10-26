@@ -12,7 +12,8 @@ namespace EliteCreaturesReborn.Altars
 {
     /// <summary>
     /// The altar window's words for the fight a player is choosing, never for what the altar happens to show: the chosen
-    /// aspect's heading and what it does, and what the chosen fight pays. A part left on Random is described as rolling;
+    /// aspect's heading and what it does (a chosen Bountiful's with the extras chosen for it), and what the chosen fight
+    /// pays. A part left on Random, or extras left to roll, is described as rolling;
     /// the pay is then the least that fight can pay, marked "(at least)", and while the stars roll the boss's past defeats
     /// show, since each leans its stars up. With every part on Random the plain boss is named as one of the rolls.
     /// </summary>
@@ -30,7 +31,10 @@ namespace EliteCreaturesReborn.Altars
             return Orange(Lang.Format("ecr_altar_aspect_line", name));
         }
 
-        public static string Description(int aspect, bool any)
+        /// <summary>What the chosen aspect does and pays; beside a chosen Bountiful, the extras chosen for it
+        /// (<paramref name="extras"/>, one bit per aspect) each with what it does, and while
+        /// <paramref name="extrasRoll"/> that the rest roll, its pay then "(at least)".</summary>
+        public static string Description(int aspect, bool any, int extras, bool extrasRoll)
         {
             if (!any)
             {
@@ -41,22 +45,29 @@ namespace EliteCreaturesReborn.Altars
                 return Lang.Get("ecr_altar_random_text");
             }
             AspectRules rules = RuleState.Active.Boss.Aspects;
+            BossAspects fight = new BossAspects((Aspect)aspect, extras);
             return AspectText.Sentence((Aspect)aspect, rules)
-                + (aspect == (int)Aspect.Bountiful ? " " + Lang.Get("ecr_altar_bountiful_text") : "")
-                + Loot(AspectLoot.FactorOf(new BossAspects((Aspect)aspect, 0), rules));
+                + (extrasRoll ? " " + Lang.Get("ecr_altar_bountiful_text") : "")
+                + AspectText.ExtraLines(fight, rules)
+                + Loot(AspectLoot.FactorOf(fight, rules), extrasRoll);
         }
 
-        /// <summary>The pay, then grey notes for what still rolls; one line each.</summary>
-        public static string Fight(string boss, int stars, int aspect, List<Aspect> aspects)
+        /// <summary>The heading over a chosen Bountiful's extra buttons: how many of them are chosen.</summary>
+        public static string ExtrasTitle(int chosen, int carried) => Orange(Lang.Format("ecr_altar_extras_line", chosen, carried));
+
+        /// <summary>The pay, then grey notes for what still rolls; one line each. <paramref name="extras"/> and
+        /// <paramref name="extrasRoll"/> as for <see cref="Description"/>.</summary>
+        public static string Fight(string boss, int stars, int aspect, List<Aspect> aspects, int extras, bool extrasRoll)
         {
             bool starsOn = RuleState.Active.Boss.Enabled;
             bool starsRoll = starsOn && stars == AltarPicks.Random;
             bool aspectRolls = aspects.Count > 0 && aspect == AltarPicks.Random;
             List<string> lines = new List<string>();
-            string reward = BossRewards.AltarLine(boss, starsOn && !starsRoll ? stars : 0, LeastLoot(aspect, aspects));
+            string reward = BossRewards.AltarLine(boss, starsOn && !starsRoll ? stars : 0, LeastLoot(aspect, aspects, extras));
             if (reward.Length > 0)
             {
-                lines.Add(reward.TrimStart('\n') + (starsRoll || aspectRolls ? " " + Note(Lang.Get("ecr_altar_at_least")) : ""));
+                bool least = starsRoll || aspectRolls || extrasRoll;
+                lines.Add(reward.TrimStart('\n') + (least ? " " + Note(Lang.Get("ecr_altar_at_least")) : ""));
             }
             if (starsRoll)
             {
@@ -79,8 +90,9 @@ namespace EliteCreaturesReborn.Altars
             }
         }
 
-        // The chosen aspect's loot multiplier, or with the aspect on Random the smallest any roll can bring.
-        private static float LeastLoot(int aspect, List<Aspect> aspects)
+        // The chosen aspect's loot multiplier (a chosen Bountiful's with the extras chosen for it; any that roll only add),
+        // or with the aspect on Random the smallest any roll can bring.
+        private static float LeastLoot(int aspect, List<Aspect> aspects, int extras)
         {
             AspectRules rules = RuleState.Active.Boss.Aspects;
             if (aspects.Count == 0)
@@ -89,7 +101,7 @@ namespace EliteCreaturesReborn.Altars
             }
             if (aspect != AltarPicks.Random)
             {
-                return AspectLoot.FactorOf(new BossAspects((Aspect)aspect, 0), rules);
+                return AspectLoot.FactorOf(new BossAspects((Aspect)aspect, extras), rules);
             }
             float least = float.MaxValue;
             foreach (Aspect choice in aspects)
@@ -99,8 +111,9 @@ namespace EliteCreaturesReborn.Altars
             return least;
         }
 
-        private static string Loot(float factor) => Mathf.Approximately(factor, 1f) ? ""
-            : "\n" + Note(Lang.Format("ecr_altar_loot", factor.ToString("0.##")));
+        private static string Loot(float factor, bool atLeast) => Mathf.Approximately(factor, 1f) ? ""
+            : "\n" + Note(Lang.Format("ecr_altar_loot", factor.ToString("0.##"))
+                + (atLeast ? " " + Lang.Get("ecr_altar_at_least") : ""));
 
         private static string Orange(string text) => "<color=orange>" + text + "</color>";
 
