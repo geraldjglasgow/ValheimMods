@@ -418,6 +418,11 @@ Problems met while building the ship designer and the ships built from the hamme
 - **Cause:** the climb's spot is planned from the blueprint for a 0.22 m body, but the game's player is 0.49 m round; on a full-bodied hull the hull's collider boxes stand inside the drawn planking, and pieces built aboard (cannons) are not in the blueprint. The player landed overlapping a hull box and the physics pushed him out over the side.
 - **Solution:** after the game's ladder places the player on a Broadside ship, the player's own capsule is tried there against the ship's solid colliders and moved inboard and along in small steps to the nearest clear spot on the ship's floor (`KwShipLadderLanding`, a postfix on `Ladder.Interact`).
 
+## Climbing onto a roof drags the player back down
+- **Problem:** the user (2026-10-26): climbing a cabin's ladder put the player on the roof, then a moment later back down on the deck ("it tries to place me, fails and then just puts me back down"); a roof climb on a cabin on a cabin did the same.
+- **Cause:** the game keeps a player standing still on a ship at the spot they stood on it (`Character.ApplyGroundForce`: pulled back at ten times the distance a second from up to 4 m away, or set straight onto it when another peer owns the ship), and takes that spot again only when the ship body under them changes. Deck and roof are one body, so after the climb the spot was still the ladder's foot, 3 m away: the player was dragged back toward it over the roof's edge. Recorded in game: no input, the push pointed at the ladder's foot, the game's spot sat there.
+- **Solution:** every Broadside climb puts the player down through `KwClimbRoom.Place`, which also lets go of that spot (`m_lastAttachBody`), so the game takes it again where they land (`KwLadderClimb`, `KwMastClimb`, `KwShipLadderLanding`).
+
 ## Can't walk through a roof railing's ladder gap
 - **Problem:** the gap a roof railing leaves where a ladder comes up could not be walked through, and a climb onto the roof there could push the player back off.
 - **Cause:** the gap was 0.7 m (`KwRoofRail.Gap`) less its posts, narrower than the player (0.98 m).

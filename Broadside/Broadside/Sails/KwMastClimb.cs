@@ -93,11 +93,9 @@ namespace Broadside
             Vector3 stand = stands[to];
             stand.y *= Kit(player.transform.position).y < 0f ? -1f : 1f;
             Vector3 facing = new Vector3(frame.forward.x, 0f, frame.forward.z).normalized;
-            player.transform.position = frame.TransformPoint(KwMesh.ToUnity(stand));
             player.transform.rotation = Quaternion.LookRotation(facing);
             player.SetLookDir(facing);
-            player.m_maxAirAltitude = player.transform.position.y;      // no fall counted from the floor left behind
-            Physics.SyncTransforms();
+            KwClimbRoom.Place(player, frame.TransformPoint(KwMesh.ToUnity(stand)));
             return false;
         }
 

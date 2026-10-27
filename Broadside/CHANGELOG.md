@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.1.1
+
+- Fixed: climbing a ladder onto a cabin roof no longer drags you back down to the deck.
+- Fixed: climbing masts and boarding ladders no longer pulls you back toward where you started the climb.
+
 ## 0.1.0
 
 - First release.

@@ -11,8 +11,8 @@ namespace Broadside
     /// full-bodied hull, or a piece built aboard since (a cannon, a chest), could fill the spot; the game then pushed the
     /// player back out over the side (the user, 2026-10-26: "I keep getting teleported back down"). After the climb the
     /// player's own capsule is tried there against the ship's solid colliders and, when it overlaps one, moved inboard
-    /// (toward the ship's middle line) and along in small steps to the nearest clear place standing on the ship. The fall
-    /// the game counts from is reset to where the player lands. Local to the climbing player.
+    /// (toward the ship's middle line) and along in small steps to the nearest clear place standing on the ship, and put
+    /// down there as every climb puts the player (<see cref="KwClimbRoom.Place"/>). Local to the climbing player.
     /// </summary>
     [HarmonyPatch(typeof(Ladder), nameof(Ladder.Interact))]
     public static class KwShipLadderLanding
@@ -34,10 +34,7 @@ namespace Broadside
             if (ship == null || (player.transform.position - ladder.m_targetPos.position).sqrMagnitude > 0.01f)
                 return;
             Vector3? clear = Clear(ship.transform, player, player.transform.position);
-            if (clear != null)
-                player.transform.position = clear.Value;
-            player.m_maxAirAltitude = player.transform.position.y;
-            Physics.SyncTransforms();
+            KwClimbRoom.Place(player, clear ?? player.transform.position);
         }
 
         // The landing itself when the player's capsule fits there, else the nearest clear spot inboard and along with the

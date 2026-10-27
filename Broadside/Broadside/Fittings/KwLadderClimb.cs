@@ -56,11 +56,9 @@ namespace Broadside
                 OpenAbove();
             Vector3 to = up ? Top(player) : Foot(player, length);
             Vector3 facing = up ? Away(to) : transform.forward;
-            player.transform.position = to;
             player.transform.rotation = Quaternion.LookRotation(facing);
             player.SetLookDir(facing);
-            player.m_maxAirAltitude = player.transform.position.y;      // no fall counted from the floor left behind
-            Physics.SyncTransforms();
+            KwClimbRoom.Place(player, to);
             return false;
         }
 
