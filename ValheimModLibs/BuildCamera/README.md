@@ -11,7 +11,7 @@ placement, so a dedicated server and the other players need nothing (they see th
   bounds). False when dead, teleporting, seated with a seat camera, in the game's free fly, or another mod's copy has
   its camera out (an empty `BuildCamera_out` child under the game camera says so).
 - `FreeCamera.Leave()`, `IsOut`, `IsOutFor(player)`, `Flight`, `Position`, `Rotation`.
-- `CameraFlight(bounds)`: one trip out. `Speed` (10 m/s), `RunMultiplier` (3), `Reach` (metres from the camera along the
+- `CameraFlight(bounds)`: one trip out. `Speed` (10 m/s), `RunMultiplier` (3), `WheelSpeed` (10) `WheelMoves` (when the mouse wheel moves the camera along its view like the game's zoom instead of turning the piece in hand; null, never), `FliesWhile` (when it still flies on the movement keys though a window holds the player's input; null, never), `Reach` (metres from the camera along the
   game's 50 m build ray; default 50), `Collide` (sphere sweep against `terrain` and `static_solid`, on), `AboveGround`
   (off, for caves), `AboveWater` (on), `EscapeLeaves` (on), `LeaveWhenHurt` (on), `Stays` (the mod's own rule, asked
   after every player update), `Ended` (why it came back: `CameraEnd`).
@@ -42,5 +42,5 @@ if (CameraTool.Hold(player, item => item.m_shared.m_name == "$item_hammer"))
 	FreeCamera.Enter(player, new CameraFlight(new BallBounds(table.position, 30f)) { Stays = p => p.InPlaceMode() });
 ```
 
-Merged into the consuming mod with ILRepack like every library here. Consumer: Keelwright (the blueprint table's
+Merged into the consuming mod with ILRepack like every library here. Consumer: Broadside (the blueprint table's
 Build ship camera round the dock). OpenKeep's `BuildCamera/` section is the same rules and is to move onto it.

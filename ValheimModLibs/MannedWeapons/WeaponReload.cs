@@ -4,8 +4,10 @@ namespace MannedWeapons;
 /// The reload and the trigger, on the operator's machine, which owns the weapon's ZDO while he holds it. The reload runs
 /// by itself (<see cref="ReloadCycle"/>): each physics step a step that has run its time is written as done, and the
 /// next begins when he carries ammunition (taken as its step says) and the weapon has rested after its last shot. The
-/// trigger fires a loaded weapon (<see cref="MannedWeapon.Shoot"/>), then writes it empty and counts the shot, every
-/// peer's cue for the shot's look and sound.
+/// trigger takes what the crosshair is on (<see cref="WeaponAim.Mark"/>) and fires a loaded weapon
+/// (<see cref="MannedWeapon.Shoot"/>), then writes it empty and counts the shot, every
+/// peer's cue for the shot's look and sound; a shot called without an operator (<see cref="Called"/>), or ordered of a
+/// weapon its operator holds (<see cref="Ordered"/>), the same.
 /// </summary>
 internal static class WeaponReload
 {
@@ -50,6 +52,7 @@ internal static class WeaponReload
 		WeaponState s = weapon.State;
 		if (s.Loaded && !s.Busy)
 		{
+			weapon.Aim.Mark = WeaponSight.Crosshair(weapon, player);
 			if (weapon.Shoot(player))
 			{
 				Fired(weapon);
@@ -58,6 +61,45 @@ internal static class WeaponReload
 		else if (!s.Busy && weapon.FindAmmo(player) == null)
 		{
 			player.Message(MessageHud.MessageType.Center, weapon.Design.Words.NoAmmo);
+		}
+	}
+
+	/// <summary>A shot without an operator (<see cref="WeaponCall"/>), on the caller's machine once it owns the ZDO: a loaded weapon fired where it points; false when it was not.</summary>
+	public static bool Called(MannedWeapon weapon, Player caller)
+	{
+		if (weapon.Frame == null || !weapon.Net.IsValid() || !weapon.Net.IsOwner())
+		{
+			return false;
+		}
+		WeaponState s = weapon.State;
+		if (!s.Loaded || s.Busy || !weapon.ShootCalled(caller))
+		{
+			return false;
+		}
+		Fired(weapon);
+		return true;
+	}
+
+	/// <summary>
+	/// A shot ordered by another player (<see cref="WeaponCall"/>), on the machine of the operator who holds the weapon:
+	/// a loaded weapon fired as his own trigger fires it, on what his crosshair is on (where he has it laid), its reload
+	/// then his as always; nothing is said to him when it is not loaded.
+	/// </summary>
+	public static void Ordered(MannedWeapon weapon, Player holder)
+	{
+		if (weapon.Frame == null || !weapon.Net.IsValid() || !weapon.Net.IsOwner())
+		{
+			return;
+		}
+		WeaponState s = weapon.State;
+		if (!s.Loaded || s.Busy)
+		{
+			return;
+		}
+		weapon.Aim.Mark = WeaponSight.Crosshair(weapon, holder);
+		if (weapon.ShootOrdered(holder))
+		{
+			Fired(weapon);
 		}
 	}
 

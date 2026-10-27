@@ -8,7 +8,8 @@ namespace MannedWeapons;
 /// player ID), `_yaw` and `_pitch` (degrees), the reload's `_stage` (steps done), `_step` (the step under way, from 1; 0
 /// none) and `_step_at` (network ticks), `_shots` and `_shot_at`; RPCs `prefix_request`, `_release` (a player ID) and
 /// `_answer` (granted). The three reload keys can be named otherwise, so a weapon that already kept them under its own
-/// names keeps its saved state.
+/// names keeps its saved state. A shot without an operator is asked for with `prefix_call` (a player ID) and answered
+/// with `prefix_called` (granted); a shot ordered whoever mans the weapon with `prefix_order` (a player ID).
 /// </summary>
 public sealed class WeaponKeys
 {
@@ -19,6 +20,7 @@ public sealed class WeaponKeys
 		(Stage, Step, StepAt) = (Hash(stage), Hash(step), Hash(stepAt));
 		(Shots, ShotAt) = (Hash("shots"), Hash("shot_at"));
 		(Request, Release, Answer) = (prefix + "_request", prefix + "_release", prefix + "_answer");
+		(Call, Called, Order) = (prefix + "_call", prefix + "_called", prefix + "_order");
 	}
 
 	public string Prefix { get; }
@@ -33,6 +35,9 @@ public sealed class WeaponKeys
 	public string Request { get; }
 	public string Release { get; }
 	public string Answer { get; }
+	public string Call { get; }
+	public string Called { get; }
+	public string Order { get; }
 
 	private int Hash(string name) => (Prefix + "_" + name).GetStableHashCode();
 }

@@ -1,0 +1,22 @@
+{
+  "name": "Fjord_Wasp",
+  "format": 1,
+  "frame": "Unity axes of the dock's aft section: x right, y up, z forward; metres from its origin on the ground at its aft end",
+  "pieces": [
+    {"prefab": "KW_gen_keel", "pos": [0, 0.9, 3.2], "rot": [0, 1, 0, 0], "s": {"kw_span": "keel|2.2|2.24|o|1|1|0.4|0.45", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_keel", "pos": [0, 0.9, 3.2], "rot": [0, 0, 0, 1], "s": {"kw_span": "keel|5.6|0|q|0|1|0.4|0.45", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_keel", "pos": [0, 0.9, 8.8], "rot": [0, 0, 0, 1], "s": {"kw_span": "keel|2.2|2.24|o|1|1|0.4|0.45", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_rib", "pos": [0, 1.35, 3.2], "rot": [0, 0, 0, 1], "s": {"kw_span": "rib|rounded|3x1.6x0.4", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_rib", "pos": [0, 1.35, 8.8], "rot": [0, 0, 0, 1], "s": {"kw_span": "rib|rounded|3x1.6x0.4", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_planking", "pos": [0, 1.35, 3.2], "rot": [0, 1, 0, 0], "s": {"kw_span": "rounded|3x1.6x0.4|3x1.6x0.4|2.2|o:2.24:3.09:0.386|0|0", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_planking", "pos": [0, 1.35, 3.2], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|3x1.6x0.4|3x1.6x0.4|5.6|rib|0|0|open=1,p,rect,0.9,0.91,0.6,0.5,heavy,up;2,s,rect,1.9,0.91,0.6,0.5,heavy,up;3,p,rect,3.7,0.91,0.6,0.5,heavy,up;4,s,rect,4.7,0.91,0.6,0.5,heavy,up|paint=4-4:red", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_planking", "pos": [0, 1.35, 8.8], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|3x1.6x0.4|3x1.6x0.4|2.2|o:2.24:3.09:0.386|0|0", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.35, 3.2], "rot": [0, 1, 0, 0], "s": {"kw_span": "rounded|3x1.6x0.4|3x1.6x0.4|2.2|o:2.24:3.09:0.386|0.56|0.56|1593319333", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.35, 3.2], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|3x1.6x0.4|3x1.6x0.4|5.6|rib|0.56|0.56|96345691", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.35, 8.8], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|3x1.6x0.4|3x1.6x0.4|2.2|o:2.24:3.09:0.386|0.56|0.56|567646066", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_sail", "pos": [0, 1.91, 6.0], "rot": [0, 0, 0, 1], "s": {"kw_span": "mast|7|square,6.5,4.3,rawhide,hstripes:brown:2"}},
+    {"prefab": "KW_gen_cap", "pos": [0, 3.7024, 10.8071], "rot": [0, 0, 0, 1], "s": {"kw_span": "cap|scroll|0.533|0.386|0.8", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_cap", "pos": [0, 3.7024, 1.1929], "rot": [0, 1, 0, 0], "s": {"kw_span": "cap|scroll|0.533|0.386|0.7", "kw_tier": "blackforest"}},
+    {"prefab": "KW_rudder_blackforest", "pos": [0, 3.14, 1.0], "rot": [0, 0, 0, 1]}
+  ]
+}

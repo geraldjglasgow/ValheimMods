@@ -15,6 +15,6 @@ for (int pass = 0; pass < 2; pass++)
 ```
 
 Pure Unity transforms: no game types, no Harmony. Merged into the consuming mod with ILRepack like every library here.
-Consumers: Keelwright (the helmsman's hands on a tiller), MannedWeapons (an operator's fists on a weapon's grips) and
+Consumers: Broadside (the helmsman's hands on a tiller), MannedWeapons (an operator's fists on a weapon's grips) and
 Elite Creatures Pack (the hands on the Bone Crossbow and the greataxe's haft; its own copy `Core/TwoBoneIk` went on
 2026-10-26).

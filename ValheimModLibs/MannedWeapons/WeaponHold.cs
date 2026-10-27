@@ -7,7 +7,10 @@ namespace MannedWeapons;
 /// use key asks the weapon's owner (<see cref="WeaponKeys.Request"/>); the owner grants it when no valid operator holds
 /// it and the weapon is <see cref="MannedWeapon.Free"/>, writes the operator to the ZDO and hands the ZDO over to him
 /// (sent first, so his machine has it), and answers. Letting go on a machine that is not the owner tells the owner
-/// (<see cref="WeaponKeys.Release"/>), which finishes a step under way and frees the weapon.
+/// (<see cref="WeaponKeys.Release"/>), which finishes a step under way and frees the weapon. Generous: from anywhere
+/// within <see cref="WeaponDesign.UseRange"/> of the stand point, in front of the weapon too, he is brought there
+/// (<see cref="QuickStep"/>), and only what truly stops him refuses him (<see cref="OperatorReach"/>); the hover offers
+/// the use key exactly when it would work (<see cref="Barred"/>).
 /// </summary>
 internal static class WeaponHold
 {
@@ -21,8 +24,8 @@ internal static class WeaponHold
 	}
 
 	/// <summary>
-	/// The use key: lets go of a weapon held here, else asks for it from its stand point (from behind, when it must be),
-	/// unless he sits, steers or mans something else, or the weapon says why not (<see cref="MannedWeapon.Refusal"/>).
+	/// The use key: lets go of a weapon held here; else the weapon's own use first (<see cref="MannedWeapon.OwnUse"/>);
+	/// else asks for it, unless he may not (<see cref="Barred"/>: said to him, but for being too far or busy).
 	/// </summary>
 	public static bool Interact(MannedWeapon weapon, Humanoid character, bool hold)
 	{
@@ -35,28 +38,41 @@ internal static class WeaponHold
 			player.StopDoodadControl();
 			return true;
 		}
-		if (player.IsAttached() || player.GetDoodadController() != null || Vector3.Distance(player.transform.position, weapon.Frame.Stand.position) > weapon.Design.UseRange)
+		if (weapon.OwnUse(player))
 		{
-			return false;
+			return true;
 		}
-		string? why = Refused(weapon, player);
+		string? why = Barred(weapon, player);
 		if (why != null)
 		{
-			player.Message(MessageHud.MessageType.Center, why);
+			if (why.Length > 0)
+			{
+				player.Message(MessageHud.MessageType.Center, why);
+			}
 			return false;
 		}
 		weapon.Net.InvokeRPC(weapon.Design.Keys.Request, player.GetPlayerID());
 		return true;
 	}
 
-	/// <summary>Why the player may not ask for the weapon now: in front of one taken from behind, or the weapon's own reason; null: he may.</summary>
-	private static string? Refused(MannedWeapon weapon, Player player)
+	/// <summary>
+	/// Why the player may not ask for the weapon from where he is now: "" when he is beyond <see cref="WeaponDesign.UseRange"/>
+	/// of the stand point or busy (sitting, steering, manning another), the weapon's own reason
+	/// (<see cref="MannedWeapon.Refusal"/>), or <see cref="WeaponWords.Unreachable"/> when he cannot be brought there; null: he may.
+	/// </summary>
+	public static string? Barred(MannedWeapon weapon, Player player)
 	{
-		if (weapon.Design.Behind is float behind && weapon.Frame!.Yaw.InverseTransformPoint(player.transform.position).z > -behind)
+		Vector3 spot = weapon.StandPoint(weapon.State);
+		if (player.IsAttached() || player.GetDoodadController() != null || Vector3.Distance(player.transform.position, spot) > weapon.Design.UseRange)
 		{
-			return weapon.Design.Words.Behind;
+			return "";
 		}
-		return weapon.Refusal(player);
+		string? refused = weapon.Refusal(player);
+		if (refused != null)
+		{
+			return refused;
+		}
+		return OperatorReach.Why(player, spot, weapon.Frame!.Yaw.position, weapon.transform) == ReachBlock.None ? null : weapon.Design.Words.Unreachable;
 	}
 
 	/// <summary>The owner: the weapon goes to the asker when no valid operator holds it, the ZDO with it.</summary>
@@ -121,10 +137,10 @@ internal static class WeaponHold
 		}
 	}
 
-	/// <summary>An operator who is still in the world, alive and at the weapon.</summary>
+	/// <summary>An operator who is still in the world, alive and at the weapon (within <see cref="WeaponDesign.HolderRange"/> of its stand point).</summary>
 	public static bool ValidUser(MannedWeapon weapon, long user)
 	{
 		Player? player = user != 0L ? Player.GetPlayer(user) : null;
-		return player != null && !player.IsDead() && Vector3.Distance(player.transform.position, weapon.transform.position) < weapon.Design.HolderRange;
+		return player != null && !player.IsDead() && Vector3.Distance(player.transform.position, weapon.GetPosition()) < weapon.Design.HolderRange;
 	}
 }

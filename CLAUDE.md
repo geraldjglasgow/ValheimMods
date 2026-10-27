@@ -27,6 +27,7 @@ ValheimMods/
   PrestigeWorldwide/ entertainment: proximity voice chat and TVs that play a video link for everyone in sync
   Hearthhold/        Stardew-style quality stars on food (needs GrindstoneSkills): fortune, professions, crate, friendship, cask
   HighSeat/          server-run creatures: the server loads every player's area and owns creatures and spawners (server only)
+  Broadside/        ship building: a dry dock, hull tools, fittings, a blueprint table; saved ships built and sailed from the hammer; ship cannons
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
   DevBridge/         test bridge: drive the running game over localhost HTTP (for agents), internal: never released to a store
   AssetLab/          dev-only mod, gitignored: unreleased workshop assets tested and balanced in game, never shipped
@@ -72,7 +73,9 @@ that stops food from degrading. Foods and meads are discovered from the item dat
 **ShipConfig**: one health setting per ship prefab, applied to new and already loaded ships. The minimal example
 of the shared libraries. Its ship panel (HUD, under the minimap while aboard) reads GrindstoneSkills' public
 `GrindstoneSkills.Api.SailingApi` by reflection (`Panel/GrindstoneLink.cs`) for the Sailing bonuses and abilities;
-changing that API's endpoints needs a matching ShipConfig change.
+changing that API's endpoints needs a matching ShipConfig change. Other mods add lines to the panel without a reference
+(`Panel/OtherLines.cs`: copies of the `Template` line in the published `ShipConfig_ShipPanelRows`); Broadside hides
+ShipConfig's panel (`ShipConfig_ShipPanel`) on its own ships and shows its own, so renaming that needs a matching change there.
 
 **Lockstep** (published as OathBound up to 0.1.2, renamed to avoid confusion with LionAndOtter's unrelated Oathbound): the next boss stays sealed until every player on the server has defeated the previous one. Per player
 credit, a self-maintaining roster with ignore and inactivity rules, altar gate with a spawn guard, admin console
@@ -136,6 +139,21 @@ Crate that buys starred goods at dawn, trader friendship with a small discount, 
 the stars themselves (quality, stacking, display) and exposes them with its `SkillsApi` and `StarsApi`, read by
 reflection (`Core/GrindstoneLink.cs`). The .cfg holds only three switches. Design in `Hearthhold/CLAUDE.md`.
 
+**Broadside**: ship building. A dry dock (keel block guides, keel blocks) and seven hull tools that make every keel,
+rib, plank run, deck, railing, ladder and multi-sail mast to the sizes typed in a small window, in seven biome looks;
+post caps, hatches and seven rudders linked to a deck tiller; a blueprint table that saves the ship on the dock, builds
+a saved one back onto it and shares designs through the BlueprintShelf library, and flies a build camera round the dock
+(the BuildCamera library). Designing on the dock is free. Every saved ship is also in the hammer: built on the water
+near a workbench for what its parts cost, it floats on its own hull, sails, and is steered by a helmsman at its rudder's
+tiller or a captain's wheel (his hands by the LimbIk library). Ship cannons (three sizes, iron cannonballs, black
+powder; MannedWeapons library) are built only on a launched ship, which takes no other hammer piece; the captain fires
+the broadside on the side he looks toward (U), shows shot arcs (J), and a ship panel under the minimap gives speed,
+speed against a karve, explore radius, health and the guns' reloads. Named Keelwright until 2026-10-26 (internal ids
+stay `KW_`/`kw_`; cannons and their items `BS_`/`bs_`). Built as a prototype in AssetLab and moved out on 2026-10-24
+(the cannons followed from AssetLab's bench on 2026-10-26); the prototype's storage, hammocks and other fittings stay
+archived, uncompiled, in `AssetLab/AssetLab/Keelwright/`. Required on the server and every client. Code map and rules
+in `Broadside/CLAUDE.md`; ships made by script with the `broadside-ships` skill.
+
 ### The libraries (ValheimModLibs)
 
 Small, single-purpose libraries. None is a plugin and players never install them: each mod merges the DLLs it uses
@@ -161,6 +179,11 @@ versions. `ValheimModLibs/CLAUDE.md` carries the design rules and per-library do
 | EliteCraftingLink | EliteCrafting's public API by reflection: typed wrappers (classes, inscriptions, items, hooks) that do nothing without EliteCrafting |
 | RecipeCounts | starred eggs (and any single-quality item) count for recipes: the game counted an egg only at quality 1 |
 | Translations | a mod's words in the game's language: English embedded as YAML, translations as `<Mod>.translations.<Language>.yml` |
+| BlueprintShelf | a blueprint window at a station in the game's panel look: the player's files with folders beside the world's shared pool on the server, share and take in parts, host buttons |
+| BuildCamera | a free build camera for the local player: flies in the mod's bounds (ball, capsule or its own), body at rest, the game's build, remove and repair reach from it, Esc and death bring it back |
+| LimbIk | two-bone IK for a character's limbs after the animator: an arm or leg bent so its end reaches a target, the elbow or knee toward a hint |
+| MannedWeapons | a placed weapon manned with E: the hold handed to the operator, aim within its arcs (the view stops there too, or all round), his walk round it and hands on its grips, the reload and the shot |
+| StatusTemplates | a mod's own status effects: template made once and kept loaded, held on or dropped from a character, game icons borrowed, hit effects in every ObjectDB |
 
 Using a library from a new mod: add a `ProjectReference` to the library project, list its DLL (and its
 dependencies' DLLs) in the mod's `ILRepack.targets`, and follow the pattern in ShipConfig. Build ValheimModLibs

@@ -1,0 +1,146 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net48</TargetFramework>
+    <AssemblyName>Broadside</AssemblyName>
+    <RootNamespace>Broadside</RootNamespace>
+    <LangVersion>latest</LangVersion>
+    <Nullable>enable</Nullable>
+    <Version>0.1.0</Version>
+    <Product>Broadside</Product>
+    <Authors>Gerald Glasgow</Authors>
+    <Company>Gerald Glasgow</Company>
+    <Copyright>Copyright (c) Gerald Glasgow. Licensed under the GNU General Public License v3.0.</Copyright>
+    <Description>Broadside: design ships on a dry dock in Valheim</Description>
+    <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
+    <CopyLocalLockFileAssemblies>true</CopyLocalLockFileAssemblies>
+    <DebugType>none</DebugType>
+    <NoWarn>$(NoWarn);CS0649;CS0169;CS0414;CS1591</NoWarn>
+    <AppendTargetFrameworkToOutputPath>false</AppendTargetFrameworkToOutputPath>
+    <NuGetAudit>false</NuGetAudit>
+  </PropertyGroup>
+
+  <!-- Paths: override with -p:GamePath=..., -p:BepInExCore=... and -p:ModLibsPath=... if your layout differs -->
+  <PropertyGroup>
+    <GamePath Condition="'$(GamePath)' == ''">C:\Program Files (x86)\Steam\steamapps\common\Valheim</GamePath>
+    <ManagedPath>$(GamePath)\valheim_Data\Managed</ManagedPath>
+    <BepInExCore Condition="'$(BepInExCore)' == '' AND Exists('$(GamePath)\BepInEx\core\BepInEx.dll')">$(GamePath)\BepInEx\core</BepInExCore>
+    <BepInExCore Condition="'$(BepInExCore)' == ''">$(MSBuildProjectDirectory)\..\lib\BepInEx\core</BepInExCore>
+    <!-- Shared libraries (ValheimModLibs), expected as a sibling checkout -->
+    <ModLibsPath Condition="'$(ModLibsPath)' == ''">$(MSBuildProjectDirectory)\..\..\ValheimModLibs</ModLibsPath>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.NETFramework.ReferenceAssemblies" Version="1.0.3" PrivateAssets="all" />
+    <PackageReference Include="BepInEx.AssemblyPublicizer.MSBuild" Version="0.4.3" PrivateAssets="all" />
+    <PackageReference Include="ILRepack.Lib.MSBuild.Task" Version="2.0.46" PrivateAssets="all" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
+    <!-- BundlePrefabs: prefab copies on the bench and their registration with the network scene on every peer -->
+    <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
+    <!-- BlueprintShelf: the blueprint table's window and sharing (it brings WindowInput and PlateColumn) -->
+    <ProjectReference Include="$(ModLibsPath)\BlueprintShelf\BlueprintShelf.csproj" />
+    <!-- WindowInput: the sizes window treated like one of the game's while open -->
+    <ProjectReference Include="$(ModLibsPath)\WindowInput\WindowInput.csproj" />
+    <!-- PlateColumn: EmbeddedSprite decodes the painted tool and piece icons -->
+    <ProjectReference Include="$(ModLibsPath)\PlateColumn\PlateColumn.csproj" />
+    <!-- Hotkeys: H at a ship's helm to nudge it free, U and J for the cannons' broadside and shot arcs, never while typing -->
+    <ProjectReference Include="$(ModLibsPath)\Hotkeys\Hotkeys.csproj" />
+    <!-- BuildCamera: the blueprint table's free build camera round the dock -->
+    <ProjectReference Include="$(ModLibsPath)\BuildCamera\BuildCamera.csproj" />
+    <!-- LimbIk: the helmsman's hands on a launched ship's tiller (two-bone IK) -->
+    <ProjectReference Include="$(ModLibsPath)\LimbIk\LimbIk.csproj" />
+    <!-- MannedWeapons: the ship cannons manned, aimed, walked round, reloaded and fired, as ECP's Bone Ballista (Cannons/) -->
+    <ProjectReference Include="$(ModLibsPath)\MannedWeapons\MannedWeapons.csproj" />
+    <!-- LocalEffects: the cannons' muzzle blasts, local copies of the game's effects, never networked -->
+    <ProjectReference Include="$(ModLibsPath)\LocalEffects\LocalEffects.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <!-- The pieces' textures and the painted tool and piece icons, made in ValheimAssets (Assets/Ships/Keelwright), read as Broadside.assets.<file> -->
+    <EmbeddedResource Include="assets\*.png" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <!-- The ready-made ships (blueprint JSON) and the sail picture they wear, copied into the player's folders on first start (KwReadyShips) -->
+    <EmbeddedResource Include="assets\ships\*.json" LogicalName="Broadside.ships.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <EmbeddedResource Include="assets\sails\*.png" LogicalName="Broadside.sails.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <!-- The blueprint table's model, one bundle per platform (ValheimAssets Assets/Ships/Keelwright/BlueprintTable; .linux for dedicated servers), read as Broadside.assets.kw_bptable.<platform> -->
+    <EmbeddedResource Include="assets\bundles\kw_bptable.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <!-- The Post cap tool's carved heads, one bundle per platform (ValheimAssets Assets/Ships/Keelwright/PostHeads), read as Broadside.assets.kw_postheads.<platform> -->
+    <EmbeddedResource Include="assets\bundles\kw_postheads.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <!-- The Wooden Repair Kit and its hull patch, one bundle per platform (ValheimAssets Assets/Items/Keelwright/RepairKit), read as Broadside.assets.kw_repairkit.<platform> -->
+    <EmbeddedResource Include="assets\bundles\kw_repairkit.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Reference Include="BepInEx">
+      <HintPath>$(BepInExCore)\BepInEx.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="0Harmony">
+      <HintPath>$(BepInExCore)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- Splatform: the platform user id a placed piece records as its creator's -->
+    <Reference Include="Splatform">
+      <HintPath>$(ManagedPath)\Splatform.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_valheim" Publicize="true">
+      <HintPath>$(ManagedPath)\assembly_valheim.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_utils" Publicize="true">
+      <HintPath>$(ManagedPath)\assembly_utils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="assembly_guiutils" Publicize="true">
+      <HintPath>$(ManagedPath)\assembly_guiutils.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine">
+      <HintPath>$(ManagedPath)\UnityEngine.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(ManagedPath)\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- AssetBundleModule: the blueprint table's embedded bundle (BundlePrefabs.EmbeddedBundle) -->
+    <Reference Include="UnityEngine.AssetBundleModule">
+      <HintPath>$(ManagedPath)\UnityEngine.AssetBundleModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>$(ManagedPath)\UnityEngine.UI.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>$(ManagedPath)\Unity.TextMeshPro.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>$(ManagedPath)\UnityEngine.TextRenderingModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>$(ManagedPath)\UnityEngine.InputLegacyModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>$(ManagedPath)\UnityEngine.UIModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>$(ManagedPath)\UnityEngine.ParticleSystemModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+  </ItemGroup>
+
+  <!-- ILRepack.targets in this directory is imported automatically by ILRepack.Lib.MSBuild.Task -->
+
+</Project>

@@ -22,10 +22,10 @@ public sealed class WeaponFrame
 }
 
 /// <summary>
-/// One read of a weapon's ZDO: who mans it, where it points, its reload (steps done, the step under way and how long it
-/// has run), its shots and how long since the last. A step that has run its time counts as done (<see cref="Settled"/>)
-/// with no one writing it, so an operator letting go mid-step, or leaving the game, leaves a weapon every peer draws
-/// the same.
+/// One read of a weapon's ZDO: who mans it, where it points (never aimed: its rest lay, <see cref="WeaponDesign.Rest"/>),
+/// its reload (steps done, the step under way and how long it has run), its shots and how long since the last. A step
+/// that has run its time counts as done (<see cref="Settled"/>) with no one writing it, so an operator letting go
+/// mid-step, or leaving the game, leaves a weapon every peer draws the same.
 /// </summary>
 public readonly struct WeaponState
 {
@@ -39,8 +39,9 @@ public readonly struct WeaponState
 		WeaponKeys keys = design.Keys;
 		steps = design.Reload.Steps;
 		User = zdo.GetLong(keys.User, 0L);
-		Yaw = zdo.GetFloat(keys.Yaw, 0f);
-		Pitch = zdo.GetFloat(keys.Pitch, 0f);
+		(float restYaw, float restPitch) = RestLay.Lay(design);
+		Yaw = zdo.GetFloat(keys.Yaw, restYaw);
+		Pitch = zdo.GetFloat(keys.Pitch, restPitch);
 		Stage = zdo.GetInt(keys.Stage, 0);
 		Step = zdo.GetInt(keys.Step, 0);
 		StepTime = WeaponClock.Since(zdo.GetLong(keys.StepAt, 0L));

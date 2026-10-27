@@ -8,9 +8,11 @@ namespace MannedWeapons;
 /// to <see cref="PitchUp"/>. The weapon follows the view's yaw at <see cref="TurnRate"/> and lays its pitch on what the
 /// crosshair is on (out to <see cref="Reach"/>, short of the sea with <see cref="StopAtSea"/>) at <see cref="TiltRate"/>,
 /// degrees a second. While manned the view itself turns no further than the weapon (it stops at the arc's end, as the
-/// weapon does) and, with a <see cref="ViewRate"/>, no faster, so view, weapon and the operator's feet stop together; it
-/// tilts from <see cref="LookUp"/> above level to <see cref="LookDown"/> below. The aim goes to the ZDO when it moves
-/// more than <see cref="WriteStep"/>; other peers ease toward it at <see cref="Follow"/>.
+/// weapon does) and, with a <see cref="ViewRate"/>, no faster, so view, weapon and the operator's feet stop together; with
+/// <see cref="ViewTiltStops"/> (the default) it tilts no further than the weapon can lay itself on what the crosshair is
+/// on and no faster than <see cref="TiltRate"/>, so view and barrel stop together at the pitch arc's ends too; and always
+/// from <see cref="LookUp"/> above level to <see cref="LookDown"/> below. The aim goes to the ZDO when it moves more than
+/// <see cref="WriteStep"/>; other peers ease toward it at <see cref="Follow"/>.
 /// </summary>
 public sealed class WeaponArcs
 {
@@ -22,6 +24,9 @@ public sealed class WeaponArcs
 
 	/// <summary>The most the view turns a second while manned; 0: as fast as the mouse.</summary>
 	public float ViewRate { get; set; }
+
+	/// <summary>While manned the view tilts only as far as the weapon can follow it, and no faster (<see cref="ViewTilt"/>); false: the view tilts freely within <see cref="LookUp"/> and <see cref="LookDown"/>.</summary>
+	public bool ViewTiltStops { get; set; } = true;
 
 	public float LookUp { get; set; } = 89f;
 	public float LookDown { get; set; } = 89f;

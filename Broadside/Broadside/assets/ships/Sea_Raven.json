@@ -1,0 +1,28 @@
+{
+  "name": "Sea_Raven",
+  "format": 1,
+  "frame": "Unity axes of the dock's aft section: x right, y up, z forward; metres from its origin on the ground at its aft end",
+  "pieces": [
+    {"prefab": "KW_gen_keel", "pos": [0, 0.9, 5.8], "rot": [0, 1, 0, 0], "s": {"kw_span": "keel|4.8|3.05|o|1|1.7|0.4|0.45", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_keel", "pos": [0, 0.9, 5.8], "rot": [0, 0, 0, 1], "s": {"kw_span": "keel|12.4|0|q|0|1|0.4|0.45", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_keel", "pos": [0, 0.9, 18.2], "rot": [0, 0, 0, 1], "s": {"kw_span": "keel|4.8|3.05|o|1|2.2|0.4|0.45", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_rib", "pos": [0, 1.35, 5.8], "rot": [0, 0, 0, 1], "s": {"kw_span": "rib|rounded|5.2x2.18x0.4", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_rib", "pos": [0, 1.35, 9.93], "rot": [0, 0, 0, 1], "s": {"kw_span": "rib|rounded|5.2x2.18x0.4", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_rib", "pos": [0, 1.35, 14.07], "rot": [0, 0, 0, 1], "s": {"kw_span": "rib|rounded|5.2x2.18x0.4", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_rib", "pos": [0, 1.35, 18.2], "rot": [0, 0, 0, 1], "s": {"kw_span": "rib|rounded|5.2x2.18x0.4", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_planking", "pos": [0, 1.35, 5.8], "rot": [0, 1, 0, 0], "s": {"kw_span": "rounded|5.2x2.18x0.4|5.2x2.18x0.4|4.8|o:3.05:4.6:0.386|0|0", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_planking", "pos": [0, 1.35, 5.8], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|5.2x2.18x0.4|5.2x2.18x0.4|4.13|rib|0|0|paint=7-7:red", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_planking", "pos": [0, 1.35, 9.93], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|5.2x2.18x0.4|5.2x2.18x0.4|4.14|rib|0|0|paint=7-7:red", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_planking", "pos": [0, 1.35, 14.07], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|5.2x2.18x0.4|5.2x2.18x0.4|4.13|rib|0|0|paint=7-7:red", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_planking", "pos": [0, 1.35, 18.2], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|5.2x2.18x0.4|5.2x2.18x0.4|4.8|o:3.05:5.1:0.386|0|0", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.35, 5.8], "rot": [0, 1, 0, 0], "s": {"kw_span": "rounded|5.2x2.18x0.4|5.2x2.18x0.4|4.8|o:3.05:4.6:0.386|0.87|0.87|719976474", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.35, 5.8], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|5.2x2.18x0.4|5.2x2.18x0.4|4.13|rib|0.87|0.87|481211101", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.35, 9.93], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|5.2x2.18x0.4|5.2x2.18x0.4|4.14|rib|0.87|0.87|27131803", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.35, 14.07], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|5.2x2.18x0.4|5.2x2.18x0.4|4.13|rib|0.87|0.87|1819312537", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.35, 18.2], "rot": [0, 0, 0, 1], "s": {"kw_span": "rounded|5.2x2.18x0.4|5.2x2.18x0.4|4.8|o:3.05:5.1:0.386|0.87|0.87|1098068717", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_sail", "pos": [0, 2.22, 12.0], "rot": [0, 0, 0, 1], "s": {"kw_span": "mast|10.6|square,8.9,6.6,rawhide,vstripes:red:3"}},
+    {"prefab": "KW_gen_cap", "pos": [0, 5.9841, 22.8071], "rot": [0, 0, 0, 1], "s": {"kw_span": "cap|dragon|0.533|0.386|1.8", "kw_tier": "meadows"}},
+    {"prefab": "KW_gen_cap", "pos": [0, 5.4841, 1.1929], "rot": [0, 1, 0, 0], "s": {"kw_span": "cap|tail|0.533|0.386|1.5", "kw_tier": "meadows"}},
+    {"prefab": "KW_rudder_meadows", "pos": [0, 3.95, 1.0], "rot": [0, 0, 0, 1]}
+  ]
+}

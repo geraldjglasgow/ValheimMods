@@ -34,4 +34,4 @@ shelf.Open(this);
 
 Create the shelf on every machine (a dedicated server keeps the pool). The patches (`ZNet.Awake` for the RPCs,
 `ConnectPanel.Update` for F2, WindowInput's) go in once per merged copy, by hand. Consumers: OpenKeep (the Blueprint
-Bench), AssetLab (Keelwright's ship blueprint table).
+Bench), AssetLab (Broadside's ship blueprint table).

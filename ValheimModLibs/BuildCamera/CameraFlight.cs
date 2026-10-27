@@ -24,6 +24,25 @@ public sealed class CameraFlight
 	public float RunMultiplier { get; set; } = 3f;
 
 	/// <summary>
+	/// How far the mouse wheel moves the camera along its view while <see cref="WheelMoves"/> says so, as the game's own
+	/// zoom sensitivity (the wheel's value times this, in metres; the game camera's is 10).
+	/// </summary>
+	public float WheelSpeed { get; set; } = 10f;
+
+	/// <summary>
+	/// When the mouse wheel moves the camera in and out instead of being the game's (which turns the piece in hand): asked
+	/// each frame, for example while the mod's sizes window is open. Null, never.
+	/// </summary>
+	public Func<Player, bool>? WheelMoves { get; set; }
+
+	/// <summary>
+	/// When the camera still flies on the movement keys though a window holds the player's input: asked each frame, for
+	/// example while the mod's sizes window is open and nothing is being typed. Null, never. Mouse look in such a window
+	/// is the mod's to give back (the game's look reaches the camera whenever it is sent).
+	/// </summary>
+	public Func<Player, bool>? FliesWhile { get; set; }
+
+	/// <summary>
 	/// Metres from the camera that placing, removing, copying and repairing reach, measured along the game's own build
 	/// ray (50 m long, so 50 or more reaches all of it). Asked for each ray with the player's own place distance still
 	/// in <c>m_maxPlaceDistance</c>; a piece's extra placement distance is added for placing.

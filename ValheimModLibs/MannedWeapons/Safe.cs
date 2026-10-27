@@ -10,6 +10,18 @@ namespace MannedWeapons;
 /// </summary>
 internal static class Safe
 {
+	public static void Run<T>(string context, Action<T> action, T only)
+	{
+		try
+		{
+			action(only);
+		}
+		catch (Exception e)
+		{
+			Guard.Report(e, context);
+		}
+	}
+
 	public static void Run<T1, T2>(string context, Action<T1, T2> action, T1 first, T2 second)
 	{
 		try

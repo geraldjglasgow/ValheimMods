@@ -4,9 +4,10 @@ namespace MannedWeapons;
 
 /// <summary>
 /// The operator's feet, on his own machine, each physics step after the game has worked out his controls (which the
-/// doodad control leaves still): nothing holds him; the game's own movement walks him to the weapon's stand point
-/// (<see cref="MannedWeapon.StandPoint"/>; on the yaw part it swings round as the weapon turns, so turning it walks him
-/// round it), at a jog while walking up or keeping up with a big turn, easing in over the last stretch. He stops a few
+/// doodad control leaves still). Taking hold he is first brought to the weapon's stand point
+/// (<see cref="MannedWeapon.StandPoint"/>) in about a third of a second, round the weapon (<see cref="QuickStep"/>); from
+/// then on nothing holds him: the game's own movement walks him after it (on the yaw part it swings round as the weapon
+/// turns, so turning it walks him round it), at a jog keeping up with a big turn, easing in over the last stretch. He stops a few
 /// centimetres from it and starts again only once it has moved on (a small turn moves the hands, not the feet), and gives
 /// up on a spot he cannot reach after a moment without moving. He faces the way he walks while walking up, then the way
 /// the weapon points, so a turn plays as a side step (<see cref="Face"/>, in place of the game's turning). Where he stopped
@@ -15,12 +16,24 @@ namespace MannedWeapons;
 /// </summary>
 public sealed class OperatorFeet
 {
+	private readonly QuickStep step = new();
 	private bool arrived, settled;
 	private float stuck;
 	private Vector3 restAt;
 
-	/// <summary>Taking hold: walking up afresh.</summary>
-	internal void Start() => (arrived, settled, stuck) = (false, false, 0f);
+	/// <summary>Taking hold: brought to the stand point round the weapon, then walking afresh.</summary>
+	internal void Start(MannedWeapon weapon, Player player)
+	{
+		(arrived, settled, stuck) = (false, false, 0f);
+		step.Stop();
+		if (weapon.Frame != null)
+		{
+			step.Begin(player, weapon.StandPoint(weapon.State), weapon.Frame.Yaw.position, weapon.transform);
+		}
+	}
+
+	/// <summary>Letting go: no longer brought anywhere.</summary>
+	internal void Stop() => step.Stop();
 
 	/// <summary>Where his feet go this step, and his facing.</summary>
 	internal void Steer(MannedWeapon weapon, Player player)
@@ -31,6 +44,12 @@ public sealed class OperatorFeet
 		}
 		OperatorBody body = weapon.Design.Body;
 		Vector3 spot = weapon.StandPoint(weapon.State);
+		if (step.Step(player, spot, Time.fixedDeltaTime))
+		{
+			GameAccess.MoveDir(player) = Vector3.zero;
+			Face(weapon, player, Time.fixedDeltaTime);
+			return;
+		}
 		Vector3 to = spot - player.transform.position;
 		to.y = 0f;
 		float distance = to.magnitude;

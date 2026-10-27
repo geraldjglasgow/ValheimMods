@@ -1,0 +1,9 @@
+{
+    "name": "Broadside",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/Broadside",
+    "description": "Design and build your own ships: keel, ribs, planking, decks, cabins, masts and sails on a dry dock, then launch and sail. Ship cannons, broadsides, holes and flooding. 11 ready-made ships included.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}

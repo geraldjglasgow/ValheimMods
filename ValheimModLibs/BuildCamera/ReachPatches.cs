@@ -8,7 +8,7 @@ namespace BuildCamera;
 /// of every build tool: the game's mask for the selected piece, with water for water-aware pieces, and the piece's extra
 /// placement distance) and <c>Player.RemovePiece</c>, <c>Player.CopyPiece</c>, <c>Player.UpdateWearNTearHover</c> (the
 /// remove mask, no extra). The prefixes run first (<see cref="Priority.First"/>), so another prefix on the same method
-/// that measures with <c>m_maxPlaceDistance</c> (Keelwright's whole-ship removal) sees the lifted value too.
+/// that measures with <c>m_maxPlaceDistance</c> (Broadside's whole-ship removal) sees the lifted value too.
 /// </summary>
 internal static class ReachPatches
 {

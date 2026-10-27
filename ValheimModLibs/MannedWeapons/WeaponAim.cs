@@ -3,39 +3,82 @@ using UnityEngine;
 namespace MannedWeapons;
 
 /// <summary>
-/// The operator's aim, on his own machine, each drawn frame: the yaw follows the view's own (which
-/// <see cref="ViewLimit"/> holds to the weapon's arc and pace, so it stops at the arc's end and as the mouse stops), the
-/// pitch lays the weapon on what the crosshair is on (measured from the plane the weapon stands on, so a base tilted on a
-/// slope or a rolling deck is taken off), both within the arcs and at the weapon's rates (<see cref="WeaponArcs"/>). It
-/// goes to the ZDO when it has moved a little; every other peer eases toward that.
+/// The weapon's aim. On the operator's machine, each drawn frame, the weapon is laid so its shot lands on what the
+/// crosshair is on (<see cref="WeaponLay"/>: from where the shot leaves, <see cref="MannedWeapon.Flight"/>, along a
+/// straight line or the shot's arc, the carrying body's motion led off; measured from the plane the weapon stands on, so
+/// a base tilted on a slope or a rolling deck is taken off), held within the arcs and turned at the weapon's rates
+/// (<see cref="WeaponArcs"/>). The view itself turns and tilts no further than the weapon (<see cref="ViewLimit"/>,
+/// <see cref="ViewTilt"/>), so the crosshair is never on what the weapon cannot reach. It goes to the ZDO when it has
+/// moved a little; every other peer eases toward that. From the trigger until the shot has left
+/// (<see cref="MannedWeapon.Steady"/>) it stays laid on what the crosshair was on as the trigger was pulled
+/// (<see cref="Mark"/>). Each drawn frame on every peer the yaw and pitch parts are turned to it, a shot's kick on top.
 /// </summary>
 public sealed class WeaponAim
 {
-	private static readonly string[] Layers = { "Default", "static_solid", "Default_small", "piece", "terrain", "vehicle", "character", "character_net", "character_ghost" };
-	private static readonly RaycastHit[] hits = new RaycastHit[32];
-	private static int mask;
+	private float shownYaw, shownPitch;
 
 	/// <summary>The operator's aim, degrees from where the weapon was placed (yaw to the right, pitch up), ahead of what the ZDO has sent.</summary>
 	public float Yaw { get; private set; }
 
 	public float Pitch { get; private set; }
 
-	internal void Begin(in WeaponState s) => (Yaw, Pitch) = (s.Yaw, s.Pitch);
+	/// <summary>
+	/// What the crosshair was on as the trigger was last pulled (taken by the library's trigger before each shot; none
+	/// after taking hold): while the shot is on its way (<see cref="MannedWeapon.Steady"/>) the weapon stays laid on it and
+	/// the shot leaves onto it (<see cref="WeaponShot.Way"/>), so a deck rolling or turning under it, or the operator
+	/// stepping aside, does not carry the shot off.
+	/// </summary>
+	public Sight? Mark { get; internal set; }
 
-	internal void Step(MannedWeapon weapon, Player player, float dt)
+	internal void Begin(in WeaponState s) => (Yaw, Pitch, Mark) = (s.Yaw, s.Pitch, null);
+
+	/// <summary>The operator's lay toward a sight: the weapon laid so its shot lands there, held within the arcs, at its rates.</summary>
+	internal void Step(MannedWeapon weapon, in Sight sight, float dt)
 	{
 		if (weapon.Frame == null || !weapon.Net.IsValid())
 		{
 			return;
 		}
 		WeaponArcs arcs = weapon.Design.Aim;
-		float yaw = arcs.ClampYaw(Mathf.DeltaAngle(weapon.transform.eulerAngles.y, GameAccess.LookYaw(player).eulerAngles.y));
+		(float yaw, float pitch) = WeaponLay.Solve(weapon, sight, Yaw, Pitch);
+		(yaw, pitch) = WeaponLay.Hold(weapon, arcs, yaw, pitch);
+		Pitch = Mathf.MoveTowards(Pitch, pitch, arcs.TiltRate * dt);
 		Yaw = arcs.Turn(Yaw, yaw, arcs.TurnRate * dt);
-		Pitch = Mathf.MoveTowards(Pitch, Elevation(weapon, arcs), arcs.TiltRate * dt);
 		if (weapon.Net.IsOwner())
 		{
 			Write(weapon.Net.GetZDO(), weapon.Design.Keys.Yaw, Yaw, arcs.WriteStep);
 			Write(weapon.Net.GetZDO(), weapon.Design.Keys.Pitch, Pitch, arcs.WriteStep);
+		}
+	}
+
+	/// <summary>The operator's own aim, worked out here each frame (on the mark while <see cref="MannedWeapon.Steady"/>, held still without one); anyone else's eased toward the ZDO's; the kick on top.</summary>
+	internal void Turn(MannedWeapon weapon, WeaponFrame frame, in WeaponState s, Player? operating)
+	{
+		if (operating != null)
+		{
+			Lay(weapon, operating, s);
+			(shownYaw, shownPitch) = (Yaw, Pitch);
+		}
+		else
+		{
+			float ease = 1f - Mathf.Exp(-weapon.Design.Aim.Follow * Time.deltaTime);
+			(shownYaw, shownPitch) = (Mathf.LerpAngle(shownYaw, s.Yaw, ease), Mathf.LerpAngle(shownPitch, s.Pitch, ease));
+		}
+		float kick = weapon.Kick(s);
+		frame.Yaw.localRotation = Quaternion.Euler(0f, shownYaw, 0f);
+		frame.Pitch.localRotation = Quaternion.Euler(-(shownPitch + kick), 0f, 0f);
+	}
+
+	// The operator's lay this frame: onto the crosshair, or while the shot is on its way onto the mark.
+	private void Lay(MannedWeapon weapon, Player operating, in WeaponState s)
+	{
+		if (!weapon.Steady(s))
+		{
+			Step(weapon, WeaponSight.Crosshair(weapon, operating), Time.deltaTime);
+		}
+		else if (Mark is Sight mark)
+		{
+			Step(weapon, mark, Time.deltaTime);
 		}
 	}
 
@@ -45,61 +88,5 @@ public sealed class WeaponAim
 		{
 			zdo.Set(key, value);
 		}
-	}
-
-	/// <summary>
-	/// The pitch that lays the weapon on what the crosshair is on, within its tilt, measured from the plane the weapon
-	/// stands on (its pitch part tilts on its base, so a base tilted on a slope or a rolling deck is taken off).
-	/// </summary>
-	private float Elevation(MannedWeapon weapon, WeaponArcs arcs)
-	{
-		if (GameCamera.instance == null)
-		{
-			return Pitch;
-		}
-		Transform camera = GameCamera.instance.transform;
-		Vector3 pivot = weapon.AimPivot;
-		Vector3 from = camera.position + camera.forward * Mathf.Max(0f, Vector3.Dot(pivot - camera.position, camera.forward) + 1f);
-		Vector3 run = weapon.transform.InverseTransformDirection(Target(weapon, arcs, from, camera.forward) - pivot);
-		float pitch = Mathf.Atan2(run.y, new Vector2(run.x, run.z).magnitude) * Mathf.Rad2Deg;
-		return Mathf.Clamp(pitch, arcs.PitchDown, arcs.PitchUp);
-	}
-
-	/// <summary>The first solid thing along the view from just past the weapon (not the body it stands on), or far ahead; short of the sea when asked.</summary>
-	private static Vector3 Target(MannedWeapon weapon, WeaponArcs arcs, Vector3 from, Vector3 ahead)
-	{
-		mask = mask != 0 ? mask : LayerMask.GetMask(Layers);
-		Rigidbody? carrier = weapon.Carrier;
-		Vector3 target = carrier == null
-			? Physics.Raycast(from, ahead, out RaycastHit hit, arcs.Reach, mask) ? hit.point : from + ahead * arcs.Reach
-			: from + ahead * Past(carrier, from, ahead, arcs.Reach);
-		return arcs.StopAtSea ? AtSea(from, ahead, target) : target;
-	}
-
-	/// <summary>How far the view's ray goes to the first solid thing on it, passing through the body the weapon stands on.</summary>
-	private static float Past(Rigidbody carrier, Vector3 from, Vector3 ahead, float reach)
-	{
-		int count = Physics.RaycastNonAlloc(from, ahead, hits, reach, mask);
-		float nearest = reach;
-		for (int i = 0; i < count; i++)
-		{
-			if (hits[i].distance < nearest && hits[i].collider.attachedRigidbody != carrier)
-			{
-				nearest = hits[i].distance;
-			}
-		}
-		return nearest;
-	}
-
-	/// <summary>The target, or the sea's surface along the ray when the ray goes down to it first.</summary>
-	private static Vector3 AtSea(Vector3 from, Vector3 ahead, Vector3 target)
-	{
-		float sea = ZoneSystem.instance != null ? ZoneSystem.instance.m_waterLevel : 30f;
-		if (ahead.y >= -0.01f || from.y <= sea)
-		{
-			return target;
-		}
-		float down = (sea - from.y) / ahead.y;
-		return down < (target - from).magnitude ? from + ahead * down : target;
 	}
 }
