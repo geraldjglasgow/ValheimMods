@@ -1,4 +1,4 @@
-"""Elite Creatures Pack trailer: plays the scene files (DevBridge Studio's Scenes tab edits the same files).
+"""Elite Creatures Pack trailer: plays the scene files (DevBridge's /studio/scene endpoints).
 
     python ecp_trailer.py list
     python ecp_trailer.py rehearse <scene> [<scene> ...]   setup, then the shot live, nothing recorded

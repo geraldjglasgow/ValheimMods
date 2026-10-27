@@ -46,7 +46,7 @@ PowerShell call `curl.exe`, not the `curl` alias.
 | `/click`, `/hover` | UI pointer events on an element by `path=` or at screen pixel `x=&y=` (top-left origin) |
 | `/key`, `/type` | real key presses through the Input System (`tap=E`, `hold=W&seconds=2`, `down=`/`up=`); set an input field's text |
 | `/mouse` | the mouse device: move to `x,y`, turn with `dx,dy`, `click=left`, `down`/`up`, `scroll` |
-| `/console` | runs a console command and returns what the console printed |
+| `/console` | runs a console command (several, one per line, in order) and returns what the console printed |
 | `/log` | numbered recent log lines (`since=`, `level=warning`, `grep=`), or the console's (`buffer=console`) |
 | `/eval` | reflection: `Player.m_localPlayer.m_runSpeed`, `$hover.Character.GetLevel()`, `Terminal.m_cheat = true`, `members=1` |
 | `/nearby` | networked objects near the player with creature, item, container and piece details and ZDO ids |
@@ -60,7 +60,7 @@ PowerShell call `curl.exe`, not the `curl` alias.
 | `/effect`, `/sound` | a bundle or game particle effect at the row; a game sound, or a bundle clip played through a game sound |
 | `/frame` | the game's free camera framing the row (or one placed object, or a point) from a set angle; HUD off |
 | `/light` | fixed time of day, weather environment and wind, on this machine only |
-| `/hitbox` | `on=1`/`off=1`: flash each melee swing's hit shape and mark each hit on the player; replies with their distances |
+| `/hitbox` | `on=1`/`off=1`: flash each melee swing's or area attack's hit shape and mark each hit on the player; replies with their distances |
 | `/time` | this machine's game clock: slow motion `scale=0.25`, `pause=1`, `resume=1`, `step=N` frames or `step_seconds=` game time then frozen again, `reset=1` hands it back |
 | `/burst` | a run of frames (`seconds=2&frames=12` or `every=N`) on one labelled contact sheet; `crop=`, `cell=`, `keep=1`, `video=` through ffmpeg |
 | `/overlay` | persistent debug lines round the player: colliders, AI senses and targets, AI paths, wards, portal links, edited terrain, spawner ranges, the zone grid (`show=`, `off=`, `radius=30`, `every=0.5`, `max=`, `layer=`) |
@@ -92,7 +92,9 @@ a screenshot is shrunk (`maxWidth`), scale by `screen / image` from its reply be
 
 `/hitbox?on=1` shows how far attacks reach while a creature is fought. Each melee swing flashes its hit shape for
 `seconds=` (default 1.5), worked out the way `Attack.DoMeleeAttack` casts it: red at the swing's height, orange on the
-ground under it. A body that crosses the edge is hit (the sweep is spheres of the attack's ray width out to its range,
+ground under it. An area attack (`Attack.DoAreaAttack`: stomps, breath, and the Asset Lab Hel's creatures' strikes at
+the striking bone) flashes its sphere the same way, three red rings round the centre and an orange ring under it; its
+record (`area`) gives the radius, the centre and `you_from_centre`. A body that crosses the edge is hit (the sweep is spheres of the attack's ray width out to its range,
 so the edge is the reach). Every hit on the local player, whatever made it (swing, projectile, a mod's own area damage),
 draws a yellow line from the attacker's centre to the player with the player's body outlined. The reply, and the log
 (`/log?grep=hitbox`), list the recent swings and hits: the attack's item name, shape, range and ray width, the damage,
@@ -477,6 +479,80 @@ biome; the groups on the left jump to theirs. A box's picture turns when dragged
 viewer on the right, with its name, prefab, tier, biome, group and crafting station on top: drag to turn it, the wheel
 zooms, double-click resets, and Front, Side, Back, Top and Spin set the view.
 
+Under the viewer, **Spawn** gives the picked item to your player at the amount and level set beside it (Stack fills in a
+full stack; Level shows for items with more than one): into the inventory first, made as the game makes new items (full
+durability, this world's level), and what does not fit is dropped in front of you. The inventory is the player's own, so
+it works on a dedicated server too. ☆ (beside Spawn, or on a box's picture) keeps the item in the **Favourites**; **Add
+to group** puts it in a named group at that amount and level (choosing a group that has it changes them). The Saved list
+on the left shows the favourites and the groups: click one to show its items as boxes, ▶ beside a group (or Spawn all
+above it) spawns every item in it; a group's bar renames or deletes it, and an item picked from a group fills the amount
+and level from it and can be taken out. `/studio/spawn?items=SwordIron:1:3,Wood:50` (or the list POSTed) spawns from
+curl, `prefab[:amount[:level]]` entries; `/studio/items?prefabs=A,B` lists named items.
+
+The Commands tab runs console commands as if typed in the F5 console: one per line, in order, a frame apart (Run, or
+Ctrl+Enter), with what each printed under it in Output. Cheats need `devcommands` first, and `devcommands` turns them on
+and off, so a group that starts with it switches them off again on a second run. ☆ Favourite keeps each line as a
+favourite (▶ runs it, a click puts it in the editor); Save as group names the lines as a group (▶ runs them all, a click
+opens the group in the editor, where it saves as you type). The right side lists the console's commands, the game's and
+mods', with their descriptions and a cheat badge; a click adds one as a line. `/studio/console` (one command per line,
+or POSTed) and `/studio/commands` are the tab's calls; `/console` also takes several lines now.
+
+The favourites and groups of both tabs live in one file beside DevBridge's .cfg, `DevBridge.studio.json` in the
+profile's `BepInEx/config` (`/studio/saved` reads it, `/studio/saved/save` replaces it), so they outlast the browser
+and a restart, and an agent can read or edit them.
+
+The Spawning tab puts anything networked in the world: every prefab the game and mods register (but players and the
+game's `_` helpers), found by the name shown in game or by the prefab name, each word in either or in the group. Results
+come in groups (Bosses, Creatures, Items, Pieces, Plants and pickables, Trees and rocks, Spawners, Effects, Other), the
+search's own name first in each, as boxes with the shown name over the prefab; the viewer turns the picked one. Spawn puts
+copies in front of you (2 to 20 m), facing you, as the game's `spawn` makes them (marked cheated, items at full
+durability): what falls (creatures, items) a metre up, the rest on the ground or floor there. A creature takes a level
+(1 to 10, stars + 1) and Tamed; an item an amount in stacks and an item level; anything else up to 50 copies. They are
+networked objects you own, so everyone sees them. **Undo** removes the last spawn's copies still in the world, loaded or
+not (the last 20 spawns are kept, until the game closes). `/studio/catalog?filter=` searches,
+`/studio/spawn/world?prefab=Troll&amount=1&level=3&tamed=1&distance=3` spawns and `/studio/spawn/undo` takes back.
+
+Above every tab, two switches and five buttons. **Time** (Off, Night, Morning, Day, Dusk) holds the time of day near midnight, just after
+sunrise, noon or before sunset: the sky runs on at the game's pace for an in-game hour, then back for an hour, and again,
+so it stays that time without jumps. **Weather** (Off, Clear, Rain, Storm, Fog, Snow, Blizzard, Ash, or any of the game's
+weathers under More) holds one environment; a dungeon's or a boss's own still wins. Both are the game's own overrides
+(what `tod` and `env` set), on this machine only: the world's clock runs on underneath, so plants, fermenters and the day
+count are untouched (the readout shows the held clock beside the world's), while the sky and this machine's day and night
+checks follow the switch (in single player or on a host, night spawns too). They carry over into the next world loaded
+and end with the game; a `tod` or `env` from the console, `/light` or a film cue takes over and turns that switch off.
+`/studio/sky?time=day&weather=Rain` sets them from curl (`off` for either), and `/studio/sky` alone reports them.
+
+Between them, five buttons. **Screenshot** saves the game window, UI included, at full size as a PNG named by the time
+taken (`2026-10-24 20-31-05.png`, `(2)` and on within one second) in the Screenshots folder (`Screenshots folder` under
+`[Studio]` in the .cfg, empty for `<your Pictures folder>\DevBridge`); the frame is read at the end of a frame and the
+PNG made on a worker thread, so the game does not hitch. **Free camera** lets the camera go from your character where it is and flies it like the game's
+`fly` mode: it moves where it looks (forward while looking down goes down) at your fly speed, 5 m/s or 12 m/s with Run
+(Shift) held, Jump (Space) up and Crouch (Ctrl) down, the mouse turning it, while your character stands still; press it
+again to go back, and it lights up while on. The game's free-fly flag stays on (your character takes no input, other
+mods see a free camera), but DevBridge places the camera after the game and every mod each frame, so neither the
+game's own free-fly speed and smoothing nor a mod's camera changes (Broadside's steadied ship view) reach it. **Hitboxes** turns `/hitbox`'s view on and off: each melee
+swing flashes its reach (red at its height, orange on the ground) and each hit on you draws a yellow line from the
+attacker. **Colliders** turns `/overlay`'s collider shapes on and off: every collider within 30 m of you (or of the
+free camera), creatures red, buildings orange, triggers green and the rest blue, redrawn twice a second. **No spawns**
+stops the world's own spawning until pressed again: world spawns, spawner points, nests and raids (the Director's
+`/cast?spawns=0`, the same switch, so a scene's `spawns` step lights or clears it); creatures already there stay. It works
+where this game runs the spawning: all of it in single player or on a host, on a dedicated server only the areas this
+game owns. It carries over into the next world loaded and ends with the game. `/studio/shot`, `/studio/camera?free=1|0`,
+`/studio/hitboxes?on=1|0`, `/studio/colliders?on=1|0` and `/studio/spawns?on=1|0` are their calls.
+
+The Screenshots tab shows the folder's PNG and JPG files as cards with a small picture (a 360 pixel JPG kept in the
+folder's `.thumbs`, made when missing or older than the file), sorted newest or oldest first, by name or largest first
+(remembered in the browser), with a name filter and the folder's total size. Clicking one shows it on the right at full
+size with its pixels, size and time; the name box renames it (Enter; the extension is kept when left off; a name with
+`\ / : * ? " < > |` or one taken already is refused). Delete, the Delete key or Delete ticked (tick several on their
+cards) moves them to the Recycle Bin after asking; Show in folder and Open folder open Explorer. Calls: `/studio/shots`,
+`/studio/shots/thumb?name=`, `/studio/shots/image?name=`, `/studio/shots/rename?name=&to=`, `/studio/shots/delete`
+(`names=a.png,b.png`, or POST one a line) and `/studio/shots/open?name=`.
+
+A shrunk capture (`/screenshot` wider than `maxWidth=`, `/burst` cells, the tab's small pictures) keeps the frame's own
+brightness: until 2026-10-24 the shrink encoded the frame's colours a second time, so on a window wider than 1600 pixels
+every `/screenshot` came out far too bright (a night frame four times over); they now match the game's own capture.
+
 The pictures come from a booth of the studio's own: a still local copy of the prefab deep under the world, on a layer
 the game does not use, drawn by its own camera under its own light (the game's sun, ambient, fog and wetness are swapped
 out for that one render and put back before the game draws its frame), so nothing shows in the world and a picture
@@ -509,7 +585,7 @@ shader for the rest. The picker beside Spin switches it (`look=creature`, `piece
 built). Glow parts (materials named `*_glow`) and particles keep their own. A mod that dresses differently (a borrowed
 game material, a tint) shows only in the mod. `/studio/workshop` lists the bundles, `/studio/workshop/open?bundle=`
 opens one (`reload=1` reads it again), and `/studio/view?bundle=&prefab=&look=` draws a model. `#workshop/<bundle>`
-after `/studio` opens the page on that bundle; `#items` and `#workshop` pick a tab.
+after `/studio` opens the page on that bundle; `#items`, `#spawning`, `#workshop`, `#commands` and `#shots` pick a tab.
 
 ### Tuning values live
 
@@ -596,6 +672,9 @@ changes: it still talks to other players (RPC names stay the same), but a client
 until it reconnects, and SyncedConfig looks for YAML files beside the cache copy, not the plugin DLL.
 
 ## Notes and limits
+
+- A cheat command typed or sent while dev commands are off turns them on first, then runs (single player or the
+  host only; `World/AutoDevCommands.cs`, 2026-10-24).
 
 - The game keeps running and accepting injected input while it is in the background (the bridge turns on
   `runInBackground` and the Input System's ignore-focus mode). Keep the window visible, not minimized, or screenshots

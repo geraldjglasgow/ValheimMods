@@ -30,8 +30,11 @@ or a script can see the game, play it and check a mod unattended.
 - `/tune`: changes a value on a prefab and every live copy, printable as C#.
 - `/reload`: hot-reloads a mod's rebuilt DLL without restarting the game.
 - `/studio` (F3): a page in your browser to pick an object near you, move its parts, attach effects and play them, find
-  the game's items by name, kind or biome, grouped, with their tier, and turn each one in a viewer, or open the asset
-  workshop's built bundles and turn their models and effects in the game's own look.
+  the game's items by name, kind or biome, grouped, with their tier, turn each one in a viewer and spawn it, keep
+  favourite items and groups to spawn at once, spawn any creature, piece or object by its shown or prefab name, run
+  console commands and keep favourites and groups of them, hold the time of day and the weather, stop the world's spawning, take, rename and
+  sort screenshots, let the camera fly free, or open
+  the asset workshop's built bundles and turn their models and effects in the game's own look.
 - `/swap`, `/bundle`, `/place`, `/lineup`: asset bundles staged beside the game's own prefabs.
 - `/animate`, `/effect`, `/sound`, `/frame`, `/light`: animations, effects, sounds, camera and lighting for staged models.
 

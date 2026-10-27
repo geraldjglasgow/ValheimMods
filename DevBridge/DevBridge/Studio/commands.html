@@ -1,0 +1,238 @@
+<!-- The Studio's Commands tab: added to the studio page when it is served (Studio/StudioPage.cs). Uses the page's own
+     call(), run(), status(), el(), $(), debounce(), the saved favourites and groups (saved, storeSaved(), savedRead) and
+     their rows (savedRow(), miniButton(), addRow(), askName()). -->
+<style>
+  main.commands { grid-template-columns: 270px minmax(320px, 1fr) minmax(320px, 34%); }
+  .command-text { display: block; width: 100%; min-height: 130px; resize: vertical; padding: 6px 8px; border: 1px solid var(--line); border-radius: 4px;
+    background: var(--bg); color: var(--text); font: 12.5px/1.45 ui-monospace, Consolas, monospace; }
+  .command-text:focus { outline: 1px solid var(--accent); border-color: var(--accent); }
+  .commands .pad { padding-top: 4px; }
+  .mono { font-family: ui-monospace, Consolas, monospace; font-size: 12px; }
+  .output { flex: 1; overflow: auto; padding: 0 10px 14px; font: 12px/1.45 ui-monospace, Consolas, monospace; white-space: pre-wrap; word-break: break-word; }
+  .output .ran { margin-top: 6px; color: var(--accent); }
+  .output .quiet { color: var(--dim); }
+  .row .about { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; color: var(--dim); }
+  .badge.cheat { background: #5a2e2e; color: #ffc2c2; }
+  .heading { display: flex; align-items: center; justify-content: space-between; padding-right: 10px; }
+</style>
+<main id="commandsView" class="commands" data-pane="commands" hidden>
+  <section>
+    <h2>Favourites</h2>
+    <div id="commandFavourites" class="list saved"></div>
+    <h2>Groups</h2>
+    <div id="commandGroups" class="list"></div>
+  </section>
+  <section>
+    <h2 id="editorTitle">Run commands</h2>
+    <div class="pad">
+      <textarea id="commandText" class="command-text" spellcheck="false"
+        placeholder="One command per line, run in order a frame apart, e.g.&#10;devcommands&#10;god&#10;tod 0.5"></textarea>
+      <div class="actions">
+        <button id="runCommands" class="primary" title="Ctrl+Enter">▶ Run</button>
+        <button id="favouriteCommands" title="Each line becomes a favourite">☆ Favourite</button>
+        <button id="saveCommandGroup" title="These lines as a new group">Save as group…</button>
+        <span class="grow"></span>
+        <button id="renameCommandGroup" hidden>Rename</button>
+        <button id="deleteCommandGroup" hidden>Delete</button>
+        <button id="closeCommandGroup" hidden title="Stop editing the group">Close</button>
+      </div>
+    </div>
+    <div class="heading"><h2>Output</h2><button id="clearOutput" class="mini">Clear</button></div>
+    <div id="commandOutput" class="output"><div id="outputEmpty" class="quiet">What the console prints shows here.</div></div>
+  </section>
+  <section>
+    <h2>Console commands</h2>
+    <div class="bar">
+      <input id="commandFilter" type="search" placeholder="Filter, e.g. spawn, time, god">
+      <button id="refreshCommands" title="Read the list again">↻</button>
+    </div>
+    <div id="gameCommands" class="list"><div class="empty">The console's commands, the game's and mods', show here.</div></div>
+    <div class="hint folder">Click one to add it as a line. Cheats need devcommands first, which turns them on and off.</div>
+  </section>
+</main>
+<script>
+"use strict";
+const commandBook = { all: [], loaded: false };
+const editor = { group: null }; // the command group open in the editor, if any
+
+/* ---------- running ---------- */
+
+const editorLines = () => $("commandText").value.split("\n").map(line => line.trim()).filter(Boolean);
+
+async function runCommands(commands, label) {
+  if (!commands.length) return status("No command to run.", true);
+  const data = await run(() => call("console", {}, commands.join("\n")),
+    result => `${label ? label + ": ran" : "Ran"} ${result.ran.length} command${result.ran.length === 1 ? "" : "s"}`);
+  if (data) showOutput(data.ran);
+}
+
+function showOutput(ran) {
+  const out = $("commandOutput");
+  $("outputEmpty")?.remove();
+  for (const one of ran) {
+    const printed = one.printed.map(line => line.replace(/^console: /, "")).join("\n");
+    out.append(el("div", "ran", `> ${one.command}`));
+    out.append(el("div", printed ? "" : "quiet", printed || "(the console printed nothing)"));
+  }
+  while (out.childElementCount > 600) out.firstElementChild.remove();
+  out.scrollTop = out.scrollHeight;
+}
+
+/* ---------- favourites and groups ---------- */
+
+function renderCommandLists() {
+  const { favourites, groups } = saved.commands;
+  $("commandFavourites").replaceChildren(...favourites.map(favouriteRow));
+  if (!favourites.length) $("commandFavourites").append(el("div", "empty", "☆ Favourite keeps each line typed in the middle here."));
+  const rows = groups.map(group => savedRow(group.name, group.commands.length, () => openGroup(group), editor.group === group,
+    () => runCommands(group.commands, group.name), "Run them all"));
+  $("commandGroups").replaceChildren(...rows, addRow("+ New group", newGroup));
+}
+
+function favouriteRow(command) {
+  const row = savedRow(command, "", () => openText(command), false, () => runCommands([command]), "Run it");
+  row.querySelector(".name").classList.add("mono");
+  row.append(miniButton("×", "Remove from the favourites", () => removeFavourite(command)));
+  row.title = "Click to put it in the editor";
+  return row;
+}
+
+function favouriteLines() {
+  const lines = editorLines(), added = lines.filter(line => !saved.commands.favourites.includes(line));
+  if (!lines.length) return status("Type a command first.", true);
+  saved.commands.favourites.push(...added);
+  storeSaved();
+  renderCommandLists();
+  status(added.length ? `Favourite${added.length === 1 ? "" : "s"}: ${added.join(", ")}` : "Those are favourites already");
+}
+
+function removeFavourite(command) {
+  saved.commands.favourites = saved.commands.favourites.filter(line => line !== command);
+  storeSaved();
+  renderCommandLists();
+  status(`${command} is no longer a favourite`);
+}
+
+function saveAsGroup() {
+  const name = askName("Name the new group of commands");
+  if (!name) return;
+  const group = { name, commands: editorLines() };
+  saved.commands.groups.push(group);
+  storeSaved();
+  openGroup(group);
+  status(`Saved ${group.commands.length} command${group.commands.length === 1 ? "" : "s"} as ${name}`);
+}
+
+function newGroup() {
+  const name = askName("Name the new group of commands");
+  if (!name) return;
+  const group = { name, commands: [] };
+  saved.commands.groups.push(group);
+  storeSaved();
+  openGroup(group);
+}
+
+/* ---------- the editor: free lines, or one group's (saved as they are typed) ---------- */
+
+function openGroup(group) {
+  editor.group = group;
+  $("commandText").value = group.commands.join("\n");
+  showEditor();
+}
+
+function openText(text) {
+  editor.group = null;
+  $("commandText").value = text;
+  showEditor();
+}
+
+function showEditor() {
+  const group = editor.group;
+  $("editorTitle").textContent = group ? `Group: ${group.name} (saved as you type)` : "Run commands";
+  ["renameCommandGroup", "deleteCommandGroup", "closeCommandGroup"].forEach(id => { $(id).hidden = !group; });
+  renderCommandLists();
+  $("commandText").focus();
+}
+
+const saveGroupSoon = debounce(storeSaved, 600);
+
+function editorChanged() {
+  if (!editor.group) return;
+  editor.group.commands = editorLines();
+  saveGroupSoon();
+  renderCommandLists();
+}
+
+function renameGroup() {
+  const group = editor.group, name = group && askName("Rename the group", group.name);
+  if (!name) return;
+  group.name = name;
+  storeSaved();
+  showEditor();
+}
+
+function deleteGroup() {
+  const group = editor.group;
+  if (!group || !confirm(`Delete the group ${group.name}?`)) return;
+  saved.commands.groups = saved.commands.groups.filter(other => other !== group);
+  storeSaved();
+  openText("");
+}
+
+/* ---------- the console's commands ---------- */
+
+async function loadCommandBook() {
+  const data = await run(() => call("commands"), result => `${result.length} console commands`);
+  if (!data) return;
+  Object.assign(commandBook, { all: data, loaded: true });
+  renderCommandBook();
+}
+
+function renderCommandBook() {
+  const words = $("commandFilter").value.toLowerCase().split(/\s+/).filter(Boolean);
+  const shown = commandBook.all.filter(command => words.every(word => `${command.name} ${command.description}`.toLowerCase().includes(word)));
+  $("gameCommands").replaceChildren(...shown.map(bookRow));
+  if (!shown.length) $("gameCommands").append(el("div", "empty", commandBook.loaded ? "No command matches." : "Not read yet."));
+}
+
+function bookRow(command) {
+  const row = el("div", "row");
+  row.append(el("span", "mono", command.name));
+  if (command.cheat) row.append(el("span", "badge cheat", "cheat"));
+  row.append(el("span", "about", command.description));
+  row.title = `${command.name} ${command.description}`;
+  row.onclick = () => addLine(`${command.name} `);
+  return row;
+}
+
+/* Adds a line to the editor and puts the cursor at its end, to type the arguments. */
+function addLine(text) {
+  const box = $("commandText"), before = box.value.replace(/\s+$/, "");
+  box.value = before ? `${before}\n${text}` : text;
+  box.focus();
+  box.setSelectionRange(box.value.length, box.value.length);
+  editorChanged();
+}
+
+/* ---------- wiring ---------- */
+
+function wireCommands() {
+  $("runCommands").onclick = () => runCommands(editorLines(), editor.group?.name);
+  $("commandText").onkeydown = event => {
+    if (event.key === "Enter" && (event.ctrlKey || event.metaKey)) { event.preventDefault(); $("runCommands").click(); }
+  };
+  $("commandText").oninput = editorChanged;
+  $("favouriteCommands").onclick = favouriteLines;
+  $("saveCommandGroup").onclick = saveAsGroup;
+  $("renameCommandGroup").onclick = renameGroup;
+  $("deleteCommandGroup").onclick = deleteGroup;
+  $("closeCommandGroup").onclick = () => openText("");
+  $("clearOutput").onclick = () => $("commandOutput").replaceChildren();
+  $("commandFilter").oninput = renderCommandBook;
+  $("refreshCommands").onclick = loadCommandBook;
+  OPENED.commands = () => { if (!commandBook.loaded) loadCommandBook(); $("commandText").focus(); };
+  savedRead.then(renderCommandLists);
+}
+
+wireCommands();
+</script>

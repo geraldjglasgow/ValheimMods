@@ -42,6 +42,7 @@ namespace DevBridge.Stage
         internal static void Free(Vector3 eye, Vector3 look, float fov)
         {
             GameCamera camera = Camera;
+            Studio.FlyCamera.Yield();
             camera.m_freeFly = true;
             (camera.m_freeFlyVel, camera.m_freeFlyAcc, camera.m_freeFlySavedVel, camera.m_freeFlyTurnVel) = (Vector3.zero, Vector3.zero, Vector3.zero, Vector3.zero);
             (camera.m_freeFlyTarget, camera.m_freeFlyLockon) = (null, null);

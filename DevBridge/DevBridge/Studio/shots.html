@@ -1,0 +1,228 @@
+<!-- The Studio's Screenshots tab and the Screenshot button in the switches bar: added to the studio page when it is served
+     (Studio/StudioPage.cs). Uses the page's own call(), run(), status(), el(), $(), debounce() and OPENED. -->
+<style>
+  main.shots { grid-template-columns: minmax(380px, 1fr) minmax(420px, 46%); }
+  .shot-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); align-content: start; gap: 10px; padding: 12px 14px 24px; }
+  .shot-grid > .empty { grid-column: 1 / -1; }
+  .shot { position: relative; overflow: hidden; border: 1px solid var(--line); border-radius: 6px; background: var(--stage); cursor: pointer; }
+  .shot:hover { border-color: #4a5468; }
+  .shot.selected { border-color: var(--accent); box-shadow: 0 0 0 1px var(--accent); }
+  .shot .pic { aspect-ratio: 16 / 9; background: #20232b; }
+  .shot .pic.loading { animation: pulse 1.4s ease-in-out infinite; }
+  .shot .pic img { display: block; width: 100%; height: 100%; object-fit: cover; }
+  .shot .pic img:not([src]) { visibility: hidden; }
+  .shot .meta { padding: 5px 8px 7px; }
+  .shot .meta .name { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .shot .meta .when { color: var(--dim); font-size: 11px; }
+  .shot input[type=checkbox] { position: absolute; top: 6px; left: 6px; width: 16px; height: 16px; margin: 0; opacity: 0; cursor: pointer; }
+  .shot:hover input[type=checkbox], .shot input[type=checkbox]:checked { opacity: 1; }
+  .shot-stage { cursor: default; }
+  .rename { display: flex; gap: 6px; flex: 1; min-width: 0; }
+  .rename input { flex: 1; min-width: 0; }
+</style>
+<main id="shotsView" class="shots" data-pane="shots" hidden>
+  <section>
+    <div class="bar">
+      <select id="shotSort" title="Order">
+        <option value="newest">Newest first</option><option value="oldest">Oldest first</option>
+        <option value="az">Name A–Z</option><option value="za">Name Z–A</option><option value="largest">Largest first</option>
+      </select>
+      <input id="shotFilter" type="search" placeholder="Filter by name">
+      <span id="shotCount" class="dim"></span>
+      <span class="grow"></span>
+      <button id="shotsDelete" disabled title="Ticked ones, to the Recycle Bin">Delete ticked</button>
+      <button id="shotsFolder" title="The Screenshots folder in Explorer">Open folder</button>
+      <button id="shotsRefresh" title="Read the folder again">↻</button>
+    </div>
+    <div id="shotGrid" class="results shot-grid"></div>
+  </section>
+  <section class="viewer">
+    <div class="stage shot-stage">
+      <img id="shotImage" alt="" draggable="false" hidden>
+      <div id="shotEmpty" class="stage-empty">Pick a screenshot to see it here.</div>
+    </div>
+    <div class="bar views">
+      <div class="rename"><input id="shotName" spellcheck="false" placeholder="Name" disabled><button id="shotRename" disabled>Rename</button></div>
+    </div>
+    <div class="bar views">
+      <button id="shotShow" disabled>Show in folder</button>
+      <span class="grow"></span>
+      <button id="shotDelete" disabled title="To the Recycle Bin (Delete key)">Delete</button>
+    </div>
+    <div id="shotInfo" class="hint pad"></div>
+  </section>
+</main>
+<script>
+"use strict";
+const shots = { list: [], folder: "", picked: null, checked: new Set(), loaded: false, generation: 0, queue: [], drawing: false, thumbs: new Map() };
+const shotSight = new IntersectionObserver(thumbsSeen, { root: $("shotGrid"), rootMargin: "300px" });
+
+const SHOT_SORTS = {
+  newest: (a, b) => b.taken.localeCompare(a.taken) || b.name.localeCompare(a.name),
+  oldest: (a, b) => a.taken.localeCompare(b.taken) || a.name.localeCompare(b.name),
+  az: (a, b) => a.name.localeCompare(b.name, undefined, { numeric: true }),
+  za: (a, b) => b.name.localeCompare(a.name, undefined, { numeric: true }),
+  largest: (a, b) => b.bytes - a.bytes,
+};
+
+function size(bytes) {
+  return bytes >= 1048576 ? `${(bytes / 1048576).toFixed(1)} MB` : `${Math.max(1, Math.round(bytes / 1024))} KB`;
+}
+
+/* ---------- the list ---------- */
+
+async function loadShots(quiet = false) {
+  const data = await run(() => call("shots"), quiet ? null : result => `${result.shots.length} screenshot${result.shots.length === 1 ? "" : "s"} in ${result.folder}`);
+  if (!data) return;
+  Object.assign(shots, { list: data.shots, folder: data.folder, loaded: true });
+  const names = new Set(data.shots.map(shot => shot.name));
+  shots.checked = new Set([...shots.checked].filter(name => names.has(name)));
+  renderShots();
+  if (shots.picked && !names.has(shots.picked)) pickShot(null);
+}
+
+function renderShots() {
+  const words = $("shotFilter").value.toLowerCase().split(/\s+/).filter(Boolean);
+  const shown = shots.list.filter(shot => words.every(word => shot.name.toLowerCase().includes(word))).sort(SHOT_SORTS[$("shotSort").value]);
+  shotSight.disconnect();
+  shots.generation++;
+  $("shotGrid").replaceChildren(...shown.map(shotCard));
+  if (!shown.length) $("shotGrid").append(el("div", "empty center", shots.list.length ? "No screenshot matches." : "No screenshots yet: press Screenshot above."));
+  $("shotCount").textContent = `${shown.length} of ${shots.list.length} · ${size(shots.list.reduce((sum, shot) => sum + shot.bytes, 0))}`;
+  paintTicks();
+}
+
+function shotCard(shot) {
+  const card = el("div", "shot" + (shot.name === shots.picked ? " selected" : ""));
+  const tick = el("input");
+  tick.type = "checkbox";
+  tick.title = "Tick to delete several";
+  tick.checked = shots.checked.has(shot.name);
+  tick.onclick = event => { event.stopPropagation(); setTick(shot.name, tick.checked); };
+  const pic = el("div", "pic loading"), img = el("img"), meta = el("div", "meta");
+  img.alt = shot.name;
+  img.onload = () => pic.classList.remove("loading");
+  pic.append(img);
+  meta.append(el("div", "name", shot.name), el("div", "when", `${shot.taken} · ${size(shot.bytes)}`));
+  card.append(pic, tick, meta);
+  Object.assign(card, { title: shot.name, thumb: { img, name: shot.name, generation: shots.generation } });
+  card.dataset.name = shot.name;
+  card.onclick = () => pickShot(shot.name);
+  shotSight.observe(card);
+  return card;
+}
+
+/* Cards in sight get their small pictures, one at a time; ones already fetched come from memory. */
+function thumbsSeen(entries, sight) {
+  for (const entry of entries.filter(entry => entry.isIntersecting)) {
+    sight.unobserve(entry.target);
+    shots.queue.push(entry.target.thumb);
+  }
+  drawThumbs();
+}
+
+async function drawThumbs() {
+  if (shots.drawing) return;
+  shots.drawing = true;
+  while (shots.queue.length) {
+    const thumb = shots.queue.shift();
+    if (thumb.generation !== shots.generation) continue;
+    if (!shots.thumbs.has(thumb.name)) {
+      const data = await run(() => call("shots/thumb", { name: thumb.name }));
+      if (data) shots.thumbs.set(thumb.name, data.image);
+    }
+    if (shots.thumbs.has(thumb.name)) thumb.img.src = shots.thumbs.get(thumb.name);
+  }
+  shots.drawing = false;
+}
+
+/* ---------- ticking several ---------- */
+
+function setTick(name, on) {
+  if (on) shots.checked.add(name); else shots.checked.delete(name);
+  paintTicks();
+}
+
+function paintTicks() {
+  const count = shots.checked.size;
+  $("shotsDelete").disabled = count === 0;
+  $("shotsDelete").textContent = count ? `Delete ticked (${count})` : "Delete ticked";
+}
+
+/* ---------- one screenshot ---------- */
+
+async function pickShot(name) {
+  shots.picked = name;
+  document.querySelectorAll(".shot").forEach(card => card.classList.toggle("selected", card.dataset.name === name));
+  ["shotName", "shotRename", "shotShow", "shotDelete"].forEach(id => { $(id).disabled = !name; });
+  $("shotName").value = name || "";
+  $("shotImage").hidden = !name;
+  $("shotEmpty").hidden = !!name;
+  $("shotInfo").textContent = "";
+  if (!name) return;
+  const data = await run(() => call("shots/image", { name }));
+  if (!data || shots.picked !== name) return;
+  $("shotImage").src = data.image;
+  const shot = shots.list.find(one => one.name === name);
+  $("shotImage").onload = () => {
+    $("shotInfo").textContent = `${$("shotImage").naturalWidth} × ${$("shotImage").naturalHeight}${shot ? ` · ${size(shot.bytes)} · taken ${shot.taken}` : ""}`;
+  };
+}
+
+async function renameShot() {
+  const name = shots.picked, to = $("shotName").value.trim();
+  if (!name || !to || to === name) return;
+  const data = await run(() => call("shots/rename", { name, to }), result => `Renamed to ${result.name}`);
+  if (!data) return;
+  if (shots.thumbs.has(name)) { shots.thumbs.set(data.name, shots.thumbs.get(name)); shots.thumbs.delete(name); }
+  if (shots.checked.delete(name)) shots.checked.add(data.name);
+  shots.picked = data.name;
+  await loadShots(true);
+  pickShot(data.name);
+}
+
+/* To the Recycle Bin, after asking. */
+async function deleteShots(names) {
+  if (!names.length) return;
+  const what = names.length === 1 ? names[0] : `${names.length} screenshots`;
+  if (!confirm(`Move ${what} to the Recycle Bin?`)) return;
+  const data = await run(() => call("shots/delete", {}, names.join("\n")), result => `Moved ${result.deleted} to the Recycle Bin`);
+  if (!data) return;
+  names.forEach(name => { shots.thumbs.delete(name); shots.checked.delete(name); });
+  await loadShots(true);
+}
+
+/* The Delete key: the ticked ones, else the one picked. */
+function deleteKey(event) {
+  const typing = ["INPUT", "SELECT", "TEXTAREA"].includes(document.activeElement?.tagName);
+  if (event.key !== "Delete" || typing || $("shotsView").hidden) return;
+  event.preventDefault();
+  deleteShots(shots.checked.size ? [...shots.checked] : shots.picked ? [shots.picked] : []);
+}
+
+/* The Screenshot button above every tab. */
+async function takeShot() {
+  const data = await run(() => call("shot"), result => `Screenshot saved: ${result.name}`);
+  if (data && shots.loaded) await loadShots(true);
+}
+
+/* ---------- wiring ---------- */
+
+function wireShots() {
+  $("takeShot").onclick = takeShot;
+  $("shotsRefresh").onclick = () => loadShots();
+  $("shotsFolder").onclick = () => run(() => call("shots/open"), result => `Opened ${result.opened}`);
+  $("shotsDelete").onclick = () => deleteShots([...shots.checked]);
+  $("shotShow").onclick = () => shots.picked && run(() => call("shots/open", { name: shots.picked }), () => `Showing ${shots.picked} in Explorer`);
+  $("shotDelete").onclick = () => shots.picked && deleteShots([shots.picked]);
+  $("shotRename").onclick = renameShot;
+  $("shotName").onkeydown = event => { if (event.key === "Enter") renameShot(); if (event.key === "Escape") $("shotName").value = shots.picked || ""; };
+  $("shotFilter").oninput = debounce(renderShots, 150);
+  $("shotSort").onchange = () => { renderShots(); try { localStorage.setItem("studio.shotSort", $("shotSort").value); } catch { /* no storage here */ } };
+  try { const sort = localStorage.getItem("studio.shotSort"); if (sort in SHOT_SORTS) $("shotSort").value = sort; } catch { /* no storage here */ }
+  document.addEventListener("keydown", deleteKey);
+  OPENED.shots = () => { if (!shots.loaded) loadShots(); };
+}
+
+wireShots();
+</script>

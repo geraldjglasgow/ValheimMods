@@ -4,7 +4,7 @@ using HarmonyLib;
 
 namespace DevBridge.Hitbox
 {
-    /// <summary>Where /hitbox looks: a melee swing as the game casts it, and a hit as it reaches the local player.
+    /// <summary>Where /hitbox looks: a melee swing or an area attack as the game casts it, and a hit as it reaches the local player.
     /// Neither changes anything, and a failure in either is logged and swallowed so the game's own attack goes on.
     /// While /hitbox is off each leaves at once; the work is a static lambda with its arguments passed in, so no call
     /// allocates a closure. The hit has no patch of its own: CharacterPatches' one RPC_Damage prefix calls Arrived. A
@@ -19,6 +19,17 @@ namespace DevBridge.Hitbox
                 Character attacker = __instance.m_character;
                 if (!HitboxView.On || attacker == null || (attacker.IsPlayer() && !HitboxView.Players)) return;
                 Safely(static attack => SwingShape.Show(attack), __instance);
+            }
+        }
+
+        [HarmonyPatch(typeof(Attack), nameof(Attack.DoAreaAttack))]
+        private static class Area
+        {
+            private static void Prefix(Attack __instance)
+            {
+                Character attacker = __instance.m_character;
+                if (!HitboxView.On || attacker == null || (attacker.IsPlayer() && !HitboxView.Players)) return;
+                Safely(static attack => AreaShape.Show(attack), __instance);
             }
         }
 

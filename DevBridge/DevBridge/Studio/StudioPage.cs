@@ -5,12 +5,14 @@ using DevBridge.Server;
 namespace DevBridge.Studio
 {
     /// <summary>
-    /// GET /studio: the studio page (Studio/studio.html, embedded), with this start's token written in, served on the HTTP
-    /// thread. It may not be framed, loads nothing from elsewhere and calls only this host (<see cref="StudioAccess"/>).
+    /// GET /studio: the studio page (Studio/studio.html, embedded, with its parts such as the Commands tab added before
+    /// its body ends), with this start's token written in, served on the HTTP thread. It may not be framed, loads nothing
+    /// from elsewhere and calls only this host (<see cref="StudioAccess"/>).
     /// </summary>
     internal static class StudioPage
     {
         private const string Resource = "DevBridge.Studio.studio.html";
+        private static readonly string[] Parts = { "DevBridge.Studio.commands.html", "DevBridge.Studio.shots.html" };
         private const string Rules = "default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; connect-src 'self'; " +
             "img-src 'self' data:; frame-ancestors 'none'; base-uri 'none'; form-action 'none'";
 
@@ -29,12 +31,18 @@ namespace DevBridge.Studio
         private static string Page()
         {
             if (page != null) return page;
-            using (Stream stream = typeof(StudioPage).Assembly.GetManifestResourceStream(Resource))
+            string built = Embedded(Resource);
+            foreach (string part in Parts) built = built.Replace("</body>", Embedded(part) + "\n</body>");
+            return page = built;
+        }
+
+        private static string Embedded(string resource)
+        {
+            using (Stream stream = typeof(StudioPage).Assembly.GetManifestResourceStream(resource))
             {
-                if (stream == null) throw new BridgeException($"the studio page {Resource} is missing from this build");
-                using (var reader = new StreamReader(stream)) page = Director.ScenesPage.AddTo(reader.ReadToEnd());
+                if (stream == null) throw new BridgeException($"the studio page's {resource} is missing from this build");
+                using (var reader = new StreamReader(stream)) return reader.ReadToEnd();
             }
-            return page;
         }
     }
 }

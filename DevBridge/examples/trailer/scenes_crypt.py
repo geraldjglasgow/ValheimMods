@@ -1,5 +1,5 @@
 """Writes the crypt run's scene file (crypt_sequence.json): one take in the crypt hall, from the skeletons' march to the
-Executioner's axe shattering on the lens. Run it after changing the beats; DevBridge Studio's Scenes tab shows the result."""
+Executioner's axe shattering on the lens. Run it after changing the beats; ecp_trailer.py plays it."""
 import json
 import math
 import os

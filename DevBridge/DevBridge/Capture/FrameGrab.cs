@@ -37,7 +37,7 @@ namespace DevBridge.Capture
             RectInt r = Bounds(source, spec);
             int width = maxWidth > 0 ? Mathf.Min(maxWidth, r.width) : r.width;
             int height = Mathf.Max(1, Mathf.RoundToInt(r.height * (float)width / r.width));
-            RenderTexture cropped = Temp(r.width, r.height);
+            RenderTexture cropped = Temp(r.width, r.height, source.isDataSRGB);
             Graphics.Blit(source, cropped, new Vector2(r.width / (float)source.width, r.height / (float)source.height),
                 new Vector2(r.x / (float)source.width, (source.height - r.y - r.height) / (float)source.height));
             RenderTexture target = Downsample(cropped, width, height);
@@ -74,22 +74,26 @@ namespace DevBridge.Capture
         {
             RenderTexture held = null;
             Texture current = source;
+            bool srgb = source.isDataSRGB;
             while (current.width > width * 2)
             {
-                RenderTexture half = Temp(current.width / 2, Mathf.Max(1, current.height / 2));
+                RenderTexture half = Temp(current.width / 2, Mathf.Max(1, current.height / 2), srgb);
                 Graphics.Blit(current, half);
                 if (held) RenderTexture.ReleaseTemporary(held);
                 current = held = half;
             }
-            RenderTexture target = Temp(width, height);
+            RenderTexture target = Temp(width, height, srgb);
             Graphics.Blit(current, target);
             if (held) RenderTexture.ReleaseTemporary(held);
             return target;
         }
 
-        private static RenderTexture Temp(int width, int height)
+        // The copies keep the source's own encoding: a captured frame holds the screen's bytes untagged, and an sRGB
+        // target would encode them a second time (a night frame came out four times too bright); a loaded image is sRGB.
+        private static RenderTexture Temp(int width, int height, bool srgb)
         {
-            RenderTexture texture = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32, RenderTextureReadWrite.sRGB);
+            RenderTexture texture = RenderTexture.GetTemporary(width, height, 0, RenderTextureFormat.ARGB32,
+                srgb ? RenderTextureReadWrite.sRGB : RenderTextureReadWrite.Linear);
             texture.filterMode = FilterMode.Bilinear;
             return texture;
         }

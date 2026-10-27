@@ -22,6 +22,8 @@ namespace DevBridge.Studio
             internal int GroupRank;
             internal Tier? Tier;
             internal string Station;
+            internal int Stack;
+            internal int Levels;
             internal string Text;
         }
 
@@ -47,6 +49,18 @@ namespace DevBridge.Studio
             };
         }
 
+        /// <summary>The items named, in that order, for the page's favourites and groups; prefabs no longer in the game are named apart.</summary>
+        internal static Dictionary<string, object> Pick(string prefabs)
+        {
+            Dictionary<string, Entry> byPrefab = Entries().GroupBy(e => e.Prefab).ToDictionary(g => g.Key, g => g.First());
+            string[] wanted = prefabs.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries).Select(p => p.Trim()).Distinct().ToArray();
+            return new Dictionary<string, object>
+            {
+                ["items"] = wanted.Where(byPrefab.ContainsKey).Select(p => Line(byPrefab[p])).ToList(),
+                ["missing"] = wanted.Where(p => !byPrefab.ContainsKey(p)).ToList(),
+            };
+        }
+
         private static bool Named(string group, string[] words)
         {
             string named = ItemGroups.Words(group).ToLowerInvariant();
@@ -67,6 +81,8 @@ namespace DevBridge.Studio
             ["tier"] = entry.Tier?.Rank + 1,
             ["biome"] = entry.Tier?.Biome,
             ["station"] = entry.Station,
+            ["stack"] = entry.Stack,
+            ["levels"] = entry.Levels,
         };
 
         private static List<Entry> Entries()
@@ -100,6 +116,7 @@ namespace DevBridge.Studio
             {
                 Prefab = prefab.name, Name = name, Group = group, GroupRank = rank < 0 ? int.MaxValue : rank, Tier = tier,
                 Station = Station(recipes.TryGetValue(prefab.name, out Recipe recipe) ? recipe : null),
+                Stack = Mathf.Max(1, shared.m_maxStackSize), Levels = Mathf.Max(1, shared.m_maxQuality),
                 Text = $"{name} {prefab.name} {ItemGroups.Words(group)} {tier?.Biome}".ToLowerInvariant(),
             };
         }

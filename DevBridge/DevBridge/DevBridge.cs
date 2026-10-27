@@ -33,6 +33,7 @@ namespace DevBridge
                 "First localhost port to listen on. When it is taken (a second game or a server on this machine) the next nine are tried.");
             StudioKey.Bind(Config);
             WorkshopFiles.Bind(Config);
+            StudioShots.Bind(Config);
             Application.runInBackground = true;
             LogCapture.Install();
             new Harmony(PluginGuid).PatchAll(typeof(DevBridgePlugin).Assembly);
@@ -45,6 +46,7 @@ namespace DevBridge
             if (!Application.runInBackground) Application.runInBackground = true;
             MainThread.Drain();
             StudioKey.Check(Port);
+            StudioSky.Tick();
         }
 
         private void OnDestroy() => server?.Stop();

@@ -9,7 +9,8 @@ namespace DevBridge.Server
     /// The page opens only from the address bar or a reload (Sec-Fetch-Site none or same-origin), never from a link or a
     /// frame on another site, and may not be framed. Its calls carry the token in a header; another page can neither read
     /// the token (the same-origin rule) nor send that header to 127.0.0.1 without a preflight it fails. With the token a call
-    /// reaches the /studio/ endpoints only, so the page can move and play things but never run /eval or /reload.
+    /// reaches the /studio/ endpoints only, so the page can move and play things, give the player items and run console
+    /// commands, but never run /eval or /reload.
     /// </summary>
     internal static class StudioAccess
     {

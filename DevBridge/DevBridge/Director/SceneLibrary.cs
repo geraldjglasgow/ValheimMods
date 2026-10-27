@@ -22,7 +22,7 @@ namespace DevBridge.Director
         {
             string videos = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.MyVideos), "ValheimTrailers");
             scenes = config.Bind("Director", "Scenes folder", Path.Combine(videos, "scenes"),
-                "Where the director's scene files are (one JSON per scene); the Studio's Scenes tab lists and edits them.");
+                "Where the director's scene files are (one JSON per scene), listed and played by /studio/scenes and /studio/scene/play.");
             footage = config.Bind("Director", "Footage folder", videos,
                 "Where takes are recorded: preview/ and final/ beneath it.");
         }

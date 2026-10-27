@@ -17,13 +17,18 @@ namespace DevBridge.Routes
         internal static void Register(Router router)
         {
             router.Add("/studio", "/studio                a page for your browser (or the Open key, F3): pick an object near you, select its" + Pad +
-                "parts, move, rotate and scale them, attach effects and play them; or find items by name, kind or biome" + Pad +
-                "and turn them in a viewer; this machine only",
+                "parts, move, rotate and scale them, attach effects and play them; find items by name, kind or biome, turn" + Pad +
+                "them in a viewer and spawn them; spawn any creature, piece or object by its shown or prefab name; run" + Pad +
+                "console commands; keep favourites and groups of items and commands; hold the time of day and the weather",
                 _ => throw new BridgeException("/studio is a page: open it in a browser"));
             HttpBridge.ServeDirect("/studio", StudioPage.Answer);
             RegisterReads(router);
             RegisterEdits(router);
             StudioItemsRoute.Register(router);
+            StudioCommandsRoute.Register(router);
+            StudioSpawningRoute.Register(router);
+            StudioShotsRoute.Register(router);
+            StudioSwitchesRoute.Register(router);
         }
 
         private static void RegisterReads(Router router)

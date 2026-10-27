@@ -31,7 +31,8 @@
 
   <ItemGroup>
     <EmbeddedResource Include="Studio\studio.html" LogicalName="DevBridge.Studio.studio.html" />
-    <EmbeddedResource Include="Director\scenes.html" LogicalName="DevBridge.Director.scenes.html" />
+    <EmbeddedResource Include="Studio\commands.html" LogicalName="DevBridge.Studio.commands.html" />
+    <EmbeddedResource Include="Studio\shots.html" LogicalName="DevBridge.Studio.shots.html" />
   </ItemGroup>
 
   <ItemGroup>

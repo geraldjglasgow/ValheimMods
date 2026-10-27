@@ -12,7 +12,7 @@ using UnityEngine;
 
 namespace DevBridge.Routes
 {
-    /// <summary>/studio/scenes and /studio/scene/*: the Studio's Scenes tab (and any local tool) plans and shoots scenes.</summary>
+    /// <summary>/studio/scenes and /studio/scene/*: local tools (examples/trailer/ecp_trailer.py) list, play and shoot scene files.</summary>
     internal static class StudioScenesRoute
     {
         internal static void Register(Router router)

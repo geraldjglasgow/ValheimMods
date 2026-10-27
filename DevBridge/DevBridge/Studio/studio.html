@@ -118,15 +118,58 @@
   .folder { padding: 8px 10px; border-top: 1px solid var(--line); word-break: break-all; }
   .bundle-bar { padding: 8px 14px; }
   .bundle-bar .name { font-size: 14px; font-weight: 600; }
+
+  /* favourites and groups */
+  .list.saved { flex: 0 0 auto; max-height: 40%; border-bottom: 1px solid var(--line); }
+  button.mini { padding: 0 6px; line-height: 17px; font-size: 11px; }
+  .row.add { color: var(--dim); }
+  .row.add:hover { color: var(--text); }
+  .box .pic { position: relative; }
+  .box .fav { position: absolute; top: 4px; right: 4px; padding: 0 5px; line-height: 18px; border: 0; background: rgba(0, 0, 0, .35); color: var(--dim); opacity: 0; }
+  .box:hover .fav, .box .fav.on { opacity: 1; }
+  .fav.on, #favourite.on { color: #f1c75b; }
+  .spawn { flex-wrap: wrap; border-top: 1px solid var(--line); border-bottom: 0; }
+  .spawn input[type=number] { width: 72px; }
+
+  /* time and weather switches */
+  .switches { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; padding: 5px 14px; border-bottom: 1px solid var(--line); background: var(--panel); }
+  .switches .label { color: var(--dim); font-size: 11px; letter-spacing: .08em; text-transform: uppercase; }
+  .switches .tabs button.on { background: #23547f; color: var(--text); }
+  .switches select { max-width: 170px; }
+  .switches select.on { border-color: #2e6ca3; background: #23547f; }
+  .switches .gap { width: 12px; }
+  .switches > button.on { border-color: #2e6ca3; background: #23547f; }
+
+  /* spawning */
+  .box .sub { margin-top: -5px; padding: 0 7px 7px; color: var(--dim); font-size: 10.5px; text-align: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .spawn input[type=checkbox] { vertical-align: -2px; }
 </style>
 </head>
 <body>
 <header>
   <h1>DevBridge Studio</h1>
-  <nav class="tabs"><button data-tab="objects">Objects</button><button data-tab="items">Items</button><button data-tab="workshop">Workshop</button><button data-tab="scenes">Scenes</button></nav>
+  <nav class="tabs"><button data-tab="objects">Objects</button><button data-tab="items">Items</button><button data-tab="spawning">Spawning</button><button data-tab="workshop">Workshop</button><button data-tab="commands">Commands</button><button data-tab="shots">Screenshots</button></nav>
   <span id="status">Connecting to the game…</span>
   <span id="hint" class="hint"></span>
 </header>
+<div class="switches">
+  <span class="label">Time</span>
+  <nav id="timeSwitch" class="tabs" title="Holds the time of day near that point: an hour on, an hour back, again. The world's clock runs on underneath.">
+    <button data-time="off">Off</button><button data-time="night">Night</button><button data-time="morning">Morning</button><button data-time="day">Day</button><button data-time="dusk">Dusk</button>
+  </nav>
+  <span class="gap"></span>
+  <button id="takeShot" title="Saves the game window, UI included, as <time>.png (the Screenshots tab lists them)">Screenshot</button>
+  <button id="freeCamera" title="Lets the camera go from your character: fly it in the game with W A S D and the mouse; press again to go back">Free camera</button>
+  <button id="hitboxes" title="Each melee swing flashes its reach (red at its height, orange on the ground); each hit on you draws a yellow line from the attacker">Hitboxes</button>
+  <button id="colliders" title="Outlines every collider within 30 m of you (or of the free camera): creatures red, buildings orange, triggers green, the rest blue">Colliders</button>
+  <button id="noSpawns" title="Stops the world's own spawning (world spawns, spawner points, nests, raids) until pressed again; creatures already there stay. All of it in single player or on a host; on a server, the areas your game runs">No spawns</button>
+  <span class="gap"></span>
+  <span class="label">Weather</span>
+  <nav id="weatherSwitch" class="tabs" title="Holds one weather (a dungeon's or a boss's own still wins)"></nav>
+  <select id="moreWeather" title="Any of the game's weathers"><option value="">More…</option></select>
+  <span class="grow"></span>
+  <span id="skyNow" class="hint"></span>
+</div>
 <main id="objectsView">
   <section>
     <h2>Objects near you</h2>
@@ -190,9 +233,16 @@
 
 <main id="itemsView" class="items" hidden>
   <section data-pane="items">
+    <h2>Saved</h2>
+    <div id="savedItems" class="list saved"></div>
     <h2>Find items</h2>
     <div class="bar"><input id="itemSearch" type="search" placeholder="e.g. iron shield, sword, swamp"></div>
     <div id="groupIndex" class="list"></div>
+  </section>
+  <section data-pane="spawning" hidden>
+    <h2>Find anything</h2>
+    <div class="bar"><input id="spawnSearch" type="search" placeholder="Name in game or prefab, e.g. troll, Greydwarf_Elite"></div>
+    <div id="spawnIndex" class="list"></div>
   </section>
   <section data-pane="workshop" hidden>
     <h2>Workshop bundles</h2>
@@ -205,7 +255,17 @@
   </section>
 
   <section data-pane="items">
+    <div id="savedBar" class="bar bundle-bar" hidden>
+      <span id="savedName" class="name"></span>
+      <span id="savedNote" class="dim grow"></span>
+      <button id="spawnGroup" class="primary" title="Every item in the group, at its amount and level">▶ Spawn all</button>
+      <button id="renameGroup">Rename</button>
+      <button id="deleteGroup">Delete</button>
+    </div>
     <div id="results" class="results"></div>
+  </section>
+  <section data-pane="spawning" hidden>
+    <div id="spawnResults" class="results"></div>
   </section>
   <section data-pane="workshop" hidden>
     <div id="bundleBar" class="bar bundle-bar" hidden>
@@ -234,6 +294,25 @@
       </select>
       <button id="spin">Spin</button>
     </div>
+    <div id="spawnBar" class="bar spawn" hidden>
+      <label>Amount <input id="spawnAmount" type="number" min="1" max="10000" value="1"></label>
+      <button id="fullStack" title="A full stack">Stack</button>
+      <label id="levelBox">Level <select id="spawnLevel"></select></label>
+      <button id="spawn" class="primary" title="Into your inventory; what does not fit is dropped in front of you">Spawn</button>
+      <span class="grow"></span>
+      <button id="favourite" title="Add to or remove from the favourites">☆</button>
+      <select id="addToGroup" title="Add to a group at this amount and level (again to change them)"></select>
+      <button id="leaveGroup" hidden>Remove from group</button>
+    </div>
+    <div id="worldSpawnBar" class="bar spawn" hidden>
+      <label>Amount <input id="worldAmount" type="number" min="1" max="50" value="1"></label>
+      <label id="worldLevelBox">Level <select id="worldLevel"></select></label>
+      <label id="worldTameBox"><input id="worldTamed" type="checkbox"> Tamed</label>
+      <label>at <select id="worldDistance"><option>2</option><option selected>3</option><option>5</option><option>10</option><option>20</option></select> m</label>
+      <button id="worldSpawn" class="primary" title="In front of you, facing you">Spawn</button>
+      <span class="grow"></span>
+      <button id="worldUndo" title="Remove what the last Spawn put in the world (the last 20 are kept)">Undo</button>
+    </div>
     <div class="hint pad">Drag to turn · wheel to zoom · double-click to reset</div>
   </section>
 </main>
@@ -252,9 +331,12 @@ function el(tag, className, text) {
   return node;
 }
 
-async function call(name, args = {}) {
+/* A /studio/ call; with a body, a POST of that text. */
+async function call(name, args = {}, body = null) {
   const query = new URLSearchParams(args).toString();
-  const response = await fetch(`/studio/${name}?${query}`, { headers: { "X-DevBridge-Studio": TOKEN }, cache: "no-store" });
+  const options = { headers: { "X-DevBridge-Studio": TOKEN }, cache: "no-store" };
+  if (body != null) Object.assign(options, { method: "POST", body, headers: { ...options.headers, "Content-Type": "text/plain; charset=utf-8" } });
+  const response = await fetch(`/studio/${name}?${query}`, options);
   const text = await response.text();
   if (!response.ok) throw new Error(text.replace(/^error: /, ""));
   return JSON.parse(text);
@@ -508,6 +590,7 @@ const viewer = new Turntable($("stageImage"), viewerPixels);
 const panes = {
   items: { name: "items", results: $("results"), index: $("groupIndex"), generation: 0, none: "No item matches." },
   workshop: { name: "workshop", results: $("workshopResults"), index: null, generation: 0, none: "Nothing here to draw: no meshes or particles." },
+  spawning: { name: "spawning", results: $("spawnResults"), index: $("spawnIndex"), generation: 0, none: "Nothing matches: try part of the name shown in game or of the prefab." },
 };
 for (const pane of Object.values(panes)) pane.sight = new IntersectionObserver(boxesSeen, { root: pane.results, rootMargin: "200px" });
 
@@ -517,15 +600,15 @@ function viewerPixels() {
   return Math.min(1024, Math.max(256, Math.round(pixels / 64) * 64));
 }
 
-function renderGroups(pane, groups, makeBox) {
+function renderGroups(pane, groups, makeBox, index = pane.index) {
   pane.sight.disconnect();
   pane.results.replaceChildren();
-  if (pane.index) pane.index.replaceChildren();
+  if (index) index.replaceChildren();
   if (groups.length === 0) pane.results.append(el("div", "empty center", pane.none));
   groups.forEach((group, number) => {
     const block = groupBlock(group, `${pane.name}${number}`, makeBox, pane);
     pane.results.append(block);
-    if (pane.index) pane.index.append(indexRow(group, block));
+    if (index) index.append(indexRow(group, block));
   });
 }
 
@@ -609,6 +692,8 @@ function dragToTurn(area, turntable, owner) {
 
 /* Shows the subject in the viewer, with its name, a line under it and chips; a workshop model with meshes offers its looks. */
 function select(subject, name, line, chips, lookable = false) {
+  picked = spawnPick = null;
+  $("spawnBar").hidden = $("worldSpawnBar").hidden = true;
   pictures.selected = keyOf(subject);
   document.querySelectorAll(".box").forEach(box => box.classList.toggle("selected", box.dataset.key === pictures.selected));
   $("infoName").textContent = name;
@@ -659,37 +744,52 @@ function toggleSpin() {
 async function searchItems() {
   const filter = $("itemSearch").value.trim();
   const generation = ++panes.items.generation;
+  leaveShelf();
   if (!filter) return showExamples();
-  const data = await run(() => call("items", { filter }), countLine);
+  const data = await run(() => call("items", { filter }), result => countLine(result, "item"));
   if (!data || generation !== panes.items.generation) return;
   renderGroups(panes.items, data.groups, itemBox);
 }
 
-function countLine(result) {
+function countLine(result, noun) {
   const groups = result.groups.length;
   const shown = result.shown < result.found ? ` · the first ${result.shown} shown` : "";
-  return `${result.found} item${result.found === 1 ? "" : "s"} in ${groups} group${groups === 1 ? "" : "s"}${shown}`;
+  return `${result.found} ${noun}${result.found === 1 ? "" : "s"} in ${groups} group${groups === 1 ? "" : "s"}${shown}`;
 }
 
 function showExamples() {
   $("groupIndex").replaceChildren(el("div", "empty", "Groups appear here."));
-  const prompt = el("div", "empty center", "Search by name, kind or biome:");
-  const examples = el("div", "examples");
-  for (const word of ["shield", "iron shield", "sword", "bow", "helmet", "mead", "swamp", "mistlands staff"]) {
+  $("results").replaceChildren(examples("Search by name, kind or biome:", ["shield", "iron shield", "sword", "bow", "helmet", "mead", "swamp", "mistlands staff"],
+    word => { $("itemSearch").value = word; searchItems(); }));
+}
+
+/* A prompt with example searches to click. */
+function examples(text, words, pick) {
+  const prompt = el("div", "empty center", text);
+  const row = el("div", "examples");
+  for (const word of words) {
     const button = el("button", "", word);
-    button.onclick = () => { $("itemSearch").value = word; searchItems(); };
-    examples.append(button);
+    button.onclick = () => pick(word);
+    row.append(button);
   }
-  prompt.append(examples);
-  $("results").replaceChildren(prompt);
+  prompt.append(row);
+  return prompt;
 }
 
 function itemBox(item) {
   const tag = el("div", "tag");
   tag.append(el("span", "", item.tier ? `Tier ${item.tier}` : "Tier ?"), biomeLabel(item));
-  const box = pictureBox({ prefab: item.prefab }, item.name, tag, () => select({ prefab: item.prefab }, item.name, item.prefab, infoChips(item)));
+  const onSelect = () => { select({ prefab: item.prefab }, item.name, item.prefab, infoChips(item)); showSpawn(item); };
+  const box = pictureBox({ prefab: item.prefab }, item.name + amountText(groupEntry(item.prefab)), tag, onSelect);
+  box.querySelector(".pic").append(starButton(item.prefab));
   box.title = `${item.name}  ·  ${item.prefab}`;
   return box;
+}
+
+/* " ×50 · level 3" for a group's entry; nothing outside a group. */
+function amountText(entry) {
+  if (!entry) return "";
+  return `${entry.amount > 1 ? ` ×${entry.amount}` : ""}${entry.level > 1 ? ` · level ${entry.level}` : ""}`;
 }
 
 function biomeLabel(item) {
@@ -710,6 +810,402 @@ function infoChips(item) {
   const chips = [el("span", "chip", item.tier ? `Tier ${item.tier}` : "Tier unknown"), biome, el("span", "chip dim", item.group)];
   if (item.station) chips.push(el("span", "chip dim", item.station));
   return chips;
+}
+
+/* ---------- favourites and groups (DevBridge.studio.json beside the .cfg, shared with the Commands tab) ---------- */
+
+const saved = { loaded: false, rest: {}, writing: Promise.resolve(), items: { favourites: [], groups: [] }, commands: { favourites: [], groups: [] } };
+
+async function loadSaved() {
+  const data = await run(() => call("saved"));
+  if (!data) return;
+  for (const part of ["items", "commands"]) {
+    saved[part].favourites = Array.isArray(data[part]?.favourites) ? data[part].favourites : [];
+    saved[part].groups = Array.isArray(data[part]?.groups) ? data[part].groups : [];
+  }
+  const { items, commands, ...rest } = data;
+  Object.assign(saved, { rest, loaded: true });
+}
+
+/* Writes them all, one write after another; never before they were read, so a failed read cannot empty the file. */
+function storeSaved() {
+  if (!saved.loaded) return status("The favourites and groups could not be read from the game: reload the page before changing them.", true);
+  const body = () => JSON.stringify({ ...saved.rest, items: saved.items, commands: saved.commands });
+  saved.writing = saved.writing.then(() => run(() => call("saved/save", {}, body())));
+}
+
+function askName(question, current = "") {
+  const name = prompt(question, current);
+  return name && name.trim() ? name.trim() : null;
+}
+
+/* A row of a saved list: an optional ▶ (its own action), the name and a count; the row itself opens it. */
+function savedRow(name, count, open, on, play, playTitle) {
+  const row = el("div", "row" + (on ? " selected" : ""));
+  if (play) row.append(miniButton("▶", playTitle, play));
+  row.append(el("span", "name grow", name), el("span", "dim", count));
+  row.onclick = open;
+  return row;
+}
+
+function miniButton(text, title, action) {
+  const button = el("button", "mini", text);
+  button.title = title;
+  button.onclick = event => { event.stopPropagation(); action(); };
+  return button;
+}
+
+function addRow(text, action) {
+  const row = el("div", "row add", text);
+  row.onclick = action;
+  return row;
+}
+
+/* ---------- items: favourites, groups and spawning ---------- */
+
+const shelf = { mode: "search", group: null }; // what the middle shows: a search, the favourites or one group
+let picked = null; // the item in the viewer, with its entry when shown from a group
+
+const isFavourite = prefab => saved.items.favourites.includes(prefab);
+const groupEntry = prefab => shelf.mode === "group" ? shelf.group.items.find(entry => entry.prefab === prefab) : null;
+
+function renderSavedItems() {
+  const { favourites, groups } = saved.items;
+  const rows = [savedRow("☆ Favourites", favourites.length, showFavourites, shelf.mode === "favourites")];
+  for (const group of groups)
+    rows.push(savedRow(group.name, group.items.length, () => showItemGroup(group), shelf.group === group, () => spawnItems(group.items, group.name), "Spawn them all"));
+  $("savedItems").replaceChildren(...rows, addRow("+ New group", newItemGroup));
+}
+
+function showFavourites() {
+  Object.assign(shelf, { mode: "favourites", group: null });
+  showShelfBar("Favourites", "☆ on a box or beside Spawn adds or removes one", false);
+  return showPicked(saved.items.favourites, "Favourites");
+}
+
+function showItemGroup(group) {
+  Object.assign(shelf, { mode: "group", group });
+  showShelfBar(group.name, "click an item to change its amount or take it out", true);
+  return showPicked(group.items.map(entry => entry.prefab), group.name);
+}
+
+function showShelfBar(name, note, editable) {
+  $("savedBar").hidden = false;
+  $("savedName").textContent = name;
+  $("savedNote").textContent = note;
+  ["spawnGroup", "renameGroup", "deleteGroup"].forEach(id => { $(id).hidden = !editable; });
+  $("groupIndex").replaceChildren(el("div", "empty", "Search to list items by kind."));
+  renderSavedItems();
+}
+
+async function showPicked(prefabs, name) {
+  const generation = ++panes.items.generation;
+  const data = await run(() => call("items", { prefabs: prefabs.join(",") }),
+    result => `${name}: ${result.items.length} item${result.items.length === 1 ? "" : "s"}${result.missing.length ? ` · not in the game: ${result.missing.join(", ")}` : ""}`);
+  if (!data || generation !== panes.items.generation) return;
+  renderGroups(panes.items, data.items.length ? [{ name, items: data.items }] : [], itemBox, null);
+  if (!data.items.length) $("results").replaceChildren(el("div", "empty center", "Nothing here yet: pick an item, then ☆ or Add to group."));
+}
+
+/* Back to searching: the favourites or group bar goes. */
+function leaveShelf() {
+  if (shelf.mode === "search") return;
+  Object.assign(shelf, { mode: "search", group: null });
+  $("savedBar").hidden = true;
+  renderSavedItems();
+}
+
+function starButton(prefab) {
+  const star = el("button", "fav");
+  star.dataset.prefab = prefab;
+  star.title = "Favourite";
+  star.onpointerdown = event => event.stopPropagation(); // not a drag of the picture
+  star.onclick = event => { event.stopPropagation(); toggleFavourite(prefab); };
+  paintStar(star, isFavourite(prefab));
+  return star;
+}
+
+function paintStar(star, on) {
+  star.classList.toggle("on", on);
+  star.textContent = on ? "★" : "☆";
+}
+
+function toggleFavourite(prefab) {
+  const list = saved.items.favourites;
+  const at = list.indexOf(prefab);
+  if (at >= 0) list.splice(at, 1); else list.push(prefab);
+  storeSaved();
+  renderSavedItems();
+  document.querySelectorAll(".box .fav").forEach(star => paintStar(star, isFavourite(star.dataset.prefab)));
+  if (picked) paintStar($("favourite"), isFavourite(picked.item.prefab));
+  status(at >= 0 ? `${prefab} is no longer a favourite` : `${prefab} is a favourite`);
+}
+
+/* The spawn bar under the viewer, for the item just picked: a group's amount and level when shown from that group. */
+function showSpawn(item) {
+  const entry = groupEntry(item.prefab);
+  picked = { item, entry };
+  $("spawnBar").hidden = false;
+  $("spawnAmount").value = entry?.amount ?? 1;
+  $("fullStack").hidden = item.stack <= 1;
+  $("fullStack").title = `A full stack: ${item.stack}`;
+  $("levelBox").hidden = item.levels <= 1;
+  $("spawnLevel").replaceChildren(...Array.from({ length: item.levels }, (_, n) => el("option", "", n + 1)));
+  $("spawnLevel").value = entry?.level ?? 1;
+  $("leaveGroup").hidden = !entry;
+  paintStar($("favourite"), isFavourite(item.prefab));
+  fillGroupPicker();
+}
+
+function fillGroupPicker() {
+  const options = [el("option", "", "Add to group…")];
+  saved.items.groups.forEach((group, index) => options.push(el("option", "", group.name)));
+  options.push(el("option", "", "New group…"));
+  options.forEach((option, index) => { option.value = index === 0 ? "" : index === options.length - 1 ? "new" : index - 1; });
+  $("addToGroup").replaceChildren(...options);
+}
+
+const pickedEntry = () => ({
+  prefab: picked.item.prefab,
+  amount: Math.max(1, Math.min(10000, parseInt($("spawnAmount").value, 10) || 1)),
+  level: parseInt($("spawnLevel").value, 10) || 1,
+});
+
+async function spawnItems(entries, label) {
+  if (!entries.length) return status(`${label}: nothing to spawn`, true);
+  const list = entries.map(entry => `${entry.prefab}:${entry.amount || 1}:${entry.level || 1}`).join(",");
+  await run(() => call("spawn", {}, list), spawnedLine);
+}
+
+function spawnedLine(result) {
+  const given = result.given.map(line => `${line.amount > 1 ? line.amount + " " : ""}${line.name}${line.level > 1 ? ` (level ${line.level})` : ""}`);
+  const dropped = result.dropped ? ` · ${result.dropped} dropped in front of you: the inventory is full` : "";
+  const missing = result.missing.length ? ` · not in the game: ${result.missing.join(", ")}` : "";
+  return `Spawned ${given.join(", ") || "nothing"}${dropped}${missing}`;
+}
+
+/* Adds the picked item at the bar's amount and level, or changes them when the group has it already. */
+function addToGroup() {
+  const choice = $("addToGroup").value;
+  $("addToGroup").value = "";
+  if (!picked || choice === "") return;
+  const group = choice === "new" ? makeItemGroup() : saved.items.groups[+choice];
+  if (!group) return;
+  const entry = pickedEntry(), at = group.items.findIndex(old => old.prefab === entry.prefab);
+  if (at >= 0) group.items[at] = entry; else group.items.push(entry);
+  storeSaved();
+  status(`${picked.item.name}${amountText(entry)} ${at >= 0 ? "changed in" : "added to"} ${group.name}`);
+  if (shelf.group === group) showItemGroup(group); else renderSavedItems();
+}
+
+function makeItemGroup() {
+  const name = askName("Name the new group of items");
+  if (!name) return null;
+  const group = { name, items: [] };
+  saved.items.groups.push(group);
+  fillGroupPicker();
+  return group;
+}
+
+function newItemGroup() {
+  const group = makeItemGroup();
+  if (!group) return;
+  storeSaved();
+  showItemGroup(group);
+}
+
+function leaveGroup() {
+  if (!picked?.entry || shelf.mode !== "group") return;
+  const group = shelf.group;
+  group.items = group.items.filter(entry => entry !== picked.entry);
+  storeSaved();
+  status(`${picked.item.name} taken out of ${group.name}`);
+  Object.assign(picked, { entry: null });
+  $("leaveGroup").hidden = true;
+  showItemGroup(group);
+}
+
+function renameItemGroup() {
+  const group = shelf.group, name = group && askName("Rename the group", group.name);
+  if (!name) return;
+  group.name = name;
+  storeSaved();
+  showShelfBar(name, $("savedNote").textContent, true);
+  fillGroupPicker();
+}
+
+function deleteItemGroup() {
+  const group = shelf.group;
+  if (!group || !confirm(`Delete the group ${group.name}? Its items stay in the game.`)) return;
+  saved.items.groups.splice(saved.items.groups.indexOf(group), 1);
+  storeSaved();
+  fillGroupPicker();
+  searchItems();
+}
+
+/* ---------- time and weather switches (this machine only; the world's clock runs on) ---------- */
+
+const WEATHERS = [["off", "Off"], ["Clear", "Clear"], ["Rain", "Rain"], ["ThunderStorm", "Storm"], ["Misty", "Fog"], ["Snow", "Snow"],
+  ["SnowStorm", "Blizzard"], ["Ashlands_ashrain", "Ash"]];
+const sky = { listed: false };
+
+function buildSwitches() {
+  $("weatherSwitch").replaceChildren(...WEATHERS.map(([name, label]) => {
+    const button = el("button", "", label);
+    button.dataset.weather = name;
+    return button;
+  }));
+}
+
+/* Sets a switch and shows what the game reports back. */
+async function setSky(args, line) {
+  const data = await run(() => call("sky", args), line);
+  if (data) showSky(data);
+}
+
+/* The page asks every few seconds, quietly: the clock moves, and a tod or env typed in the console turns a switch off. */
+async function pollSky() {
+  if (document.visibilityState !== "visible") return;
+  try { showSky(await call("sky")); } catch { $("skyNow").textContent = ""; }
+}
+
+function showSky(data) {
+  document.querySelectorAll("#timeSwitch button").forEach(button => button.classList.toggle("on", button.dataset.time === data.time));
+  document.querySelectorAll("#weatherSwitch button").forEach(button => button.classList.toggle("on", button.dataset.weather === data.weather));
+  $("freeCamera").classList.toggle("on", data.camera === "free");
+  $("hitboxes").classList.toggle("on", !!data.hitboxes);
+  $("colliders").classList.toggle("on", !!data.colliders);
+  $("noSpawns").classList.toggle("on", data.spawns === false);
+  if (data.environments && !sky.listed) {
+    $("moreWeather").append(...data.environments.map(name => Object.assign(el("option", "", name), { value: name })));
+    sky.listed = true;
+  }
+  const other = data.weather !== "off" && !WEATHERS.some(([name]) => name === data.weather);
+  $("moreWeather").value = other ? data.weather : "";
+  $("moreWeather").classList.toggle("on", other);
+  $("skyNow").textContent = !data.clock ? "no world loaded"
+    : `${data.clock}${data.time !== "off" ? ` (world clock ${data.worldClock})` : ""} · day ${data.day} · ${data.environment}`;
+}
+
+async function setCamera(free) {
+  const data = await run(() => call("camera", { free: free ? 1 : 0 }),
+    () => free ? "Free camera: fly it in the game with W A S D and the mouse · press Free camera again to go back" : "Camera back on your character");
+  if (data) showSky(data);
+}
+
+async function setHitboxes(on) {
+  const data = await run(() => call("hitboxes", { on: on ? 1 : 0 }),
+    () => on ? "Hitboxes shown: swings flash their reach, hits on you draw a yellow line" : "Hitboxes hidden");
+  if (data) showSky(data);
+}
+
+async function setColliders(on) {
+  const data = await run(() => call("colliders", { on: on ? 1 : 0 }), () => on ? "Colliders shown within 30 m" : "Colliders hidden");
+  if (data) showSky(data);
+}
+
+async function setSpawns(on) {
+  const data = await run(() => call("spawns", { on: on ? 1 : 0 }),
+    () => on ? "Spawning: the world's own again" : "No spawns: world spawns, spawner points, nests and raids stopped");
+  if (data) showSky(data);
+}
+
+const timeLine = time => () => time === "off" ? "Time: the game's own clock again" : `Time: held around ${time}, an hour on and back`;
+const weatherLine = weather => () => weather === "off" ? "Weather: the game's own again" : `Weather: held at ${weather}`;
+
+function wireSwitches() {
+  buildSwitches();
+  document.querySelectorAll("#timeSwitch button").forEach(button => {
+    button.onclick = () => setSky({ time: button.dataset.time }, timeLine(button.dataset.time));
+  });
+  document.querySelectorAll("#weatherSwitch button").forEach(button => {
+    button.onclick = () => setSky({ weather: button.dataset.weather }, weatherLine(button.dataset.weather));
+  });
+  $("freeCamera").onclick = () => setCamera(!$("freeCamera").classList.contains("on"));
+  $("hitboxes").onclick = () => setHitboxes(!$("hitboxes").classList.contains("on"));
+  $("colliders").onclick = () => setColliders(!$("colliders").classList.contains("on"));
+  $("noSpawns").onclick = () => setSpawns($("noSpawns").classList.contains("on"));
+  $("moreWeather").onchange = () => {
+    const weather = $("moreWeather").value || "off";
+    setSky({ weather }, weatherLine(weather));
+  };
+  pollSky();
+  setInterval(pollSky, 4000);
+}
+
+/* ---------- spawning: anything in the world, by the name shown in game or the prefab ---------- */
+
+const GROUP_TAG = { Bosses: "Boss", Creatures: "Creature", Items: "Item", Pieces: "Piece", "Plants and pickables": "Plant",
+  "Trees and rocks": "Tree or rock", Spawners: "Spawner", Effects: "Effect", Other: "Other" };
+let spawnPick = null; // the catalog entry in the viewer
+
+async function searchCatalog() {
+  const filter = $("spawnSearch").value.trim();
+  const generation = ++panes.spawning.generation;
+  if (!filter) return showSpawnExamples();
+  const data = await run(() => call("catalog", { filter }), result => countLine(result, "result"));
+  if (!data || generation !== panes.spawning.generation) return;
+  renderGroups(panes.spawning, data.groups, catalogBox);
+}
+
+function showSpawnExamples() {
+  $("spawnIndex").replaceChildren(el("div", "empty", "Groups appear here."));
+  $("spawnResults").replaceChildren(examples("Search by the name shown in game or the prefab name:",
+    ["troll", "greydwarf", "boar", "eikthyr", "portal", "chest", "raspberry", "beech", "copper"],
+    word => { $("spawnSearch").value = word; searchCatalog(); }));
+}
+
+function catalogBox(entry) {
+  const tag = el("div", "tag");
+  tag.append(el("span", "", GROUP_TAG[entry.group] || entry.group), el("span", "", entry.tameable ? "tameable" : ""));
+  const name = entry.name || entry.prefab;
+  const box = pictureBox({ prefab: entry.prefab }, name, tag, () => {
+    select({ prefab: entry.prefab }, name, entry.prefab, catalogChips(entry));
+    showWorldSpawn(entry);
+  });
+  box.append(el("div", "sub", entry.prefab));
+  box.title = `${name}  ·  ${entry.prefab}`;
+  return box;
+}
+
+function catalogChips(entry) {
+  const chips = [el("span", "chip", GROUP_TAG[entry.group] || entry.group)];
+  if (entry.tameable) chips.push(el("span", "chip dim", "Tameable"));
+  if (entry.stack > 1) chips.push(el("span", "chip dim", `Stacks of ${entry.stack}`));
+  if (entry.levels > 1) chips.push(el("span", "chip dim", `${entry.levels} levels`));
+  return chips;
+}
+
+/* The spawn bar for the entry just picked: stars for a creature, a level for an item that has them. */
+function showWorldSpawn(entry) {
+  spawnPick = entry;
+  const item = entry.stack != null, levels = entry.creature ? 10 : item ? entry.levels : 1;
+  $("worldSpawnBar").hidden = false;
+  $("worldAmount").max = item ? 10000 : 50;
+  $("worldAmount").value = 1;
+  $("worldLevelBox").hidden = levels <= 1;
+  $("worldLevel").replaceChildren(...Array.from({ length: levels }, (_, n) =>
+    Object.assign(el("option", "", entry.creature ? `${n + 1} (${n}★)` : n + 1), { value: n + 1 })));
+  $("worldTameBox").hidden = !entry.creature;
+  $("worldTamed").checked = false;
+}
+
+async function spawnInWorld() {
+  if (!spawnPick) return;
+  const entry = spawnPick, name = entry.name || entry.prefab;
+  const args = { prefab: entry.prefab, amount: $("worldAmount").value, level: $("worldLevel").value || 1, distance: $("worldDistance").value };
+  if (!$("worldTameBox").hidden && $("worldTamed").checked) args.tamed = 1;
+  await run(() => call("spawn/world", args),
+    result => `Spawned ${result.amount} ${name}${result.copies !== result.amount ? ` in ${result.copies} stacks` : ""} in front of you · Undo takes it back`);
+}
+
+function wireSpawning() {
+  $("spawnSearch").oninput = debounce(searchCatalog, 250);
+  $("spawnSearch").onkeydown = event => { if (event.key === "Enter") searchCatalog(); };
+  $("worldSpawn").onclick = spawnInWorld;
+  $("worldAmount").onkeydown = event => { if (event.key === "Enter") spawnInWorld(); };
+  $("worldUndo").onclick = () => run(() => call("spawn/undo"), result => `Took back ${result.removed} spawned`);
+  showSpawnExamples();
 }
 
 /* ---------- workshop ---------- */
@@ -803,22 +1299,29 @@ function modelChips(model, bundle) {
 
 const HINTS = {
   objects: "Space plays the selected part · changes stay on this machine",
-  items: "Drag a picture to turn it · nothing is placed in the world",
+  items: "Drag a picture to turn it · Spawn gives the item to your player · ☆ keeps it in the favourites",
+  spawning: "Creatures, pieces, plants, rocks, items: by the name shown in game or the prefab · Spawn puts it in front of you · Undo takes it back",
   workshop: "Bundles built in the asset workshop · Reload after a rebuild · nothing is placed in the world",
-  scenes: "Film scenes: their parts and timings · Rehearse plays one in the game · Save writes the scene file",
+  commands: "Console commands run as if typed (F5), one per line in order · favourites and groups are kept beside DevBridge's .cfg",
+  shots: "Screenshot (above) saves the game window as <time>.png · click one to see it, rename it or delete it · tick several to delete them",
 };
+
+/* What a page part (commands.html) does when its tab opens. */
+const OPENED = {};
 
 function showTab(name) {
   $("objectsView").hidden = name !== "objects";
-  $("itemsView").hidden = name === "objects" || name === "scenes";
+  $("itemsView").hidden = !["items", "workshop", "spawning"].includes(name);
   $("itemsView").classList.toggle("workshop", name === "workshop");
   document.querySelectorAll("[data-pane]").forEach(pane => { pane.hidden = pane.dataset.pane !== name; });
-  document.querySelectorAll(".tabs button").forEach(tab => tab.classList.toggle("on", tab.dataset.tab === name));
+  document.querySelectorAll("header .tabs button").forEach(tab => tab.classList.toggle("on", tab.dataset.tab === name));
   $("hint").textContent = HINTS[name];
   try { localStorage.setItem("studio.tab", name); } catch { /* no storage here */ }
   if (name === "items") $("itemSearch").focus();
+  if (name === "spawning") $("spawnSearch").focus();
   if (name === "workshop" && !shop.listed) loadBundles();
   if (name === "objects" && !view.listed) loadTargets();
+  OPENED[name]?.();
 }
 
 /* The tab a link names (#items, #workshop, #workshop/<bundle> opening that bundle), else the one used last. */
@@ -855,9 +1358,12 @@ function wire() {
   $("findSources").onclick = findSources;
   $("sourceFilter").onkeydown = event => { if (event.key === "Enter") findSources(); };
   document.addEventListener("keydown", playKey);
-  document.querySelectorAll(".tabs button").forEach(tab => { tab.onclick = () => showTab(tab.dataset.tab); });
+  document.querySelectorAll("header .tabs button").forEach(tab => { tab.onclick = () => showTab(tab.dataset.tab); });
   wireItems();
+  wireSaved();
   wireWorkshop();
+  wireSwitches();
+  wireSpawning();
 }
 
 function wireItems() {
@@ -869,6 +1375,18 @@ function wireItems() {
   document.querySelectorAll("[data-view]").forEach(button => { button.onclick = () => viewFrom(button.dataset.view); });
   $("spin").onclick = toggleSpin;
   $("look").onchange = changeLook;
+}
+
+function wireSaved() {
+  $("spawn").onclick = () => picked && spawnItems([pickedEntry()], picked.item.name);
+  $("spawnAmount").onkeydown = event => { if (event.key === "Enter") $("spawn").click(); };
+  $("fullStack").onclick = () => { if (picked) $("spawnAmount").value = picked.item.stack; };
+  $("favourite").onclick = () => picked && toggleFavourite(picked.item.prefab);
+  $("addToGroup").onchange = addToGroup;
+  $("leaveGroup").onclick = leaveGroup;
+  $("spawnGroup").onclick = () => shelf.group && spawnItems(shelf.group.items, shelf.group.name);
+  $("renameGroup").onclick = renameItemGroup;
+  $("deleteGroup").onclick = deleteItemGroup;
 }
 
 function wireWorkshop() {
@@ -892,7 +1410,8 @@ function debounce(action, wait = 300) {
 buildVectors();
 wire();
 showExamples();
-startTab();
+const savedRead = loadSaved().then(renderSavedItems);
+document.addEventListener("DOMContentLoaded", startTab); // after the page's parts have run
 </script>
 </body>
 </html>

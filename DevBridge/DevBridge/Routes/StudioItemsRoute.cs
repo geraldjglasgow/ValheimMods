@@ -11,7 +11,8 @@ namespace DevBridge.Routes
 {
     /// <summary>
     /// The studio's Items tab (also usable from curl): /studio/items finds the game's items in groups with their tier,
-    /// biome and station; /studio/view draws one prefab by itself, turned and zoomed, as a JPG the page shows or a file.
+    /// biome and station; /studio/spawn gives them to the player; /studio/view draws one prefab by itself, turned and
+    /// zoomed, as a JPG the page shows or a file.
     /// </summary>
     internal static class StudioItemsRoute
     {
@@ -19,8 +20,11 @@ namespace DevBridge.Routes
 
         internal static void Register(Router router)
         {
-            router.Add("/studio/items", "/studio/items?filter=iron shield&most=400" + Pad +
-                "the game's items matching every word, in groups (Shields, Swords...), each with its tier, biome and station", Items);
+            router.Add("/studio/items", "/studio/items?filter=iron shield&most=400 | prefabs=SwordIron,Wood" + Pad +
+                "the game's items matching every word, in groups (Shields, Swords...), each with its tier, biome, station," + Pad +
+                "stack size and levels; prefabs= those items in that order", Items);
+            router.Add("/studio/spawn", "/studio/spawn?items=SwordIron:1:3,Wood:50 (or POST the list)" + Pad +
+                "give items (prefab:amount:level) to your player: into the inventory, what does not fit dropped in front", Spawn);
             router.Add("/studio/view", "/studio/view?prefab=ShieldBanded&bundle=<workshop bundle>&look=creature|piece|workshop&yaw=30&pitch=20" + Pad +
                 "&zoom=1&size=512&file=<.jpg>   one prefab drawn by itself, turned right yaw degrees and tilted top-towards-you" + Pad +
                 "pitch: a data URL, or a file; with bundle= a model of a workshop bundle (/studio/workshop/open), dressed in" + Pad +
@@ -28,8 +32,10 @@ namespace DevBridge.Routes
             StudioWorkshopRoute.Register(router);
         }
 
-        private static void Items(BridgeRequest request) =>
-            request.Json(StudioItems.Search(request.Get("filter"), Mathf.Clamp(request.Int("most", 400), 1, 3000)));
+        private static void Items(BridgeRequest request) => request.Json(request.Has("prefabs") ? StudioItems.Pick(request.Get("prefabs", ""))
+            : StudioItems.Search(request.Get("filter"), Mathf.Clamp(request.Int("most", 400), 1, 3000)));
+
+        private static void Spawn(BridgeRequest request) => request.Json(StudioSpawn.Give(request.Get("items") ?? request.Get("body")));
 
         private static void View(BridgeRequest request)
         {

@@ -9,30 +9,68 @@ using UnityEngine;
 
 namespace DevBridge.Routes
 {
-    /// <summary>/console runs a game console command and returns what it printed; /log reads the recent log.</summary>
+    /// <summary>/console runs game console commands and returns what they printed; /log reads the recent log.</summary>
     internal static class ConsoleRoute
     {
         internal static void Register(Router router) => router.Add("/console",
             "/console?cmd=<command>&wait=0.3\n" +
             "                       run a console command as if typed (F5), reply with what the console printed within wait seconds;\n" +
+            "                       several, one per line (POST them), run in order a frame apart, each answer under \"> command\";\n" +
             "                       cheats need cmd=devcommands first (and a server you are admin on)",
             Handle);
 
         private static void Handle(BridgeRequest request)
         {
-            string command = request.Get("cmd") ?? request.Get("body") ?? throw new BridgeException("give cmd=<console command>");
-            global::Console console = global::Console.instance;
-            if (!console) throw new BridgeException("the console does not exist yet");
-            long mark = ConsoleCapture.Lines.Next;
-            console.TryRunCommand(command.Trim(), silentFail: false, skipAllowedCheck: true);
-            Async.Start(request, Collect(request, mark));
+            string commands = request.Get("cmd") ?? request.Get("body") ?? throw new BridgeException("give cmd=<console command>");
+            ConsoleRuns.Start(request, commands, ran => request.Text(Text(ran)));
         }
 
-        private static IEnumerator Collect(BridgeRequest request, long mark)
+        private static string Text(List<ConsoleRuns.Ran> ran) => ran.Count == 1 ? Printed(ran[0])
+            : string.Join("\n", ran.Select(one => $"> {one.Command}\n{Printed(one)}"));
+
+        private static string Printed(ConsoleRuns.Ran ran) =>
+            ran.Printed.Count == 0 ? "(the console printed nothing)" : string.Join("\n", ran.Printed);
+    }
+
+    /// <summary>
+    /// Console commands run as if typed, one a line, in order and a frame apart, then what the console printed after
+    /// each, read wait seconds after the last (a line printed later counts for the last command). Used by /console and
+    /// the studio's Commands tab.
+    /// </summary>
+    internal static class ConsoleRuns
+    {
+        internal sealed class Ran
         {
+            internal string Command;
+            internal List<string> Printed;
+        }
+
+        internal static void Start(BridgeRequest request, string text, Action<List<Ran>> answer)
+        {
+            string[] commands = text.Split('\n').Select(line => line.Trim()).Where(line => line.Length > 0).ToArray();
+            if (commands.Length == 0) throw new BridgeException("no command to run");
+            if (!global::Console.instance) throw new BridgeException("the console does not exist yet");
+            Async.Start(request, Run(request, commands, answer));
+        }
+
+        private static IEnumerator Run(BridgeRequest request, string[] commands, Action<List<Ran>> answer)
+        {
+            var marks = new long[commands.Length + 1];
+            for (int i = 0; i < commands.Length; i++)
+            {
+                if (i > 0) yield return null;
+                marks[i] = ConsoleCapture.Lines.Next;
+                if (!global::Console.instance) throw new BridgeException($"the console went away before {commands[i]}");
+                global::Console.instance.TryRunCommand(commands[i], silentFail: false, skipAllowedCheck: true);
+            }
             yield return new WaitForSecondsRealtime(request.Float("wait", 0.3f));
-            List<LineBuffer.Line> printed = ConsoleCapture.Lines.Since(mark, 500, _ => true);
-            request.Text(printed.Count == 0 ? "(the console printed nothing)" : string.Join("\n", printed.Select(l => l.Text)));
+            marks[commands.Length] = long.MaxValue;
+            List<LineBuffer.Line> printed = ConsoleCapture.Lines.Since(marks[0], 500, _ => true);
+            answer(commands.Select((command, i) => new Ran
+            {
+                Command = command,
+                Printed = printed.Where(line => line.Seq >= marks[i] && line.Seq < marks[i + 1]).Select(line => line.Text).ToList(),
+            }).ToList());
         }
     }
 
