@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.12.10
+
+- The Bone Ballista's bolt now flies to the crosshair, not beside it; the view stops where the bolt can still reach.
+- The Bone Ballista's view no longer tilts past where its bolt can go, nor faster than the ballista.
+- The Bone Ballista can be taken from anywhere its hover shows the use key; you step round behind it.
+- Fixed: the ballista's aim no longer catches on its own frame when looking down.
+
 ## 0.12.9
 
 - The Bone Ballista moved onto the shared MannedWeapons library; no change in play.

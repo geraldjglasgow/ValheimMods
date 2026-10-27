@@ -93,4 +93,3 @@ hud_ecp_bal_loaded: "załadowana"
 hud_ecp_bal_empty: "pusta"
 # The Bone Ballista's messages to its holder
 msg_ecp_bal_nomissiles: "Brak kostnych pocisków"
-msg_ecp_bal_behind: "Stań za balistą, aby ją obsługiwać"

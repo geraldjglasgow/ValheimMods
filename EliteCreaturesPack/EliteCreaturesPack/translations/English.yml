@@ -98,4 +98,4 @@ hud_ecp_bal_loaded: "loaded"
 hud_ecp_bal_empty: "empty"
 # The Bone Ballista's messages to its holder
 msg_ecp_bal_nomissiles: "No bone missiles"
-msg_ecp_bal_behind: "Stand behind it to hold it"
+msg_ecp_bal_unreachable: "You cannot reach it from here"

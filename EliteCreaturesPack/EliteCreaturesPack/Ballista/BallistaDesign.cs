@@ -6,9 +6,10 @@ namespace EliteCreaturesPack.Ballista
     /// The Bone Ballista as a manned weapon (the MannedWeapons library): its ZDO keys and calls (`ecp_bal_*`, the names it
     /// has always kept, so built ballistas keep their aim and load), its turn (45 degrees either side of where it was placed,
     /// 90 in all, 20 down and 25 up; the view held to the same and to 240 degrees a second, about what the holder's jog
-    /// round its back keeps up with, and tilting 25 up to 30 down, since the camera sits above it), its reload (pull 1.4 s,
-    /// load 1.2 s taking a Bone Missile as the load begins, half a second's rest after a shot), its words, and the holder:
-    /// within 3 m of the stand point and 0.2 m behind the post to take it, counted while within 6 m.
+    /// round its back keeps up with, and tilting no further than the bolt can be laid on what the crosshair is on, nor
+    /// faster than the ballista tilts, within 25 up and 30 down), its reload (pull 1.4 s, load 1.2 s taking a Bone Missile
+    /// as the load begins, half a second's rest after a shot), its words, and the holder: taken from anywhere within the
+    /// library's 4.5 m of the stand point (in front of it too: he is brought round behind it), counted while within 6 m.
     /// </summary>
     public static class BallistaDesign
     {
@@ -31,11 +32,9 @@ namespace EliteCreaturesPack.Ballista
             Words = new WeaponWords
             {
                 Name = "$" + BallistaPiece.Word, Loaded = "$hud_ecp_bal_loaded", Empty = "$hud_ecp_bal_empty",
-                Hold = "$hud_ecp_bal_hold", LetGo = "$hud_ecp_bal_letgo", Behind = "$msg_ecp_bal_behind", NoAmmo = "$msg_ecp_bal_nomissiles",
+                Hold = "$hud_ecp_bal_hold", LetGo = "$hud_ecp_bal_letgo", NoAmmo = "$msg_ecp_bal_nomissiles", Unreachable = "$msg_ecp_bal_unreachable",
             },
-            UseRange = 3f,
             HolderRange = 6f,
-            Behind = 0.2f,
         };
     }
 }

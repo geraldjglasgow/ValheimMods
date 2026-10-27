@@ -9,7 +9,8 @@ namespace EliteCreaturesPack.Ballista
     /// reload's steps and the trigger; its numbers are <see cref="BallistaDesign"/>). The ballista's own part: its model's
     /// parts (<see cref="BallistaParts"/>), the holder's spot stepping in for the pull and the load
     /// (<see cref="BallistaTimeline.Close"/>), the nose's kick at a shot, its look (<see cref="BallistaLook"/>), his hands on
-    /// the string and with the missile (<see cref="BallistaHands"/>) and the shot (<see cref="BallistaShot"/>).
+    /// the string and with the missile (<see cref="BallistaHands"/>) and the shot (<see cref="BallistaShot"/>), whose flight
+    /// from the groove (<see cref="Flight"/>) the library lays on the crosshair.
     /// </summary>
     public sealed class BallistaControl : MannedWeapon
     {
@@ -31,7 +32,10 @@ namespace EliteCreaturesPack.Ballista
         public override Vector3 StandPoint(in WeaponState s) =>
             Vector3.Lerp(Parts!.StandAim.position, Parts.StandLoad.position, BallistaTimeline.Close(s));
 
-        protected override bool Shoot(Player shooter) => Parts != null && BallistaShot.Fire(Parts, shooter);
+        /// <summary>The bolt's flight, for laying the ballista so it lands on the crosshair: from its nose in the groove, straight, at the missile's speed.</summary>
+        public override ShotFlight Flight => ShotFlight.At(Frame!, BallistaShot.Nose(Parts!), BallistaMissile.Speed);
+
+        protected override bool Shoot(Player shooter) => Parts != null && BallistaShot.Fire(this, Parts, shooter);
 
         /// <summary>A shot kicks the nose up and it settles back.</summary>
         protected override float Kick(in WeaponState s) => s.ShotAge < 1f ? KickDegrees * Mathf.Exp(-s.ShotAge / KickTime) : 0f;

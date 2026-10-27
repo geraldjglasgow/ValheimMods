@@ -95,4 +95,3 @@ hud_ecp_bal_loaded: "đã nạp đạn"
 hud_ecp_bal_empty: "hết đạn"
 # The Bone Ballista's messages to its holder
 msg_ecp_bal_nomissiles: "Không có tên ballista xương"
-msg_ecp_bal_behind: "Đứng phía sau để giữ"

@@ -21,14 +21,20 @@ offline patch check passes.
 - **Bone Missiles.** Workbench level 2: 5 bone fragments and 2 feathers make 20 (the game's Wooden Missile is 5 core wood
   and 2 feathers for 20 at the artisan table). 50 blunt (the user, 2026-10-09), knockback 40, 45 m/s, no drop; the Crossbows skill rises with
   hits. Their own ammo type: only the Bone Ballista takes them, and it takes nothing else.
-- **Holding it.** The use key on it (standing within 3.5 m of its back): the player walks to the spot behind it, hand
-  items put away, both fists on its handles; their body passes through the ballista while holding it (the player's
+- **Holding it.** The use key on it, from anywhere within 4.5 m of the spot behind it, in front of it too (since
+  2026-10-26: its hover offers the key exactly where it works): the player is brought round to that spot in about a
+  third of a second, refused only when swimming, when the spot is over 1.2 m up or 3 m down, or when something solid is in the way
+  ("You cannot reach it from here"); hand items put away, both fists on its handles; their body passes through the ballista while holding it (the player's
   capsule is wider than the room behind the post; rubbing on it slowed every side-step). Movement keys do nothing; the use key again, jump or dodge let go (hand
   items come back). One holder at a time ("in use" otherwise).
-- **Aiming.** It follows the view, and the view turns no faster than 240 degrees a second while holding it (what
+- **Aiming.** It lays its bolt on what the crosshair is on (since 2026-10-26 evening: from the bolt's nose in the groove,
+  straight at its 45 m/s, rather than turning parallel to the view, whose ray runs over the holder's right shoulder and
+  left the bolt passing beside the crosshair), and the view turns no faster than 240 degrees a second while holding it (what
   the holder's jog round its back keeps up with), so view, ballista and feet stop together when the mouse stops; at most 45 degrees either side of where it was placed (90 in all), 20 down to 25 up (the user, 2026-10-09).
   The feet stop a few centimetres from their spot and move again only once it has moved 15 cm (no walking in place). The camera is held to the same turn while holding it (no looking behind; the user,
-  2026-10-09). The holder keeps facing the way it points while their feet walk the arc
+  2026-10-09; it stops where the bolt can still be laid on the crosshair), and since 2026-10-26 to the same tilt: it
+  tilts no faster than the ballista (200 degrees a second) and no further than the bolt can be laid on what the
+  crosshair is on, so it cannot look at ground the ballista cannot reach. The holder keeps facing the way it points while their feet walk the arc
   behind it: turning it makes them side-step back and forth.
 - **Reloading, by itself while the holder carries Bone Missiles.** Pull (1.4 s): step in and lean, both hands take the
   string either side of the groove, haul it back to the latch with the body, from bent forward to leaning back, while stepping back (the spine arms
