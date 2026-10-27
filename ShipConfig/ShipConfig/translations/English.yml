@@ -26,6 +26,11 @@ sc_explore_value: "$1 m"
 sc_explore_tip: "How far around you the map uncovers as you sail. Vanilla $1 m."
 sc_explore_skill: "Your Sailing skill: x$1"
 
+# Ship panel: the ship's health line, its value (now / at full) and its tooltip
+sc_health: "Ship health"
+sc_health_value: "$1 / $2"
+sc_health_tip: "How much damage the ship can still take before it breaks apart. Repair it with the hammer near a workbench."
+
 # Ship panel: a Sailing ability's cooldown (the ability names come from GrindstoneSkills; over a minute shows as 2:05)
 sc_ability_ready: "Ready"
 sc_ability_seconds: "$1 s"

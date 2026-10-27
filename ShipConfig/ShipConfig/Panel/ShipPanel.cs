@@ -10,8 +10,9 @@ namespace ShipConfig
     /// The ship panel on the HUD, in the minimap's own look (<see cref="PanelLook"/>): under the ship HUD's wind
     /// indicator while that shows, else right under the minimap, as wide as the minimap. It sits under the HUD root, in
     /// the HUD's own layer, so it hides with the HUD and the inventory, crafting and other windows draw over it, as they
-    /// do over the minimap. Lines: speed, speed multiplier, exploration radius, then, under a thin divider, one per
-    /// Sailing ability GrindstoneSkills says the player has unlocked, with a cooldown bar.
+    /// do over the minimap. Lines: speed, speed multiplier, exploration radius, the ship's health, other mods' lines
+    /// (<see cref="OtherLines"/>), then, under a thin divider, one per Sailing ability GrindstoneSkills says the player has
+    /// unlocked, with a cooldown bar.
     /// </summary>
     public sealed class ShipPanel
     {
@@ -32,6 +33,8 @@ namespace ShipConfig
         private readonly PanelRow speed;
         private readonly PanelRow multiplier;
         private readonly PanelRow explore;
+        private readonly PanelRow health;
+        private readonly OtherLines others;
         private readonly RectTransform divider;
         private readonly List<PanelRow> abilities = new List<PanelRow>();
         private int laidOut = -1;
@@ -49,8 +52,10 @@ namespace ShipConfig
             speed = new PanelRow(root, "ShipConfig_speed", StatHeight, font, tipPrefab);
             multiplier = new PanelRow(root, "ShipConfig_multiplier", StatHeight, font, tipPrefab);
             explore = new PanelRow(root, "ShipConfig_explore", StatHeight, font, tipPrefab);
+            health = new PanelRow(root, "ShipConfig_health", StatHeight, font, tipPrefab);
+            others = new OtherLines(root, StatHeight, Side, font, tipPrefab);
             divider = PanelLook.Block("ShipConfig_divider", root, PanelLook.Line).rectTransform;
-            Hover = new PanelHover(root);
+            Hover = new PanelHover(root, others.Container);
         }
 
         /// <summary>
@@ -92,6 +97,7 @@ namespace ShipConfig
                     Lang.Get("sc_speed_tip"));
             RefreshMultiplier(ship);
             RefreshExplore();
+            RefreshHealth(ship);
             string[] ids = GrindstoneLink.Abilities();
             for (int i = 0; i < ids.Length; i++)
                 RefreshAbility(Ability(i), ids[i]);
@@ -131,6 +137,28 @@ namespace ShipConfig
                 account);
         }
 
+        // The ship's health now and at full, from its wear (its health kept in its ZDO, as the game keeps every piece's).
+        private void RefreshHealth(Ship ship)
+        {
+            WearNTear wear = ship.GetComponent<WearNTear>();
+            ZDO zdo = wear != null && wear.m_nview != null && wear.m_nview.IsValid() ? wear.m_nview.GetZDO() : null;
+            if (zdo == null)
+                return;
+            float max = wear.m_health, now = Mathf.Clamp(zdo.GetFloat(ZDOVars.s_health, max), 0f, max);
+            if (health.Changed(Mathf.CeilToInt(now), Mathf.RoundToInt(max)))
+                health.Set(Lang.Get("sc_health"), Health(now, max), Lang.Get("sc_health"), Lang.Get("sc_health_tip"));
+        }
+
+        /// <summary>"812 / 1000", orange under three fifths, red under a quarter.</summary>
+        private static string Health(float now, float max)
+        {
+            string text = Lang.Format("sc_health_value", Mathf.CeilToInt(now), Mathf.RoundToInt(max));
+            float share = max > 0f ? now / max : 1f;
+            if (share < 0.25f)
+                return $"<color={PanelLook.Red}>{text}</color>";
+            return share < 0.6f ? $"<color={PanelLook.Orange}>{text}</color>" : text;
+        }
+
         private static void RefreshAbility(PanelRow row, string id)
         {
             string name = GrindstoneLink.AbilityName(id);
@@ -165,16 +193,25 @@ namespace ShipConfig
             return abilities[index];
         }
 
-        /// <summary>Lines placed top to bottom and the panel sized to hold them, when the number of abilities changed.</summary>
+        /// <summary>Each frame: laid out again when another mod's line showed or hid since (<see cref="OtherLines"/>).</summary>
+        public void Restack()
+        {
+            if (laidOut >= 0)
+                Layout(laidOut);
+        }
+
+        /// <summary>Lines placed top to bottom and the panel sized to hold them, when the number of abilities or other mods' lines changed.</summary>
         private void Layout(int abilityCount)
         {
-            if (abilityCount == laidOut)
+            if (abilityCount == laidOut && !others.Changed)
                 return;
             laidOut = abilityCount;
             float y = Padding;
             y = Stack(speed, y);
             y = Stack(multiplier, y);
             y = Stack(explore, y);
+            y = Stack(health, y);
+            y = others.Stack(y, Side);
             divider.gameObject.SetActive(abilityCount > 0);
             if (abilityCount > 0)
                 y = PlaceDivider(y);

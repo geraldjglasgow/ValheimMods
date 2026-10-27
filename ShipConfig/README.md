@@ -25,7 +25,9 @@ Raft, Karve, Longship, Drakkar and every modded ship each get:
 - Speed: how fast the ship moves, in km/h.
 - Speed multiplier: top speed against a vanilla ship of its kind.
 - Explore radius: how far around you the map uncovers as you sail.
+- Ship health: what the ship has left of its full health, orange then red as it wears.
 - Sailing abilities: with GrindstoneSkills, each ability and its cooldown; hover to read what it does.
+- Other mods can add their own lines to it.
 
 ## Install
 Needed on the server and every client. Install with r2modman or the Thunderstore app, or put `ShipConfig.dll` in

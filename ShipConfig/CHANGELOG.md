@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.6.0
+
+- The ship panel under the minimap shows the ship's health (now and at full), orange when low and red when nearly broken.
+- Other mods can add a line to the ship panel.
+
 ## 1.5.1
 
 - Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.

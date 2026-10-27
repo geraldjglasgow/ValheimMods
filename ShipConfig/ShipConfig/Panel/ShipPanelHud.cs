@@ -8,7 +8,8 @@ namespace ShipConfig
     /// <summary>
     /// Drives the ship panel from the HUD's own object (added at Hud.Awake): builds it the first time the local player
     /// is aboard a ship, shows it while they are (alive, the large map closed, the Ship Panel setting on), tests the
-    /// hover every frame, and measures and redraws it four times a second. Everything here is the local player's own
+    /// hover and other mods' lines (<see cref="OtherLines"/>) every frame, and measures and redraws it four times a second.
+    /// Everything here is the local player's own
     /// view; nothing is networked.
     /// </summary>
     public class ShipPanelHud : MonoBehaviour
@@ -50,6 +51,7 @@ namespace ShipConfig
             bool cursorFree = ZCursor.LockState != CursorLockMode.Locked && ZCursor.IsVisible;
             panel.Interactive(cursorFree);
             panel.Hover.Update(cursorFree);
+            panel.Restack();
             if (Time.unscaledTime < nextRefresh)
                 return;
             nextRefresh = Time.unscaledTime + RefreshSeconds;

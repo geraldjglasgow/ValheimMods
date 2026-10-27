@@ -19,10 +19,12 @@ namespace ShipConfig
         private static readonly List<RaycastResult> hits = new List<RaycastResult>();
 
         private readonly RectTransform root;
+        private readonly Transform others;
         private PointerEventData pointer;
         private GameObject hovered;
 
-        public PanelHover(RectTransform root) => this.root = root;
+        /// <summary>The panel's lines are its children and <paramref name="others"/>' (other mods' lines, <see cref="OtherLines"/>).</summary>
+        public PanelHover(RectTransform root, Transform others) => (this.root, this.others) = (root, others);
 
         public void Update(bool cursorFree)
         {
@@ -63,11 +65,11 @@ namespace ShipConfig
             return null;
         }
 
-        /// <summary>The panel's line the hit is (or is inside), or null when it is anything else.</summary>
+        /// <summary>The panel's line the hit is (or is inside), its own or another mod's, or null when it is anything else.</summary>
         private GameObject Line(GameObject hit)
         {
             Transform node = hit.transform;
-            while (node != null && node.parent != root)
+            while (node != null && node.parent != root && node.parent != others)
                 node = node.parent;
             return node != null ? node.gameObject : null;
         }
