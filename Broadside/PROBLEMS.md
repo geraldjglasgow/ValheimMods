@@ -436,7 +436,7 @@ Problems met while building the ship designer and the ships built from the hamme
 ## Dropped items fall through the ship
 - **Problem:** an item dropped on a launched ship's deck fell through it to the sea floor.
 - **Cause:** the ship's boxes are on the vehicle layer, as the game's own ships' are, and the game's physics never lets the item layer meet the vehicle layer.
-- **Solution:** a copy of each box on the item layer under `ship/item_floors` (`KwShipItemFloors`, made with the boxes): only items meet them; characters, the camera, building rays and the shot trace pass them.
+- **Solution:** a copy of each box under `ship/item_floors` (`KwShipItemFloors`, made with the boxes) on the game's UI layer, which meets items and terrain but not the water, characters, the camera, the building rays or the shot trace. A first try put the copies on the item layer itself, which also meets the water surface: every ship sat on top of the sea.
 
 ## A ship under sail stops dead
 - **Problem:** sailing at 16 km/h with the wind behind, over deep water, the ship stopped dead.

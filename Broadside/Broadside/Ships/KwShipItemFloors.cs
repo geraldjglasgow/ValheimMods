@@ -7,9 +7,10 @@ namespace Broadside
     /// straight through the ship all the way to the sea floor"). The ship's boxes are on the vehicle layer, like the game's
     /// own ships', and the game's physics never lets the item layer meet the vehicle layer, so items fell through every
     /// deck. Each box the ship's colliders were built with (decks, hold floors, roofs, the hull's sides and walls, keels;
-    /// not the railings, which break) gets a copy on the item layer under its own holder beside them, built once with them:
-    /// the item layer meets items, terrain and pieces but not characters, the camera, the building rays or the shot trace,
-    /// so only dropped items feel them. They move with the ship's body and are part of it; a hole shot through later leaves
+    /// not the railings, which break) gets a copy on the game's UI layer under its own holder beside them, built once with
+    /// them: the UI layer meets items and terrain but not the water, characters, the ship's own vehicle layer, the camera,
+    /// the building, removing and use rays or the shot trace, so only dropped items feel them. (On the item layer itself
+    /// the copies met the game's water surface and the ships sat on top of the sea: 2026-10-26.) They move with the ship's body and are part of it; a hole shot through later leaves
     /// its copy, so a dropped item does not fall out through a hole. On every peer (an item's physics run on its owner).
     /// </summary>
     public static class KwShipItemFloors
@@ -26,7 +27,7 @@ namespace Broadside
                 old.name = Name + "_gone";
                 Object.Destroy(old.gameObject);
             }
-            int layer = LayerMask.NameToLayer("item");
+            int layer = LayerMask.NameToLayer("UI");
             GameObject holder = new GameObject(Name) { layer = layer };
             holder.transform.SetParent(ship, false);
             holder.transform.SetLocalPositionAndRotation(colliders.localPosition, colliders.localRotation);
