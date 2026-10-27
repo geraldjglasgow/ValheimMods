@@ -10,6 +10,9 @@ namespace GrindstoneSkills
     /// For that one call the sail force factor and the oar force are raised, then put back, so ShipConfig's per-ship
     /// values and anything else that sets them are kept. The game's forward drag grows with the square of the speed,
     /// so top speed grows with the square root of the force: the force is raised by the square of the speed bonus.
+    /// The raise is the outermost patch (prefix first, finalizer last): Harmony runs finalizers in the prefixes' order,
+    /// not reversed, so another mod raising the same field the same way would otherwise put back a value already
+    /// raised, and the force would grow every step without end (Digi's World and Performance did).
     /// </summary>
     public static class HelmSpeed
     {
@@ -24,6 +27,7 @@ namespace GrindstoneSkills
         private static class Physics
         {
             [HarmonyPrefix]
+            [HarmonyPriority(Priority.First)]
             private static void Prefix(Ship __instance, out Forces __state)
             {
                 __state = default;
@@ -36,6 +40,7 @@ namespace GrindstoneSkills
             }
 
             [HarmonyFinalizer]
+            [HarmonyPriority(Priority.Last)]
             private static void Finalizer(Ship __instance, Forces __state)
             {
                 if (!__state.Raised)

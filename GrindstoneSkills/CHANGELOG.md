@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.20.3
+
+- Fixed: with World and Performance's Sailing Tweaks, ships no longer speed up without end and the map no longer uncovers itself; both mods' bonuses now stack.
+
 ## 0.20.2
 
 - Defense and Swimming breath icons moved onto a shared library; no change in play.

@@ -4,9 +4,11 @@ namespace GrindstoneSkills
 {
     /// <summary>
     /// A wider map exploration radius at sea. Minimap.UpdateExplore uncovers the map around the local player every
-    /// couple of seconds with m_exploreRadius (100 m in the game); for that one call the radius grows with the local
-    /// player's Sailing level while they are aboard a ship (Ship.GetLocalShip, the ship whose deck volume they are in),
-    /// then goes back. Exploration is each player's own, so nothing crosses the network.
+    /// couple of seconds with m_exploreRadius (100 m in the game); each time it does while the local player is aboard a
+    /// ship (Ship.GetLocalShip, the ship whose deck volume they are in), a second Minimap.Explore uncovers the radius
+    /// grown with their Sailing level. m_exploreRadius itself is never written: other mods raise it for that call and put
+    /// it back, and two mods doing so put back each other's raised value, so the radius grew without end. Exploration is
+    /// each player's own, so nothing crosses the network.
     /// </summary>
     public static class SeaExploration
     {
@@ -14,20 +16,19 @@ namespace GrindstoneSkills
         private static class Explore
         {
             [HarmonyPrefix]
-            private static void Prefix(Minimap __instance, Player player, out float __state)
-            {
-                __state = -1f;
-                if (!SailingSkill.Active || player == null || player != Player.m_localPlayer || Ship.GetLocalShip() == null)
-                    return;
-                __state = __instance.m_exploreRadius;
-                __instance.m_exploreRadius *= RadiusFactor();
-            }
+            private static void Prefix(Minimap __instance, out float __state) => __state = __instance.m_exploreTimer;
 
-            [HarmonyFinalizer]
-            private static void Finalizer(Minimap __instance, float __state)
+            // The game sets its timer back to 0 when it explores, so a timer lower than before means it just did.
+            [HarmonyPostfix]
+            private static void Postfix(Minimap __instance, Player player, float __state)
             {
-                if (__state >= 0f)
-                    __instance.m_exploreRadius = __state;
+                if (__instance.m_exploreTimer >= __state || !SailingSkill.Active || player == null)
+                    return;
+                if (player != Player.m_localPlayer || Ship.GetLocalShip() == null)
+                    return;
+                float factor = RadiusFactor();
+                if (factor > 1f)
+                    __instance.Explore(player.transform.position, __instance.m_exploreRadius * factor);
             }
         }
 
