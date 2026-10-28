@@ -16,7 +16,8 @@ namespace Broadside
     /// stays fast at its far end, drawn taut as the piece leans, until its own moment in the first part of the fall (in
     /// no order), when it snaps with the game's own sound (<see cref="KwRigSound"/>) and whips for <see cref="Whip"/> s before
     /// it is gone (<see cref="KwFallRope"/>). The length and the snaps' moments come from the fall mark, so every screen sees
-    /// the same fall. At the end it lands with a crash and is hidden. Only drawn; nothing is sent.
+    /// the same fall. As it goes its wood creaks and splinters, more as it leans (<see cref="KwMastCreak"/>); at the end it
+    /// lands with a crash of timber and is hidden. Only drawn; nothing is sent.
     /// </summary>
     public sealed class KwMastFall : MonoBehaviour
     {
@@ -27,6 +28,7 @@ namespace Broadside
         private Vector3 pivot, axis, top;
         private float most, time, falling;
         private KwRigMark mark;
+        private KwMastCreak? creak;
 
         /// <summary>A piece's fall begun, from its fall mark (where it broke, the heading it falls to).</summary>
         public static void Begin(KwRigLook look, KwRigMark fall)
@@ -36,6 +38,7 @@ namespace Broadside
             (made.look, made.mark) = (look, fall);
             made.Aim(look.Piece, fall);
             made.falling = Mathf.Lerp(Shortest, Longest, Chance(fall, 0));
+            made.creak = new KwMastCreak(fall, made.falling);
             made.parts.Add((look.High, Vector3.zero, Quaternion.identity));
             Transform? goes = KwMastFallSplit.Gather(look, fall);
             if (goes != null)
@@ -45,7 +48,7 @@ namespace Broadside
         }
 
         // A share from 0 to 1, the same on every screen for this fall and this number (the fall's length, each rope's moment).
-        private static float Chance(KwRigMark fall, int i) =>
+        internal static float Chance(KwRigMark fall, int i) =>
             Mathf.Repeat(Mathf.Sin(fall.A * 12.9898f + fall.B * 78.233f + i * 37.719f) * 43758.5453f, 1f);
 
         // About what it turns and how far: about the break, square to its spar and to where it falls.
@@ -80,7 +83,6 @@ namespace Broadside
         {
             Transform ship = look.transform.parent;
             KwRigSound.Play(KwRigSound.Crack, ship.TransformPoint(pivot));
-            KwRigSound.Play(KwRigSound.Topple, ship.TransformPoint(top));
         }
 
         private void Update()
@@ -88,6 +90,7 @@ namespace Broadside
             time += Time.deltaTime;
             foreach (KwFallRope rope in ropes)
                 rope.Show(time, look.transform.parent);
+            creak?.Tick(time, look.transform.parent.TransformPoint(pivot));
             float angle = most * Mathf.Pow(Mathf.Clamp01(time / falling), 2.4f);
             Quaternion turn = Quaternion.AngleAxis(angle, axis);
             foreach ((Transform part, Vector3 at, Quaternion rest) in parts)
@@ -97,7 +100,7 @@ namespace Broadside
             }
             if (time < falling)
                 return;
-            KwRigSound.Play(KwRigSound.Land, look.transform.parent.TransformPoint(pivot + turn * (top - pivot)));
+            KwRigSound.Play(KwRigSound.Land, look.transform.parent.TransformPoint(pivot + turn * (top - pivot)), 0.8f, 0.9f);
             Gone(look, mark);
             Destroy(this);
         }
@@ -213,32 +216,6 @@ namespace Broadside
         {
             if (line != null)
                 line.SetPositions(points);
-        }
-    }
-
-    /// <summary>
-    /// The game's own sounds played where a rig piece is hurt, on this screen only (<see cref="KwMastFall"/>): each a copy of
-    /// its sound prefab made with its network view switched off, the game's build-ghost way, so no ZDO is made.
-    /// </summary>
-    public static class KwRigSound
-    {
-        public const string Snap = "sfx_fishingrod_linebreak", Crack = "sfx_wood_break", Topple = "sfx_tree_fall", Land = "sfx_tree_fall_hit";
-
-        public static void Play(string name, Vector3 at)
-        {
-            GameObject? prefab = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(name) : null;
-            if (prefab == null)
-                return;
-            bool was = ZNetView.m_forceDisableInit;
-            ZNetView.m_forceDisableInit = true;
-            try
-            {
-                Object.Instantiate(prefab, at, Quaternion.identity);
-            }
-            finally
-            {
-                ZNetView.m_forceDisableInit = was;
-            }
         }
     }
 }

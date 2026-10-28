@@ -848,7 +848,7 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   `KwRigDamageLooks` (on the visual holder), `KwRigLook` + `KwRigLookPlan` + `KwRigSparDraw` + `KwRigLookKey` (each mast,
   bowsprit and cap drawn on its own, `KwShipFittings.Moves`, cut by its plan: spars that go, broken hoops, spars drawn
   again, a fallen piece's high part), `KwRigDamageSpar` (a notched spar's mesh, splintered ends), `KwRigDamageMesh`
-  (triangles kept, craters, joins), `KwMastFall` + `KwRigSound` (the fall, the ropes' whip, the game's sounds made local),
+  (triangles kept, craters, joins), `KwMastFall` + `KwRigSound` (the fall, 6 to 9 s, the ropes' whip, the game's sounds made local, scaled in volume and pitch; the heavy gate's creak found in `darkwood_gate`'s door effects) + `KwMastCreak` (the wood creaking and splintering as it leans, most when about halfway over; a ship's timber crash where it lands) + `KwMastFallSplit` (only what is above the break goes),
   `KwRigDamageRudder` + `KwRigBladeCut` (the blade sliced by height and clipped, broken boards' ends); in `Sails/`
   `KwSailDamageCloth` (a mast's sails: holes, droop, rings), `KwSailDamageHoles` (the texture place, the cut, the holed
   material), `KwSailDamageDroop` + `KwSailDroopAlong` (through `KwSailMotion.Bend`, `IKwClothBend`), `KwSailDamageRings`
