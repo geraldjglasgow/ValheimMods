@@ -1,5 +1,10 @@
 # Changelog
 
+## 0.20.4
+
+- Fixed: on Valheim 1.0.21 cooking stations and ovens cook again, with no error logged on every update.
+- Fixed: Sailing ability keys no longer stop working after the console is closed.
+
 ## 0.20.3
 
 - Fixed: with World and Performance's Sailing Tweaks, ships no longer speed up without end and the map no longer uncovers itself; both mods' bonuses now stack.
