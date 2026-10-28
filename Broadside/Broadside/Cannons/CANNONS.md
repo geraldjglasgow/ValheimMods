@@ -15,14 +15,15 @@ they were, as history. The ship cannons are built only on a launched Broadside s
 cannon has no physics body of its own any more (the bench's could be hauled on land by a joint and knocked over and
 righted): it rides its ship (`KwShipRider`) and is hauled about the deck by its hauler's game.
 
-**Meadows and Black Forest only, for now** (the user, 2026-10-26: "right now we should only be supporting the Meadows and
+**Up to the Swamp, for now** (the user, 2026-10-26: "right now we should only be supporting the Meadows and
 Black Forest ... We should not have any of the higher tier stuff yet"; and "Re-tier the small cannon to Black Forest: made
 of bronze and fine wood, firing stone shot; black powder from coal and resin only. The iron, Plains and Ashlands cannons
 are hidden until a later release."): the bronze ship cannon is the small iron cannon's design (`KwShipCannons.Bronze`:
 the same carriage, gun, arcs, turn speeds, recoil, reload, broadside and haul; `KwSmallIronCannonShape` cast in the
 carriage's metal) in the Black Forest rudder's two looks, the game's bronze (`bar_bronze_stack`'s `bronze`) for its gun
-and fittings and fine wood (`piece_table`'s `Table_Mat`) for its carriage, and it fires stone shot. `KwTiers.Offered`
-(the Black Forest) decides what is offered: a cannon of a higher tier stays out of the hammer (`KwCannonHammer`) and an
+and fittings and fine wood (`piece_table`'s `Table_Mat`) for its carriage, and it fires stone shot. On 2026-10-28 the user released
+the small iron ship cannon and the iron cannonball ("can we release the iron cannon and cannonballs"). `KwTiers.Offered`
+(the Swamp) decides what is offered: a cannon of a higher tier stays out of the hammer (`KwCannonHammer`) and an
 item of one has no recipe (`KwItems`), but every prefab and item is still made and registered on every peer, so cannons
 and stacks a world already has still load, work and give their cost back. Raising it offers the others again.
 
@@ -33,7 +34,7 @@ as a ship part (blueprints, snap rules, undo, `kwship clear`).
 
 | What | Names |
 | --- | --- |
-| Ship cannons (four trucks, on a launched ship's deck) | `BS_cannon_bronze` (Black Forest, the only one in the hammer for now), `BS_cannon_small_iron` (Swamp), `BS_cannon_small` (Plains), `BS_cannon_large` (Ashlands); ids `cannon_bronze`, `cannon_small_iron`, `cannon_small`, `cannon_large` |
+| Ship cannons (four trucks, on a launched ship's deck) | `BS_cannon_bronze` (Black Forest), `BS_cannon_small_iron` (Swamp; these two in the hammer for now), `BS_cannon_small` (Plains), `BS_cannon_large` (Ashlands); ids `cannon_bronze`, `cannon_small_iron`, `cannon_small`, `cannon_large` |
 | Items | `BS_CannonballStone` (the bronze cannon), `BS_CannonballIron` (the two small cannons), `BS_CannonballFlametal` (the large cannon), ammo type `$bs_ammo_cannonball`; `BS_BlackPowder`. The stone ball wears the game's `Stone` item's material (`stone`, `KwStone`), as does the ball the bronze cannon lays in at its breech |
 | Shots, bursts | `BS_shot_cannon_bronze`, `_small_iron`, `_small`, `_large`; `BS_burst_<same>` |
 | ZDO keys | the manned weapon's (MannedWeapons, "Manning" below): `bs_arm_user`, `bs_arm_yaw`, `bs_arm_pitch`, `bs_arm_loaded` (1 once loaded), `bs_arm_step`, `bs_arm_load_at`, `bs_arm_shots`, `bs_arm_shot_at`; the cannon's own: `bs_arm_kind` (the trigger that fired), `bs_arm_load_kind` (the trigger a load is for), `bs_arm_ammo` (the ball loaded), `bs_arm_tower` (who hauls it), `bs_arm_untied` (1: its breeching left unmade where it was hauled to, nothing there to make it fast to); and Broadside's rider record (`kw_rider`, `kw_rider_pos`, `kw_rider_rot`: `KwShipRider`), its pose written as it is hauled |
@@ -47,16 +48,16 @@ as a ship part (blueprints, snap rules, undo, `kwship clear`).
 | --- | --- | --- |
 | Bronze ship cannon | 10 bronze, 20 fine wood | the hammer, a workbench in range (the wood floor's station), on a launched ship's deck |
 | Stone cannonball, 4 | 2 stone | workbench, level 1 |
+| Small iron ship cannon | 14 iron, 22 ancient bark | the hammer, as the bronze one |
+| Iron cannonball, 4 | 1 iron | forge, level 2 |
 | Black powder, 4 | 2 coal, 1 resin (no guck since 2026-10-26) | forge, level 1 |
 
 Held back for a later release (`KwTiers.Offered`), not in the hammer or the crafting lists:
 
 | What | Cost | Where |
 | --- | --- | --- |
-| Small iron ship cannon | 14 iron, 22 ancient bark | the hammer, as the bronze one |
-| Small ship cannon | 14 black metal, 8 tar, 24 wood, 4 linen thread | the same |
+| Small ship cannon | 14 black metal, 8 tar, 24 wood, 4 linen thread | the hammer, as the bronze one |
 | Large ship cannon | 18 flametal, 6 surtling cores, 26 blackwood, 6 linen thread | the same |
-| Iron cannonball, 4 | 1 iron | forge, level 2 |
 | Flametal cannonball, 4 | 1 flametal, 2 grausten | black forge, level 2 |
 
 A shot takes one ball and one, one, two or three black powder (bronze, small iron, small, large). The bronze cannon fires

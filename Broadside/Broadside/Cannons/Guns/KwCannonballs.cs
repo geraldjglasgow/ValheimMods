@@ -12,8 +12,8 @@ namespace Broadside
     /// cannonball (<c>BS_CannonballFlametal</c>) is for the large cannon: a bigger ball of flametal cast round a grausten
     /// core, its seam still glowing, four cast at the black forge from one flametal and two grausten. The balls fly in
     /// the cannons' shots wearing these models, and the same shapes are drawn going in at a breech as a cannon is loaded
-    /// (<see cref="KwCannonWork"/>). Only the stone ball is crafted for now (<see cref="KwTiers.Offered"/>); the iron and
-    /// flametal ones are still made, so a world's stacks of them load.
+    /// (<see cref="KwCannonWork"/>). Only the stone and iron balls are crafted for now (<see cref="KwTiers.Offered"/>); the
+    /// flametal one is still made, so a world's stacks of it load.
     /// </summary>
     public sealed class KwCannonballs : IKwItemSet
     {

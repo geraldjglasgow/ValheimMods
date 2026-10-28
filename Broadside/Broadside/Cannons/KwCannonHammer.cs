@@ -8,8 +8,8 @@ namespace Broadside
     /// The ship cannons in the hammer's Misc tab, after Broadside's own pieces (<see cref="KwHammer"/> adds them, so the
     /// saved ships still come last), each costing its own recipe (<see cref="KwArmDef.Cost"/>, refunded on removal; an item
     /// the game lacks left out, with a warning), at the wood floor's station: a workbench in range, as Broadside's sea
-    /// edits and saved ships need. Only the cannons of a tier offered now (<see cref="KwTiers.Shown"/>: the bronze ship
-    /// cannon); the others are kept out of it (taken out should they be in it), still registered and still costing their
+    /// edits and saved ships need. Only the cannons of a tier offered now (<see cref="KwTiers.Shown"/>: the bronze and
+    /// small iron ship cannons); the others are kept out of it (taken out should they be in it), still registered and still costing their
     /// recipe, so those a world already has load and give it back when removed. Idempotent.
     /// </summary>
     public static class KwCannonHammer

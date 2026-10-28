@@ -10,7 +10,7 @@ namespace Broadside
     /// stretch) that reaches back over the carriage and overhangs well past its front, as a naval gun's does, each a piece
     /// of its own (<c>BS_cannon_bronze</c>, Black Forest, the small iron cannon's design cast in bronze on fine wood and
     /// firing stone shot; <c>BS_cannon_small_iron</c>, Swamp; <c>BS_cannon_small</c>, Plains; <c>BS_cannon_large</c>,
-    /// Ashlands; only the bronze one offered for now, <see cref="KwTiers.Offered"/>) built only on a launched Broadside
+    /// Ashlands; only the bronze and small iron ones offered for now, <see cref="KwTiers.Offered"/>) built only on a launched Broadside
     /// ship's deck (<see cref="KwArmPlace"/>). The whole carriage is levered round on its
     /// trucks only <see cref="Arc"/> each way, the gun elevating in it with the quoin following under the breech; further
     /// round it is hauled about the deck by its rear (<see cref="KwArmTow"/>). At each shot the carriage rolls back on its trucks until the breeching

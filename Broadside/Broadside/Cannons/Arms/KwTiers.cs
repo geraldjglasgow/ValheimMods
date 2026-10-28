@@ -13,11 +13,12 @@ namespace Broadside
 
         /// <summary>
         /// The highest tier offered for now (the user, 2026-10-26: "right now we should only be supporting the Meadows and
-        /// Black Forest ... We should not have any of the higher tier stuff yet"). A cannon of a higher tier stays out of the
+        /// Black Forest ... We should not have any of the higher tier stuff yet"; raised to the Swamp on 2026-10-28 to release
+        /// the small iron ship cannon and the iron cannonball). A cannon of a higher tier stays out of the
         /// hammer (<see cref="KwCannonHammer"/>) and an item of one has no recipe (<see cref="KwItems"/>), but both stay
         /// registered with the game, so the cannons and items a world already has still load. A later release raises it.
         /// </summary>
-        public const int Offered = BlackForest;
+        public const int Offered = Swamp;
 
         /// <summary>Whether a cannon or an item of the tier is offered now: in the hammer, or crafted.</summary>
         public static bool Shown(int tier) => tier <= Offered;

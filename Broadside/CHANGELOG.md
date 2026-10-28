@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.0
+
+- The small iron ship cannon (14 iron, 22 ancient bark) is in the hammer, firing iron cannonballs.
+- Iron cannonballs: 1 iron makes 4 at the forge (level 2).
+- A falling mast creaks and splinters as it leans and lands with a timber crash.
+
 ## 0.2.0
 
 - Logging off aboard a ship puts you back on the same spot when you log in, not inside the hull.

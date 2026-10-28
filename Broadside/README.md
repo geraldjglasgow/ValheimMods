@@ -20,7 +20,7 @@ Watch the ship cannons video: https://www.youtube.com/watch?v=8zDX1wglYUQ
 - Steering by tiller, or a captain's wheel with working steering gear; anchor windlass, hatches, crow's nests, pennants.
 - Ship panel: speed, top speed for the wind and sails you have now, explore radius, health and your guns' reloads.
 - Log off aboard a ship and you log back in on the same spot on deck.
-- A bronze ship cannon, built on a launched ship (the only piece built aboard), firing stone cannonballs with black powder.
+- Ship cannons, built on a launched ship (the only piece built aboard): bronze with stone shot, or iron with iron shot.
 - Broadside from the helm: U fires the side you look toward, J shows the shot arcs.
 - Battle damage: holes through the hull, flooding, bailing, holed sails and falling masts; wooden repair kits patch
   leaks at sea and the hammer mends the rest.

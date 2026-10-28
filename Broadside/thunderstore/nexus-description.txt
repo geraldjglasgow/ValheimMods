@@ -2,7 +2,7 @@ Nexus Mods page text for Broadside (https://www.nexusmods.com/valheim/mods/4655)
 Paste each block into the matching field on the page's edit form.
 
 ===== SUMMARY (plain text, one paragraph) =====
-Design and build your own ships, from a one-man skiff to a 50 m pirate galleon: keel, ribs, planking, decks, cabins, masts and sails on a dry dock, then launch from your hammer and sail. Bronze ship cannons fire broadsides that hole hulls and sink ships. 11 ready-made ships included. Meadows and Black Forest for now.
+Design and build your own ships, from a one-man skiff to a 50 m pirate galleon: keel, ribs, planking, decks, cabins, masts and sails on a dry dock, then launch from your hammer and sail. Bronze and iron ship cannons fire broadsides that hole hulls and sink ships. 11 ready-made ships included. Meadows and Black Forest woods for now.
 
 ===== DESCRIPTION (BBCode) =====
 Design and build your own ships, from a one-man skiff to a 50 m pirate galleon. Lay a keel on a dry dock, raise ribs, plank the hull, add decks, cabins, masts and sails, then launch it from your hammer and sail. Arm it with ship cannons and fight: shots punch holes, the sea floods in, and wrecked ships sink.
@@ -20,7 +20,7 @@ Design and build your own ships, from a one-man skiff to a 50 m pirate galleon. 
 [*]Steering by tiller, or a captain's wheel with working steering gear; anchor windlass, hatches, crow's nests, pennants.
 [*]Ship panel: speed, top speed for the wind and sails you have now, explore radius, health and your guns' reloads.
 [*]Log off aboard a ship and you log back in on the same spot on deck.
-[*]A bronze ship cannon, built on a launched ship (the only piece built aboard), firing stone cannonballs with black powder.
+[*]Ship cannons, built on a launched ship (the only piece built aboard): bronze with stone shot, or iron with iron shot.
 [*]Broadside from the helm: U fires the side you look toward, J shows the shot arcs.
 [*]Battle damage: holes through the hull, flooding, bailing, holed sails and falling masts; wooden repair kits patch leaks at sea and the hammer mends the rest.
 [*]Edit at sea: railings, ladders, doors, windows, masts and sails can be changed while the ship is afloat.

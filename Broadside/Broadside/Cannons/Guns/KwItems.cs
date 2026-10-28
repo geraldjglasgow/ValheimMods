@@ -11,7 +11,7 @@ namespace Broadside
     /// peer: built once when the network scene first wakes (a copy of a game item wearing its own model and icon,
     /// <see cref="KwItemModel"/>), registered with the scene every time it wakes, and kept with their recipes in the live
     /// item database and every one the game builds or copies later. An item carries no damage of its own (a weapon's shot says what it does). A recipe's station is looked up each time (none in the main menu: the recipe waits, disabled).
-    /// An item of a tier not offered yet (<see cref="KwTiers.Shown"/>: the iron and flametal cannonballs) is made and
+    /// An item of a tier not offered yet (<see cref="KwTiers.Shown"/>: the flametal cannonball) is made and
     /// registered all the same, so a world's stacks of it still load, but has no recipe.
     /// </summary>
     [HarmonyPatch]
