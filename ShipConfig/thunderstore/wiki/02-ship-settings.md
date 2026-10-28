@@ -13,6 +13,7 @@ A negative number counts as 0 in every setting except `SailForceOffset`.
 | `Turning Multiplier` | `1` | Times every ship's `TurnForceSailing` and `TurnForcePaddling` (not `RudderSpeed`) |
 | `Damage Taken Multiplier` | `1` | Times every ship's `DamageTaken` |
 | `Build Cost Multiplier` | `1` | Times every ship's `BuildCost` |
+| `Explore Radius Multiplier` | `1` | Times how far around you the map uncovers while you are aboard a ship (100 m in vanilla), from 1 to 10. Multiplies with GrindstoneSkills' Sailing bonus |
 
 Ship settings not listed here are used as written.
 

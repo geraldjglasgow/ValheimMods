@@ -4,7 +4,7 @@ Configure every ship in Valheim: health, speed, steering, damage and build cost,
 
 ## Features
 - Every ship gets its own settings, defaulting to its vanilla values (below).
-- Global multipliers on top: health, sail force, paddle force, turning, damage taken and build cost.
+- Global multipliers on top: health, sail force, paddle force, turning, damage taken and build cost, plus the map explore radius aboard a ship.
 - Modded ships get settings too (any ship with a `Ship` and a `WearNTear` component).
 - Changes apply at once, to new ships and to ships already in the world.
 - `AshlandsOceanDamage` off lets ships sail the Ashlands ocean unharmed (this skips the Drakkar's progression gate).

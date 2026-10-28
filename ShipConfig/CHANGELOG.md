@@ -1,5 +1,9 @@
 # Changelog
 
+## 1.7.0
+
+- `Explore Radius Multiplier` (1 to 10) widens how far the map uncovers while you are aboard a ship; the ship panel shows it.
+
 ## 1.6.0
 
 - The ship panel under the minimap shows the ship's health (now and at full), orange when low and red when nearly broken.

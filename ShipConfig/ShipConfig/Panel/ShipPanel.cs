@@ -124,17 +124,20 @@ namespace ShipConfig
             return factor < 0.995f ? $"<color={PanelLook.Red}>{text}</color>" : text;
         }
 
+        // The game's radius times the Explore Radius Multiplier (1 to 10) and the Sailing factor (ShipExploration).
         private void RefreshExplore()
         {
-            float factor = GrindstoneLink.ExploreFactor();
-            float radius = Minimap.instance != null ? Minimap.instance.m_exploreRadius : VanillaExploreRadius;
-            if (!explore.Changed(Mathf.RoundToInt(radius * factor), Mathf.RoundToInt(factor * 100f) * 2 + (GrindstoneLink.Present ? 1 : 0)))
+            float skill = GrindstoneLink.ExploreFactor(), settings = ShipMultipliers.ExploreRadius;
+            float radius = (Minimap.instance != null ? Minimap.instance.m_exploreRadius : VanillaExploreRadius) * skill * settings;
+            int settingsShown = Mathf.RoundToInt(settings * 100f);
+            if (!explore.Changed(Mathf.RoundToInt(radius), Mathf.RoundToInt(skill * 100f) * 2048 + settingsShown * 2 + (GrindstoneLink.Present ? 1 : 0)))
                 return;
             string account = Lang.Format("sc_explore_tip", VanillaExploreRadius.ToString("0"));
+            if (settingsShown != 100)
+                account += "\n" + Lang.Format("sc_explore_settings", settings.ToString("0.00"));
             if (GrindstoneLink.Present)
-                account += "\n" + Lang.Format("sc_explore_skill", factor.ToString("0.00"));
-            explore.Set(Lang.Get("sc_explore"), Lang.Format("sc_explore_value", (radius * factor).ToString("0")), Lang.Get("sc_explore"),
-                account);
+                account += "\n" + Lang.Format("sc_explore_skill", skill.ToString("0.00"));
+            explore.Set(Lang.Get("sc_explore"), Lang.Format("sc_explore_value", radius.ToString("0")), Lang.Get("sc_explore"), account);
         }
 
         // The ship's health now and at full, from its wear (its health kept in its ZDO, as the game keeps every piece's).

@@ -1,12 +1,14 @@
 using BepInEx.Configuration;
 using PatchGuard;
 using SyncedConfig;
+using UnityEngine;
 
 namespace ShipConfig
 {
     /// <summary>
     /// Section Multipliers: global factors on top of the per-ship values, all default 1, synced and lockable.
-    /// Values below 0 count as 0. A change re-applies every ship.
+    /// Values below 0 count as 0. A change re-applies every ship. The explore radius one is read live
+    /// (<see cref="ShipExploration"/>), from 1 to 10.
     /// </summary>
     public static class ShipMultipliers
     {
@@ -18,6 +20,7 @@ namespace ShipConfig
         public static ConfigEntry<float> TurningMultiplier { get; private set; }
         public static ConfigEntry<float> DamageTakenMultiplier { get; private set; }
         public static ConfigEntry<float> BuildCostMultiplier { get; private set; }
+        public static ConfigEntry<float> ExploreRadiusMultiplier { get; private set; }
 
         public static float Health => Positive(HealthMultiplier);
         public static float SailForce => Positive(SailForceMultiplier);
@@ -25,6 +28,7 @@ namespace ShipConfig
         public static float Turning => Positive(TurningMultiplier);
         public static float DamageTaken => Positive(DamageTakenMultiplier);
         public static float BuildCost => Positive(BuildCostMultiplier);
+        public static float ExploreRadius => ExploreRadiusMultiplier == null ? 1f : Mathf.Clamp(ExploreRadiusMultiplier.Value, 1f, 10f);
 
         public static void Initialize(SyncedConfiguration config)
         {
@@ -34,6 +38,10 @@ namespace ShipConfig
             TurningMultiplier = Bind(config, "Turning Multiplier", "turning force");
             DamageTakenMultiplier = Bind(config, "Damage Taken Multiplier", "damage taken");
             BuildCostMultiplier = Bind(config, "Build Cost Multiplier", "build cost");
+            ExploreRadiusMultiplier = config.Bind(Section, "Explore Radius Multiplier", 1f,
+                "Multiplier on how far around you the map uncovers while you are aboard a ship (100 m in vanilla), " +
+                "times GrindstoneSkills' Sailing bonus when it is installed. 1 is vanilla.",
+                acceptableValues: new AcceptableValueRange<float>(1f, 10f));
         }
 
         private static ConfigEntry<float> Bind(SyncedConfiguration config, string key, string subject)

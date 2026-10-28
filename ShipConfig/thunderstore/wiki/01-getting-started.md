@@ -20,7 +20,7 @@ Everyone needs the same version, or the player cannot join. Use r2modman or the 
 ## The config file
 
 `BepInEx/config/com.ShipConfig.cfg`, created on first start; every setting is described in it. Sections: `General`
-(`Lock Configuration`), `Multipliers` (six global factors) and `Ship` (every setting of every ship, keyed
+(`Lock Configuration`), `Multipliers` (seven global factors) and `Ship` (every setting of every ship, keyed
 `<Ship>.<Setting>`, e.g. `VikingShip.Health`). Save it and the change applies within a few seconds, no restart. On a
 server, the server's file applies to everyone while `Lock Configuration` is on (the default).
 

@@ -24,6 +24,7 @@ sc_multiplier_skill: "Helmsman's Sailing skill: x$1"
 sc_explore: "Explore radius"
 sc_explore_value: "$1 m"
 sc_explore_tip: "How far around you the map uncovers as you sail. Vanilla $1 m."
+sc_explore_settings: "Ship settings: x$1"
 sc_explore_skill: "Your Sailing skill: x$1"
 
 # Ship panel: the ship's health line, its value (now / at full) and its tooltip
