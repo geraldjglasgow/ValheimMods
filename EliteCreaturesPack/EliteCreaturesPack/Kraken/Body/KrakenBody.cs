@@ -218,7 +218,8 @@ namespace EliteCreaturesPack.Kraken
         {
             switch (phase)
             {
-                case KrakenPhase.Tentacles: return TentacleMotion.Mode.Up;
+                case KrakenPhase.Tentacles:
+                case KrakenPhase.Drag: return TentacleMotion.Mode.Up;
                 case KrakenPhase.Head: return grips ? TentacleMotion.Mode.Grip : TentacleMotion.Mode.Down;
                 case KrakenPhase.Leave: return TentacleMotion.Mode.Down;
                 default: return TentacleMotion.Mode.Trail;

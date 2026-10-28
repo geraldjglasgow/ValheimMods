@@ -54,8 +54,14 @@ against the game's assemblies; nothing has been seen in a running game yet.
 - From the moment it dives, the ship **cannot sail, drift or turn**: its sail comes down and stays down, and it is
   held where it was caught, still free to bob and roll on the waves. The kraken's body sits under the hull (or beside
   it, with the head); it never shoves the ship.
-- The grip ends when the kraken dies, when no one has been aboard or right beside the ship for 12 seconds (the crew
-  died, or swam off), or when the ship is gone. Then it lets go and leaves.
+- With no one aboard or within 4 m of the hull (in the water, swimming back) it holds its attacks. **Abandoning ship loses it** (a player report,
+  2026-10-28: jumping off made it let go, and the crew climbed back aboard): with someone still alive within `Hunt
+  Range`, after 5 seconds it bellows, its tentacles come up round the hull and it drags the ship under, bow first,
+  for 6 seconds; there the ship breaks by the game's own destruction (its cargo and timbers float up in the game's
+  crates) and the kraken is gone. Anyone back within 4 m of the hull before then calls the drag off and the fight goes
+  on.
+- The grip ends when the kraken dies, when no one has been aboard or near the ship for 12 seconds (the crew died or
+  is gone: the ship is left afloat for them), or when the ship is gone. Then it lets go and leaves.
 - **The crew cannot hurt their own ship** while it is held (the user, 2026-09-28): blades, arrows and fire from players
   do the ship no harm, so they can swing at the kraken over the rail. The kraken's smashes still damage it.
 
@@ -283,7 +289,9 @@ there:
 
 ## The grip
 - [ ] It dives under the ship with a splash; the sail comes down and the ship can't sail or turn, but still bobs
-- [ ] With no one aboard for 12 s it lets go and leaves; the ship sails again
+- [ ] Everyone jumps off and swims away: 5 s later it bellows and drags the ship under; it breaks, crates float up
+- [ ] Back at the ship while it is being dragged: the drag stops, the ship floats up, the fight goes on
+- [ ] The whole crew dies: 12 s later it lets go and leaves; the ship stays afloat
 
 ## Tentacle phase
 - [ ] Under the ship the body is upside down, reaching up to the keel

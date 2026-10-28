@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.12.11
+
+- Fixed: abandoning ship no longer makes the Kraken let go. With nobody aboard for 5 seconds, it drags the ship under.
+- Swimming back within 4 m of the ship stops the drag; anyone within 4 m of the hull counts as crew.
+- If the whole crew dies, the Kraken still lets go and leaves the ship afloat.
+
 ## 0.12.10
 
 - The Bone Ballista's bolt now flies to the crosshair, not beside it; the view stops where the bolt can still reach.

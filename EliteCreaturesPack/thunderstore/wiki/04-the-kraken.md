@@ -9,8 +9,9 @@ attacks in two phases: tentacles slamming the deck, then its head at the rail.
   about every hour or two.
 - It chases a ship within 90 m. **Escape** under sail with a fair wind, or into shallow water; rowing is too slow.
   Kept out of reach for a few seconds, it dives and is gone for good.
-- **Caught:** it holds the ship from below. The ship cannot sail or turn until the kraken dies or everyone has been
-  off and away from the ship for 12 seconds.
+- **Caught:** it holds the ship from below. The ship cannot sail or turn until the kraken dies.
+- **Don't abandon ship:** with nobody aboard or within 4 m of the ship for 5 seconds, it drags the ship under and it
+  breaks (its cargo floats up). Swim back within 4 m in time and it stops. If the whole crew dies, it lets go and leaves the ship afloat.
 - While it holds the ship, **players cannot damage their own ship**, so swing over the rail freely. Its smashes still
   do: a karve has 500 health, a longship 1000.
 

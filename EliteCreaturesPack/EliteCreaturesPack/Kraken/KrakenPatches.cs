@@ -63,16 +63,21 @@ namespace EliteCreaturesPack.Kraken
         }
     }
 
-    /// <summary>A held ship, on the machine that sails it: no sail before the game moves it, kept in place after (<see cref="ShipHold"/>).</summary>
+    /// <summary>
+    /// A held ship, on the machine that sails it: no sail before the game moves it, kept in place after; dragged under
+    /// instead of floating when its crew abandoned it (<see cref="ShipHold"/>).
+    /// </summary>
     [HarmonyPatch(typeof(Ship), nameof(Ship.CustomFixedUpdate))]
     public static class ShipHoldPatch
     {
-        private static void Prefix(Ship __instance)
+        private static bool Prefix(Ship __instance)
         {
-            if (KrakenBrain.Loaded.Count > 0)
+            if (KrakenBrain.Loaded.Count == 0)
             {
-                SafeCall.Run("Ship.CustomFixedUpdate kraken hold", static ship => ShipHold.Furl(ship), __instance);
+                return true;
             }
+            SafeCall.Run("Ship.CustomFixedUpdate kraken hold", static ship => ShipHold.Furl(ship), __instance);
+            return !SafeCall.Run("Ship.CustomFixedUpdate kraken drag", static ship => ShipHold.Sinks(ship), __instance, false);
         }
 
         private static void Postfix(Ship __instance)

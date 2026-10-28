@@ -12,6 +12,7 @@ namespace EliteCreaturesPack.Kraken
         Tentacles = 3,  // under the ship; six tentacles up round it, slamming the deck one at a time
         Head = 4,       // the head up beside the ship: bites, ink, and a tentacle smashing the ship now and then
         Leave = 5,      // giving up: diving away, gone for good in a few seconds
+        Drag = 6,       // its crew abandoned the held ship: dragging it under, where it breaks
     }
 
     /// <summary>
@@ -36,7 +37,7 @@ namespace EliteCreaturesPack.Kraken
 
         public KrakenPhase Phase => (KrakenPhase)(Zdo?.GetInt(PhaseKey) ?? 0);
 
-        /// <summary>The ship it hunts (Hunt) or holds (Dive, Tentacles, Head).</summary>
+        /// <summary>The ship it hunts (Hunt) or holds (Dive, Tentacles, Head, Drag).</summary>
         public ZDOID Ship => Zdo?.GetZDOID(ShipKey) ?? ZDOID.None;
 
         /// <summary>Where the held ship is kept: its position when the kraken caught it.</summary>
@@ -52,7 +53,7 @@ namespace EliteCreaturesPack.Kraken
         public bool Grips => IsGrip(Phase);
 
         public static bool IsGrip(KrakenPhase phase) =>
-            phase == KrakenPhase.Dive || phase == KrakenPhase.Tentacles || phase == KrakenPhase.Head;
+            phase == KrakenPhase.Dive || phase == KrakenPhase.Tentacles || phase == KrakenPhase.Head || phase == KrakenPhase.Drag;
 
         /// <summary>Whether the fight is on: the boss bar shows.</summary>
         public bool Fighting => Phase != KrakenPhase.Lurk && Phase != KrakenPhase.Leave;

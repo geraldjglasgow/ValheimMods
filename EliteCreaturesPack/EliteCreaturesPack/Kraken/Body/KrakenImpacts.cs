@@ -67,12 +67,11 @@ namespace EliteCreaturesPack.Kraken
                     KrakenEffects.Surfacing(Surface(body.transform.position));
                     break;
                 case KrakenPhase.Tentacles when ship != null:
-                    Splashes(ship);
+                case KrakenPhase.Drag when ship != null:
+                    Splashes(ship, dragging: phase == KrakenPhase.Drag);
                     break;
                 case KrakenPhase.Head when ship != null:
-                    Vector3 head = KrakenTargets.HeadSpot(ship, body.State.Side, body.State.Along, 0f);
-                    KrakenEffects.Surfacing(head);
-                    KrakenEffects.Roaring(head);
+                    HeadUp(body, ship);
                     break;
                 case KrakenPhase.Leave:
                     KrakenEffects.Diving(Surface(body.transform.position));
@@ -80,13 +79,25 @@ namespace EliteCreaturesPack.Kraken
             }
         }
 
-        private static void Splashes(Ship ship)
+        // The tentacles coming up round the hull; taking the ship down, a bellow first.
+        private static void Splashes(Ship ship, bool dragging)
         {
+            if (dragging)
+            {
+                KrakenEffects.Warning(Surface(ship.transform.position));
+            }
             ShipHull hull = ShipHull.Of(ship);
             for (int i = 0; i < ShipHull.Anchors; i++)
             {
                 KrakenEffects.Emerging(Surface(ship.transform.TransformPoint(hull.Anchor(i))));
             }
+        }
+
+        private static void HeadUp(KrakenBody body, Ship ship)
+        {
+            Vector3 head = KrakenTargets.HeadSpot(ship, body.State.Side, body.State.Along, 0f);
+            KrakenEffects.Surfacing(head);
+            KrakenEffects.Roaring(head);
         }
 
         private static Vector3 Surface(Vector3 at) => new Vector3(at.x, KrakenShips.Water(at), at.z);

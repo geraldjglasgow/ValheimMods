@@ -9,8 +9,11 @@ namespace EliteCreaturesPack.Kraken
     /// </summary>
     public static class KrakenShips
     {
-        /// <summary>Metres beside the hull that still count as aboard: someone who just fell over the side is still in the fight.</summary>
-        public const float Beside = 2.5f;
+        /// <summary>
+        /// Metres beside the hull that still count as aboard: someone who just fell or was thrown over the side is still in
+        /// the fight, and swimming back keeps the ship from being dragged under.
+        /// </summary>
+        public const float Beside = 4f;
 
         private static readonly List<Player> crew = new List<Player>();
         private static WaterVolume? volume;
@@ -38,6 +41,19 @@ namespace EliteCreaturesPack.Kraken
                 }
             }
             return crew;
+        }
+
+        /// <summary>Whether a living player is within <paramref name="range"/> metres of the ship, aboard or not.</summary>
+        public static bool Anyone(Ship ship, float range)
+        {
+            foreach (Player player in Player.GetAllPlayers())
+            {
+                if (player != null && !player.IsDead() && Level(player.transform.position - ship.transform.position) < range)
+                {
+                    return true;
+                }
+            }
+            return false;
         }
 
         /// <summary>The nearest ship within <paramref name="range"/> metres that carries a crew, or null.</summary>

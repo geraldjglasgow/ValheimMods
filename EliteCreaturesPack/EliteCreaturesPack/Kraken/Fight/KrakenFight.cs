@@ -15,9 +15,12 @@ namespace EliteCreaturesPack.Kraken
     /// side when both have one, off the ladder), and bites whoever is at the rail, spits ink at
     /// whoever is further off and, while the ink recovers, throws its whole head over the rail at whoever is within its
     /// reach on the deck; about every `Ship Hit Interval` seconds its turn is a tentacle from the far side smashing
-    /// across the ship itself. Then back under the ship, and round again. With no one aboard for a while, or the ship
-    /// gone, it lets go and leaves. A stagger (a parried bite or ink, or enough damage at once) calls off whatever was
-    /// about to land and holds the next attack back a moment.
+    /// across the ship itself. Then back under the ship, and round again. With no one aboard it holds its attacks: if the
+    /// crew abandoned ship (someone is still alive within `Hunt Range`) it drags the ship under a few seconds later, and
+    /// the ship breaks there; anyone back at the ship before then calls it off. With nobody left near (the crew died or
+    /// are gone) it lets go after a while and leaves the ship afloat; it leaves too once the ship is gone. A stagger (a
+    /// parried bite or ink, or enough damage at once) calls off whatever was about to land and holds the next attack back
+    /// a moment.
     /// </summary>
     public class KrakenFight
     {
@@ -25,7 +28,11 @@ namespace EliteCreaturesPack.Kraken
         private const float EmergeTime = 1.6f;       // seconds for the tentacles to rise before the first slam
         private const float Surfacing = 2.2f;        // seconds for the head to come up before it attacks
         private const float Retry = 0.5f;            // seconds to look again when there is nobody to attack
-        private const float NoCrewFor = 12f;
+        private const float AbandonedFor = 5f;       // seconds with nobody aboard, someone still near, before it drags the ship under
+        private const float NoCrewFor = 12f;         // seconds with nobody aboard or near before it lets go
+        private const float DragTime = 6f;           // seconds from taking the ship down to its breaking
+        private const float WreckRetry = 1f;         // seconds between blows while the ship has not broken yet
+        private const float WreckGiveUp = 5f;        // seconds past the drag after which a ship that will not break is let go
         private const float FlinchPause = 2f;
         private const float UnderDepth = 7f;         // metres its body sits under the waterline while under the ship
         private const float PlaceSpeed = 8f;
@@ -33,7 +40,7 @@ namespace EliteCreaturesPack.Kraken
         private readonly KrakenBrain _brain;
         private readonly List<int> _order = new List<int>();
         private int _attacks, _grab;
-        private float _nextAttack, _strikeDone, _headFree, _inkFree, _lastSmash, _noCrew;
+        private float _nextAttack, _strikeDone, _headFree, _inkFree, _lastSmash, _unmanned, _wreckAt;
         private bool _staggered;
 
         public KrakenFight(KrakenBrain brain) => _brain = brain;
@@ -46,7 +53,7 @@ namespace EliteCreaturesPack.Kraken
         {
             State.SetShip(ship.m_nview.GetZDO().m_uid);
             State.SetAnchor(ship.transform.position);
-            _noCrew = 0f;
+            _unmanned = 0f;
             _brain.Enter(KrakenPhase.Dive);
         }
 
@@ -54,14 +61,25 @@ namespace EliteCreaturesPack.Kraken
         {
             Ship? ship = KrakenShips.Find(State.Ship);
             List<Player>? crew = ship != null ? KrakenShips.Crew(ship) : null;
-            _noCrew = crew != null && crew.Count > 0 ? 0f : _noCrew + dt;
-            if (ship == null || crew == null || _noCrew > NoCrewFor)
+            if (ship == null || crew == null)
             {
                 _brain.Enter(KrakenPhase.Leave);
                 return;
             }
             PlaceBody(phase, ship, dt);
+            if (phase == KrakenPhase.Drag || crew.Count == 0)
+            {
+                Unmanned(ship, crew.Count > 0, phase, age, dt);
+                return;
+            }
+            _unmanned = 0f;
             Flinch(age);
+            Attack(phase, ship, age, crew);
+        }
+
+        // What comes next in the phase it is in.
+        private void Attack(KrakenPhase phase, Ship ship, float age, List<Player> crew)
+        {
             if (phase == KrakenPhase.Dive && age >= DiveTime)
             {
                 StartTentacles();
@@ -73,6 +91,47 @@ namespace EliteCreaturesPack.Kraken
             else if (phase == KrakenPhase.Head)
             {
                 Head(ship, age, crew);
+            }
+        }
+
+        // Nobody aboard: abandoned with someone still near, it drags the ship under after a few seconds; with nobody left
+        // near, it lets go after a while. Someone back at the ship while it drags calls the drag off.
+        private void Unmanned(Ship ship, bool manned, KrakenPhase phase, float age, float dt)
+        {
+            if (phase == KrakenPhase.Drag)
+            {
+                Drag(ship, manned, age);
+                return;
+            }
+            _unmanned += dt;
+            bool near = KrakenShips.Anyone(ship, KrakenSettings.HuntRange);
+            if (near && _unmanned > AbandonedFor)
+            {
+                _wreckAt = DragTime;
+                _brain.Enter(KrakenPhase.Drag);
+            }
+            else if (!near && _unmanned > NoCrewFor)
+            {
+                _brain.Enter(KrakenPhase.Leave);
+            }
+        }
+
+        // Taking the ship down (its owner sinks it, see ShipHold.Sinks); once it is under, the ship breaks and the
+        // kraken is gone. A ship that will not break is let go, and floats back up.
+        private void Drag(Ship ship, bool manned, float age)
+        {
+            if (manned)
+            {
+                StartTentacles();
+            }
+            else if (age > DragTime + WreckGiveUp)
+            {
+                _brain.Enter(KrakenPhase.Leave);
+            }
+            else if (age >= _wreckAt)
+            {
+                ShipHold.Wreck(ship, _brain.Character);
+                _wreckAt = age + WreckRetry;
             }
         }
 
