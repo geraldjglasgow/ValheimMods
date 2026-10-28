@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.1
+
+- Fixed: launched ships sail and steer again after the game's latest patch.
+
 ## 0.3.0
 
 - The small iron ship cannon (14 iron, 22 ancient bark) is in the hammer, firing iron cannonballs.

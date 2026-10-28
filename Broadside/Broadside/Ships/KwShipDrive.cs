@@ -36,7 +36,7 @@ namespace Broadside
         {
             bool controlled = ship.HaveControllingPlayer();
             ship.UpdateControlls(dt);
-            ship.UpdateSail(dt);
+            ship.UpdateSail(dt, controlled);
             ship.UpdateRudder(dt, controlled);
             if (ship.m_nview != null && !ship.m_nview.IsOwner())
                 return;
