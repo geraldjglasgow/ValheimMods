@@ -19,7 +19,26 @@ namespace Broadside
 
         private const float Thick = 0.1f;
 
+        /// <summary>
+        /// Every box, made with the holder switched off and switched on once (each box added live to the ship's body cost
+        /// about three times as much: a thousand boxes a ship, 2026-10-27), then their copies for dropped items.
+        /// </summary>
         public static void Add(Transform holder, KwBlueprint blueprint)
+        {
+            bool was = holder.gameObject.activeSelf;
+            holder.gameObject.SetActive(false);
+            try
+            {
+                Boxes(holder, blueprint);
+            }
+            finally
+            {
+                holder.gameObject.SetActive(was);
+            }
+            KwShipItemFloors.Add(holder);
+        }
+
+        private static void Boxes(Transform holder, KwBlueprint blueprint)
         {
             List<(Vector3 At, Vector3 Forward, KwDef Def)> decks = KwSole.Decks(blueprint);
             foreach ((KwBpPiece piece, string tool, KwSpan span) in KwBpHull.Parts(blueprint))
@@ -37,7 +56,6 @@ namespace Broadside
                 Keel(holder, piece);
             KwShipHouses.Colliders(holder, blueprint);
             KwMastTopColliders.Add(holder, blueprint);
-            KwShipItemFloors.Add(holder);
         }
 
         /// <summary>

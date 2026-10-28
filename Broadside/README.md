@@ -4,6 +4,10 @@ Design and build your own ships, from a one-man skiff to a 50 m pirate galleon. 
 plank the hull, add decks, cabins, masts and sails, then launch it from your hammer and sail. Arm it with ship cannons
 and fight: shots punch holes, the sea floods in, and wrecked ships sink.
 
+[![Broadside - Ship Cannons](https://img.youtube.com/vi/8zDX1wglYUQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=8zDX1wglYUQ)
+
+Watch the ship cannons video: https://www.youtube.com/watch?v=8zDX1wglYUQ
+
 ## Features
 - Dry dock: keel block guides and keel blocks to build on; designing is free.
 - Hull tools: keel, rib, planking, deck, railing, ladder, cabin, masts and sails, bowsprit, post caps, doors and windows,
@@ -15,6 +19,7 @@ and fight: shots punch holes, the sea floods in, and wrecked ships sink.
 - Real sailing: the ship floats on its own hull; square sails want the wind behind, gaff sails and jibs sail closer to it.
 - Steering by tiller, or a captain's wheel with working steering gear; anchor windlass, hatches, crow's nests, pennants.
 - Ship panel: speed, top speed for the wind and sails you have now, explore radius, health and your guns' reloads.
+- Log off aboard a ship and you log back in on the same spot on deck.
 - A bronze ship cannon, built on a launched ship (the only piece built aboard), firing stone cannonballs with black powder.
 - Broadside from the helm: U fires the side you look toward, J shows the shot arcs.
 - Battle damage: holes through the hull, flooding, bailing, holed sails and falling masts; wooden repair kits patch

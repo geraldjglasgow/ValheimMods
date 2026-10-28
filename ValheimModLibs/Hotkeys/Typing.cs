@@ -29,17 +29,28 @@ namespace Hotkeys
 
         private static bool ChatFocused => Chat.instance != null && Chat.instance.HasFocus();
 
+        /// <summary>
+        /// An input field that takes the keys now. Selected is not enough: the game's console leaves its input field
+        /// selected after it closes, hidden (2026-10-27: every hotkey dead until something else was clicked), and a field
+        /// stays selected after its text is submitted.
+        /// </summary>
         private static bool InputFieldSelected
         {
             get
             {
                 EventSystem system = EventSystem.current;
                 GameObject? selected = system != null ? system.currentSelectedGameObject : null;
-                if (selected == null)
+                if (selected == null || !selected.activeInHierarchy)
                 {
                     return false;
                 }
-                return selected.GetComponent<TMP_InputField>() != null || selected.GetComponent<InputField>() != null;
+                TMP_InputField? field = selected.GetComponent<TMP_InputField>();
+                if (field != null)
+                {
+                    return field.isFocused;
+                }
+                InputField? legacy = selected.GetComponent<InputField>();
+                return legacy != null && legacy.isFocused;
             }
         }
 

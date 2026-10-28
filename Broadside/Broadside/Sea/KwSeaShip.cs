@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using System.Diagnostics;
 using PatchGuard;
 using UnityEngine;
@@ -49,8 +50,22 @@ namespace Broadside
 
         public bool IsOwner => View != null && View.IsValid() && View.IsOwner();
 
-        /// <summary>Made once the ship is built: the calls registered, the kinds told (<see cref="KwSeaKind.Build"/>).</summary>
-        public static KwSeaShip Add(KwShipBody body, KwBlueprint blueprint, KwBpHull hull)
+        /// <summary>
+        /// Made as the ship's last build step: the calls registered, then the kinds told (<see cref="KwSeaKind.Building"/>),
+        /// as steps the build may spread over frames (<see cref="KwShipBody"/>).
+        /// </summary>
+        public static IEnumerable<bool> Steps(KwShipBody body, KwBlueprint blueprint, KwBpHull hull)
+        {
+            KwSeaShip ship = Add(body, blueprint, hull);
+            foreach (KwSeaKind kind in KwSeaKinds.All)
+            {
+                foreach (bool step in kind.Building(ship))
+                    yield return step;
+            }
+        }
+
+        // The component and its calls.
+        private static KwSeaShip Add(KwShipBody body, KwBlueprint blueprint, KwBpHull hull)
         {
             KwSeaShip ship = body.gameObject.AddComponent<KwSeaShip>();
             (ship.Body, ship.Blueprint, ship.Hull) = (body, blueprint, hull);
@@ -61,8 +76,6 @@ namespace Broadside
                 ship.View.Register<ZPackage, int>(EditRpc, (sender, pkg, token) => Guard.Run("Broadside sea edit", () => KwSeaOwner.Edit(ship, sender, pkg, token)));
                 ship.View.Register<int, bool, string, ZPackage>(EditedRpc, (sender, token, ok, words, cost) => Guard.Run("Broadside sea edit answer", () => KwSeaAsk.Answered(ship, token, ok, words, cost)));
             }
-            foreach (KwSeaKind kind in KwSeaKinds.All)
-                KwShipBody.Step("Broadside sea " + kind.Name, () => kind.Build(ship));
             return ship;
         }
 

@@ -51,11 +51,16 @@ namespace Broadside
         }
 
         /// <summary>A saved ship, or null (and a warning in the log) when it cannot be read.</summary>
-        public static KwBlueprint? Load(string name)
+        public static KwBlueprint? Load(string name) => Load(name, out _);
+
+        /// <summary>As <see cref="Load(string)"/>, with the file's text as read (null when it could not be read).</summary>
+        public static KwBlueprint? Load(string name, out string? text)
         {
+            text = null;
             try
             {
-                return KwBpStrays.Trim(KwBpFile.Read(name, File.ReadAllText(PathOf(name))));
+                text = File.ReadAllText(PathOf(name));
+                return KwBpStrays.Trim(KwBpFile.Read(name, text));
             }
             catch (Exception e) when (e is IOException || e is FormatException || e is UnauthorizedAccessException)
             {

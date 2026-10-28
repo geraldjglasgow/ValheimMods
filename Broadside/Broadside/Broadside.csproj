@@ -6,7 +6,7 @@
     <RootNamespace>Broadside</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.1.1</Version>
+    <Version>0.2.0</Version>
     <Product>Broadside</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -64,6 +64,8 @@
     <!-- The ready-made ships (blueprint JSON) and the sail picture they wear, copied into the player's folders on first start (KwReadyShips) -->
     <EmbeddedResource Include="assets\ships\*.json" LogicalName="Broadside.ships.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
     <EmbeddedResource Include="assets\sails\*.png" LogicalName="Broadside.sails.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <!-- Rendered icons carried so no player renders them: the ready-made ships, the rendered pieces and items (tools/bake_icons.py), read as Broadside.icons.<file> (KwIconCache) -->
+    <EmbeddedResource Include="assets\icons\*.icon" LogicalName="Broadside.icons.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
     <!-- The blueprint table's model, one bundle per platform (ValheimAssets Assets/Ships/Keelwright/BlueprintTable; .linux for dedicated servers), read as Broadside.assets.kw_bptable.<platform> -->
     <EmbeddedResource Include="assets\bundles\kw_bptable.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
     <!-- The Post cap tool's carved heads, one bundle per platform (ValheimAssets Assets/Ships/Keelwright/PostHeads), read as Broadside.assets.kw_postheads.<platform> -->

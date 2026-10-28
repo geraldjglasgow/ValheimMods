@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.2.0
+
+- Logging off aboard a ship puts you back on the same spot when you log in, not inside the hull.
+- A mast shot through high up drops only what is above the break; the sails below stay set.
+- A shot-down mast takes twice as long to fall.
+- Fixed: lag spikes when taking up the hammer, previewing a saved ship and launching or loading ships.
+- Fixed: the broadside key (U) did nothing after using the console.
+
 ## 0.1.1
 
 - Fixed: climbing a ladder onto a cabin roof no longer drags you back down to the deck.

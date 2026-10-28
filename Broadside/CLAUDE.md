@@ -304,6 +304,9 @@ deck in place of the deck tiller. The ship formulas are in
   its gunner's game. An empty cannon another peer owns is asked for (`BS_Arm_Load`) before the captain's pack loads it.
   The rest lay is its owner's, a dedicated server too. The helm key lines, the shot arcs and the reload lines are the
   captain's screen only, read from the cannons' ZDOs; nothing of them is sent or saved.
+- Logging off aboard (2026-10-27, `KwShipLogout`): each save of the local player aboard a launched ship keeps the
+  ship's id and his place on it in his own save, per world; spawning there again he is put back on that spot once the
+  ship is built. Local only: nothing is sent, his own sync carries him.
 - Sea edits (2026-10-26, the user's words: "I might want to edit the railing to add another cannon, so I want to remove some
   of my railing so there's a gap for the cannon on the deck. Or I might want to add in a porthole window": railings, doors
   and windows, ladders, masts and sails, post caps and the bowsprit, with the dock's tools and windows; nothing else, and
@@ -338,7 +341,8 @@ deck in place of the deck tiller. The ship formulas are in
 | ZDO keys | `kw_span` (a part's saved text), `kw_tier` (biome tier id: `meadows`, `blackforest`, `swamp`, `mountains`, `plains`, `mistlands`, `ashlands`; new work only the first two), `kw_rudder_lay`, `kw_rudder_gear` (a rudder's steering gear to a captain's wheel, or why not), `kw_rudder_water` (the design waterline over a dock rudder's point, a float), `kw_helm` and `kw_helmsman` (a dock wheel's helm and who holds it), `kw_hatch_open`, `kw_sail_hoist`, `kw_ship` (on a piece: the build id of a ship built from a blueprint on the dock; on a `KW_ship`: its packed blueprint), `kw_hatch<n>_open` (a launched ship's hatch n), `kw_open<id>` (a dock opening's leaf, an int on its part); on a `KW_ship` also `kw_ship_open<n>` (a covered opening's leaf: 0 shut, 1 or -1 open), `kw_anchor_down`, `kw_anchor_at`, `kw_ship_load`, `kw_ship_by`, `kw_ship_helm`, `kw_ship_name`, `kw_holes`, `kw_hull_wear`, `kw_flood`, `kw_flood_parts` (its holes, its parts' wear, the water in its hold and in each of its compartments; never in a blueprint), `kw_rails_broken` (its broken railing stretches, "piece:part;..." with part = run × 1000 + stretch; never in a blueprint), `kw_hull_patches` (its patched holes, "id,radius;...", the hole's number and its radius when patched; never in a blueprint), `kw_rig_damage` (its rig's damage marks, "type,piece,part,a,b,c,d,seed;...", `KwRigMark`; never in a blueprint); `kw_name` (a name board's, and a `KW_ship`'s name), `kw_shields` (a railing's or a `KW_ship`'s hung shields; in a blueprint as data only); `kw_ship_uid` (a `KW_ship`'s own id, a random long its owner writes once); `kw_ship_rev` (a `KW_ship`'s sea edits' revision, written with `kw_ship`); on any piece built on a launched ship `kw_rider` (its ship's `kw_ship_uid`; 0 once it is an ordinary piece again), `kw_rider_pos`, `kw_rider_rot` (its pose in the ship's frame); on a ship cannon `bs_arm_user`, `bs_arm_yaw`, `bs_arm_pitch`, `bs_arm_loaded`, `bs_arm_step`, `bs_arm_load_at`, `bs_arm_shots`, `bs_arm_shot_at` (the MannedWeapons library's, from the prefix `bs_arm`), `bs_arm_kind`, `bs_arm_load_kind`, `bs_arm_ammo`, `bs_arm_tower` (who hauls it), `bs_arm_untied` (its breeching left unmade) |
 | RPCs | `KW_HatchToggle`, `KW_SailHoist`, `KW_Helm`, `KW_HelmTurn`, `KW_HelmReply` (a dock wheel's helm), `KW_Hatch<n>_Toggle`, `KW_OpeningUse` (a dock opening's leaf), `KW_ShipOpeningUse` (a launched ship's), `KW_AnchorToggle`, `KW_ShipLoad`, `KW_Bail`, `KW_HoleMend` (one hole, by its number), `KW_HolePatch`, `KW_HolePatched` (a repair kit's patch, asked and answered), `KW_ShipShot` (a heavy shot, to the owner), `KW_RailMend`, `KW_SailShot`, `KW_RigMend`, `KW_RigRaise`, `KW_RigRaised` (the rig's damage), `KW_ShipName`, `KW_ShieldHang`, `KW_ShieldHung`, `KW_ShieldUndo`, `KW_ShieldTake`, `KW_ShieldGiven` (on a `KW_ship`), `KW_ShieldOwn` (a dock railing), `KW_ShipWhere`, `KW_ShipsAre`, `KW_ShipLaunched` (routed, the ship pins), `KW_SeaEdit`, `KW_SeaEdited` (a sea edit asked of a `KW_ship`'s owner and answered), `KW_Bench*` (BlueprintShelf: `List`, `Listing`, `Put`, ...); on a ship cannon `bs_arm_request`, `bs_arm_release`, `bs_arm_answer`, `bs_arm_call`, `bs_arm_called`, `bs_arm_order` (the MannedWeapons library's, named from its key prefix), `BS_Arm_Tow`, `BS_Arm_TowDenied`, `BS_Arm_Load` |
 | UI objects (the captain's screen) | `Broadside_HelmKeys` (the helm key list) with the cannons' `Broadside_FireBroadside` and `Broadside_ShotArcs` lines; `Broadside_CannonsTicker` (the broadside's keys and ticks); `Broadside_ShotArcLines`; the reload lines: rows `cannons.port` and `cannons.starboard` of Broadside's own ship panel (`KwShipPanel`) |
-| Folders | `BepInEx/config/Broadside.Ships/` (the player's ships, `.json`, folders kept); the server's `BepInEx/config/Broadside.SharedShips/<world>/`; `BepInEx/config/Broadside.Sails/` (the player's PNG pictures for sail emblems) |
+| Folders | `BepInEx/config/Broadside.Ships/` (the player's ships, `.json`, folders kept); the server's `BepInEx/config/Broadside.SharedShips/<world>/`; `BepInEx/config/Broadside.Sails/` (the player's PNG pictures for sail emblems); `BepInEx/cache/Broadside.Icons/` (rendered hammer and item icons, `KwIconCache`; the carried ones are `Broadside.icons.<name>@<hash>.icon`) |
+| Player save | `broadside_aboard_<worldUID>` in the player's custom data: the launched ship he was saved aboard and his place on it (`KwShipLogout`) |
 | Console | `kwship clear` (every `KW_` piece within 40 m, launched ships too); a cheat |
 | Harmony ids | `milkyteam.broadside`, `.shelf` (BlueprintShelf's patches), `.form` (WindowInput's), `.camera` (BuildCamera's) |
 
@@ -688,9 +692,26 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   `KW_bp_` prefabs), `KwBpHammer` (putting them in), `KwBpCost` + `KwRigCost` (what one costs; the ladders', masts'
   and sails' part), `KwBpGhost` + `KwBpMeshSet` (the
   ghost's look, the whole ship combined, its icon rendered by `KwIcons.RenderAll`), `KwBpWater` (the ghost on the
-  water, too shallow refused), `KwBpPlace` (the click: the ship launched, the cost taken).
+  water, too shallow refused), `KwBpPlace` (the click: the ship launched, the cost taken). Load (2026-10-27, the user's
+  hammer lag: all fourteen saved ships' looks and icons made on the first hammer of every launch, about 1.4 s of 50 to
+  400 ms frames): the entries are read one a frame from the local player's spawn (`KwBpWarm`); a look is made only
+  when the hammer holds that ship or it has no icon yet (`KwBpGhost.Want`); icons, the pieces' and items' too, are kept
+  by `KwIconCache` (a saved ship's by a hash of its file's text, so a player's own ship renders again only when it is
+  saved again at the table, whatever the mod's version) and rendered only when new.
+  Generated part meshes (a part's strakes, frames, cabin) are kept for the session by `KwPartMeshes` (keyed by tool,
+  text, tier, covers shut and the part's seat in its own frame; each use a copy), so a previewed design builds, loads
+  and repeats without generating them again.
+  The mod carries the icons that are the same for every player (`assets/icons`, gzipped: the 11 ready-made ships, the
+  rendered pieces and items), so no player renders them. **Before a release** that changes how ships, the ready-made
+  ships or a rendered piece or item look: delete `assets/icons/*.icon` (carried icons are found first, so they are
+  never rendered while carried), build, launch LocalTesting, take up the hammer once, run
+  `python Broadside/tools/bake_icons.py` and build again (it refuses while an icon is missing from the cache).
 - `Ships/`: a launched ship. `KwShipPrefab` (the karve copy), `KwShipLaunch` (spawning it), `KwShipData` (its blueprint
-  in its ZDO), `KwShipBody` (building it on every peer), `KwShipParts` (a blueprint piece's sizes, prefab copies, the
+  in its ZDO), `KwShipBody` (building it on every peer; where there is a screen its steps run over a few frames, about
+  4 ms a frame, its colliders and tuning always on the first, `Built` once all have run: `KwShipFittings.Steps` a piece's
+  fitting a step, `KwSeaShip.Steps` and `KwSeaKind.Building`, `KwSeaOpeningLooks.Building` a part's look a step; its body's
+  centre of mass and inertia off automatic before a box is added, and the colliders made switched off and switched on
+  once, 2026-10-27: a Little Gull from 906 ms in one frame to a few frames), `KwShipParts` (a blueprint piece's sizes, prefab copies, the
   rudder's post), `KwShipTuning` + `KwShipHydro` + `KwHullSlices` + `KwSectionBlend` + `KwSectionMath` (how it floats:
   the hull in slices, each shaped as the hull is at its middle, Archimedes), `KwShipWeight` (its weight, the water
   displaced to the design waterline, and the weight's centre straight over that water's middle, 35% up to the

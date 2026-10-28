@@ -81,6 +81,21 @@ namespace Broadside
 
         public bool Fallen(int piece) => falls.ContainsKey(piece);
 
+        /// <summary>
+        /// Whether a sail went with its mast's fall: it hung from above where the mast broke (the user, 2026-10-27: the sails
+        /// below a break stay, set and drawing); any sail of a fallen bowsprit or cap.
+        /// </summary>
+        public bool SailDown(int piece, int sail)
+        {
+            if (!falls.TryGetValue(piece, out KwRigMark fall))
+                return false;
+            KwRigPiece? mast = Parts.Get(piece);
+            return mast == null || !mast.IsMast || sail < 0 || sail >= mast.Sails.Count || Above(mast, sail, fall);
+        }
+
+        /// <summary>Whether a mast's sail hangs from above a fall's break: its head higher up the mast than where it broke.</summary>
+        public static bool Above(KwRigPiece mast, int sail, KwRigMark fall) => mast.Main.Along(new Vector3(0f, 0f, mast.Sails[sail].Spec.Top)) > fall.A;
+
         /// <summary>A fallen piece's fall (where it broke, which way it went); null when it stands.</summary>
         public KwRigMark? FallOf(int piece) => falls.TryGetValue(piece, out KwRigMark fall) ? fall : (KwRigMark?)null;
 
@@ -121,12 +136,12 @@ namespace Broadside
             return sails[key] = hurt;
         }
 
-        /// <summary>The share of a sail's drive left: none once its mast is down, less its holes' area and the share drooping.</summary>
+        /// <summary>The share of a sail's drive left: none once it went with its mast's fall, less its holes' area and the share drooping.</summary>
         public float Working(int piece, int sail)
         {
             if (Whole)
                 return 1f;
-            if (Fallen(piece))
+            if (SailDown(piece, sail))
                 return 0f;
             KwSailHurt hurt = Sail(piece, sail);
             return Mathf.Clamp01(1f - hurt.Droop - hurt.Holed);

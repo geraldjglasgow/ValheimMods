@@ -69,7 +69,7 @@ namespace Broadside
         {
             KwRigDamage? damage = ship.GetComponent<KwRigDamage>();
             KwRigPiece? piece = damage?.Parts.Get(hit.Piece);
-            if (damage == null || piece == null || hit.Part < 0 || hit.Part >= piece.Sails.Count || damage.Condition.Fallen(piece.Index))
+            if (damage == null || piece == null || hit.Part < 0 || hit.Part >= piece.Sails.Count || damage.Condition.SailDown(piece.Index, hit.Part))
                 return 0f;
             Vector3 kit = Local(ship, damage, piece, hit, out _);
             float f = KwRigDamageHits.Set(ship.GetComponent<Ship>(), piece, hit.Part);

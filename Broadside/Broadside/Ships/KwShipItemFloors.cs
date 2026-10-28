@@ -29,6 +29,9 @@ namespace Broadside
             }
             int layer = LayerMask.NameToLayer("UI");
             GameObject holder = new GameObject(Name) { layer = layer };
+            // made switched off and switched on once: each box added live to the ship's body cost about three times as
+            // much (a thousand boxes, 2026-10-27; 407 ms within a ship's build)
+            holder.SetActive(false);
             holder.transform.SetParent(ship, false);
             holder.transform.SetLocalPositionAndRotation(colliders.localPosition, colliders.localRotation);
             foreach (Transform child in colliders)
@@ -36,6 +39,7 @@ namespace Broadside
                 if (child.TryGetComponent(out BoxCollider box))
                     Copy(holder.transform, child, box, layer);
             }
+            holder.SetActive(true);
         }
 
         // One box's copy, placed and sized as it is.

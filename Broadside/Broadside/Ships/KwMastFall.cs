@@ -8,37 +8,39 @@ namespace Broadside
     /// sail falls over and then just disappears, for now"; then "it needs to take a lot longer to fall over, as it normally
     /// would: three to four and a half seconds, with the ropes snapping at different times, a little out of order"), on
     /// every screen that sees its fall mark come (<see cref="KwRigDamage"/>), never for one already down when the ship loads:
-    /// the wood cracks at the break and what is past it (its look's high part, <see cref="KwRigLook.High"/>, and its fitting:
-    /// a mast's sails, ropes and pennant, a bowsprit's jibs) begins to go, slowly at first and faster as it goes, about the
-    /// break, a mast or cap away from the shot, a bowsprit down, over <see cref="Shortest"/> to <see cref="Longest"/> s. Each
-    /// rope stays fast at its far end, drawn taut as the piece leans, until its own moment in the first part of the fall (in
+    /// the wood cracks at the break and what is past it (its look's high part, <see cref="KwRigLook.High"/>, and what of its
+    /// fitting goes with it, <see cref="KwMastFallSplit"/>: a mast's pennant and the sails hung from above the break, a
+    /// bowsprit's jibs; the sails below stay) begins to go, slowly at first and faster as it goes, about the break, a mast or
+    /// cap away from the shot, a bowsprit down, over <see cref="Shortest"/> to <see cref="Longest"/> s (doubled from 3 to 4.5
+    /// s, the user, 2026-10-27). Each rope tied on above the break
+    /// stays fast at its far end, drawn taut as the piece leans, until its own moment in the first part of the fall (in
     /// no order), when it snaps with the game's own sound (<see cref="KwRigSound"/>) and whips for <see cref="Whip"/> s before
     /// it is gone (<see cref="KwFallRope"/>). The length and the snaps' moments come from the fall mark, so every screen sees
     /// the same fall. At the end it lands with a crash and is hidden. Only drawn; nothing is sent.
     /// </summary>
     public sealed class KwMastFall : MonoBehaviour
     {
-        public const float Shortest = 3f, Longest = 4.5f, Whip = 0.35f, SnapsWithin = 0.6f;
+        public const float Shortest = 6f, Longest = 9f, Whip = 0.35f, SnapsWithin = 0.6f;
         private readonly List<(Transform Part, Vector3 At, Quaternion Turn)> parts = new List<(Transform, Vector3, Quaternion)>();
         private readonly List<KwFallRope> ropes = new List<KwFallRope>();
         private KwRigLook look = null!;
         private Vector3 pivot, axis, top;
         private float most, time, falling;
+        private KwRigMark mark;
 
         /// <summary>A piece's fall begun, from its fall mark (where it broke, the heading it falls to).</summary>
         public static void Begin(KwRigLook look, KwRigMark fall)
         {
             Stop(look);
             KwMastFall made = look.gameObject.AddComponent<KwMastFall>();
-            made.look = look;
+            (made.look, made.mark) = (look, fall);
             made.Aim(look.Piece, fall);
             made.falling = Mathf.Lerp(Shortest, Longest, Chance(fall, 0));
             made.parts.Add((look.High, Vector3.zero, Quaternion.identity));
-            if (look.Fitting != null)
-            {
-                made.parts.Add((look.Fitting, look.Piece.Piece.Position, look.Piece.Piece.Rotation));
-                made.Ropes(look.Fitting, fall);
-            }
+            Transform? goes = KwMastFallSplit.Gather(look, fall);
+            if (goes != null)
+                made.parts.Add((goes, look.Piece.Piece.Position, look.Piece.Piece.Rotation));
+            made.Ropes(KwMastFallSplit.Ropes(look, fall), fall);
             made.Sounds();
         }
 
@@ -62,14 +64,12 @@ namespace Broadside
             most = piece.Kind == KwRigPiece.SpritKind ? 60f : 95f;
         }
 
-        // Every rope of the fitting (not a sail's bolt rope, which goes with its cloth), held at its far end until it parts.
-        private void Ropes(Transform fitting, KwRigMark fall)
+        // Each rope that parts with the fall (KwMastFallSplit.Ropes), held at its far end until it parts.
+        private void Ropes(List<LineRenderer> lines, KwRigMark fall)
         {
             Transform ship = look.transform.parent;
-            foreach (LineRenderer line in fitting.GetComponentsInChildren<LineRenderer>())
+            foreach (LineRenderer line in lines)
             {
-                if (line.name == KwSailRigging.BoltName || line.positionCount < 2)
-                    continue;
                 float at = Chance(fall, ropes.Count + 1) * SnapsWithin * falling;
                 ropes.Add(new KwFallRope(line, ship, at));
             }
@@ -98,7 +98,7 @@ namespace Broadside
             if (time < falling)
                 return;
             KwRigSound.Play(KwRigSound.Land, look.transform.parent.TransformPoint(pivot + turn * (top - pivot)));
-            Gone(look, true);
+            Gone(look, mark);
             Destroy(this);
         }
 
@@ -113,17 +113,30 @@ namespace Broadside
             DestroyImmediate(falling);
         }
 
-        /// <summary>A piece shown down (its high part and fitting hidden) or standing (both back in their places, its ropes drawn).</summary>
-        public static void Gone(KwRigLook look, bool down)
+        /// <summary>
+        /// A piece shown down after a fall (its high part and what went with it hidden, the ropes tied on above the break
+        /// gone) or standing, fall null (everything back in its place, its ropes drawn).
+        /// </summary>
+        public static void Gone(KwRigLook look, KwRigMark? fall)
         {
             look.High.SetLocalPositionAndRotation(Vector3.zero, Quaternion.identity);
-            look.High.gameObject.SetActive(!down);
+            look.High.gameObject.SetActive(fall == null);
             if (look.Fitting == null)
                 return;
             look.Fitting.SetLocalPositionAndRotation(look.Piece.Piece.Position, look.Piece.Piece.Rotation);
-            look.Fitting.gameObject.SetActive(!down);
-            foreach (LineRenderer line in look.Fitting.GetComponentsInChildren<LineRenderer>(true))
-                line.enabled = true;
+            look.Fitting.gameObject.SetActive(true);
+            if (fall == null)
+            {
+                KwMastFallSplit.Scatter(look);
+                foreach (LineRenderer line in look.Fitting.GetComponentsInChildren<LineRenderer>(true))
+                    line.enabled = true;
+                return;
+            }
+            Transform? goes = KwMastFallSplit.Gather(look, fall.Value);
+            goes?.SetLocalPositionAndRotation(look.Piece.Piece.Position, look.Piece.Piece.Rotation);
+            goes?.gameObject.SetActive(false);
+            foreach (LineRenderer line in KwMastFallSplit.Ropes(look, fall.Value))
+                line.enabled = false;
         }
     }
 

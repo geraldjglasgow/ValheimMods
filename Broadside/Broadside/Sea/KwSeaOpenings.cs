@@ -31,6 +31,8 @@ namespace Broadside
 
         public override void Build(KwSeaShip ship) => KwSeaOpeningLooks.Build(ship);
 
+        public override IEnumerable<bool> Building(KwSeaShip ship) => KwSeaOpeningLooks.Building(ship);
+
         public override bool Click(Player player, string tool, KwSeaAim aim)
         {
             if (aim.Hit && !aim.Within(player, aim.Point) && !KwForm.IsOpen)

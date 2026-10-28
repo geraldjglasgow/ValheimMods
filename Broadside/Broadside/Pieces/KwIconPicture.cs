@@ -13,8 +13,11 @@ namespace Broadside
     {
         private const float Clear = 0.02f;
 
-        /// <summary>The sprite from two square renders of width samples, step samples to the icon's pixel.</summary>
-        public static Sprite? Sprite(Color32[] black, Color32[] white, int width, int step, string name)
+        /// <summary>
+        /// The sprite from two square renders of width samples, step samples to the icon's pixel, and its pixels (bottom
+        /// row first) for the icon cache (<see cref="KwIconCache"/>).
+        /// </summary>
+        public static Sprite? Sprite(Color32[] black, Color32[] white, int width, int step, string name, out Color32[]? kept)
         {
             int size = width / step;
             Color[] pixels = new Color[size * size];
@@ -23,13 +26,21 @@ namespace Broadside
                 for (int x = 0; x < size; x++)
                     pixels[y * size + x] = Pixel(black, white, width, x * step, y * step, step);
             }
+            kept = null;
             if (!Fill(pixels))
                 return null;
+            kept = System.Array.ConvertAll(pixels, c => (Color32)c);
+            return Make(kept, size, name);
+        }
+
+        /// <summary>An icon's sprite from its pixels (bottom row first): mipmapped, smoothly filtered, not kept readable.</summary>
+        public static Sprite Make(Color32[] pixels, int size, string name)
+        {
             Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, true)
             {
                 name = name + "_icon", wrapMode = TextureWrapMode.Clamp, filterMode = FilterMode.Trilinear,
             };
-            texture.SetPixels(pixels);
+            texture.SetPixels32(pixels);
             texture.Apply(true, true);
             Sprite sprite = UnityEngine.Sprite.Create(texture, new Rect(0f, 0f, size, size), new Vector2(0.5f, 0.5f), 100f);
             sprite.name = name + "_icon";

@@ -22,14 +22,28 @@ namespace Broadside
         /// <summary>Every planking part and cabin of a ship drawn, once as it is built.</summary>
         public static void Build(KwSeaShip ship)
         {
+            foreach (bool _ in Building(ship))
+            {
+            }
+        }
+
+        /// <summary>
+        /// As <see cref="Build"/>, a part a step (20 to 50 ms each on the Little Gull, 2026-10-27), so a ship's build may
+        /// draw its parts over a few frames (<see cref="KwShipBody"/>).
+        /// </summary>
+        public static IEnumerable<bool> Building(KwSeaShip ship)
+        {
             if (!KwShipBody.Drawn)
-                return;
+                yield break;
             List<(Vector3 At, Vector3 Forward, KwDef Def)> decks = Decks(ship);
             for (int i = 0; i < ship.Blueprint.Pieces.Count; i++)
             {
                 KwBpPiece piece = ship.Blueprint.Pieces[i];
-                if (KwSeaOpeningPart.Takes(piece))
-                    Draw(ship, i, piece, decks);
+                if (!KwSeaOpeningPart.Takes(piece))
+                    continue;
+                int index = i;
+                KwShipBody.Step("Broadside sea openings", () => Draw(ship, index, piece, decks));
+                yield return true;
             }
         }
 

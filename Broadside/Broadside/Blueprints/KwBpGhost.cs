@@ -11,11 +11,13 @@ namespace Broadside
     /// game's placement ghost, a copy of the entry, shows the ship, its sails' cloth too (<see cref="KwSailGhost"/>).
     /// Entries wait in a queue and are made one at a time,
     /// a few pieces a frame (<see cref="KwBpRunner"/>); a ghost already out for an entry that was just made is set up
-    /// again. Clients only (it runs from the hammer).
+    /// again. A look is made only when wanted (<see cref="Want"/>: the hammer holds the ship, or it has no icon yet), and
+    /// its icon rendered (and kept, <see cref="KwIconCache"/>) only when it has none. Clients only (it runs from the hammer).
     /// </summary>
     public static class KwBpGhost
     {
         private static readonly Queue<KwBpEntry> waiting = new Queue<KwBpEntry>();
+        private static KwBpEntry? making;
         private static bool running;
 
         public static void Queue(KwBpEntry entry)
@@ -25,12 +27,28 @@ namespace Broadside
             if (running)
                 return;
             running = true;
-            KwBpRunner.Run("Broadside blueprint ghost", Work(), () => running = false);
+            KwBpRunner.Run("Broadside blueprint ghost", Work(), () => (running, making) = (false, null));
+        }
+
+        /// <summary>The entry's look made, unless it is made already or on its way.</summary>
+        public static void Want(KwBpEntry entry)
+        {
+            if (!entry.Looked && entry != making && !waiting.Contains(entry))
+                Queue(entry);
+        }
+
+        /// <summary>Each frame the hammer is out (<see cref="KwBpWater"/>): the saved ship it holds has its look made.</summary>
+        public static void Held(Player player)
+        {
+            KwBpEntry? held = KwBpEntries.Of(player.GetSelectedPiece());
+            if (held != null)
+                Want(held);
         }
 
         /// <summary>Takes the entry's look off and lets its meshes go.</summary>
         public static void Clear(KwBpEntry entry)
         {
+            entry.Looked = false;
             foreach (Mesh mesh in entry.Meshes)
                 Object.DestroyImmediate(mesh);
             entry.Meshes.Clear();
@@ -43,7 +61,7 @@ namespace Broadside
         {
             while (waiting.Count > 0)
             {
-                KwBpEntry entry = waiting.Dequeue();
+                KwBpEntry entry = making = waiting.Dequeue();
                 KwBlueprint blueprint = entry.Blueprint;
                 Vector3 anchor = entry.Anchor;
                 KwBpMeshSet set = new KwBpMeshSet { Decks = KwSole.Decks(blueprint), Shut = true, Keels = KwKeelLines.Of(blueprint) };
@@ -57,16 +75,17 @@ namespace Broadside
                         pace.Restart();
                     }
                 }
-                Assemble(entry, set);
+                Assemble(entry, set, blueprint);
+                making = null;
             }
         }
 
-        private static void Assemble(KwBpEntry entry, KwBpMeshSet set)
+        private static void Assemble(KwBpEntry entry, KwBpMeshSet set, KwBlueprint blueprint)
         {
-            List<(Material Material, Mesh Mesh)> groups = set.Combine(KwBlueprintStation.EntryPrefix + entry.Blueprint.Name);
-            if (entry.Prefab == null)
+            List<(Material Material, Mesh Mesh)> groups = set.Combine(KwBlueprintStation.EntryPrefix + blueprint.Name);
+            if (entry.Prefab == null || entry.Blueprint != blueprint)
             {
-                // the blueprint's file went while its look was being made
+                // the blueprint's file went, or changed, while its look was being made: made again from the new one when wanted
                 groups.ForEach(g => Object.Destroy(g.Mesh));
                 return;
             }
@@ -79,7 +98,9 @@ namespace Broadside
             foreach ((Mesh mesh, Material[] materials, Matrix4x4 at) in set.Loose)
                 Child(entry.Prefab, "part", mesh, materials, at);
             KwSailGhost.Dress(entry.Prefab, entry.Blueprint, entry.Anchor, entry.Meshes);
-            KwIcons.RenderAll(new[] { entry.Prefab });
+            entry.Looked = true;
+            if (!entry.Iconed)
+                entry.Iconed = KwIcons.RenderAll(new[] { entry.Prefab }, entry.Source) > 0;
             Reghost(entry);
         }
 

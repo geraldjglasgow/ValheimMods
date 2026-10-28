@@ -31,6 +31,16 @@ namespace Broadside
         {
         }
 
+        /// <summary>
+        /// <see cref="Build"/> as steps a ship's build may spread over frames (<see cref="KwShipBody"/>); a kind with much to
+        /// draw yields between its parts (<see cref="KwSeaOpenings"/>).
+        /// </summary>
+        public virtual IEnumerable<bool> Building(KwSeaShip ship)
+        {
+            KwShipBody.Step("Broadside sea " + Name, () => Build(ship));
+            yield return true;
+        }
+
         /// <summary>The tool clicked aiming at a launched ship; true when taken (something said or opened).</summary>
         public abstract bool Click(Player player, string tool, KwSeaAim aim);
 

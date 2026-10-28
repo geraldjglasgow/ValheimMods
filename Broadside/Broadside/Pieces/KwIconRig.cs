@@ -66,16 +66,20 @@ namespace Broadside
             return lens;
         }
 
-        /// <summary>An icon of every drawn part under a piece (or a saved ship's entry), named for it; null when nothing draws.</summary>
-        public Sprite? Shoot(Transform piece, string name)
+        /// <summary>
+        /// An icon of every drawn part under a piece (or a saved ship's entry), named for it, and its pixels for the icon
+        /// cache; null when nothing draws.
+        /// </summary>
+        public Sprite? Shoot(Transform piece, string name, out Color32[]? pixels)
         {
+            pixels = null;
             using (KwIconSubject? subject = KwIconSubject.Make(piece, Stage, layer))
             {
                 if (subject == null)
                     return null;
                 Aim(subject);
                 Color32[] black = Grab(Color.black), white = Grab(Color.white);
-                return KwIconPicture.Sprite(black, white, Size * Supersample, Supersample, name);
+                return KwIconPicture.Sprite(black, white, Size * Supersample, Supersample, name, out pixels);
             }
         }
 
@@ -104,12 +108,14 @@ namespace Broadside
             return new Vector3(Mathf.Cos(yaw) * Mathf.Cos(pitch), Mathf.Sin(pitch), Mathf.Sin(yaw) * Mathf.Cos(pitch));
         }
 
+        // The render read back. The active target is taken before the blit, which leaves its own target active: taken
+        // after, the read texture stayed active and Unity warned as the rig let it go.
         private Color32[] Grab(Color background)
         {
+            RenderTexture previous = RenderTexture.active;
             camera.backgroundColor = background;
             light.During(camera.Render);
             Graphics.Blit(drawn, plain);
-            RenderTexture previous = RenderTexture.active;
             RenderTexture.active = plain;
             read.ReadPixels(new Rect(0, 0, plain.width, plain.height), 0, 0);
             read.Apply(false);

@@ -112,7 +112,7 @@ namespace Broadside
             // down and hidden until now, put back: it grows back in place (KwRigRise)
             bool back = !fall.HasValue && !look.High.gameObject.activeSelf;
             KwMastFall.Stop(look);
-            KwMastFall.Gone(look, fall.HasValue);
+            KwMastFall.Gone(look, fall);
             if (back)
                 KwRigRise.Begin(look);
         }

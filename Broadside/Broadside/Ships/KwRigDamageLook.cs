@@ -24,8 +24,11 @@ namespace Broadside
         /// <summary>What falls with the piece: its look's high part.</summary>
         public Transform High { get; private set; } = null!;
 
-        /// <summary>The piece's working parts that go with it: a mast's sails and ropes, a bowsprit's jibs.</summary>
+        /// <summary>The piece's working parts: a mast's sails and ropes, a bowsprit's jibs.</summary>
         public Transform? Fitting { get; set; }
+
+        /// <summary>What of its fitting went with its fall, gathered apart (<see cref="KwMastFallSplit"/>); null while it stands.</summary>
+        public Transform? Fallen { get; set; }
 
         /// <summary>A rig piece's look under the ship's visual holder; null when it draws nothing.</summary>
         public static KwRigLook? Make(Transform visual, KwRigPiece piece)
@@ -151,6 +154,7 @@ namespace Broadside
         public static string Of(KwRigCondition condition, KwRigPiece piece) => condition.Key(piece.Index, "ncx");
 
         /// <summary>A mast's sails: its notches (fastenings, booms, gaffs) and holes.</summary>
-        public static string Sails(KwRigCondition condition, KwRigPiece piece) => condition.Key(piece.Index, "nh");
+        public static string Sails(KwRigCondition condition, KwRigPiece piece) =>
+            condition.Key(piece.Index, new string(new[] { KwRigMark.Notch, KwRigMark.Hole, KwRigMark.Fall }));
     }
 }

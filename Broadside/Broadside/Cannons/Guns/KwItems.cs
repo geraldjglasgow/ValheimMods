@@ -71,20 +71,20 @@ namespace Broadside
             Built[def.Name] = copy;
         }
 
-        // The item's icon rendered from its own model (Broadside's icon camera); none on a dedicated server or a failed render.
+        // The item's icon rendered from its own model (Broadside's icon camera), or kept from an earlier launch
+        // (KwIconCache); none on a dedicated server or a failed render.
         private static Sprite? Icon(GameObject item, string name)
         {
             if (!KwIcons.CanRender)
                 return null;
+            KwIconRig? rig = null;
             try
             {
-                using KwIconRig rig = new KwIconRig();
-                return rig.Shoot(item.transform, name);
+                return KwIcons.Icon(ref rig, item.transform, name, null);
             }
-            catch (System.Exception e)
+            finally
             {
-                Log.Warn($"Broadside cannon items: the icon of {name} could not be rendered ({e.Message}).");
-                return null;
+                rig?.Dispose();
             }
         }
 

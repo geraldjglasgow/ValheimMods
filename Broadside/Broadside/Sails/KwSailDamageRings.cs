@@ -22,6 +22,12 @@ namespace Broadside
                 KwSailLayout s = piece.Sails[i];
                 if (!s.Square)
                     continue;
+                // a sail gone with its mast's fall takes its lashings with it
+                if (condition.SailDown(piece.Index, i))
+                {
+                    any = true;
+                    continue;
+                }
                 bool[] gone = condition.Sail(piece.Index, i).Lashings;
                 any |= System.Array.IndexOf(gone, true) >= 0;
                 Bind(b, s, gone);

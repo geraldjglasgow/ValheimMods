@@ -67,6 +67,7 @@ namespace Broadside
             putIn = table;
             putVersion = KwBpLibrary.Version;
             putCount = entries.Count;
+            KwBpEntries.WantIcons();
             if (player == null)
                 return;
             foreach (GameObject entry in entries)

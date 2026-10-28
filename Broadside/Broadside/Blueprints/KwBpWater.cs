@@ -22,6 +22,7 @@ namespace Broadside
 
         private static void Settle(Player player)
         {
+            KwBpGhost.Held(player);
             GameObject? ghost = player.m_placementGhost;
             KwBpEntry? entry = ghost != null && ghost.activeSelf ? KwBpEntries.Of(player.GetSelectedPiece()) : null;
             Reason = null;

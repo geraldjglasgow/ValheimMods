@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using PatchGuard;
 using UnityEngine;
 
@@ -30,22 +31,38 @@ namespace Broadside
 
         public static void Add(Transform ship, KwBlueprint blueprint, KwBpHull hull)
         {
+            foreach (bool _ in Steps(ship, blueprint, hull))
+            {
+            }
+        }
+
+        /// <summary>
+        /// As <see cref="Add"/>, as steps a ship's build may spread over frames (<see cref="KwShipBody"/>): one piece's
+        /// fitting a step (a sail is about 15 ms), then the openings, the helm and ladder, and the rig's damage.
+        /// </summary>
+        public static IEnumerable<bool> Steps(Transform ship, KwBlueprint blueprint, KwBpHull hull)
+        {
             Transform holder = ship.Find(KwShipPrefab.Fittings);
             Ship game = ship.GetComponent<Ship>();
             int numbered = 0;
             Physics.SyncTransforms();
             foreach (KwBpPiece piece in blueprint.Pieces)
-                Fit(ship, holder, blueprint, piece, ref numbered);
+            {
+                numbered = Fit(ship, holder, blueprint, piece, numbered);
+                yield return true;
+            }
             KwShipBody.Step("Broadside ship openings", () => KwShipOpenings.Add(ship, holder, blueprint, hull));
+            yield return true;
             KwShipBody.Step("Broadside ship helm", () => KwShipHelm.Place(ship, hull, game.m_rudderObject));
             KwShipBody.Step("Broadside ship ladder", () => KwShipLadder.Place(ship, blueprint, hull));
+            yield return true;
             KwShipBody.Step("Broadside ship rig damage", () => KwRigDamage.Add(ship, blueprint));
             Size(ship, hull);
         }
 
         // One piece's working part, if it has one: a rudder, a sail, a ladder below deck, a captain's wheel, or a hatch
         // (numbered among the ship's hatches, whose state is kept in the ship's ZDO).
-        private static void Fit(Transform ship, Transform holder, KwBlueprint blueprint, KwBpPiece piece, ref int numbered)
+        private static int Fit(Transform ship, Transform holder, KwBlueprint blueprint, KwBpPiece piece, int numbered)
         {
             Ship game = ship.GetComponent<Ship>();
             KwShipDress.Fit(ship, holder, piece);
@@ -61,6 +78,7 @@ namespace Broadside
                 KwShipBody.Step("Broadside ship wheel", () => KwShipWheel.Add(holder, piece));
             else if (piece.Prefab.StartsWith(KwHatch.Prefix))
                 Hatch(ship, holder, piece, numbered++);
+            return numbered;
         }
 
         // A hatch: a copy of its piece, whether it is open kept in the ship's ZDO under its number.

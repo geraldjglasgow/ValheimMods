@@ -214,13 +214,16 @@ namespace Broadside
             return true;
         }
 
-        /// <summary>A fallen piece keeps its stump's collider alone; one put back has all of them again.</summary>
+        /// <summary>
+        /// A fallen piece keeps its stump's collider and those of the sails, yards, booms and gaffs it still carries (a mast's
+        /// sails hung below the break, <see cref="KwRigCondition.SailDown"/>); one put back has all of them again.
+        /// </summary>
         public void Show(KwRigCondition condition)
         {
             KwRigMark? fall = condition.FallOf(piece.Index);
             down = fall.HasValue;
-            foreach ((Collider box, int _) in parts)
-                box.enabled = !down;
+            foreach ((Collider box, int part) in parts)
+                box.enabled = !down || !condition.SailDown(piece.Index, part % KwRigSpar.Boom);
             foreach ((Collider box, float up) in tops)
                 box.enabled = !down || up < fall!.Value.A;
             if (main is CapsuleCollider spar)

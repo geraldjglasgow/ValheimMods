@@ -118,10 +118,10 @@ namespace Broadside
         {
             string tool = ToolOf(piece.Prefab)!, saved = KwBpData.Text(piece.Data, SpanHash) ?? "";
             Openings(piece, tool, saved, at);
-            if (KwHouses.Owns(tool) && Layered(piece, KwHouses.Looks(tool, saved, KwBiomeTiers.Of(piece.Data)), at))
+            if (KwHouses.Owns(tool) && Layered(piece, KwPartMeshes.Looks(tool, saved, KwBiomeTiers.Of(piece.Data)), at))
                 return;
             Material? material = Carved(piece) ?? KwBiomeLooks.Of(tool, piece.Data) ?? KwPrefabs.Planks;
-            Mesh? mesh = KwGenerated.MeshFor(tool, saved, null, out KwDef? def, DeckHoles == null ? null : d => DeckHoles(piece, d), KwBiomeTiers.Of(piece.Data), Seat(piece));
+            Mesh? mesh = KwPartMeshes.MeshFor(tool, saved, out KwDef? def, DeckHoles == null ? null : d => DeckHoles(piece, d), KwBiomeTiers.Of(piece.Data), Seat(piece));
             if (material == null || mesh == null)
                 return;
             if (tool == "planking")
@@ -138,7 +138,7 @@ namespace Broadside
         // (doors in the game's door wood).
         private void Openings(KwBpPiece piece, string tool, string saved, Matrix4x4 at)
         {
-            foreach ((Material? look, Mesh mesh) in KwOpeningLooks.Dressed(tool, saved, Shut, KwBiomeTiers.Of(piece.Data), Seat(piece)))
+            foreach ((Material? look, Mesh mesh) in KwPartMeshes.Dressed(tool, saved, Shut, KwBiomeTiers.Of(piece.Data), Seat(piece)))
             {
                 temporary.Add(mesh);
                 if (look != null)
