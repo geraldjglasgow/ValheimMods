@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.2
+
+- Fixed: ships no longer sink by one end or roll over when you leave the area and come back.
+
 ## 0.3.1
 
 - Fixed: launched ships sail and steer again after the game's latest patch.

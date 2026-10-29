@@ -15,7 +15,9 @@ namespace Broadside
     /// over the middle of that water and low in the hull (<see cref="KwShipWeight"/>), so it floats level; as hard to
     /// turn as a solid hull of its size. Each slice's sides are damped as they move up and down.
     /// The water is looked up at sea level over each point (the game finds water only inside the sea's volume, which does
-    /// not reach a sunken hull). While the world round it loads and until it finds water (or 15 s), the ship is held.
+    /// not reach a sunken hull); over a zone not loaded (the edge of the area round a player, where a long hull's end can
+    /// lie while its middle is loaded) the calm sea's height is used. While the world round it loads and until it finds
+    /// water (or 15 s), the ship is held.
     /// </summary>
     public sealed class KwShipHydro : MonoBehaviour
     {
@@ -79,8 +81,6 @@ namespace Broadside
             float half = Mathf.Max(s.Breadth, 0.4f) / 2f;
             Vector3 port = transform.TransformPoint(new Vector3(-half, Waterline, s.Z)), starboard = transform.TransformPoint(new Vector3(half, Waterline, s.Z));
             float left = Level(2 * i, port), right = Level(2 * i + 1, starboard);
-            if (left < NoWater || right < NoWater)
-                return;
             // wet where the point's height in the world is under the sea's, which runs straight from one side to the other
             float slope = (right - left) / (2f * half), mid = (left + right) / 2f;
             float area = KwSectionMath.Wet(s.Shape, up.x - slope, up.y, mid - transform.position.y - up.z * s.Z, out Vector2 at);
@@ -95,7 +95,15 @@ namespace Broadside
 
         private static float Sea => ZoneSystem.instance != null ? ZoneSystem.instance.m_waterLevel : 30f;
 
-        private float Level(int i, Vector3 at) => Floating.GetWaterLevel(new Vector3(at.x, Sea, at.z), ref volumes[i]);
+        // The sea's height over a point; where its zone is not loaded, the calm sea's. The game loads the water with the
+        // land, only round a player, and a long hull at the edge of that area (its middle loaded, an end or a side not)
+        // had no lift there: it sank by that end, rolled, flooded through its gunports and was saved so (the user,
+        // 2026-10-29: "when I leave the area and come back my ships are on their side and under the water").
+        private float Level(int i, Vector3 at)
+        {
+            float level = Floating.GetWaterLevel(new Vector3(at.x, Sea, at.z), ref volumes[i]);
+            return level < NoWater ? Sea : level;
+        }
 
         // Held still, with no gravity, until the area round the ship has loaded and water is found under it (or for a
         // while after the area loaded, on land): false while it is held. Once released never held again while it stays

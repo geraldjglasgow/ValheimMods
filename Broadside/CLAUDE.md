@@ -713,7 +713,8 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   centre of mass and inertia off automatic before a box is added, and the colliders made switched off and switched on
   once, 2026-10-27: a Little Gull from 906 ms in one frame to a few frames), `KwShipParts` (a blueprint piece's sizes, prefab copies, the
   rudder's post), `KwShipTuning` + `KwShipHydro` + `KwHullSlices` + `KwSectionBlend` + `KwSectionMath` (how it floats:
-  the hull in slices, each shaped as the hull is at its middle, Archimedes), `KwShipWeight` (its weight, the water
+  the hull in slices, each shaped as the hull is at its middle, Archimedes; over a zone not loaded, at the edge of the
+  area round a player, the calm sea's height, so a long hull's end there keeps its lift), `KwShipWeight` (its weight, the water
   displaced to the design waterline, and the weight's centre straight over that water's middle, 35% up to the
   waterline, so it floats level; the one reckoning for the ship, the dock waterline and the table's figures), `KwShipDrive` (its physics step; its sails' push from `KwShipWind`), `KwShipStats` (speed, sail push, steering, health, its sails by kind), `KwShipWind` (the ship's sails by kind and apparent wind on every peer; the owner's sail push by kind, eased as the game's), `KwShipLook`
   (combined look), `KwShipColliders` (decks, hold floors, keels as boxes; the planking's sides and keel strip from
