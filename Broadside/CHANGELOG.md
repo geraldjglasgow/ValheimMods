@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.3.3
+
+- Fixed: a saved ship's whole cost now counts items in nearby chests when a craft-from-containers mod is installed.
+- A saved ship's hammer tooltip now lists its whole cost first.
+- Fixed: players with a taller or wider body (a race mod) land where they fit after a climb.
+
 ## 0.3.2
 
 - Fixed: ships no longer sink by one end or roll over when you leave the area and come back.

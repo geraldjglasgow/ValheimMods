@@ -18,7 +18,8 @@ namespace Broadside
     /// out from the blueprint's saved part texts, so every peer, the hammer's requirements and the click agree. Designing on
     /// the dock stays free. The game's build menu shows a piece's requirements in a few slots, one of them the workbench's,
     /// so the piece carries only as many as it can show (<see cref="Split"/>) and the rest are checked and taken at the
-    /// click (<see cref="KwBpPlace"/>), however many kinds of item the ship needs. The game recovers none of it (the
+    /// click (<see cref="KwBpPlace"/>) the game's way (<see cref="KwGamePay"/>: nearby chests count where a mod lets them),
+    /// however many kinds of item the ship needs. The game recovers none of it (the
     /// requirements are not recovered); a launched ship broken up with the hammer gives all of it back in floating crates
     /// (<see cref="KwShipBreakSpill"/>).
     /// </summary>
@@ -132,30 +133,32 @@ namespace Broadside
             return hud != null && hud.m_requirementItems.Length > 1 ? hud.m_requirementItems.Length - 1 : 4;
         }
 
-        /// <summary>What the player lacks of the cost, in words; null when they have it all.</summary>
+        /// <summary>What the player lacks of the cost, in words, counted as the game counts a piece's (<see cref="KwGamePay"/>); null when they have it all.</summary>
         public static string? Missing(Player player, List<(string Item, int Amount)> cost)
         {
-            Inventory inventory = player.GetInventory();
             List<string> lacking = new List<string>();
-            foreach ((string item, int amount) in cost)
+            foreach (Piece.Requirement need in Requirements(cost))
             {
-                ItemDrop? drop = Drop(item);
-                int have = drop != null ? inventory.CountItems(drop.m_itemData.m_shared.m_name) : 0;
-                if (drop != null && have < amount)
-                    lacking.Add($"{amount} {Shown(item)} (you have {have})");
+                if (!KwGamePay.Has(player, need))
+                    lacking.Add($"{need.m_amount} {Shown(need.m_resItem.gameObject.name)}");
             }
             return lacking.Count > 0 ? string.Join(", ", lacking) : null;
         }
 
-        /// <summary>Takes the cost from the player's inventory.</summary>
-        public static void Take(Player player, List<(string Item, int Amount)> cost)
+        /// <summary>Takes the cost as the game takes a piece's (<see cref="KwGamePay"/>).</summary>
+        public static void Take(Player player, List<(string Item, int Amount)> cost) => KwGamePay.Take(player, Requirements(cost));
+
+        // The cost as the game's requirements, an item the game lacks left out.
+        private static Piece.Requirement[] Requirements(List<(string Item, int Amount)> cost)
         {
+            List<Piece.Requirement> made = new List<Piece.Requirement>();
             foreach ((string item, int amount) in cost)
             {
                 ItemDrop? drop = Drop(item);
-                if (drop != null)
-                    player.GetInventory().RemoveItem(drop.m_itemData.m_shared.m_name, amount);
+                if (drop != null && amount > 0)
+                    made.Add(new Piece.Requirement { m_resItem = drop, m_amount = amount, m_recover = false });
             }
+            return made.ToArray();
         }
 
         /// <summary>"12 Fine wood, 6 Bronze nails": the cost in the game's own item names.</summary>

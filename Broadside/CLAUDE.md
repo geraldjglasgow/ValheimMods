@@ -70,7 +70,7 @@ deck in place of the deck tiller. The ship formulas are in
   length rounded (`KwCapSpec.Cost`; a carved head the same, its lean and facing free); each old hammer cap, hatch, name board or captain's wheel one wood (painted bands and
   hung shields nothing). All from the
   saved part texts (a mast's sails as placed to fit it). The piece shows as many requirements as the build menu has
-  slots beside the workbench; the rest are checked and taken at the click. The launched ship (`KW_ship`) broken up with
+  slots beside the workbench; the rest are checked and taken at the click, the game's way (`KwGamePay`: `Player.HaveRequirements` and `ConsumeResources`, so a mod that builds from nearby chests counts there too; every Broadside cost, a mast put back and an edit at sea as well). The launched ship (`KW_ship`) broken up with
   the hammer's remove gives all of it back, in full, in the game's floating cargo crates (`KwShipBreak`, below); wrecked
   or cleared with `kwship clear` it gives nothing; its boarding ladder (the karve's own, remade) is not a saved part and costs nothing.
 - **Built aboard once launched: ship cannons only.** The dock designs the whole ship; the only pieces built with the

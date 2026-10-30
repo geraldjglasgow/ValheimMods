@@ -136,14 +136,21 @@ namespace Broadside
             Piece piece = entry.Prefab.GetComponent<Piece>();
             (piece.m_resources, entry.Rest) = KwBpCost.Split(entry.Cost);
             piece.m_extraPlacementDistance = Reach(entry.Hull);
-            piece.m_description =
-                $"A saved ship: {blueprint.Pieces.Count} pieces, {entry.Hull.Length:0.#} m long. Built on the water like the game's ships, near a " +
-                $"workbench. It costs what its parts do: {KwBpCost.Words(entry.Cost)}. Broken up with the hammer near a workbench, it gives them back in floating crates.";
+            piece.m_description = Described(entry, blueprint);
             Sprite? icon = KwIcons.CanRender ? KwIconCache.Find(entry.Prefab.name, entry.Source) : null;
             entry.Iconed = icon != null;
             piece.m_icon = icon != null ? icon : KwBlueprintStation.Icon();
             // the file changed: the old look goes, and is made again from the new file when wanted
             KwBpGhost.Clear(entry);
+        }
+
+        // The whole cost first (a long text is cut short on screen), and that what the slots cannot show is taken as it is placed.
+        private static string Described(KwBpEntry entry, KwBlueprint blueprint)
+        {
+            int shown = entry.Prefab.GetComponent<Piece>().m_resources.Length;
+            string rest = entry.Rest.Count > 0 ? $" (the slots show the first {shown}; the rest is taken too when it is placed)" : "";
+            return $"Costs {KwBpCost.Words(entry.Cost)}{rest}. A saved ship: {blueprint.Pieces.Count} pieces, {entry.Hull.Length:0.#} m long, " +
+                "built on the water near a workbench. Broken up with the hammer near a workbench, it gives its cost back in floating crates.";
         }
 
         /// <summary>Every entry without its own icon has its look made, and its icon rendered and kept (the hammer was taken up).</summary>

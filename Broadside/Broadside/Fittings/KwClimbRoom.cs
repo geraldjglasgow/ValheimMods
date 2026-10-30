@@ -26,11 +26,16 @@ namespace Broadside
             Physics.SyncTransforms();
         }
 
-        /// <summary>Whether the player's capsule standing with its feet there touches nothing solid (their place-ray layers).</summary>
+        /// <summary>
+        /// Whether the player's capsule standing with its feet there touches nothing solid (their place-ray layers), at its
+        /// size in the world: a body made taller or broader (a race mod scaling the player) needs that much more room.
+        /// </summary>
         public static bool Fits(Player player, Vector3 feet)
         {
             CapsuleCollider body = player.m_collider;
-            float r = body.radius - 0.02f, h = Mathf.Max(body.height, 2f * body.radius);
+            Vector3 scale = body.transform.lossyScale;
+            float wide = body.radius * Mathf.Max(Mathf.Abs(scale.x), Mathf.Abs(scale.z));
+            float r = wide - 0.02f, h = Mathf.Max(body.height * Mathf.Abs(scale.y), 2f * wide);
             Vector3 low = feet + Vector3.up * (r + 0.05f), high = feet + Vector3.up * (h - r);
             return !Physics.CheckCapsule(low, high, r, player.m_placeRayMask, QueryTriggerInteraction.Ignore);
         }
