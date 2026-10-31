@@ -59,7 +59,9 @@ breaks after it.
    player as the game does (no round trip for their hits); near two or more, to the server. A creature stays with the
    server until it has had one player near it for some seconds, so it does not flip. Spawners stay on the server, so
    every roll on spawn follows the server's rules. The server then runs only the shared areas, not all 100 players'.
-6. **Night skip for a crowd.** The night passes once a share of the players are in bed, not all of them.
+6. **Night skip for a crowd.** A vote, not every player in bed: lying in bed or saying `!sleep` in chat is a yes, and
+   the night passes once more than half of the players online say yes. Only the players in bed get the sleep screen;
+   the server tells everyone the count with the game's own messages, so players need nothing installed.
 7. **Kept places on the server.** The server keeps the ground and still objects of the busiest places (time spent
    there by every player, fading) and of fresh death spots (a new tombstone), creatures unloaded as today, so a player
    arriving there has creatures running at once instead of after the ground is built. The ground follows the rules of
@@ -76,8 +78,8 @@ breaks after it.
 9. **Combined building meshes.** A settled building is drawn as a few combined meshes per material instead of one
    renderer per piece, split back when a piece in it changes (placed, removed, its worn or broken look). Colliders and
    ZDOs stay untouched, so the hammer, repair, comfort, roof checks, wards and other mods see what they see today.
-10. **Crowds.** Players beyond the nearest few are drawn simpler (no cloth, a lower animation rate), and only far ones
-    are hidden. Party members and anyone near enough to fight are always drawn in full.
+10. **Crowds.** Players beyond the nearest few are drawn simpler (no cloth, a lower animation rate), never hidden.
+    Party members and anyone near enough to fight are always drawn in full.
 11. **Baking, last and only if the numbers ask for it.** The structural pieces of a settled room stored as one ZDO
     (each piece's prefab, position, rotation and health inside), one per room, so a hit resends a room and not a base.
     It needs the server and every player, an uninstall must never lose a base, and it hides pieces from everything that
@@ -103,13 +105,14 @@ breaks after it.
 5. Crossplay: how many PlayFab players can join. The IronLabs ExpandedServer page warns PlayFab Party may cap lower
    than the game's own limit; fake peers cannot test this.
 
-## Settings (proposed)
+## Settings
 
-- HighSeat: `Max players` (server). A choice for creatures: every creature near any player (today's rule) or only
-  where shared. `Night skip share` (the share of players in bed that skips the night). `Kept places` (how many busy
-  places the server keeps, 0 for none).
-- HighSeatPlus, unsynced (each player decides): `Combine building meshes` on or off, `Players drawn in full` (the
-  nearest N). Support checking on change has no setting: it changes no result.
+One on/off setting per feature; counts, distances and times are constants in the code.
+
+- HighSeat, section `2 - Big servers` (server only, not synced): `Max players` (50), `Creatures only where shared`
+  (off), `Night skip vote` (on), `Kept places` (on). The send loop, change-driven sync and update rates have no setting.
+- HighSeatPlus, unsynced (each player decides): `Combine building meshes` (on), `Simpler far players` (on). Support
+  checking on change has no setting: it changes no result.
 
 ## Decisions (user, 2026-10-31)
 
@@ -118,21 +121,46 @@ breaks after it.
   nothing for HighSeat; HighSeatPlus is optional.
 - Kept places and kept portals are not here or in HighSeat: "the portal loading thing shouldn't be in highseat or
   highseatplus, maybe wayfare". They are planned in `Wayfare/PLAN.md`, "Kept places".
+- `Max players` defaults to 50.
+- `Creatures only where shared` is off by default: the server runs every creature near any player, as 0.2.3.
+- The night is skipped by a vote, not a share in bed: lying in bed or saying `!sleep` in chat is a yes, and more than
+  half of the players online skips the night.
+- Far players are drawn simpler (no cloth, fewer animation updates) but never hidden, so PvP stays fair.
+- Baking (design 11) is not built for now; raids stay one at a time; PlayFab (crossplay) limits stay as the game sets
+  them until spike 5 is tested.
 
 ## Open questions
 
-- The `Max players` default: the game's 10 until a server owner raises it, or higher?
-- The creature choice's default, once measured.
-- Night skip: a share of players in bed, or a vote?
 - Raids: more than one at a time with 100 players spread out? The game runs one, and players' PCs show one; it would
   need HighSeatPlus too.
 - Lockstep's whole-group rule (the next boss only after everyone beat the last) does not suit 100 players: a setting
   there, or leave it to server owners?
-- Crowds in PvP: is drawing far players simpler fair, and how near is "near enough to fight"?
+- `Creatures only where shared` on by default, once measured?
 
 ## Status (2026-10-31)
 
-Folder, empty plugin and plan. Nothing designed past this page, nothing measured.
+Designs 1 to 10 and 12 to 13 written on 2026-10-31, built and checked offline (every Harmony target against the game
+DLL, the size rules), never run in game and nothing measured; baking (11) not written. Nothing released.
+
+- HighSeat (`HighSeat/HighSeat`): `PlayerCap/` (a transpiler on the cap check in `ZNet.RPC_PeerInfo`; the dedicated
+  server's own build was not available to check its IL; the Steam lobby limit); `Sync/` (the send loop, change-driven
+  sync and update rates, switch `Big server sync`); `Shared/` (creatures only where shared: a lone player's area keeps
+  only its ground, spawners, creatures and base markers on the server, a fresh spawn goes to the lone player three
+  frames after it was made); `NightSkip/` (the vote, chat heard on the server, sleep sent only to players in bed);
+  `KeptPlaces/` (four busiest places, death spots for 10 minutes).
+- HighSeatPlus: `Support/` (the game already caches most support checks; only pieces held by the ground or by rock
+  and trees ran the full search every second, and those now skip it until something near them changes), `Meshes/`
+  (16 m cells per material, the pieces' renderers hidden with forceRenderingOff and shown again the frame a piece
+  changes; capped at 3M vertices), `Crowd/` (capes stilled, far animators stepped ten times a second; party members from
+  Party's API).
+- Combined meshes need measuring before release: the game's piece materials are already GPU-instanced (1008 of 1076
+  hammer material slots), so combining cuts the renderers Unity culls about 4x but may not cut draw calls, and costs
+  about 23 KB of video memory per combined piece (about 120 MB for a 6,000-piece base).
+- DevBridge: `/load` (fake players, their bodies, `measure=`), in `DevBridge/REFERENCE.md`.
+
+Found while building: a boss's one-per-player drop counts every player online (`CharacterDrop`, capped at 100); the
+user chose players within 100 m instead (`PerPlayerDrops`, switch `Boss drops for players nearby`). The game sends the whole player list to every peer every 2 s (about 100 bytes a player). The game's own crossplay
+(PlayFab) lobby and network stay at 10 players.
 
 ## Milestones
 

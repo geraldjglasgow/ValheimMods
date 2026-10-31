@@ -1,17 +1,28 @@
 # HighSeatPlus
 
 The players' half of HighSeat, for big servers. HighSeat makes the server hold a big group; HighSeatPlus makes big bases
-and crowds cheaper to draw and run on each player's PC. Not released yet: nothing in it works so far.
+and crowds cheaper to draw and run on each player's PC. It changes only how your own PC does the work: what you and
+everyone else see, and every building's support, stay exactly the game's.
 
-## Features (planned)
+## Features
 
-- Building support worked out again only when something near a piece changes.
-- Settled buildings drawn as a few combined meshes.
-- Crowds: players beyond the nearest few drawn simpler, party members always in full.
+- Building support on change: pieces standing on the ground or leaning on rock and trees search for their support
+  again only when something near them changes (a piece placed, removed or damaged, the ground dug), not every second.
+- Combined building meshes: a settled building is drawn as a few combined meshes instead of one per piece, split back
+  out the moment a piece in it changes.
+- Simpler far players: players beyond the nearest ten and out of fighting range are drawn with their capes still and
+  fewer animation updates. Nobody is ever hidden, so PvP stays fair, and party members (with the Party mod) are always
+  drawn in full.
 
 ## Install
 
-Optional, on players' PCs. Made for servers running HighSeat; a player without it plays as today.
+Optional, on players' PCs. Made for servers running HighSeat, and works on any server; a player without it plays as
+today. Install with r2modman or the Thunderstore app, or put `HighSeatPlus.dll` in `BepInEx/plugins`.
+
+## Configuration
+
+`BepInEx/config/com.HighSeatPlus.cfg`: `Combine building meshes` and `Simpler far players`, each your own choice and
+described in the file. Support on change has no setting: it gives the game's own results.
 
 ## Links
 

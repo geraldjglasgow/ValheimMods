@@ -9,7 +9,7 @@ namespace HighSeatPlus
 {
     /// <summary>
     /// The players' half of HighSeat for big servers: big bases and crowds made cheap to draw and run on a player's PC.
-    /// Optional: a player without it plays as today. Nothing written yet; the design is in PLAN.md.
+    /// Optional: a player without it plays as today. Design in PLAN.md.
     /// </summary>
     [BepInPlugin(PluginGuid, PluginName, PluginVersion)]
     public class HighSeatPlus : BaseUnityPlugin
@@ -23,6 +23,7 @@ namespace HighSeatPlus
         private void Awake()
         {
             Log = Logger;
+            Settings.Bind(Config);
             ConfigReloader.Setup(Config, Logger);
             Harmony harmony = new Harmony(PluginGuid);
             harmony.PatchAll(Assembly.GetExecutingAssembly());

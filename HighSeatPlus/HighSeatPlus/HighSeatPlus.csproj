@@ -69,8 +69,21 @@
       <HintPath>$(ManagedPath)\UnityEngine.CoreModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>$(ManagedPath)\UnityEngine.PhysicsModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
     <Reference Include="UnityEngine.AnimationModule">
       <HintPath>$(ManagedPath)\UnityEngine.AnimationModule.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- Cloth on players' gear: the game's MagicaCloth and Unity's own Cloth; Crowd/StillCloth only. -->
+    <Reference Include="MagicaClothV2">
+      <HintPath>$(ManagedPath)\MagicaClothV2.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <Reference Include="UnityEngine.ClothModule">
+      <HintPath>$(ManagedPath)\UnityEngine.ClothModule.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="com.rlabrecque.steamworks.net">
