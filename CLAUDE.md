@@ -26,8 +26,8 @@ ValheimMods/
   GrindstoneSkills/  deeper skills: game skills (Cooking, Farming, Fishing, ...) and new ones (Sailing, Husbandry, ...)
   PrestigeWorldwide/ entertainment: proximity voice chat and TVs that play a video link for everyone in sync
   Hearthhold/        Stardew-style quality stars on food (needs GrindstoneSkills): fortune, professions, crate, friendship, cask
-  HighSeat/          server-run creatures: the server loads every player's area and owns creatures and spawners (server only)
-  HighSeatPlus/      the players' half of HighSeat for big servers (100+): big bases and crowds cheaper on players' PCs (planned)
+  HighSeat/          server-run creatures and big servers: player cap, send loop, night vote, kept places (server only)
+  HighSeatPlus/      the players' half of HighSeat for big servers (100+): big bases and crowds cheaper on players' PCs
   Broadside/        ship building: a dry dock, hull tools, fittings, a blueprint table; saved ships built and sailed from the hammer; ship cannons
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
   DevBridge/         test bridge: drive the running game over localhost HTTP (for agents), internal: never released to a store
@@ -139,6 +139,18 @@ stars and the day's fortune; starred food gives more when eaten. Daily Fortune, 
 Crate that buys starred goods at dawn, trader friendship with a small discount, and an Aging Cask. GrindstoneSkills owns
 the stars themselves (quality, stacking, display) and exposes them with its `SkillsApi` and `StarsApi`, read by
 reflection (`Core/GrindstoneLink.cs`). The .cfg holds only three switches. Design in `Hearthhold/CLAUDE.md`.
+
+**HighSeat**: server-run creatures and big servers, on the server only (players install nothing). The server loads
+every player's area and runs the creatures and spawners in it (or, with `Creatures only where shared`, only where two
+or more players share them), and holds a crowd: a player cap (`Max players`, 50), a send loop serving every player
+every round with only what changed (`Sync/`, switch `Big server sync`), a night skip vote (bed or `!sleep`) and kept
+places (busy places and fresh death spots stay loaded on the server). Design in `HighSeat/PLAN.md`; big servers in
+`HighSeatPlus/PLAN.md`, measured with DevBridge's fake players (`/load`).
+
+**HighSeatPlus**: the players' half of big servers, optional on each PC and never changing what others see: building
+support searched again only when something near a ground- or rock-held piece changes, settled buildings drawn as
+combined meshes, far players drawn simpler (capes stilled, fewer animation updates, never hidden). Works with or
+without HighSeat on the server. Design and status in `HighSeatPlus/PLAN.md`.
 
 **Broadside**: ship building. A dry dock (keel block guides, keel blocks) and seven hull tools that make every keel,
 rib, plank run, deck, railing, ladder and multi-sail mast to the sizes typed in a small window, in seven biome looks;

@@ -1,8 +1,8 @@
 {
     "name": "HighSeat",
-    "version_number": "0.2.3",
+    "version_number": "0.3.0",
     "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/HighSeat",
-    "description": "The server runs every creature near any player, so one laggy player no longer freezes creatures for everyone. Server only.",
+    "description": "The server runs every creature near any player, so one laggy player no longer freezes creatures for everyone, and holds big groups: 50 players, faster sync, a night skip vote. Server only.",
     "dependencies": [
         "denikson-BepInExPack_Valheim-5.4.2350"
     ]

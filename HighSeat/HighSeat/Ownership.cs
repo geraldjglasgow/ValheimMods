@@ -9,7 +9,9 @@ namespace HighSeat
     /// player's (ZDOMan.ReleaseNearbyZDOS). Everything goes as the game decides, except what the server runs
     /// (<see cref="ServerRun"/>): near any player it goes to the server and stays there, wherever the creature wanders,
     /// so it never flips between players. While the server is over its frame budget (<see cref="FrameGuard"/>) a
-    /// creature it does not run yet goes as the game decides; one it runs stays.
+    /// creature it does not run yet goes as the game decides; one it runs stays. With "Creatures only where shared" on,
+    /// creatures follow <see cref="SharedRule"/> instead (the server's where two or more players share them), and the
+    /// pass's players are listed once at its first call; spawners and everything else go as above.
     /// </summary>
     [HarmonyPatch(typeof(ZDOMan), nameof(ZDOMan.ReleaseNearbyZDOS))]
     internal static class Ownership
@@ -22,25 +24,35 @@ namespace HighSeat
             {
                 return true;
             }
+            bool shared = Settings.OnlyWhereShared.Value;
+            if (shared)
+            {
+                SharedRule.BeginPass();
+            }
             Vector2s zone = ZoneSystem.GetZone(refPosition);
             SimulationDistance synced = ZNet.instance.GetSyncedSimulationDistance();
             Near.Clear();
             __instance.FindSectorObjects(zone, new SimulationDistance(synced.NearSimulationDistance, 0, synced.IsClassic), Near);
-            long server = ZDOMan.GetSessionID();
-            bool take = !FrameGuard.Busy;
-            foreach (ZDO zdo in Near)
-            {
-                if (zdo.Persistent && !Claim(zdo, server, take))
-                {
-                    Vanilla(__instance, zdo, zone, uid);
-                }
-            }
+            Release(__instance, zone, uid, shared);
             Near.Clear();
             return false;
         }
 
+        private static void Release(ZDOMan man, Vector2s zone, long uid, bool shared)
+        {
+            long server = ZDOMan.GetSessionID();
+            bool take = !FrameGuard.Busy;
+            foreach (ZDO zdo in Near)
+            {
+                if (zdo.Persistent && !(shared ? SharedRule.Decide(zdo, uid, server, take) : Claim(zdo, server, take)))
+                {
+                    Vanilla(man, zdo, zone, uid);
+                }
+            }
+        }
+
         // True when the server runs it (now, or from here on); false leaves it to the game's own rule.
-        private static bool Claim(ZDO zdo, long server, bool take)
+        internal static bool Claim(ZDO zdo, long server, bool take)
         {
             if (!ServerRun.Is(zdo))
             {

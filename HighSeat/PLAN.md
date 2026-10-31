@@ -94,7 +94,8 @@ rates by distance, creatures run by the server only where two or more players sh
 night skip for a crowd, and the busiest places and fresh death spots kept loaded (ground and still objects, creatures
 unloaded) so creatures run as soon as a player arrives. The send loop keeps the game's force-send list working:
 Wayfare's kept portals (`Wayfare/PLAN.md`, "Kept places") send far areas through it. HighSeatPlus is the players' half, optional on their PCs; HighSeat stays server only.
-Measured first with fake players through DevBridge.
+Measured first with fake players through DevBridge. Written 2026-10-31 (status in `HighSeatPlus/PLAN.md`), not yet run
+in game; the settings are in the .cfg section `2 - Big servers`.
 
 ## Milestones
 

@@ -1,5 +1,14 @@
 # Changelog
 
+## 0.3.0
+
+- `Max players`: the server takes 50 players by default instead of the game's 10.
+- `Big server sync`: every player is sent only what changed, 20 times a second, far things less often.
+- `Night skip vote`: a bed or `!sleep` in chat is a vote; more than half online skips the night.
+- `Kept places`: busy places and fresh death spots stay loaded on the server.
+- `Creatures only where shared` (off by default): a creature near one player only runs on that player's game.
+- `Boss drops for players nearby`: once-per-player boss items count players near the fight, not everyone online.
+
 ## 0.2.3
 
 - Fixed: a world save or one slow frame no longer makes the server leave new creatures to players.
