@@ -86,6 +86,16 @@ guard, no sync). Found in review: the game's SpawnSystem returns without a local
 event, and SpawnArea checks the machine's own active area: ServerSpawning and ActiveArea make both work on the server.
 Tested 2026-10-15 on the Ravenholt dedicated server, one player: creatures server-owned, moving, attacks landing. Not written: building integrity (design 8), lag compensation, the compatibility pass.
 
+## Big servers (planned 2026-10-31)
+
+The server's half of 100 players or more on one world, designed in `HighSeatPlus/PLAN.md` (one plan for both halves):
+the player cap, every player served every send round instead of one per frame, sync driven by what changed, update
+rates by distance, creatures run by the server only where two or more players share them (a change to design 2 here),
+night skip for a crowd, and the busiest places and fresh death spots kept loaded (ground and still objects, creatures
+unloaded) so creatures run as soon as a player arrives. The send loop keeps the game's force-send list working:
+Wayfare's kept portals (`Wayfare/PLAN.md`, "Kept places") send far areas through it. HighSeatPlus is the players' half, optional on their PCs; HighSeat stays server only.
+Measured first with fake players through DevBridge.
+
 ## Milestones
 
 1. Spikes 1-3 with DevBridge on a local dedicated server plus two clients.

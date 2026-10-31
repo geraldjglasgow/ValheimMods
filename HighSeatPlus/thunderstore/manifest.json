@@ -1,0 +1,9 @@
+{
+    "name": "HighSeatPlus",
+    "version_number": "0.1.0",
+    "website_url": "https://github.com/geraldjglasgow/ValheimMods/tree/main/HighSeatPlus",
+    "description": "The players' half of HighSeat for big servers: big bases and crowds cheaper to draw and run on each player's PC. Optional.",
+    "dependencies": [
+        "denikson-BepInExPack_Valheim-5.4.2350"
+    ]
+}

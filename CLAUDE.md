@@ -27,6 +27,7 @@ ValheimMods/
   PrestigeWorldwide/ entertainment: proximity voice chat and TVs that play a video link for everyone in sync
   Hearthhold/        Stardew-style quality stars on food (needs GrindstoneSkills): fortune, professions, crate, friendship, cask
   HighSeat/          server-run creatures: the server loads every player's area and owns creatures and spawners (server only)
+  HighSeatPlus/      the players' half of HighSeat for big servers (100+): big bases and crowds cheaper on players' PCs (planned)
   Broadside/        ship building: a dry dock, hull tools, fittings, a blueprint table; saved ships built and sailed from the hammer; ship cannons
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
   DevBridge/         test bridge: drive the running game over localhost HTTP (for agents), internal: never released to a store

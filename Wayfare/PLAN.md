@@ -536,3 +536,95 @@ together.
 3. Dedicated server, a big base 1 km from a portal: the jump lands on the base's floors (never on the ground below
    them), at most about 8 s. The server's `Quick Portal Seconds = 3` applies to every client.
 4. Sea gate with Quick Portals on: the crew still lands on the deck after the ship settles, with the game's fade.
+
+## Kept places (planned 2026-10-31, nothing written)
+
+The user, 2026-10-31, while planning big servers (`HighSeatPlus/PLAN.md`): the places a player goes back to stay loaded
+so a jump there is near instant, creatures loading only when a player is near; the death spot kept for some minutes;
+portals the player built and travelled to before other portals, as many as the PC's memory allows ("if a player has
+memory to spare they could have all portals loaded; if not maybe only 1 to 5"). First written into HighSeatPlus's
+plan, then moved here: "the portal loading thing shouldn't be in highseat or highseatplus, maybe wayfare". The kept
+places themselves came with it, since kept portals are built on them. Wayfare already runs on the server and every
+client, owns the quick jumps and asks the server for every portal.
+
+### What the game does (verified in assembly_valheim, 2026-10-31)
+
+- Leaving a place, on a player's PC: the ZDOs stay for the whole session (only destroyed ones, and orphaned ones that
+  are not persistent, are dropped), and the server remembers what each player has (`ZDOPeer.m_zdos`), so going back
+  resends only what changed. What goes is the rest: `ZNetScene.RemoveObjects` destroys every object instance outside
+  the area (30 times a second, walking every instance), and `ZoneSystem.UpdateTTL` destroys a zone's ground 4 s
+  (`m_zoneTTL`) after it has no instance left (`ZNetScene.HaveInstanceInSector`, which walks every instance again).
+  Coming back, `CreateObjects` remakes the instances a few a frame (10, or 100 in the loading screen).
+- Arriving: `ZNetScene.IsAreaReady` is true once the arrival zone's ground is in and every object the PC knows in the
+  3x3 sectors around it has an instance; Screen Only When Loading asks it (Jump speed, above).
+- Ground edits: each zone's edits live in its terrain compiler's ZDO (`TerrainComp`, `s_TCData`, the whole zone at
+  once). The compiler's instance compares that ZDO's revision every frame and rebuilds the ground when it changes
+  (`CheckLoad`, `Heightmap.Poke`). It looks for its zone's ground once, in `Awake`; with no ground yet it gives up for
+  good (HighSeat met this: creatures over dug ground).
+- EarthWright writes a compiler's pending save every 0.3 s from its own ticker, and also before the compiler is
+  destroyed (`TerrainComp.OnDestroy` prefix); it keeps no ZDO keys of its own.
+- Only the server holds every portal (`ZDOMan.m_portalObjects`); a PC holds those it has been near this session.
+  `wf_PortalList` already carries each one's id, position, tag, access mode and owner.
+- `ZDOMan.ForceSendZDO(peer, id)` puts an object in that player's next send unless they already have its revision, at
+  the front of it (`AddForceSendZdos` inserts at 0), ahead of what is near the player.
+
+### Design
+
+1. **Kept places on the PC.** A place stays loaded after the player leaves: the ground of the 3x3 zones around it and
+   its still objects (pieces, trees, rocks, pickables, locations), kept as instances but switched off and taken off the
+   game's instance list, so they cost memory and no frame time. Whatever moves or thinks unloads as today: creatures,
+   items on the ground, ships, carts, projectiles. As a jump there starts they go back on the list and are switched
+   on, so Screen Only When Loading finds the area ready and shows no screen; a respawn at home is near instant too.
+   An object destroyed meanwhile is removed by Wayfare (the game tells everyone, but removes only the instances on its
+   list).
+2. **Order and memory.** In this order, as many as a memory budget allows: the death spot (for some minutes), the
+   place a jump left from (for some minutes, there and back), home (where the player respawns), the portals the player
+   built (`wf_PortalList`'s owner is them), the portals they travelled to (kept on the character in
+   `Player.m_customData`, most used first), every other portal (most used on the server first), then the places the
+   player spends most time in (fading over days). Only portals the player may target under the access modes; sea gate
+   pillars not. The budget is by default taken from the PC's RAM; each place's cost is measured as it loads and the
+   lowest-ranked go first if the game's memory climbs, so a big PC keeps every portal and a small one 1 to 5. A setting
+   can fix the budget or the number instead.
+3. **Far areas, from Wayfare's server.** For a portal the PC was never near this session, the server feeds the player
+   its area through the force-send list: a few objects a round, only while that player's queue is light (force-sent
+   objects go ahead of what is near the player), filled once per session; then each area's ids again every 30 s or so
+   (the game skips what the player already has, so only changes go). The server sends data and loads nothing for it.
+4. **Landing on current ground.** Ground someone dug or raised while the player was away is stale until the
+   compiler's new data arrives. As a jump to a kept place starts, the client asks the server, which force-sends the
+   destination's changed objects (the front of the queue is right here) and answers with a fingerprint of the
+   destination's still objects (AreaSettle's count, id XOR and revision sum, over still objects only). The landing
+   waits until the PC's copy matches, so nobody lands inside new raised ground or above a new pit. AreaSettle alone
+   is not enough: on a busy server an update can take longer than its 0.5 s quiet window to arrive.
+5. **Ground and compilers.** Each kept zone's terrain compiler is one of its kept instances and stays switched on (its
+   frame work is one revision compare). The zone's ground is kept by poking it (the game's own timer, so the game
+   never walks the instances for that zone) and let go only after the zone's instances are gone, the compiler among
+   them: never a compiler without ground.
+
+### Settings (proposed, section `Kept Places`)
+
+`Kept Places` (true), `Kept Places Memory` (Auto from the PC's RAM, or a number of MB), `Kept Portals` (Auto, as many
+as the memory allows, or a fixed number), `Death Spot Minutes`, `Jump Start Minutes`: unsynced, each PC's own.
+`Send Far Portal Areas` (true, the server's). All gated on the master `Enabled`.
+
+### Verify first
+
+1. Still objects switched off and on again work as before (`WearNTear` registers its instance in `Awake`; doors,
+   fires, beds, stations, signs); the memory one kept place costs, to set the default budget.
+2. Ground: a place dug and raised by another player while away comes back right and the player lands on the new
+   ground; an edit made just before jumping away is saved and seen by others, with EarthWright and without.
+3. Far areas: a place the PC was never near is built from force-sent ZDOs outside its own area; what one portal area
+   costs to fill, in bytes and in the server's time, at 100 players (HighSeatPlus's fake players in DevBridge).
+
+### Open questions
+
+- The defaults: the share of RAM Auto takes, the minutes for a death spot and a jump start.
+- A death spot kept until its tombstone is emptied, rather than for a time?
+- Favourite portals: after the ones the player built, or with them?
+- Sea gates: keep the areas of the pillars a crew sails to, later?
+
+### Other mods
+
+- HighSeat: its planned send loop (HighSeatPlus's plan, design 2) keeps the force-send list working. Its own kept
+  places (design 7 there) keep the server's ground warm for creatures; that is separate from these.
+- OpenKeep: a kept home makes its bed respawn near instant too; its AreaLoading copy still hurries only its respawn.
+- EarthWright: a kept compiler is never destroyed, so its pending saves rest on its 0.3 s ticker (Verify first, 2).
