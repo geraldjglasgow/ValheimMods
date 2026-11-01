@@ -17,12 +17,12 @@
     {"prefab": "KW_gen_planking", "pos": [0, 1.4, 13.85], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|9x4.6x0.5|9x4.6x0.5|4.48|rib|0|0|open=1,p,rect,0.747,3.6,0.6,0.65,heavy,none;2,s,rect,0.747,3.6,0.6,0.65,heavy,none;3,p,rect,2.24,3.6,0.6,0.65,heavy,none;4,s,rect,2.24,3.6,0.6,0.65,heavy,none;5,p,rect,3.733,3.6,0.6,0.65,heavy,none;6,s,rect,3.733,3.6,0.6,0.65,heavy,none|paint=14-15:red", "kw_tier": "blackforest"}},
     {"prefab": "KW_gen_planking", "pos": [0, 1.4, 18.33], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|9x4.6x0.5|8.1x4.6x0.5|4.47|rib|0|0|open=1,p,rect,0.745,3.6,0.6,0.65,heavy,none;2,s,rect,0.745,3.6,0.6,0.65,heavy,none;3,p,rect,2.235,3.6,0.6,0.65,heavy,none;4,s,rect,2.235,3.6,0.6,0.65,heavy,none;5,p,rect,3.725,3.6,0.6,0.65,heavy,none;6,s,rect,3.725,3.6,0.6,0.65,heavy,none|paint=14-15:red", "kw_tier": "blackforest"}},
     {"prefab": "KW_gen_planking", "pos": [0, 1.4, 22.8], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|8.1x4.6x0.5|8.1x4.6x0.5|6.7|o:3.08:6.43:0.429|0|0", "kw_tier": "blackforest"}},
-    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 4.9], "rot": [0, 1, 0, 0], "s": {"kw_span": "galleon|8.1x4.6x0.5|8.1x4.6x0.5|3.4|transom:1.4|1.55|1.55|662692087", "kw_tier": "blackforest"}},
-    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 4.9], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|8.1x4.6x0.5|9x4.6x0.5|4.48|rib|1.55|1.55|1069234962", "kw_tier": "blackforest"}},
-    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 9.38], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|9x4.6x0.5|9x4.6x0.5|4.47|rib|1.55|1.55|358378194", "kw_tier": "blackforest"}},
-    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 13.85], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|9x4.6x0.5|9x4.6x0.5|4.48|rib|1.55|1.55|1773351819", "kw_tier": "blackforest"}},
-    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 18.33], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|9x4.6x0.5|8.1x4.6x0.5|4.47|rib|1.55|1.55|111730006", "kw_tier": "blackforest"}},
-    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 22.8], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|8.1x4.6x0.5|8.1x4.6x0.5|6.7|o:3.08:6.43:0.429|1.55|1.55|493108465", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 4.9], "rot": [0, 1, 0, 0], "s": {"kw_span": "galleon|8.1x4.6x0.5|8.1x4.6x0.5|3.4|transom:1.4|1.05|1.05|662692087", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 4.9], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|8.1x4.6x0.5|9x4.6x0.5|4.48|rib|1.05|1.05|1069234962", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 9.38], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|9x4.6x0.5|9x4.6x0.5|4.47|rib|1.05|1.05|358378194", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 13.85], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|9x4.6x0.5|9x4.6x0.5|4.48|rib|1.05|1.05|1773351819", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 18.33], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|9x4.6x0.5|8.1x4.6x0.5|4.47|rib|1.05|1.05|111730006", "kw_tier": "blackforest"}},
+    {"prefab": "KW_gen_deck", "pos": [0, 1.4, 22.8], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|8.1x4.6x0.5|8.1x4.6x0.5|6.7|o:3.08:6.43:0.429|1.05|1.05|493108465", "kw_tier": "blackforest"}},
     {"prefab": "KW_gen_deck", "pos": [0, 1.4, 4.9], "rot": [0, 1, 0, 0], "s": {"kw_span": "galleon|8.1x4.6x0.5|8.1x4.6x0.5|3.4|transom:1.4|3.25|3.25|323824319", "kw_tier": "blackforest"}},
     {"prefab": "KW_gen_deck", "pos": [0, 1.4, 4.9], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|8.1x4.6x0.5|9x4.6x0.5|4.48|rib|3.25|3.25|562147611", "kw_tier": "blackforest"}},
     {"prefab": "KW_gen_deck", "pos": [0, 1.4, 9.38], "rot": [0, 0, 0, 1], "s": {"kw_span": "galleon|9x4.6x0.5|9x4.6x0.5|4.47|rib|3.25|3.25|1035685108", "kw_tier": "blackforest"}},
@@ -47,7 +47,7 @@
     {"prefab": "KW_rudder_blackforest", "pos": [0, 2.3, 1.0714], "rot": [0, 0, 0, 1]},
     {"prefab": "KW_helm", "pos": [0, 7.05, 7.38], "rot": [0, 0, 0, 1]},
     {"prefab": "KW_hatch_medium", "pos": [0, 4.65, 16.1], "rot": [0, 0, 0, 1]},
-    {"prefab": "KW_gen_ladder", "pos": [0, 4.65, 16.85], "rot": [0, 1, 0, 0], "s": {"kw_span": "ladder|1.70"}},
+    {"prefab": "KW_gen_ladder", "pos": [0, 4.65, 16.85], "rot": [0, 1, 0, 0], "s": {"kw_span": "ladder|2.20"}},
     {"prefab": "KW_anchor", "pos": [-2.1, 6.85, 25.48], "rot": [0, -0.707107, 0, 0.707107]}
   ]
 }

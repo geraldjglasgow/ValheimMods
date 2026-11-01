@@ -5,8 +5,8 @@ namespace Broadside
 {
     /// <summary>
     /// A launched ship's cargo: what the players aboard carry and the carts on its deck (<see cref="KwShipLoad.Carts"/>).
-    /// Each player's own game, while aboard, tells the ship's owner what its inventory weighs every few seconds
-    /// (<see cref="Call"/>; nobody else knows another player's inventory); the owner adds up the players aboard and the
+    /// Each player's own game, while aboard, tells the ship's owner what its inventory weighs every few seconds, at most
+    /// <see cref="FullPack"/> (<see cref="Call"/>; nobody else knows another player's inventory); the owner adds up the players aboard and the
     /// carts every two seconds and keeps the sum in the ship's ZDO (<see cref="LoadKey"/>), which every peer shows. On the
     /// owner, where the physics runs, the load is added to the body's mass, so the hull floats deeper on its own
     /// (<see cref="KwShipHydro"/> lifts by the water displaced), and the drag along the ship grows with it
@@ -20,6 +20,13 @@ namespace Broadside
         public const string LoadKey = "kw_ship_load";
         private const string Call = "KW_ShipLoad";
         private const float ReportEvery = 3f, TallyEvery = 2f, Fresh = 10f, WarnEvery = 30f;
+
+        /// <summary>
+        /// The most one player's pack counts as (kg): the game's carry limit with Megingjord, 300 and 150. A player whose
+        /// mods let them carry tons (unlimited weight, huge stacks) would otherwise sink every ship to its lowest and
+        /// halve its speed (a player's report, 2026-10-30).
+        /// </summary>
+        public const float FullPack = 450f;
         private static readonly int LoadHash = LoadKey.GetStableHashCode();
 
         private readonly Dictionary<long, (float Weight, float At)> reports = new Dictionary<long, (float Weight, float At)>();
@@ -61,13 +68,14 @@ namespace Broadside
             Tally();
         }
 
-        // This player's game, while aboard: what its inventory weighs, to the ship's owner; told when it is overloaded.
+        // This player's game, while aboard: what its inventory weighs, at most a full pack, to the ship's owner; told when
+        // it is overloaded.
         private void Report()
         {
             Player? me = Player.m_localPlayer;
             if (me == null || !ship!.IsPlayerInBoat(me))
                 return;
-            view!.InvokeRPC(Call, me.GetInventory().GetTotalWeight());
+            view!.InvokeRPC(Call, Mathf.Min(me.GetInventory().GetTotalWeight(), FullPack));
             if (!Overloaded || Time.time - warned < WarnEvery)
                 return;
             warned = Time.time;

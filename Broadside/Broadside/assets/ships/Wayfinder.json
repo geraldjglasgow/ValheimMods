@@ -43,8 +43,6 @@
     {"prefab": "KW_gen_cap", "pos": [0, 8.25, 1.2857], "rot": [0, 1, 0, 0], "s": {"kw_span": "cap|finial|0.667|0.429|1.2", "kw_tier": "blackforest"}},
     {"prefab": "KW_rudder_blackforest", "pos": [0, 2.2, 1.0714], "rot": [0, 0, 0, 1]},
     {"prefab": "KW_helm", "pos": [0, 7.05, 6.77], "rot": [0, 0, 0, 1]},
-    {"prefab": "KW_hatch_medium", "pos": [0, 4.65, 15.04], "rot": [0, 0, 0, 1]},
-    {"prefab": "KW_gen_ladder", "pos": [0, 4.65, 15.79], "rot": [0, 1, 0, 0], "s": {"kw_span": "ladder|1.70"}},
     {"prefab": "KW_anchor", "pos": [-1.6, 6.85, 23.78], "rot": [0, -0.707107, 0, 0.707107]}
   ]
 }

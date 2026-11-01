@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.4.1
+
+- Fixed: the Storm Petrel's hold was too low to walk in; it is now 2.1 m high.
+- Fixed: the Wayfinder's hold was too low for anyone; its hatch is gone.
+- Ready-made ships you have not changed now update with the mod. Ships already launched keep their old layout.
+- Fixed: a huge inventory (unlimited weight mods) no longer makes every ship overloaded; a pack counts at most 450 kg.
+- The dock pieces are now named "Dry dock: keel block guide" and "Dry dock: keel block".
+
 ## 0.4.0
 
 - `AllowBuildingOnShips` (off): build any piece on a launched ship, not only cannons; it sails with the ship.

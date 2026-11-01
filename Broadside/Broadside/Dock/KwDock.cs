@@ -34,7 +34,7 @@ namespace Broadside
         // resting on it (KwSupport).
         private static KwDef LooseBlock()
         {
-            KwDef def = Def("KW_keelcradle", "Keel block", SillShape,
+            KwDef def = Def("KW_keelcradle", "Dry dock: keel block", SillShape,
                 new List<(string, Vector3)> { ("Cradle foot", Vector3.zero), ("Keel rest", new Vector3(0f, 0f, CradleTop)) });
             def.Parts.Add(("support", new Vector3(0f, 0f, CapLift), CapShape));
             return def;
@@ -47,7 +47,7 @@ namespace Broadside
             List<(string, Vector3)> snaps = new List<(string, Vector3)> { ("Guide end", Vector3.zero), ("Guide end", new Vector3(GuideLength, 0f, 0f)) };
             for (float x = 0.5f; x < GuideLength; x += 1f)
                 snaps.Add(("Block seat", new Vector3(x, 0f, 0f)));
-            return Def("KW_dockguide", $"Keel block guide ({GuideLength:0} m)", GuideShape, snaps);
+            return Def("KW_dockguide", $"Dry dock: keel block guide ({GuideLength:0} m)", GuideShape, snaps);
         }
 
         // A heavy timber sole along the middle, two raised side rails outside the keel blocks' sills (the blocks stand

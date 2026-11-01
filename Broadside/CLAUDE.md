@@ -227,7 +227,7 @@ deck in place of the deck tiller. The ship formulas are in
   screens only. Where the cable leaves the ship (the first windlass's fairlead, `KwAnchorPlan`) is worked out from the
   blueprint on every peer, the server too, plain maths only, so the owner lets go and rides to the anchor there; on the
   dock each screen works it out from the dock's pieces (`KwAnchorDock`); nothing is sent or saved for it. Cargo: each
-  player's own game reports its inventory weight to the ship's owner (`KW_ShipLoad`, every 3 s while aboard); the owner adds the carts on deck, changes the body's mass and the drag by what it added before,
+  player's own game reports its inventory weight to the ship's owner (`KW_ShipLoad`, every 3 s while aboard), at most a full pack (450 kg, `KwShipCargo.FullPack`: a mod's unlimited weight would sink every ship to its lowest); the owner adds the carts on deck, changes the body's mass and the drag by what it added before,
   and keeps the sum in `kw_ship_load` for every peer's hover. Map pins: who launched a ship (`kw_ship_by`, written at
   launch) and who steered it last (`kw_ship_helm`, the owner copying the game's `s_user`) are in its ZDO; each player's
   game asks the server every 5 s (`KW_ShipWhere`), which looks the ships up among its own ZDOs (found once a session,
@@ -335,7 +335,7 @@ deck in place of the deck tiller. The ship formulas are in
 
 | What | Names |
 | --- | --- |
-| Dock | `KW_dockguide` (keel block guide), `KW_keelcradle` (keel block) |
+| Dock | `KW_dockguide` ("Dry dock: keel block guide (30 m)"), `KW_keelcradle` ("Dry dock: keel block"; both named so a player looking for the dry dock finds it) |
 | Tools (hammer) | `KW_tool_keel`, `_rib`, `_planking`, `_deck`, `_rail`, `_ladder`, `_sail`, `_bowsprit`, `_cabin` (the Cabin tool: the castle tool renamed 2026-10-25), `_doorway`, `_window` (cut openings into planking and cabins; no part of their own), `_cap` (the Post cap tool) |
 | Generated parts (never in the hammer) | `KW_gen_keel`, `_rib`, `_planking`, `_deck`, `_rail`, `_ladder`, `_sail`, `_bowsprit`, `_cabin`, `_cap` (a post cap, "cap|style|width|depth|length|lean|facing", lean in degrees, facing "out" or "in"; an older text without the last two reads as lean 0, out); `_castle` (castles built before the rename, kept so they load; they build as cabins) |
 | Fittings | `KW_cap_scroll`, `_dragon`, `_tail`, `_finial`, `_plain` (out of the hammer since the Post cap tool, kept so built caps load; its edit rebuilds one as a `KW_gen_cap`; the old dragon wears the carved head); post cap styles `dragon`, `serpent`, `wolf`, `raven`, `horse` (carved heads, bundle prefabs `kw_head_<style>`), `scroll`, `tail`, `finial`, `plain`; `KW_hatch_small`, `_medium`, `_large`; `KW_rudder_<biome>` (meadows, blackforest, swamp, mountains, plains, mistlands, ashlands; only meadows and blackforest in the hammer, the other five registered so built and saved ones load); `KW_anchor` (anchor windlass); `KW_nameboard`; `KW_helm` (captain's wheel) |
@@ -710,6 +710,10 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   Generated part meshes (a part's strakes, frames, cabin) are kept for the session by `KwPartMeshes` (keyed by tool,
   text, tier, covers shut and the part's seat in its own frame; each use a copy), so a previewed design builds, loads
   and repeats without generating them again.
+  The ready-made ships (`assets/ships`, from the broadside-ships skill's designs) are written into each player's
+  `Broadside.Ships/Ready-made` (`KwReadyShips`): never over a file the player made or changed, nor back after a delete;
+  an untouched copy is written over when the mod's own changes (its hash in `.installed`; copies of 0.1.0 to 0.3.4 by
+  `Superseded`, the old texts' hashes). A launched ship keeps the blueprint it was built from.
   The mod carries the icons that are the same for every player (`assets/icons`, gzipped: the 11 ready-made ships, the
   rendered pieces and items), so no player renders them. **Before a release** that changes how ships, the ready-made
   ships or a rendered piece or item look: delete `assets/icons/*.icon` (carried icons are found first, so they are
