@@ -5,7 +5,7 @@ using UnityEngine;
 namespace HighSeat
 {
     /// <summary>
-    /// The near objects the server has not made yet, handed out one at a time in the game's own order
+    /// The near objects the server has not made yet and may make now, handed out one at a time in the game's own order
     /// (ZNetScene.ZDOCompare): the higher object type first (terrain, then solid, then prioritized, then default), and
     /// within a type the nearest to the server's own position first (ZNet.GetReferencePosition: the host on a hosted
     /// game, the world's middle on a dedicated server). The game sorts every one of them each pass and makes the first
@@ -32,14 +32,21 @@ namespace HighSeat
         /// <summary>The objects not handed out yet.</summary>
         public static int Count => _count;
 
-        /// <summary>Takes every near object not made yet, keyed as the game keys it, by its distance from <paramref name="from"/>.</summary>
+        /// <summary>
+        /// Takes every near object not made yet whose zone is ready for its kind (ZoneSystem.IsZoneReadyForType: no
+        /// location or dungeon of a later kind still loading there), keyed as the game keys it, by its distance from
+        /// <paramref name="from"/>. Left out here, one waiting on its zone costs nothing more; handed out, thousands of them
+        /// were walked through every pass before anything could be made (12 ms a pass with 50 players' areas loaded,
+        /// measured 2026-11-01).
+        /// </summary>
         public static void Fill(List<ZDO> near, Vector3 from)
         {
             Clear();
+            ZoneSystem zones = ZoneSystem.instance;
             for (int i = 0; i < near.Count; i++)
             {
                 ZDO zdo = near[i];
-                if (!zdo.Created)
+                if (!zdo.Created && zones.IsZoneReadyForType(zdo.GetSector(), zdo.Type))
                 {
                     zdo.m_tempSortValue = Utils.DistanceSqr(from, zdo.GetPosition());
                     Add(zdo);

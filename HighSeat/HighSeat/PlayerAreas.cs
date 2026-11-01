@@ -5,10 +5,14 @@ using UnityEngine;
 namespace HighSeat
 {
     /// <summary>
-    /// The server loads every player's area, not only its own (ZNetScene.CreateDestroyObjects, 30 times a second): the
-    /// near sectors around its own position and around every ready player, each sector once, then the kept places'
-    /// (<see cref="KeptPlaces"/>, every pass, after the players' sectors so a player's sector wins), then the game's own
-    /// create, paced by time instead of the game's fixed count (<see cref="CreatePace"/>), and the game's own remove.
+    /// The server loads every player's area, not only its own (ZNetScene.CreateDestroyObjects, 30 times a second). A full
+    /// pass, every FullSeconds: the near sectors around its own position and around every ready player, each sector
+    /// once, then the kept places' (<see cref="KeptPlaces"/>, after the players' sectors so a player's sector wins), then
+    /// the game's own create, paced by time instead of the game's fixed count (<see cref="CreatePace"/>), and the game's
+    /// own remove, spread over passes (<see cref="PacedRemove"/>). The passes between gather the host's own area only
+    /// (nothing on a dedicated server), make what is missing there and remove nothing, so what the host sees comes as
+    /// fast as in the game: listing every one of 50 players' areas 30 times a second cost 8 ms a pass at 50,000 objects
+    /// (measured 2026-11-01).
     /// Distant objects (seen from afar, never simulated) are kept for a hosting player's own view only; a dedicated server
     /// draws nothing. The lists are the game's own (m_tempCurrentObjects, m_tempCurrentDistantObjects), filled as the game
     /// fills them and left filled after, because AreaLoading (Wayfare's quick jumps, OpenKeep's bed respawn) reads them in
@@ -24,11 +28,14 @@ namespace HighSeat
     [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.CreateDestroyObjects))]
     internal static class PlayerAreas
     {
+        private const float FullSeconds = 0.1f;
+
         private static List<ZDO> Near = null!;
         private static List<ZDO> Distant = null!;
         private static readonly HashSet<ZoneSystem.SectorIndex> Visited = new HashSet<ZoneSystem.SectorIndex>();
         private static bool _shared;
         private static float _now;
+        private static float _fullAt = float.NegativeInfinity;
 
         private static bool Prefix(ZNetScene __instance)
         {
@@ -40,10 +47,54 @@ namespace HighSeat
             Distant = __instance.m_tempCurrentDistantObjects;
             Near.Clear();
             Distant.Clear();
-            Collect();
+            bool full = Time.unscaledTime - _fullAt >= FullSeconds;
+            Gather(full);
             CreatePace.Create(__instance, Near, Distant);
-            __instance.RemoveObjects(Near, Distant);
+            Remove(__instance, full);
             return false;
+        }
+
+        private static void Gather(bool full)
+        {
+            if (full)
+            {
+                _fullAt = Time.unscaledTime;
+                Collect();
+            }
+            else
+            {
+                CollectOwn();
+            }
+        }
+
+        // What the lists leave out goes, planned on a full pass, a share every pass.
+        private static void Remove(ZNetScene scene, bool full)
+        {
+            if (full)
+            {
+                PacedRemove.Plan(scene, Near, Distant);
+            }
+            else
+            {
+                PacedRemove.Keep(Near, Distant);
+            }
+            PacedRemove.Step(scene);
+        }
+
+        // Between full passes: the host's own area, near and distant, as the game lists it; a dedicated server has none.
+        private static void CollectOwn()
+        {
+            Visited.Clear();
+            if (ZNet.instance.IsDedicated())
+            {
+                return;
+            }
+            _shared = Settings.OnlyWhereShared.Value;
+            _now = Time.time;
+            SimulationDistance sim = ZNet.instance.GetSyncedSimulationDistance();
+            Vector2s own = ZoneSystem.GetZone(ZNet.instance.GetReferencePosition());
+            AddNear(own, sim, false);
+            AddDistant(own, sim);
         }
 
         private static void Collect()

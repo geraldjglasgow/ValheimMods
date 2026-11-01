@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.2
+
+- Fixed: many players at the edge of explored land no longer freeze the server while new land generates.
+- Smoother with players spread out: far players' areas are gathered less often, and waiting objects no longer slow every pass.
+- Fixed: players leaving no longer cause one long frame; their areas unload a little at a time.
+
 ## 0.4.1
 
 - Fixed: players spread over the world no longer freeze the server for 30-40 s while their ground loads.

@@ -51,9 +51,8 @@ namespace HighSeat
         private static bool _armed;
         private static bool _failed;
         private static long _budget;
-        private static int _made;
 
-        /// <summary>Near objects without an instance at the start of the last pass that looked at them.</summary>
+        /// <summary>Near objects without an instance, ready to be made, at the start of the last pass that looked at them.</summary>
         public static int Waiting { get; private set; }
 
         /// <summary>The game's CreateObjects for PlayerAreas' pass, paced here.</summary>
@@ -104,7 +103,6 @@ namespace HighSeat
         private static void Run(ZNetScene scene, List<ZDO> near, List<ZDO> distant)
         {
             _budget = (long)(Budget(scene) * TicksPerMs);
-            _made = 0;
             Clock.Reset();
             if (ZoneSystem.instance.IsActiveAreaLoaded())
             {
@@ -123,22 +121,17 @@ namespace HighSeat
             return scene.InLoadingScreen() ? ArrivingMs : HostedMs;
         }
 
-        // The pass is over once it made at least one object and its time is up.
-        private static bool Spent => _made > 0 && Clock.ElapsedTicks >= _budget;
+        // The pass is over once its time is up; the clock is read before each object, so the first is always tried.
+        private static bool Spent => Clock.ElapsedTicks >= _budget;
 
         private static void MakeNear(ZNetScene scene, List<ZDO> near)
         {
             CreateOrder.Fill(near, ZNet.instance.GetReferencePosition());
             Waiting = CreateOrder.Count;
             Clock.Start();
-            ZoneSystem zones = ZoneSystem.instance;
             while (CreateOrder.Count > 0 && !Spent)
             {
-                ZDO zdo = CreateOrder.Next();
-                if (zones.IsZoneReadyForType(zdo.GetSector(), zdo.Type))
-                {
-                    Make(scene, zdo, false);
-                }
+                Make(scene, CreateOrder.Next(), false);
             }
         }
 
@@ -162,7 +155,6 @@ namespace HighSeat
         {
             if (scene.CreateObject(zdo) != null)
             {
-                _made++;
                 return;
             }
             if (!ZNet.instance.IsServer())
