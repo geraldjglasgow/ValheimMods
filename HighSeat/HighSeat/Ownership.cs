@@ -7,11 +7,10 @@ namespace HighSeat
     /// <summary>
     /// The game's ownership pass, on the server every two seconds, once for the server's own position and once for every
     /// player's (ZDOMan.ReleaseNearbyZDOS), the calls spread over frames by <see cref="OwnershipRounds"/>. Everything goes as the game decides, except what the server runs
-    /// (<see cref="ServerRun"/>): near any player it goes to the server and stays there, wherever the creature wanders,
-    /// so it never flips between players. While the server is over its frame budget (<see cref="FrameGuard"/>) a
-    /// creature it does not run yet goes as the game decides; one it runs stays. With "Creatures only where shared" on,
-    /// creatures follow <see cref="SharedRule"/> instead (the server's where two or more players share them), and the
-    /// pass's players are listed once at its start; spawners and everything else go as above. A player in a zone
+    /// (<see cref="ServerRun"/>): a spawner goes to the server and stays there; a creature follows <see cref="SharedRule"/>
+    /// (the server's where two or more players share it, else the one player's near it), the pass's players listed once
+    /// at its start. While the server is over its frame budget (<see cref="FrameGuard"/>) it takes on nothing new; what
+    /// it runs stays. A player in a zone
     /// already done in this pass (this round) is passed over: their area is the same, so what is free there went to
     /// the first player and an owner in the area keeps what it owns. The one difference from the game: something a later
     /// player owns in the scanned ring just outside the area is not let go by their pass; any other player near it still
@@ -30,7 +29,6 @@ namespace HighSeat
             {
                 return true;
             }
-            bool shared = Settings.OnlyWhereShared.Value;
             Vector2s zone = ZoneSystem.GetZone(refPosition);
             if (!Done.Add(zone))
             {
@@ -39,7 +37,7 @@ namespace HighSeat
             SimulationDistance synced = ZNet.instance.GetSyncedSimulationDistance();
             Near.Clear();
             __instance.FindSectorObjects(zone, new SimulationDistance(synced.NearSimulationDistance, 0, synced.IsClassic), Near);
-            Release(__instance, zone, uid, shared);
+            Release(__instance, zone, uid);
             Near.Clear();
             return false;
         }
@@ -48,19 +46,16 @@ namespace HighSeat
         public static void BeginRound()
         {
             Done.Clear();
-            if (Settings.OnlyWhereShared.Value)
-            {
-                SharedRule.BeginPass();
-            }
+            SharedRule.BeginPass();
         }
 
-        private static void Release(ZDOMan man, Vector2s zone, long uid, bool shared)
+        private static void Release(ZDOMan man, Vector2s zone, long uid)
         {
             long server = ZDOMan.GetSessionID();
             bool take = !FrameGuard.Busy;
             foreach (ZDO zdo in Near)
             {
-                if (zdo.Persistent && !(shared ? SharedRule.Decide(zdo, uid, server, take) : Claim(zdo, server, take)))
+                if (zdo.Persistent && !SharedRule.Decide(zdo, uid, server, take))
                 {
                     Vanilla(man, zdo, zone, uid);
                 }

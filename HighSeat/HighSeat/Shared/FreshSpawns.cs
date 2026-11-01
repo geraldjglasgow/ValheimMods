@@ -5,7 +5,7 @@ using UnityEngine;
 namespace HighSeat
 {
     /// <summary>
-    /// With "Creatures only where shared" on, a creature the server has just made near one player goes to that player
+    /// A creature the server has just made near one player goes to that player
     /// once its spawn-time code has run on the server, so every roll on spawn is the server's (Elite Creatures Reborn rolls
     /// stars and mutations in its controller's Start, on the owner). The order, in the game: the spawner's Instantiate
     /// runs every Awake (the ZDO is made, owned by the server; this is noted in <see cref="CreatureWake"/>), then the
@@ -41,7 +41,7 @@ namespace HighSeat
         /// <summary>A creature waking on the server: noted when the server made it just now and owns it.</summary>
         public static void Note(BaseAI ai)
         {
-            if (!Settings.OnlyWhereShared.Value || ZNetView.m_useInitZDO || ZNetView.m_ghostInit)
+            if (!ServerRun.Active || ZNetView.m_useInitZDO || ZNetView.m_ghostInit)
             {
                 return;
             }
@@ -58,7 +58,7 @@ namespace HighSeat
             {
                 return;
             }
-            if (!ServerRun.WhereShared)
+            if (!ServerRun.Active)
             {
                 Forget();
                 return;

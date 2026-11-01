@@ -1,3 +1,4 @@
+#if DEBUG
 using System.Diagnostics;
 using UnityEngine;
 
@@ -202,3 +203,4 @@ namespace HighSeat
         }
     }
 }
+#endif

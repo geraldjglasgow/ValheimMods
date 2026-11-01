@@ -14,12 +14,11 @@ namespace HighSeat
     /// on a dedicated server; a hosting player's camera keeps the ones it sees fully updated). Decided by a pass over every
     /// creature about twice a second (<see cref="AnimScan"/>) and at once when one begins an attack or takes damage
     /// (<see cref="AnimWake"/>, <see cref="Wake"/>). A creature starts in full when it wakes, until its first look.
-    /// Without "Creatures only where shared" that is every creature the server loads. With it, a copy the server does not
-    /// run goes back to the prefab's own culling on a hosted game (the host may be looking at it), and on a dedicated server
+    /// A copy the server does not run goes back to the prefab's own culling on a hosted game (the host may be looking at it), and on a dedicated server
     /// to none at all (nothing there reads a copy's animation; its owner's game drives what players see). Ownership
     /// HighSeat moves itself is followed at once (<see cref="Handover"/>), ownership moved any other way at the next
-    /// ownership pass (<see cref="Check"/>) or look; switching either setting re-applies every loaded creature (turning
-    /// "Server runs creatures" off gives each its own culling back). Never throws into the game: a failure is logged once
+    /// ownership pass (<see cref="Check"/>) or look; switching "Server runs creatures" re-applies every loaded creature
+    /// (off gives each its own culling back). Never throws into the game: a failure is logged once
     /// and every creature animates in full from then on, as it did before quiet ones were culled (<see cref="Fail"/>).
     /// </summary>
     internal static class AlwaysAnimate
@@ -139,12 +138,8 @@ namespace HighSeat
                 return;
             }
             bool owned = nview.IsOwner();
-            bool shared = Settings.OnlyWhereShared.Value;
-            if (shared)
-            {
-                Track(nview.GetZDO().m_uid, owned);
-            }
-            CreatureAnim.Of(ai).Set(owned || !shared ? CreatureAnim.Mode.Full : CreatureAnim.Mode.Rest);
+            Track(nview.GetZDO().m_uid, owned);
+            CreatureAnim.Of(ai).Set(owned ? CreatureAnim.Mode.Full : CreatureAnim.Mode.Rest);
         }
 
         // A creature taken over may be mid-fight: in full now, quiet only once the rule has let it go for a while.
@@ -200,7 +195,7 @@ namespace HighSeat
             Found.Clear();
         }
 
-        // Once: when either setting is switched, every loaded creature is set again for the new rule.
+        // Once: when "Server runs creatures" is switched, every loaded creature is set again for the new rule.
         private static void Hook()
         {
             if (_hooked)
@@ -208,7 +203,6 @@ namespace HighSeat
                 return;
             }
             _hooked = true;
-            Settings.OnlyWhereShared.SettingChanged += (_, _) => Reapply();
             Settings.ServerRunsCreatures.SettingChanged += (_, _) => Reapply();
         }
 

@@ -20,7 +20,9 @@ namespace HighSeat
     {
         private const int NotAhead = -2;
 
+        #if DEBUG
         private static readonly Stopwatch Clock = new Stopwatch();
+        #endif
         private static readonly DeltaRecord Maker = new DeltaRecord();
 
         /// <summary>Appends the object as a delta or whole, and returns the revisions the record carries.</summary>
@@ -32,7 +34,9 @@ namespace HighSeat
             {
                 pkg.m_writer.Write(DeltaFormat.Full);
                 pkg.m_writer.Write(Records.Bytes, span.Start, span.Length);
+                #if DEBUG
                 DeltaStats.Whole(span.Length + 1);
+                #endif
             }
             return span;
         }
@@ -62,7 +66,9 @@ namespace HighSeat
                 return false;
             }
             pkg.m_writer.Write(DeltaCache.Bytes, at, length);
+            #if DEBUG
             DeltaStats.Delta(length, span.Length + 1);
+            #endif
             return true;
         }
 
@@ -75,7 +81,9 @@ namespace HighSeat
             }
             if (!History.Find(zdo.m_uid, data, owner, out int oldAt, out int _))
             {
+                #if DEBUG
                 DeltaStats.NoBase();
+                #endif
                 return -1;
             }
             int ahead = Ahead(zdo, span, data, owner, oldAt);
@@ -83,9 +91,13 @@ namespace HighSeat
             {
                 return ahead;
             }
+            #if DEBUG
             Clock.Restart();
+            #endif
             int length = Maker.Append(DeltaCache.Buffer, History.Bytes, oldAt, Records.Bytes, span, data, owner);
+            #if DEBUG
             DeltaStats.Diffed(Clock.ElapsedTicks);
+            #endif
             return length;
         }
 
@@ -103,7 +115,9 @@ namespace HighSeat
             {
                 DeltaCache.Buffer.Run(Premade.BytesOf(at), Premade.StartOf(at), length);
             }
+            #if DEBUG
             DeltaStats.Ahead();
+            #endif
             return length > 0 ? length : -1;
         }
     }

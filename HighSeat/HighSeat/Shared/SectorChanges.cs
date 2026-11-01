@@ -7,7 +7,7 @@ namespace HighSeat
     /// one (ZDO.Initialize), one received from a player, one that moves into another sector (ZDO.SetSector) and one
     /// destroyed (ZDOMan.HandleDestroyedZDO), so a sector's kept lists are rebuilt before they could hold a ZDO the game
     /// has destroyed and given out again from its pool. Runs whatever the settings (one lookup in a small table), so the
-    /// lists are right the moment "Creatures only where shared" is switched on.
+    /// lists are right the moment "Server runs creatures" is switched on.
     /// </summary>
     [HarmonyPatch]
     internal static class SectorChanges

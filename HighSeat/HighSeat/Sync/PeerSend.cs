@@ -115,7 +115,9 @@ namespace HighSeat
                 int budget = Budget(ps.Peer.m_peer.m_socket);
                 if (budget < MinBytes)
                 {
+                    #if DEBUG
                     SyncStats.Skipped();
+                    #endif
                     continue;
                 }
                 SendSlot slot = Slots[_count++];
@@ -149,7 +151,9 @@ namespace HighSeat
                 }
                 long sent = clock.ElapsedTicks;
                 BatchCost.Measured(_count, lanes, prepared - start, sent - prepared);
+                #if DEBUG
                 SyncStats.Batch(lanes, prepared - start, sent - prepared, PrepPool.TakeHoldHits());
+                #endif
             }
             finally
             {

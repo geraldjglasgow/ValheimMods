@@ -1,7 +1,7 @@
 namespace HighSeat
 {
     /// <summary>
-    /// The server taking a creature or giving one to a player, with "Creatures only where shared" on, and what goes with
+    /// The server taking a creature or giving one to a player, and what goes with
     /// it: the animators follow (<see cref="AlwaysAnimate"/>), and the player who gains it, or the one who loses it to the
     /// server, gets the ZDO at the front of their next send (ZDOMan.ForceSendZDO), so they start, or stop, running it as
     /// soon as the network allows. The server writes the creature's ZDO until the moment it gives it away, so the new

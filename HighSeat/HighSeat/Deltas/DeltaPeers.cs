@@ -124,7 +124,9 @@ namespace HighSeat
                         peer.ForceSendZDO(id);
                     }
                 }
+                #if DEBUG
                 DeltaStats.Asked(Math.Max(count, 0));
+                #endif
             }
             catch (Exception e)
             {

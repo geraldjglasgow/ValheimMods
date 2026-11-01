@@ -15,7 +15,6 @@ namespace HighSeat
         public static ConfigEntry<int> FrameBudgetMs = null!;
         public static ConfigEntry<int> MaxPlayers = null!;
         public static ConfigEntry<bool> BigServerSync = null!;
-        public static ConfigEntry<bool> OnlyWhereShared = null!;
         public static ConfigEntry<bool> NightSkipVote = null!;
         public static ConfigEntry<bool> KeptPlaces = null!;
         public static ConfigEntry<bool> DropsForPlayersNearby = null!;
@@ -23,8 +22,9 @@ namespace HighSeat
         public static void Bind(ConfigFile config)
         {
             ServerRunsCreatures = config.Bind(General, "Server runs creatures", true,
-                "The server loads every player's area and runs every creature and spawner in it, tamed creatures and bosses " +
-                "included. Off: the game's own rule, where the nearest player's game runs each creature.");
+                "The server runs every spawner in every player's area and every creature two or more players share, tamed " +
+                "creatures and bosses included; a creature near one player only runs on that player's game, as without " +
+                "HighSeat. Off: the game's own rule, where the nearest player's game runs each creature.");
             FrameBudgetMs = config.Bind(General, "Server frame budget ms", 50,
                 new ConfigDescription("While the server's frames take longer than this, creatures it does not run yet are " +
                     "left to players as the game does; those it runs stay with it.", new AcceptableValueRange<int>(20, 500)));
@@ -40,10 +40,6 @@ namespace HighSeat
                 "Every player is sent the world every round (20 a second) with their own share of the send rate: only what " +
                 "changed since the last round, and things far from them less often; the server's sends also skip the game's " +
                 "extra copies of each package. Off: the game's own loop, which serves one player a frame.");
-            OnlyWhereShared = config.Bind(BigServers, "Creatures only where shared", false,
-                "On: the server runs only creatures near two or more players; one near a single player runs on that player's " +
-                "game as without HighSeat, so their hits need no round trip. Spawners stay on the server. Off: the server " +
-                "runs every creature near any player. Needs Server runs creatures.");
             NightSkipVote = config.Bind(BigServers, "Night skip vote", true,
                 "The night is skipped once more than half of the players online vote for it: lying in bed is a vote, and so " +
                 "is saying !sleep in chat. Off: the game's own rule, every player in bed.");

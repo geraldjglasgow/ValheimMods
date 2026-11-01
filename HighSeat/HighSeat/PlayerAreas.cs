@@ -20,10 +20,9 @@ namespace HighSeat
     /// is already built count: the game waits for the ground around its own position before making anything there, but
     /// not around anyone else's, and a terrain edit made before its ground gives up for good (the ground stays as the
     /// world first made it: creatures float over dug-out ground and sink into raised ground).
-    /// With "Creatures only where shared" on, a player's sector is loaded in full only where players are in company or
-    /// the server runs a creature or a boss altar stands (<see cref="FullSectors"/>); elsewhere it gets the lone set
-    /// (<see cref="LoneSectors"/>): spawners, players, creatures, the ground's shape, locations, base markers, and for a
-    /// hosting player's view the distant objects of it. The server's own area (a hosting player's view) is always full.
+    /// A player's sector is loaded in full only where players are in company, the server runs a creature or a boss altar
+    /// stands (<see cref="FullSectors"/>); elsewhere it gets the lone set (<see cref="LoneSectors"/>): spawners, players,
+    /// creatures, the ground's shape, locations, base markers, and for a hosting player's view the distant objects of it. The server's own area (a hosting player's view) is always full.
     /// </summary>
     [HarmonyPatch(typeof(ZNetScene), nameof(ZNetScene.CreateDestroyObjects))]
     internal static class PlayerAreas
@@ -33,7 +32,6 @@ namespace HighSeat
         private static List<ZDO> Near = null!;
         private static List<ZDO> Distant = null!;
         private static readonly HashSet<ZoneSystem.SectorIndex> Visited = new HashSet<ZoneSystem.SectorIndex>();
-        private static bool _shared;
         private static float _now;
         private static float _fullAt = float.NegativeInfinity;
 
@@ -89,7 +87,6 @@ namespace HighSeat
             {
                 return;
             }
-            _shared = Settings.OnlyWhereShared.Value;
             _now = Time.time;
             SimulationDistance sim = ZNet.instance.GetSyncedSimulationDistance();
             Vector2s own = ZoneSystem.GetZone(ZNet.instance.GetReferencePosition());
@@ -100,7 +97,6 @@ namespace HighSeat
         private static void Collect()
         {
             Visited.Clear();
-            _shared = Settings.OnlyWhereShared.Value;
             _now = Time.time;
             FullSectors.NewTick();
             SimulationDistance sim = ZNet.instance.GetSyncedSimulationDistance();
@@ -133,7 +129,7 @@ namespace HighSeat
                     {
                         continue;
                     }
-                    if (groundFirst && _shared)
+                    if (groundFirst)
                     {
                         AddPlayerSector(sector);
                     }
@@ -181,7 +177,7 @@ namespace HighSeat
         private static void AddDistantSector(Vector2s sector)
         {
             uint index = ZoneSystem.SectorToIndex(sector).Sector;
-            if (_shared && index != 0 && LoneSectors.LoadedLone(index, _now))
+            if (index != 0 && LoneSectors.LoadedLone(index, _now))
             {
                 LoneSectors.AddFar(index, Distant, _now);
                 return;

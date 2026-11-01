@@ -93,7 +93,9 @@ namespace HighSeat
                     animator.cullingMode = Culling(mode, _shipped[i], dedicated);
                 }
             }
+            #if DEBUG
             AnimStats.Switched();
+            #endif
         }
 
         /// <summary>Forgets destroyed creatures (once a scan of them all).</summary>

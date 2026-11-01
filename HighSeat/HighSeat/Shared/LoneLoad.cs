@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HighSeat
 {
     /// <summary>
-    /// The lone set: what the server makes of a sector round a single player when "Creatures only where shared" is on.
+    /// The lone set: what the server makes of a sector round a single player.
     /// The ground itself is always built there (<see cref="ZoneKeeping"/>). On top of it, only what the server's own work
     /// there reads: the spawners it runs; the players and creatures and fish they count (a nest counts its creatures
     /// round it, a wild spawn and a trigger spawner the same kind near their spot - all by instance; the creatures stay

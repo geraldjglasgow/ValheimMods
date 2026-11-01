@@ -3,7 +3,7 @@ using UnityEngine;
 namespace HighSeat
 {
     /// <summary>
-    /// With "Creatures only where shared" on, which sectors of the players' areas the server loads in full (everything in
+    /// Which sectors of the players' areas the server loads in full (everything in
     /// them, as without the setting); every other sector of a player's area gets the lone set only
     /// (<see cref="LoneSectors"/>). Full: round players in company (two whose zones are <see cref="CompanyZones"/> or
     /// fewer apart, so their creatures can be shared or soon will be: everything within <see cref="CompanyReach"/> zones
@@ -13,9 +13,8 @@ namespace HighSeat
     /// (<see cref="SharedRule"/>) and held <see cref="HoldSeconds"/> after the last mark, so a group that parts for a moment
     /// does not unload and reload its bases. A sector whose hold has run out drops to the lone set at most
     /// <see cref="DropsPerTick"/> per load tick: the game destroys every unlisted instance at once, and a base's sectors
-    /// together hold thousands. Switching the setting on counts every sector of the players' areas as loaded in full (it
-    /// was, a moment ago), so they too drop at that pace. Two times per sector (full until, last loaded in full), for the
-    /// game's whole 512 by 512 sector grid.
+    /// together hold thousands. Two times per sector (full until, last loaded in full), for the game's whole 512 by 512
+    /// sector grid.
     /// </summary>
     internal static class FullSectors
     {
@@ -35,7 +34,6 @@ namespace HighSeat
         private static readonly float[] Until = new float[Width * Width];
         private static readonly float[] LoadedAt = new float[Width * Width];
         private static int _drops;
-        private static bool _hooked;
 
         /// <summary>Two players are in company when their zones are this many apart or fewer: their active areas meet at
         /// <see cref="NearPlayers.Reach"/> zones apart, and one zone more loads the buildings between them before the
@@ -43,37 +41,7 @@ namespace HighSeat
         public static int CompanyZones(SimulationDistance sim) => NearPlayers.Reach(sim) + 1;
 
         /// <summary>A new load tick: the budget of sectors that may drop to the lone set is refilled.</summary>
-        public static void NewTick()
-        {
-            _drops = DropsPerTick;
-            if (!_hooked)
-            {
-                _hooked = true;
-                Settings.OnlyWhereShared.SettingChanged += (_, _) => SwitchedOn();
-            }
-        }
-
-        // Every sector of every ready player's area counts as loaded in full, so it drops to the lone set by the budget.
-        private static void SwitchedOn()
-        {
-            if (!Settings.OnlyWhereShared.Value || !ServerRun.Active)
-            {
-                return;
-            }
-            int n = ZNet.instance.GetSyncedSimulationDistance().NearSimulationDistance;
-            float now = Time.time;
-            foreach (ZNetPeer peer in ZNet.instance.GetPeers())
-            {
-                Vector2s zone = ZoneSystem.GetZone(peer.GetRefPos());
-                for (int dy = -n; dy <= n; dy++)
-                {
-                    for (int dx = -n; dx <= n; dx++)
-                    {
-                        LoadedAt[ZoneSystem.SectorToIndex(zone.x + dx, zone.y + dy).Sector] = now;
-                    }
-                }
-            }
-        }
+        public static void NewTick() => _drops = DropsPerTick;
 
         /// <summary>Marks every sector within <paramref name="radius"/> zones of <paramref name="zone"/> full from now.</summary>
         public static void MarkAround(Vector2s zone, int radius, float now)

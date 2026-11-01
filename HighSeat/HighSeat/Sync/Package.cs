@@ -155,7 +155,9 @@ namespace HighSeat
                 }
             }
             man.m_zdosSent += Written.Count;
+            #if DEBUG
             SyncStats.Sent(ps, Pkg.Size(), Written.Count);
+            #endif
         }
     }
 }

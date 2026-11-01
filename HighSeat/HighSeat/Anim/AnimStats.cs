@@ -1,3 +1,4 @@
+#if DEBUG
 namespace HighSeat
 {
     /// <summary>
@@ -19,7 +20,7 @@ namespace HighSeat
         /// <summary>Creatures the server runs that were quiet (CullUpdateTransforms) in the last full scan.</summary>
         public static int Quiet;
 
-        /// <summary>Copies the server does not run, at rest ("Creatures only where shared"), in the last full scan.</summary>
+        /// <summary>Copies the server does not run, at rest, in the last full scan.</summary>
         public static int Rest;
 
         /// <summary>Creatures whose animators changed mode in the last second.</summary>
@@ -67,3 +68,4 @@ namespace HighSeat
         }
     }
 }
+#endif

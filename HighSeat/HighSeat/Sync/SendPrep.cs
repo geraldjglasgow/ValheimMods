@@ -47,8 +47,10 @@ namespace HighSeat
         private readonly Backlog _backlog = new Backlog();
         private int _live;
 
+        #if DEBUG
         /// <summary>Pending objects passed over by a hold; the main thread reads and zeroes it between batches.</summary>
         public int HoldHits;
+        #endif
 
         /// <summary>Fills the slot's list for its player.</summary>
         public void Run(ZDOMan man, SendSlot slot, float time)
@@ -123,7 +125,9 @@ namespace HighSeat
                     _live++;
                 }
             }
+            #if DEBUG
             HoldHits += _live;
+            #endif
         }
 
         // Looked up again: a candidate if still wanted, else to drop. Counted for the crowd ranks unless they are measured.

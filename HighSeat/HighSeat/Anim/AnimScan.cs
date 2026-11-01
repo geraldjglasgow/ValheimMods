@@ -12,8 +12,8 @@ namespace HighSeat
     /// the wake rule says its bones may be needed (<see cref="AnimRule"/>) and for <see cref="QuietSeconds"/> after,
     /// so it does not flip at the edge of a rule; then it goes quiet (<see cref="CreatureAnim"/>). The changes take effect
     /// at the animators' update later in the same frame. A copy the server does not run, with "Creatures only where
-    /// shared" on, rests. The moments that cannot wait for the pass are taken at once (<see cref="AnimWake"/>). With
-    /// <see cref="AnimStats.QuietAllowed"/> off it puts every creature it runs in full; once something here failed it
+    /// shared" on, rests. The moments that cannot wait for the pass are taken at once (<see cref="AnimWake"/>). In a
+    /// debug build, with AnimStats.QuietAllowed off it puts every creature it runs in full; once something here failed it
     /// stops (<see cref="AlwaysAnimate.Fail"/>). Destroyed creatures' records are dropped at the end of each full scan.
     /// </summary>
     [HarmonyPatch(typeof(MonoUpdaters), nameof(MonoUpdaters.Update))]
@@ -24,6 +24,12 @@ namespace HighSeat
 
         /// <summary>Seconds a creature must have needed nothing before it goes quiet.</summary>
         public const float QuietSeconds = 5f;
+
+#if DEBUG
+        private static bool QuietAllowed => AnimStats.QuietAllowed;
+#else
+        private const bool QuietAllowed = true;
+#endif
 
         private static int _cursor;
         private static float _owed;
@@ -47,7 +53,9 @@ namespace HighSeat
         // This frame's share: the creatures due since the last frame, carried over in fractions, at most all of them.
         private static void Step(List<BaseAI> all, float now)
         {
+            #if DEBUG
             AnimStats.Tick(now);
+            #endif
             _owed = Mathf.Min(_owed + all.Count * Time.deltaTime / CheckSeconds, all.Count);
             int due = (int)_owed;
             if (due == 0)
@@ -61,7 +69,9 @@ namespace HighSeat
                 if (_cursor >= all.Count)
                 {
                     _cursor = 0;
+                    #if DEBUG
                     AnimStats.ScanDone();
+                    #endif
                     CreatureAnim.Prune();
                 }
                 Visit(all[_cursor++], now);
@@ -76,7 +86,7 @@ namespace HighSeat
                 return;
             }
             CreatureAnim anim = CreatureAnim.Of(ai);
-            if (!nview.IsOwner() && Settings.OnlyWhereShared.Value)
+            if (!nview.IsOwner())
             {
                 anim.Set(CreatureAnim.Mode.Rest);
             }
@@ -86,10 +96,12 @@ namespace HighSeat
                 {
                     anim.LastNeed = now;
                 }
-                bool quiet = AnimStats.QuietAllowed && now - anim.LastNeed >= QuietSeconds;
+                bool quiet = QuietAllowed && now - anim.LastNeed >= QuietSeconds;
                 anim.Set(quiet ? CreatureAnim.Mode.Quiet : CreatureAnim.Mode.Full);
             }
+            #if DEBUG
             AnimStats.Count(anim.Current);
+            #endif
         }
     }
 }

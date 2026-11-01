@@ -1,3 +1,4 @@
+#if DEBUG
 namespace HighSeat
 {
     /// <summary>
@@ -25,3 +26,4 @@ namespace HighSeat
         }
     }
 }
+#endif

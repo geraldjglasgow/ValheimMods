@@ -4,7 +4,7 @@ using UnityEngine;
 namespace HighSeat
 {
     /// <summary>
-    /// Who is near what, for "Creatures only where shared": the players of one ownership pass (every ready player's
+    /// Who is near what, for the shared rule (<see cref="SharedRule"/>): the players of one ownership pass (every ready player's
     /// reference position, and on a hosted game the host's own, whose id is the server's), each listed once under every
     /// zone its active area can reach, so a creature asks only the few players of its own zone. Built once per pass (at
     /// the start of each <see cref="OwnershipRounds"/> round), never per creature per peer. "Near" is the

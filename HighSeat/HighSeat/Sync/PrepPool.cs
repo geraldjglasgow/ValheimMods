@@ -107,6 +107,7 @@ namespace HighSeat
             Recover(man, slots, count, time);
         }
 
+        #if DEBUG
         /// <summary>The pending hold counts of every thread, added up and zeroed (main thread, between batches).</summary>
         public static int TakeHoldHits()
         {
@@ -118,6 +119,7 @@ namespace HighSeat
             }
             return hits;
         }
+        #endif
 
         /// <summary>
         /// Lets go of every ZDO reference the threads' buffers hold (main thread, between batches); after a hang they are

@@ -10,9 +10,9 @@ namespace HighSeat
     /// nests, through <see cref="ActiveArea"/>; spawn points; trigger spawners; boss altars), so what they spawn starts on
     /// the server. Only a console spawn still begins on the typing player's game, handed over on the next pass. Fish stay
     /// with players: a hooked fish is claimed by the angler. Decided once per prefab, by its components, so another mod's
-    /// creatures count too. With "Creatures only where shared" on (<see cref="WhereShared"/>) creatures are told apart from
-    /// spawners, because only a creature goes to a lone player (<see cref="SharedRule"/>), and boss altars from the other
-    /// spawners, because the ground round an altar is loaded in full (<see cref="FullSectors"/>).
+    /// creatures count too. Creatures are told apart from spawners, because only a creature goes to a lone player
+    /// (<see cref="SharedRule"/>), and boss altars from the other spawners, because the ground round an altar is loaded in
+    /// full (<see cref="FullSectors"/>).
     /// </summary>
     internal static class ServerRun
     {
@@ -29,9 +29,6 @@ namespace HighSeat
 
         /// <summary>True on the server (dedicated or hosting) while the setting is on.</summary>
         public static bool Active => Settings.ServerRunsCreatures.Value && ZNet.instance != null && ZNet.instance.IsServer();
-
-        /// <summary>True on the server while "Creatures only where shared" is on as well.</summary>
-        public static bool WhereShared => Active && Settings.OnlyWhereShared.Value;
 
         public static bool Is(ZDO zdo) => KindOf(zdo) != Kind.None;
 

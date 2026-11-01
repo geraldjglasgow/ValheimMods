@@ -10,9 +10,9 @@ namespace HighSeat
     /// at 100), so on a big server one kill drops one for each of 50 players wherever they are. Here it counts the
     /// players whose character is within <see cref="Range"/> m of the creature when its drops are chosen, at least one:
     /// CharacterDrop.GenerateDropList, on the creature's owner as it dies (CharacterDrop.OnDeath) or as its ragdoll saves
-    /// the loot (Ragdoll.SaveLootList); both use the list it returns. Only where this machine is the server, which by
-    /// default runs every creature near a player; a creature a player's game runs (Creatures only where shared, a busy
-    /// server) drops by that game's own rule. The list is put right after the game made it: only an entry for a
+    /// the loot (Ragdoll.SaveLootList); both use the list it returns. Only where this machine is the server, which runs every
+    /// creature two or more players share; a creature a player's game runs (one near a lone player, or on a busy server)
+    /// drops by that game's own rule. The list is put right after the game made it: only an entry for a
     /// once-per-player drop that holds the game's count of players online is changed.
     /// </summary>
     [HarmonyPatch(typeof(CharacterDrop), nameof(CharacterDrop.GenerateDropList))]

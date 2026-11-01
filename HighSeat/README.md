@@ -2,14 +2,14 @@
 
 In Valheim the nearest player's game runs every creature, and everyone else sees it through that player's connection.
 One player far away, on a slow line or on a cloud PC, and creatures freeze or move "like they have ping" for the whole
-group. HighSeat makes the server run them instead, the way most survival games do, and lets one server hold a crowd:
+group. HighSeat makes the server run every creature players share, the way most survival games do, and lets one server hold a crowd:
 50 players by default instead of the game's 10.
 
 ## Features
 
-- Server-run creatures: the server loads every player's area and runs every creature in it, monsters, animals, tamed
-  creatures and bosses alike. Optionally only where two or more players share them, so a lone player's game runs
-  their own.
+- Server-run creatures: the server runs every creature two or more players share, monsters, animals, tamed creatures
+  and bosses alike, so nobody's connection decides what the group sees. A player alone runs their own, as in the game,
+  which keeps the server light when players spread out.
 - Server-run spawners: wild spawns, the game's raids, nests, spawn points and boss altars spawn on the server, so every
   roll on spawn follows the server's rules. Only a console spawn begins on a player's game, handed over within two
   seconds.
@@ -32,14 +32,13 @@ their PCs, gets them smaller updates and makes big bases and crowds cheaper to d
 `HighSeat.dll` in `BepInEx/plugins`. A network mod that sets a higher send rate (such as Better Networking) can stay:
 HighSeat keeps the higher one.
 
-The server does more work: give it a good CPU and plenty of memory, especially when players spread out across the map.
+The server does more work: give it a good CPU and plenty of memory, especially for big groups.
 A crossplay server stays at the game's 10 players.
 
 ## Configuration
 
 `BepInEx/config/com.HighSeat.cfg`: `Server runs creatures`, `Server frame budget ms`, and under Big servers
-`Max players`, `Big server sync`, `Creatures only where shared`, `Night skip vote`, `Kept places` and `Boss drops for
-players nearby`. All are described in the file and apply without a restart.
+`Max players`, `Big server sync`, `Night skip vote`, `Kept places` and `Boss drops for players nearby`. All are described in the file and apply without a restart.
 
 ## Links
 

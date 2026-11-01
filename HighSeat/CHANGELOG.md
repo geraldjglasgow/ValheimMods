@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.5.0
+
+- `Creatures only where shared` is removed and always on: the server runs spawners and every creature players share; a creature near one player runs on that player's game.
+- Much lighter with players spread out: a lone player's area loads only what the server needs there (50 spread out: about 24 server fps instead of 4).
+- HighSeat's own statistics are only counted in debug builds.
+
 ## 0.4.3
 
 - The faster send and player list paths now check the game version instead of reading the game's code; they stay off on any game version other than 1.0.21.

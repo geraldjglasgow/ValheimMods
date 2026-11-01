@@ -1,15 +1,15 @@
 Summary (at most 350 characters):
-The server runs every creature near any player, instead of the nearest player's game, so one laggy or far-away player no longer freezes creatures for the whole group. Big servers: 50 players by default, every player sent only what changed, a night skip vote, kept places. Server only: players install nothing.
+The server runs every creature players share, instead of the nearest player's game, so one laggy or far-away player no longer freezes creatures for the whole group. Big servers: 50 players by default, every player sent only what changed, a night skip vote, kept places. Server only: players install nothing.
 
 [size=4][b]Description[/b][/size]
-In Valheim the nearest player's game runs every creature, and everyone else sees it through that player's connection. One player far away, on a slow connection or on a cloud PC, and creatures freeze or move "like they have ping" for the whole group. HighSeat makes the server run them instead, the way most survival games do, and lets one server hold a crowd: 50 players by default instead of the game's 10.
+In Valheim the nearest player's game runs every creature, and everyone else sees it through that player's connection. One player far away, on a slow connection or on a cloud PC, and creatures freeze or move "like they have ping" for the whole group. HighSeat makes the server run every creature players share, the way most survival games do, and lets one server hold a crowd: 50 players by default instead of the game's 10.
 
 [size=4][b]Installation[/b][/size]
 Install on the server only: a dedicated server, or the player who hosts. Players need nothing; HighSeatPlus, optional on their PCs, gets them smaller updates and makes big bases and crowds cheaper to draw. Put HighSeat.dll in BepInEx/plugins, or install with r2modman or the Thunderstore app. Restart the server.
 
 [size=4][b]Main features[/b][/size]
 [list]
-[*][b]Server-run creatures[/b]: the server loads every player's area and runs every creature in it, monsters, animals, tamed creatures and bosses alike. Optionally only where two or more players share them.
+[*][b]Server-run creatures[/b]: the server runs every creature two or more players share, monsters, animals, tamed creatures and bosses alike. A player alone runs their own, as in the game, which keeps the server light when players spread out.
 [*][b]Server-run spawners[/b]: wild spawns, the game's raids, nests, spawn points and boss altars spawn on the server, so every roll on spawn follows the server's rules.
 [*][b]Big servers[/b]: up to 50 players by default; every player is sent the world 20 times a second with their own share of the send rate, only what changed, and the far side of a crowded town less often; players with HighSeatPlus get only the changed parts of each object.
 [*][b]Night skip vote[/b]: lying in bed or saying !sleep in chat is a vote; more than half of the players online skips the night.
@@ -18,10 +18,10 @@ Install on the server only: a dedicated server, or the player who hosts. Players
 [*][b]Frame budget[/b]: a server that falls behind leaves new creatures to players, as the game does, until it recovers.
 [*][b]Higher send rate[/b]: 500 KB/s per player instead of the game's 150, never lowered below what another mod set.
 [/list]
-Settings in BepInEx/config/com.HighSeat.cfg: Server runs creatures, Server frame budget ms, Max players, Big server sync, Creatures only where shared, Night skip vote, Kept places, Boss drops for players nearby.
+Settings in BepInEx/config/com.HighSeat.cfg: Server runs creatures, Server frame budget ms, Max players, Big server sync, Night skip vote, Kept places, Boss drops for players nearby.
 
 [size=4][b]Requirements[/b][/size]
-BepInExPack Valheim on the server. The server does more work, so give it a good CPU and plenty of memory, especially when players spread out across the map. A crossplay server stays at the game's 10 players.
+BepInExPack Valheim on the server. The server does more work, so give it a good CPU and plenty of memory, especially for big groups. A crossplay server stays at the game's 10 players.
 
 [size=4][b]Shout outs[/b][/size]
 [list]

@@ -50,7 +50,9 @@ namespace HighSeat
         /// <summary>At the start of a frame's sending: every record goes once they are <see cref="KeepSeconds"/> old.</summary>
         public static void NewFrame()
         {
+            #if DEBUG
             DeltaStats.Frame();
+            #endif
             float now = Time.unscaledTime;
             RecordChecks.Frame(now);
             if (now - _emptied < KeepSeconds)
@@ -146,7 +148,9 @@ namespace HighSeat
             {
                 Serialize(zdo);
             }
+            #if DEBUG
             SyncStats.Record(ahead, game);
+            #endif
         }
 
         // This batch's record made ahead on a send thread, while it carries the object's revisions and owner.

@@ -67,7 +67,9 @@ namespace HighSeat
             }
             _failed = true;
             Changes.Recording = false;
+            #if DEBUG
             SyncStats.Active = false;
+            #endif
             try
             {
                 HighSeat.Log.LogError($"the send loop failed, so the game's own loop sends for the rest of this session: {e}");
@@ -84,7 +86,9 @@ namespace HighSeat
         public static void End()
         {
             Changes.Reset();
+            #if DEBUG
             SyncStats.Active = false;
+            #endif
             LetGo();
             _man = null;
         }
@@ -130,7 +134,9 @@ namespace HighSeat
             Interest.Reset(man);
             Changes.Reset();
             Throttle.Reset();
+            #if DEBUG
             SyncStats.Reset();
+            #endif
             PrepPool.Begin();
             Premade.Begin();
             RecordChecks.Begin();
@@ -157,7 +163,9 @@ namespace HighSeat
             {
                 Continue(man);
             }
+            #if DEBUG
             SyncStats.Frame(Clock.ElapsedTicks);
+            #endif
         }
 
         private static void StartRound(ZDOMan man)
@@ -195,9 +203,13 @@ namespace HighSeat
 
         private static void HandOut(ZDOMan man)
         {
+            #if DEBUG
             long start = Clock.ElapsedTicks;
+            #endif
             Changes.HandOut(man, Clock, TicksPerFrame);
+            #if DEBUG
             SyncStats.HandedOut(Clock.ElapsedTicks - start);
+            #endif
         }
 
         // Serves the players left in this round until the frame's time is spent, at least one a frame.
@@ -209,7 +221,9 @@ namespace HighSeat
             {
                 _inRound = false;
                 Order.Clear();
+                #if DEBUG
                 SyncStats.Round();
+                #endif
             }
         }
     }
