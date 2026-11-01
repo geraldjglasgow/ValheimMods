@@ -7,42 +7,29 @@ using Splatform;
 namespace HighSeat
 {
     /// <summary>
-    /// Whether each player list part may stand in for the game's code (<see cref="ListGate.Part"/>): every game method it
-    /// replaces or relies on must be the code it was checked against (its <see cref="ListCode"/> fingerprint equals the
-    /// value taken from Valheim 1.0.21, see the constants), and no other mod may patch a method whose code it
+    /// Whether each player list part may stand in for the game's code (<see cref="ListGate.Part"/>): the game must be the
+    /// version it was checked against (<see cref="CheckedGame"/>), and no other mod may patch a method whose code it
     /// skips, so a mod that changes the player list or the history keeps the game's own path (and its own change). One
     /// exception: another mod's postfix on ZNet.UpdatePlayerList still runs after <see cref="PlayerRows"/>, on the same
     /// list the game's code would have made (ServerDevcommands fills in private positions for admins there), so it does
-    /// not stop it. The history send also checks the code a player's game runs on the list it gets: how it reads it
+    /// not stop it. The history send also relies on the code a player's game runs on the list it gets: how it reads it
     /// (RPC_HistoricalPlayerList, then UpdatePlayerHistory), how a piece records its builder's place (Piece.SetCreator),
-    /// and that the place holder's id reads back (PlatformUserID.TryParse); a game update that changes any of them leaves
-    /// the whole list to the game. Fingerprints are taken once per process (the game's code does not change while it
-    /// runs), patches at every check (a mod can patch later). The values come from the client's game: should the
-    /// dedicated server's build differ in one, that part stays off there and the log gives the value to check. Each answer
-    /// is null to go ahead, or why not, for the log.
+    /// and that the place holder's id reads back (PlatformUserID.TryParse); those must be there too. The version is
+    /// checked once per process (the game does not change while it runs), patches at every check (a mod can patch
+    /// later). Each answer is null to go ahead, or why not, for the log.
     /// </summary>
     internal static class ListChecks
     {
-        private const uint RowsCode = 0x635d18e8;
-        private const uint SteamHostCode = 0xb0dba56f;
-        private const uint PlayFabHostCode = 0x07f8780b;
-        private const uint NamesCode = 0x5b781401;
-        private const uint MatchesCode = 0x44f7edcc;
-        private const uint HistoryCode = 0x97f65130;
-        private const uint SendCode = 0x4a29ae83;
-        private const uint ReceiveCode = 0xa0c38f11;
-        private const uint CreatorCode = 0x6cf9cda6;
-        private const uint ParseCode = 0xbb91d99e;
         private const string Unchecked = "its game code was not checked";
 
         private static readonly Type[] Mine = { typeof(PlayerRows), typeof(FastNames), typeof(FastHistory), typeof(HistorySend) };
         private static readonly string[] Code = { Unchecked, Unchecked, Unchecked, Unchecked, Unchecked };
         private static MethodBase _rows, _steamHost, _playFabHost, _names, _matches, _history, _send, _receive, _creator, _parse;
-        private static bool _fingerprinted;
+        private static bool _checked;
 
         public static string Verdict(ListGate.Part part)
         {
-            Fingerprints();
+            Check();
             return Code[(int)part] ?? Patched(part);
         }
 
@@ -64,22 +51,22 @@ namespace HighSeat
         }
 
         // Once per process; the verdicts start as "not checked", so a check that throws leaves every part off.
-        private static void Fingerprints()
+        private static void Check()
         {
-            if (_fingerprinted)
+            if (_checked)
             {
                 return;
             }
-            _fingerprinted = true;
+            _checked = true;
             Find();
+            string version = CheckedGame.Verdict();
             string index = ListVersion<ZNet.CrossNetworkUserInfo>.Ready ? null : "the runtime's lists keep no change count";
             string met = ListVersion<PlatformUserID>.Ready ? null : "the runtime's lists keep no change count";
-            Code[(int)ListGate.Part.Rows] = Expect(_rows, RowsCode);
-            Code[(int)ListGate.Part.HostNames] = Expect(_steamHost, SteamHostCode) ?? Expect(_playFabHost, PlayFabHostCode);
-            Code[(int)ListGate.Part.Names] = Expect(_names, NamesCode) ?? Expect(_matches, MatchesCode) ?? index;
-            Code[(int)ListGate.Part.History] = Expect(_history, HistoryCode) ?? index ?? met;
-            Code[(int)ListGate.Part.Send] = Expect(_send, SendCode) ?? Expect(_receive, ReceiveCode) ??
-                Expect(_history, HistoryCode) ?? Expect(_creator, CreatorCode) ?? Expect(_parse, ParseCode) ?? index ??
+            Code[(int)ListGate.Part.Rows] = Missing(_rows) ?? version;
+            Code[(int)ListGate.Part.HostNames] = Missing(_steamHost, _playFabHost) ?? version;
+            Code[(int)ListGate.Part.Names] = Missing(_names, _matches) ?? version ?? index;
+            Code[(int)ListGate.Part.History] = Missing(_history) ?? version ?? index ?? met;
+            Code[(int)ListGate.Part.Send] = Missing(_send, _receive, _history, _creator, _parse) ?? version ?? index ??
                 (HistorySend.EventFound ? null : "the game's HistoricalPlayerListSent event was not found");
         }
 
@@ -103,17 +90,8 @@ namespace HighSeat
                 new[] { typeof(string), typeof(PlatformUserID).MakeByRefType() });
         }
 
-        private static string Expect(MethodBase method, uint expected)
-        {
-            if (method == null)
-            {
-                return "a game method it relies on is missing";
-            }
-            uint found = ListCode.Fingerprint(method);
-            return found == expected
-                ? null
-                : $"{Name(method)} is not the code it was checked against ({found:x8}, checked {expected:x8})";
-        }
+        private static string Missing(params MethodBase[] methods) =>
+            Array.IndexOf(methods, null) >= 0 ? "a game method it relies on is missing" : null;
 
         // The first patch on the method not declared here (a postfix is let through when allowed), or null.
         private static string Other(MethodBase method, bool allowPostfixes)

@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.3
+
+- The faster send and player list paths now check the game version instead of reading the game's code; they stay off on any game version other than 1.0.21.
+
 ## 0.4.2
 
 - Fixed: many players at the edge of explored land no longer freeze the server while new land generates.
