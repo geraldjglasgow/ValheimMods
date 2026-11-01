@@ -7,7 +7,7 @@ namespace EliteEquipment.Fitted
     /// <summary>
     /// How high a pair of boots reaches on a body, in metres: the top of its worn meshes (the boots' cut of their
     /// leggings, in the body's bind space) or of its paint on the body (the highest body vertex its paint covers),
-    /// whichever is higher; 0 for no boots. Worked out once per body and pair.
+    /// whichever is higher; 0 for no boots. Worked out once per body and pair, forgotten when the menu or a world starts.
     /// </summary>
     internal static class BootTop
     {
@@ -21,6 +21,8 @@ namespace EliteEquipment.Fitted
                 known[(body.Mesh, boots)] = top = Mathf.Max(MeshTop(boots), PaintTop(body, boots));
             return top;
         }
+
+        public static void Clear() => known.Clear();
 
         private static float MeshTop(BootSet boots)
         {

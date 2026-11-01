@@ -36,6 +36,9 @@ namespace EliteEquipment.Fitted
 
         public static LegStyle ByLegsHash(int hash) => byLegs.TryGetValue(hash, out LegStyle style) ? style : null;
 
+        /// <summary>Every look (their materials are made ahead of need, <see cref="FittedCache"/>).</summary>
+        public static IEnumerable<LegStyle> All => byLegs.Values;
+
         private static void Add(LegStyle style) => byLegs[style.LegsHash] = style;
 
         /// <summary>

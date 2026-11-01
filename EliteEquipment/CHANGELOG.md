@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.5
+
+- Fixed: a crowd of players no longer stalls a frame the first time a fitted look appears.
+
 ## 0.4.4
 
 - Caster spell effects moved onto a shared library; no change in play.

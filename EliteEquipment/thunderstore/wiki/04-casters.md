@@ -89,7 +89,7 @@ Seven sets of hood (or hat, circlet, crown), robe (or tunic, coat) and trousers.
 | Deerhide Hood | Leather Helmet | Deer hide 2 (+1), Leather scraps 2 (+1), Dandelion 2 (+1) |
 | Deerhide Robe | Leather Tunic | Deer hide 4 (+2), Leather scraps 3 (+1), Dandelion 3 (+1) |
 | Deerhide Trousers | Leather Pants | Deer hide 3 (+1), Leather scraps 3 (+1), Dandelion 2 (+1) |
-| Mossweave Hood | Troll Leather Helmet | Troll hide 2 (+1), Thistle 3 (+1), Greydwarf eye 2 (+1) |
+| Mossweave Headdress | Troll Leather Helmet | Troll hide 2 (+1), Thistle 3 (+1), Greydwarf eye 2 (+1) |
 | Mossweave Robe | Troll Leather Tunic | Troll hide 4 (+2), Thistle 4 (+2), Greydwarf eye 3 (+1) |
 | Mossweave Trousers | Troll Leather Pants | Troll hide 3 (+1), Thistle 3 (+1), Greydwarf eye 2 (+1) |
 | Rootweave Hat | Root Helmet | Root 2 (+1), Ancient bark 4 (+2), Bloodbag 2 (+1) |

@@ -4,6 +4,8 @@ using System.Runtime.CompilerServices;
 using HarmonyLib;
 using UnityEngine;
 
+using Object = UnityEngine.Object;
+
 namespace EliteEquipment.Fitted
 {
     /// <summary>
@@ -11,13 +13,39 @@ namespace EliteEquipment.Fitted
     /// breastplate's plates and tabards) wear a copy with that part drawn in (<see cref="ChestPull"/>) while the player
     /// wears fitted leggings, so nothing hangs in the air over them, and their front hanging cloth moves as fabric beside it
     /// (<see cref="ChestClothSim"/>); their own mesh again when the leggings come off. Each copy is made once per chest
-    /// mesh, body and thickness. Players only, every client, from what the game replicates (<see cref="FittedLook"/> calls it).
+    /// mesh, body and thickness and shared by every player wearing it (the cloth's simulation is each player's own);
+    /// destroyed when the menu or a world starts and no one wears it (<see cref="FittedCache"/>). Players only, every
+    /// client, from what the game replicates (<see cref="FittedLook"/> calls it).
     /// </summary>
     public static class ChestFit
     {
         private static readonly Dictionary<(Mesh, Mesh, int), ChestParts> made = new Dictionary<(Mesh, Mesh, int), ChestParts>();
         private static readonly Dictionary<Mesh, BodyEnvelope> envelopes = new Dictionary<Mesh, BodyEnvelope>();
         private static readonly ConditionalWeakTable<VisEquipment, List<Swap>> worn = new ConditionalWeakTable<VisEquipment, List<Swap>>();
+
+        /// <summary>
+        /// Destroys every drawn-in chest (and its cloth's mesh) no character in the scene wears; returns how many. A chest
+        /// counts as worn by its drawn-in mesh: its cloth's renderer may be drawing the simulation's own copy instead.
+        /// </summary>
+        internal static int Release(HashSet<Object> used)
+        {
+            int freed = 0;
+            foreach ((Mesh, Mesh, int) key in new List<(Mesh, Mesh, int)>(made.Keys))
+            {
+                ChestParts parts = made[key];
+                if (parts != null && used.Contains(parts.Chest))
+                    continue;
+                made.Remove(key);
+                if (parts == null)
+                    continue;
+                Object.Destroy(parts.Chest);
+                if (parts.Cloth != null)
+                    Object.Destroy(parts.Cloth);
+                freed++;
+            }
+            envelopes.Clear();
+            return freed;
+        }
 
         /// <summary>Fitted leggings of this thickness are on: a chest that lay on baggy trousers is drawn in over them.</summary>
         internal static void Fit(VisEquipment vis, BodySurface body, float thickness)

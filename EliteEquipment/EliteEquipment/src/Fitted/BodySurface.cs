@@ -17,6 +17,9 @@ namespace EliteEquipment.Fitted
 
         private static readonly string[] UpperBones = { "Arm", "Hand", "Shoulder", "Neck", "Head", "Jaw", "Thumb", "Index", "Middle", "Ring", "Pinky" };
 
+        // Each vertex's place (Place), worked out once: the welding and every build's open edges ask for it per corner.
+        private readonly Vector3Int[] places;
+
         private BodySurface(Mesh mesh, string[] bones)
         {
             Mesh = mesh;
@@ -25,6 +28,7 @@ namespace EliteEquipment.Fitted
             Uvs = mesh.uv;
             Triangles = mesh.GetTriangles(0);
             Rest = Array.ConvertAll(Vertices, ToRest);
+            places = Array.ConvertAll(Rest, rest => Vector3Int.RoundToInt(rest * 2000f));
             Outward = Welded(mesh.normals);
             Upper = UpperOf(Weights, bones);
         }
@@ -61,7 +65,7 @@ namespace EliteEquipment.Fitted
         public Vector3 Out(int vertex, float metres) => Vertices[vertex] + Outward[vertex] * (metres / Scale);
 
         /// <summary>The vertices' place to half a millimetre, the same for the copies along a texture seam.</summary>
-        public Vector3Int Place(int vertex) => Vector3Int.RoundToInt(Rest[vertex] * 2000f);
+        public Vector3Int Place(int vertex) => places[vertex];
 
         private Vector3[] Welded(Vector3[] normals)
         {

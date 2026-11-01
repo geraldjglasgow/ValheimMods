@@ -8,8 +8,8 @@ namespace EliteEquipment.Casters
     /// <summary>
     /// The seven Seer's robe sets (features/casters.md, "Armour: the Seer's robes"), each its own design in the workshop
     /// (user, 2026-10-11: each set "match color themes of materials used to craft them, but also be somewhat distinctly
-    /// different"): Deerhide and Mossweave hoods, a bark witch hat, a fur hat, a sun hat, a chitin circlet, a flametal
-    /// crown. Recipes sit beside the game's armour of the same biome (its station and level). Max eitr per piece follows the
+    /// different"): a Deerhide hood, a Mossweave branch headdress (user, 2026-11-01: not a hood like the Meadows'), a bark
+    /// witch hat, a fur hat, a sun hat, a chitin circlet, a flametal crown. Recipes sit beside the game's armour of the same biome (its station and level). Max eitr per piece follows the
     /// plan's table until the user decides between max eitr and eitr regen.
     /// </summary>
     public static class RobeSets
@@ -44,7 +44,7 @@ namespace EliteEquipment.Casters
         private static RobeSet Mossweave()
         {
             var set = new RobeSet { Tier = "blackforest", Title = "BlackForest",
-                Hair = HairType.HiddenHood, Armour = 4f, Movement = -0.02f, Eitr = 8f };
+                Hair = HairType.HiddenHat, Armour = 4f, Movement = -0.02f, Eitr = 8f };
             set.Head = set.Piece("hood", "HelmetMage", "HelmetTrollLeather",
                 C("TrollHide", 2, 1), C("Thistle", 3, 1), C("GreydwarfEye", 2, 1));
             set.Robe = set.Piece("robe", "ArmorMageChest", "ArmorTrollLeatherChest",

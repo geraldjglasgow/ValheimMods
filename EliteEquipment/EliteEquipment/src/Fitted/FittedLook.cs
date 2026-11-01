@@ -1,4 +1,3 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using EliteEquipment.Boots;
@@ -15,11 +14,13 @@ namespace EliteEquipment.Fitted
     /// legs move (or are only paint), so a player wearing them gets leggings made from their own body instead, in the
     /// look of their set (<see cref="LegStyles"/>, <see cref="FittedBuild"/>). The game attaches its trousers as always;
     /// they are hidden, the fitted leggings are drawn on the body's bones beside the body, and the body draws without the
-    /// triangles under them (its model's mesh swapped, so the game keeps it), so no skin can show through. Made again
+    /// triangles under them (its model's mesh swapped, so the game keeps it), so no skin can show through. Put on again
     /// when the leggings, the boots (their height sets the lower end) or the body model change; everything back when the
-    /// leggings come off or the switch goes off. A chest that lay on the game's baggy trousers is drawn in over them while
-    /// they are on (<see cref="ChestFit"/>). Players only (armour stands keep the game's look), drawn by every client
-    /// from what the game already replicates; nothing on a dedicated server.
+    /// leggings come off or the switch goes off. The meshes and the material are made once per kind and shared by every
+    /// player wearing it (<see cref="FittedCache"/>); a player gets only a renderer of its own on its own bones. A chest
+    /// that lay on the game's baggy trousers is drawn in over them while they are on (<see cref="ChestFit"/>). Players
+    /// only (armour stands keep the game's look), drawn by every client from what the game already replicates; nothing
+    /// on a dedicated server.
     /// </summary>
     public static class FittedLook
     {
@@ -43,8 +44,7 @@ namespace EliteEquipment.Fitted
             if (style == null)
                 return;
             int index = vis.m_currentModelIndex;
-            string[] bones = Array.ConvertAll(vis.m_bodyModel.bones, bone => bone != null ? bone.name : null);
-            FittedParts parts = FittedBuild.For(style, vis.m_models[index].m_mesh, bones, BootSets.ByHash(bootsHash));
+            FittedParts parts = FittedBuild.For(style, vis.m_models[index].m_mesh, vis.m_bodyModel, BootSets.ByHash(bootsHash));
             Material material = parts != null ? FittedMaterial.Get(style) : null;
             if (material != null)
                 Wear(vis, style, parts, material, bootsHash);
@@ -57,8 +57,7 @@ namespace EliteEquipment.Fitted
                 ChestFit.Fit(vis, Surface(vis, state.Body), state.Style.Thickness);
         }
 
-        private static BodySurface Surface(VisEquipment vis, Mesh body) =>
-            FittedBuild.Surface(body, Array.ConvertAll(vis.m_bodyModel.bones, bone => bone != null ? bone.name : null));
+        private static BodySurface Surface(VisEquipment vis, Mesh body) => FittedBuild.Surface(body, vis.m_bodyModel);
 
         private static bool Wanted(VisEquipment vis) =>
             !headless && BootsSettings.On && vis.m_isPlayer && !vis.m_isArmorStand && vis.m_bodyModel != null && vis.m_models != null && vis.m_currentModelIndex >= 0 && vis.m_currentModelIndex < vis.m_models.Length;

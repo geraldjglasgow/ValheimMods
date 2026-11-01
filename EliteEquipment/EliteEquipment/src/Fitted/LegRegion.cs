@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 using UnityEngine;
 
 namespace EliteEquipment.Fitted
@@ -8,9 +9,12 @@ namespace EliteEquipment.Fitted
     /// waist and are not moved by the arms, hands or head. These are the triangles the leggings are made of and the ones the
     /// body stops drawing while it is worn. The lower end is the ankle, or with boots on the highest of the body's edge
     /// loops at least <see cref="Tuck"/> below the boots' top, so the leggings reach into them and no skin shows between.
+    /// A body's edge loops are found once and kept beside it (gone with it), since every player in boots asks again.
     /// </summary>
     internal static class LegRegion
     {
+        private static readonly ConditionalWeakTable<BodySurface, List<Vector2>> loops = new ConditionalWeakTable<BodySurface, List<Vector2>>();
+
         /// <summary>Above the body's hip edge (1.08 to 1.11 m), the first above the belt line.</summary>
         public const float Waist = 1.12f;
 
@@ -39,7 +43,9 @@ namespace EliteEquipment.Fitted
             float bottom = Ankle;
             if (bootTop <= Ankle)
                 return bottom;
-            foreach (Vector2 loop in Loops(body))
+            if (!loops.TryGetValue(body, out List<Vector2> found))
+                loops.Add(body, found = Loops(body));
+            foreach (Vector2 loop in found)
             {
                 if (loop.y <= bootTop - Tuck && loop.x - 0.001f > bottom)
                     bottom = loop.x - 0.001f;

@@ -87,23 +87,22 @@ namespace EliteEquipment.Fitted
 
         private static List<(int, int)> OpenEdges(BodySurface body, bool[] covered)
         {
-            var uses = new Dictionary<(Vector3Int, Vector3Int), int>();
-            var ends = new Dictionary<(Vector3Int, Vector3Int), (int, int)>();
+            // Per welded edge, in the order first met: how many covered triangles use it, and its corners as last met.
+            var edges = new Dictionary<(Vector3Int, Vector3Int), (int Uses, int A, int B)>();
             for (int t = 0; t < covered.Length; t++)
             {
                 for (int e = 0; covered[t] && e < 3; e++)
                 {
                     int a = body.Triangles[3 * t + e], b = body.Triangles[3 * t + (e + 1) % 3];
                     var key = Edge(body.Place(a), body.Place(b));
-                    uses[key] = uses.TryGetValue(key, out int n) ? n + 1 : 1;
-                    ends[key] = (a, b);
+                    edges[key] = (edges.TryGetValue(key, out (int Uses, int A, int B) seen) ? seen.Uses + 1 : 1, a, b);
                 }
             }
             var open = new List<(int, int)>();
-            foreach (KeyValuePair<(Vector3Int, Vector3Int), int> use in uses)
+            foreach (KeyValuePair<(Vector3Int, Vector3Int), (int Uses, int A, int B)> edge in edges)
             {
-                if (use.Value == 1)
-                    open.Add(ends[use.Key]);
+                if (edge.Value.Uses == 1)
+                    open.Add((edge.Value.A, edge.Value.B));
             }
             return open;
         }

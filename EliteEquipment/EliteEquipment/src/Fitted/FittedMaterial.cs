@@ -1,14 +1,18 @@
 using System.Collections.Generic;
 using UnityEngine;
 
+using Object = UnityEngine.Object;
+
 namespace EliteEquipment.Fitted
 {
     /// <summary>
     /// A look's material: a copy of its chest's worn material (the game's shader, metal and gloss) wearing the look's
-    /// atlas (<see cref="FittedAtlas"/>), made from the chest's worn textures and its body paint. Made once per client,
-    /// the first time the look is worn; null when the chest or its albedo is not found (logged once), and then the
-    /// leggings keep the game's look. A glow map the chest has (flametal's) is cleared: it is laid out for the chest's
-    /// mesh, not the atlas.
+    /// atlas (<see cref="FittedAtlas"/>), made from the chest's worn textures and its body paint. Made once per client
+    /// and shared by every player wearing the look: behind a world's loading screen (<see cref="FittedCache"/>, since
+    /// reading the chest's textures back from the GPU waits for it), or else the first time the look is worn; destroyed
+    /// with its atlases when the menu or a world starts and no one wears it. Null when the chest or its albedo is not
+    /// found (logged once), and then the leggings keep the game's look. A glow map the chest has (flametal's) is cleared:
+    /// it is laid out for the chest's mesh, not the atlas.
     /// </summary>
     internal static class FittedMaterial
     {
@@ -19,6 +23,9 @@ namespace EliteEquipment.Fitted
         };
 
         private static readonly Dictionary<LegStyle, Material> made = new Dictionary<LegStyle, Material>();
+
+        // The atlases each made material wears, destroyed with it (its other textures are the game's).
+        private static readonly Dictionary<Material, List<Texture2D>> atlases = new Dictionary<Material, List<Texture2D>>();
 
         public static Material Get(LegStyle style)
         {
@@ -32,19 +39,52 @@ namespace EliteEquipment.Fitted
             return material;
         }
 
+        /// <summary>Destroys every look's material no character in the scene wears, with its atlases; returns how many.</summary>
+        internal static int Release(HashSet<Object> used)
+        {
+            int freed = 0;
+            foreach (LegStyle style in new List<LegStyle>(made.Keys))
+            {
+                Material material = made[style];
+                if (material != null && used.Contains(material))
+                    continue;
+                made.Remove(style);
+                if (material != null)
+                {
+                    Destroy(material);
+                    freed++;
+                }
+            }
+            return freed;
+        }
+
         private static Material Make(LegStyle style, Material worn, Material paint)
         {
             var material = new Material(worn) { name = "EE_Fitted" + style.Key };
+            var own = new List<Texture2D>(3);
             for (int channel = 0; channel < 3; channel++)
             {
                 if (channel > 0 && !material.HasProperty(Properties[0][channel]))
                     continue;
                 Texture[] sources = { Texture(worn, Properties[0][channel]), Texture(paint, Properties[1][channel]) };
-                material.SetTexture(Properties[0][channel], FittedAtlas.Build(style, sources, channel));
+                own.Add(FittedAtlas.Build(style, sources, channel));
+                material.SetTexture(Properties[0][channel], own[own.Count - 1]);
             }
             if (material.HasProperty("_EmissionMap"))
                 material.SetTexture("_EmissionMap", Texture2D.blackTexture);
+            atlases[material] = own;
             return material;
+        }
+
+        private static void Destroy(Material material)
+        {
+            if (atlases.TryGetValue(material, out List<Texture2D> own))
+            {
+                foreach (Texture2D atlas in own)
+                    Object.Destroy(atlas);
+                atlases.Remove(material);
+            }
+            Object.Destroy(material);
         }
 
         private static Texture Texture(Material material, string property) =>

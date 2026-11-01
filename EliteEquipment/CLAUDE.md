@@ -73,7 +73,11 @@ EliteEquipment/EliteEquipment/src/
     LegStyle.cs, LegStyles.cs   a look's data (chest to copy, atlas recipe, density, thickness, under the boots or into
                             them, bands, buckle); Iron (mail), Bronze (plates), Wolf (silver mail, fur), Carapace (scales),
                             Flametal (heat-tinted mail), Protector (leather, flame bands), Vanguard (teal, gold vine)
-    FittedBuild.cs          per look, body mesh and lower end, made once: the leggings' mesh and the body without what they cover
+    FittedBuild.cs          once per kind (look, body mesh, lower end, boots only as far as the look uses them), shared by every
+                            player wearing it: the leggings' mesh and the body without what they cover (one per body and
+                            lower end, shared by every look of that length)
+    FittedCache.cs          FejdStartup.Start and Game.Start postfixes: builds no character wears released; behind the world's
+                            loading screen both bodies read and every look's material made (the GPU reads)
     BodySurface.cs          a body mesh read for it: rest positions (metres), welded outward normals, the arm/head vertices
     LegRegion.cs            the covered body triangles (waist 1.12 m to the ankle, or into the boots), the lower end
     BootTop.cs              how high a pair of boots reaches: its cut meshes' top or its paint's on the body
@@ -146,7 +150,8 @@ postfix `VisEquipment.AttachArmor` (private: the 20 leggings' skins on players d
 postfix `Humanoid.SetupVisEquipment` and `VisEquipment.UpdateEquipmentVisuals` (private: the worn pair, the body's
 leg paint and the fitted leggings' check on every client); postfix `VisEquipment.SetLegEquipped` (private: fitted
 leggings put on or taken off when the leggings change); postfix `VisEquipment.SetChestEquipped` (private: a new chest
-drawn in over fitted leggings at once). Core: prefix `Inventory.Changed` (private: the change count); the Translations
+drawn in over fitted leggings at once); postfix `FejdStartup.Start` and `Game.Start` (private: the fitted builds no
+character wears released, and at a world's start the bodies and materials made ahead). Core: prefix `Inventory.Changed` (private: the change count); the Translations
 library adds its own postfix on `Localization.SetupLanguage` (the words). Shields, Weapons and Casters: their patches are
 listed in their notes (each builds its items in prefixes on `ZNetScene.Awake`, `ObjectDB.Awake` and `CopyOtherDB`, the
 casters' at `Priority.High` so the seer's trousers are in the lists before the boots look for them).
@@ -415,12 +420,22 @@ and key), `2. Shields` (`Shields` true), `3. Weapons` (`Weapons` true), `4. Cast
 - PackPanel gives the boots a Feet slot under Legs while `Separate Boots` is on (its `EliteEquipmentLink`: the GUID in
   the chainloader, this entry by section and key, the boots by the `EE_Boots_` prefix). Without PackPanel a pair is worn
   from the grid (right click) and shows the grid's equipped mark.
+- Crowds (2026-10-31). Measured with DevBridge's fake players (100 at once, after a fresh start): one call of the
+  SetLegEquipped postfix took 29 ms; the other 56,000 calls of the 20 s sample took 12.5 ms together. The cut was
+  already one per kind, never per player: the 29 ms was the first player of a kind making it cold, the body read, the
+  mesh build and the look's material (its atlas reads the chest's textures back from the GPU, a wait per read). Now the bodies and every look's material are made behind the world's loading screen
+  (`FittedCache`), the trimmed body is one per body and lower end for every look, a kind keys only what its meshes are
+  made from (a look not worn under boots makes one for every boots height that ends it at the same edge loop), the
+  bands skip the triangles outside them before building them, and the weights are mixed without a sort per corner, so
+  a first player of a kind costs the mesh build alone (the meshes come out the same). The shared meshes are only ever
+  drawn, as the game shares its own body and leggings meshes; bones, bounds, blend shape weights and the body's
+  material are each player's own renderer's. Builds no character wears are destroyed when the menu or a world starts.
 
 ## Test checklist (LocalTesting profile)
 
 Never run in game as EliteEquipment (the boots ran in game as OpenKeep's section 16). With PackPanel for the Feet slot:
 
-1. Log shows `Loading [EliteEquipment 0.4.4]` without failed patches; `milkyteam.eliteequipment.cfg` has `1. Boots /
+1. Log shows `Loading [EliteEquipment 0.4.5]` without failed patches; `milkyteam.eliteequipment.cfg` has `1. Boots /
    Separate Boots = true`. With OpenKeep too, neither log mentions the other's boots.
 2. At a workbench Leather Boots sit beside Leather Trousers; Iron Greaves cost 16 iron and Iron Boots 4 at the forge (the
    game: 20); upgrades split the same. Iron Greaves show 80% of their armour, the boots 20%.
@@ -457,3 +472,8 @@ Never run in game as EliteEquipment (the boots ran in game as OpenKeep's section
 14. `Separate Boots = false` while worn: the boots come off, the greaves show the game's look, armour, weight and recipe
     again, the boots recipes leave the workbench, PackPanel's Feet slot goes. Dedicated server with the switch on:
     every client the same; no errors.
+15. Crowds, after a fresh start: `/perf` while 100 DevBridge fake players appear shows the SetLegEquipped postfix's
+    max well under the 29 ms of 2026-10-31 (a first player of a kind builds only its mesh). Two players in the same
+    leggings and boots, one in other leggings, a man and a woman: each the look of before; change leggings, boots and
+    back: nothing lost, no skin through. Back to the menu and into a world again: the log may show the fitted builds
+    released, and every look comes back.

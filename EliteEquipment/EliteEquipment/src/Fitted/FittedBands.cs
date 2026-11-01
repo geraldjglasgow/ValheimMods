@@ -32,17 +32,16 @@ namespace EliteEquipment.Fitted
         /// <summary>The part of one covered triangle inside the band, <paramref name="lift"/> off the skin.</summary>
         private static void Piece(BodySurface body, Unwrap unwrap, FittedMesh mesh, BandSpec band, float offset, float lift, int t)
         {
-            var corners = new List<FittedCorner>(3);
-            for (int i = 0; i < 3; i++)
-                corners.Add(Corner(body, body.Triangles[3 * t + i], lift));
-            int part = Unwrap.Part((corners[0].Rest + corners[1].Rest + corners[2].Rest) / 3f);
-            if (band.Hips != (part == 0))
-                return;
+            int a = body.Triangles[3 * t], b = body.Triangles[3 * t + 1], c = body.Triangles[3 * t + 2];
+            int part = Unwrap.Part((body.Rest[a] + body.Rest[b] + body.Rest[c]) / 3f);
             float from = band.From + offset, to = band.To + offset;
+            if (band.Hips != (part == 0) || Outside(body.Rest[a], body.Rest[b], body.Rest[c], band.Normal, from, to))
+                return;
+            var corners = new List<FittedCorner>(3) { Corner(body, a, lift), Corner(body, b, lift), Corner(body, c, lift) };
             corners = FittedCorner.Clip(FittedCorner.Clip(corners, band.Normal, from), -band.Normal, -to);
             if (corners.Count < 3)
                 return;
-            float[] angles = unwrap.Angles(part, corners.ConvertAll(c => c.Rest).ToArray());
+            float[] angles = unwrap.Angles(part, corners.ConvertAll(corner => corner.Rest).ToArray());
             int first = -1;
             for (int i = 0; i < corners.Count; i++)
             {
@@ -53,6 +52,23 @@ namespace EliteEquipment.Fitted
             }
             mesh.Fan(first, corners.Count);
         }
+
+        /// <summary>
+        /// True when the two clips would leave nothing of the triangle, found before any of it is built (most triangles lie
+        /// outside a band): every corner dropped at the lower plane, or none dropped there and every corner at the upper
+        /// one. It is the clip's own test on the same corners, so exactly the triangles the clips would empty are skipped.
+        /// </summary>
+        private static bool Outside(Vector3 a, Vector3 b, Vector3 c, Vector3 normal, float from, float to)
+        {
+            bool dropA = Dropped(a, normal, from), dropB = Dropped(b, normal, from), dropC = Dropped(c, normal, from);
+            if (dropA && dropB && dropC)
+                return true;
+            Vector3 down = -normal;
+            return !dropA && !dropB && !dropC && Dropped(a, down, -to) && Dropped(b, down, -to) && Dropped(c, down, -to);
+        }
+
+        /// <summary>A corner <see cref="FittedCorner.Clip"/> drops at this plane (it keeps one at a distance of zero or more).</summary>
+        private static bool Dropped(Vector3 rest, Vector3 normal, float distance) => !(Vector3.Dot(rest, normal) - distance >= 0f);
 
         private static FittedCorner Corner(BodySurface body, int v, float lift) => new FittedCorner
         {
