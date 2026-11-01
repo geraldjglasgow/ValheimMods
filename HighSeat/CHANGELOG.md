@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.4.0
+
+- Players with HighSeatPlus get only what changed in each object: about a fifth of the data in a crowd.
+- Sends are prepared on several threads, with less garbage.
+- Crowds: the nearest players update every round, the rest of a crowd less often.
+- Smoother joins: objects are made to a time budget.
+- Quiet creatures on the server skip bone animation until they fight or a player comes near.
+- Joining stays under Steam's message limit however long the player history grows.
+- Fixed: no frame budget warning while a host loads the world; the player cap is logged once.
+
 ## 0.3.0
 
 - `Max players`: the server takes 50 players by default instead of the game's 10.

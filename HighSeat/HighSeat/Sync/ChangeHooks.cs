@@ -18,7 +18,14 @@ namespace HighSeat
     /// object (ZDOMan.CreateNewZDO), here or received.</item>
     /// </list>
     /// A change that bypasses all three (another mod setting a revision or ZDOExtraData directly) is caught by the full
-    /// check in turn (<see cref="FullCheck"/>), within seconds.
+    /// check in turn (<see cref="FullCheck"/>), within seconds. Two kinds are also recorded apart, as urgent
+    /// (<see cref="Changes.RecordUrgent"/>), so the players watching the object let go of any hold the update rate put on
+    /// it (<see cref="Holds"/>): an owner change (every one, made here or received, goes through ZDO.SetOwnerInternal: the
+    /// new owner is compared with the old, and a brand-new object, with no data revision yet, is left out, as no player
+    /// can have it), and a move to another sector (ZDOMan.ZDOSectorInvalidated, from ZDO.SetSector), after which the game
+    /// forgets the object for every player whose active area it left (ZDOPeer.ZDOSectorInvalidated), so to them it is new.
+    /// A new owner revision that keeps the same owner (taken and given back between two sends) is not seen as urgent and
+    /// may wait out its hold, a few rounds at most, which no player can tell: the owner they know is still the owner.
     /// </summary>
     internal static class ChangeHooks
     {
@@ -49,11 +56,31 @@ namespace HighSeat
         [HarmonyPatch(typeof(ZDO), nameof(ZDO.SetOwnerInternal))]
         private static class OwnerSet
         {
+            private static void Prefix(ZDO __instance, long uid)
+            {
+                if (Changes.Recording && __instance.DataRevision > 0 && uid != __instance.GetOwner())
+                {
+                    Changes.RecordUrgent(__instance.m_uid);
+                }
+            }
+
             private static void Postfix(ZDO __instance)
             {
                 if (Changes.Recording)
                 {
                     Changes.Record(__instance.m_uid);
+                }
+            }
+        }
+
+        [HarmonyPatch(typeof(ZDOMan), nameof(ZDOMan.ZDOSectorInvalidated))]
+        private static class SectorChanged
+        {
+            private static void Postfix(ZDO zdo)
+            {
+                if (Changes.Recording)
+                {
+                    Changes.RecordUrgent(zdo.m_uid);
                 }
             }
         }

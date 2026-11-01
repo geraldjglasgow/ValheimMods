@@ -38,8 +38,8 @@ namespace HighSeat
                     "turned away with the game's \"server is full\".", new AcceptableValueRange<int>(1, 1000)));
             BigServerSync = config.Bind(BigServers, "Big server sync", true,
                 "Every player is sent the world every round (20 a second) with their own share of the send rate: only what " +
-                "changed since the last round, and things far from them less often. Off: the game's own loop, which serves " +
-                "one player a frame.");
+                "changed since the last round, and things far from them less often; the server's sends also skip the game's " +
+                "extra copies of each package. Off: the game's own loop, which serves one player a frame.");
             OnlyWhereShared = config.Bind(BigServers, "Creatures only where shared", false,
                 "On: the server runs only creatures near two or more players; one near a single player runs on that player's " +
                 "game as without HighSeat, so their hits need no round trip. Spawners stay on the server. Off: the server " +

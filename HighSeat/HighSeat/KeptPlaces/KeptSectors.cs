@@ -12,8 +12,9 @@ namespace HighSeat
     /// cached object destroyed since is skipped by its id (the game pools ZDO objects and hands them to new objects).
     /// Only zones whose ground is built are added (a terrain compiler made before its ground never applies its edits),
     /// each once and marked visited, so nothing is listed twice; a zone a player's area already covers is left to it.
-    /// New instances are made at most NewPerPass a pass (NewPerPassHosted on a hosted game, whose own area has a budget
-    /// of ten), and only for an object still in its zone, so loading a place never holds up the objects around players;
+    /// New instances are made at most NewPerPass a pass (NewPerPassHosted on a hosted game, whose own objects are made to
+    /// a time budget, CreatePace), and only for an object still in its zone, so loading a place never holds up the
+    /// objects around players;
     /// a leaving zone gets none, and the first leaving zone is released each pass. At most MaxObjects are held in all:
     /// past that, the remaining zones are left as the game leaves them.
     /// </summary>

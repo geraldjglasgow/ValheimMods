@@ -5,7 +5,7 @@
     <AssemblyName>HighSeat</AssemblyName>
     <RootNamespace>HighSeat</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.3.0</Version>
+    <Version>0.4.0</Version>
     <Product>HighSeat</Product>
     <Description>HighSeat: the server runs every creature near a player</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>
@@ -43,6 +43,11 @@
     </Reference>
     <Reference Include="0Harmony">
       <HintPath>$(BepInExCore)\0Harmony.dll</HintPath>
+      <Private>false</Private>
+    </Reference>
+    <!-- Splatform: the platform user ids in the player list and the player history (PlayerList/) -->
+    <Reference Include="Splatform">
+      <HintPath>$(ManagedPath)\Splatform.dll</HintPath>
       <Private>false</Private>
     </Reference>
     <Reference Include="assembly_valheim" Publicize="true">

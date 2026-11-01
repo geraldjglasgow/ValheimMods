@@ -15,7 +15,7 @@ group. HighSeat makes the server run them instead, the way most survival games d
   seconds.
 - Big servers: up to 50 players by default, and every player is sent the world 20 times a second with their own share
   of the send rate. Only what changed is sent, and the far side of a crowded town less often than the players beside
-  you.
+  you; players with HighSeatPlus get only the changed parts of each object, about a fifth of the data in a crowd.
 - Night skip vote: lying in bed or saying `!sleep` in chat is a vote, and more than half of the players online skips
   the night. Only those in bed get the sleep screen; everyone sees the count.
 - Kept places: the busiest places and fresh death spots stay loaded on the server, so creatures there start at once
@@ -28,7 +28,7 @@ group. HighSeat makes the server run them instead, the way most survival games d
 ## Install
 
 Needed on the server only: a dedicated server, or the player who hosts. Players need nothing; HighSeatPlus, optional on
-their PCs, makes big bases and crowds cheaper to draw. Install with r2modman or the Thunderstore app, or put
+their PCs, gets them smaller updates and makes big bases and crowds cheaper to draw. Install with r2modman or the Thunderstore app, or put
 `HighSeat.dll` in `BepInEx/plugins`. A network mod that sets a higher send rate (such as Better Networking) can stay:
 HighSeat keeps the higher one.
 

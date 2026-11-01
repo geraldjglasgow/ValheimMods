@@ -14,25 +14,28 @@ namespace HighSeat
     /// usual send works from those, so a round's cost no longer grows with the backlog. Objects gone or no longer wanted
     /// by the time they come back leave as usual, and changes arriving meanwhile go straight to the pending set. The order
     /// is worked out from where the player was then; a later jump that makes the set big again sorts what is left
-    /// together with the new objects, from the new place. While a backlog drains, the player's safety-net check waits
-    /// (<see cref="FullCheck"/>): it would only put the backlog back into the pending set.
+    /// together with the new objects, from the new place. Setting the pending set aside lets go of its holds
+    /// (<see cref="Holds"/>), so what comes back is looked at in full. While a backlog drains, the player's safety-net
+    /// check waits (<see cref="FullCheck"/>): it would only put the backlog back into the pending set. One per thread that
+    /// prepares sends (<see cref="SendPrep"/>, the sort buffers are its own); game state is only read, the objects by id
+    /// straight from ZDOMan.m_objectsByID.
     /// </summary>
-    internal static class Backlog
+    internal sealed class Backlog
     {
         private const int BigSet = 4096;
         private const int Feed = 2 * SendOrder.Limit;
         private const double DistantAfter = 1e8;
 
-        private static double[] _keys = new double[BigSet];
-        private static ZDOID[] _ids = new ZDOID[BigSet];
-        private static int _count;
+        private double[] _keys = new double[BigSet];
+        private ZDOID[] _ids = new ZDOID[BigSet];
+        private int _count;
 
         /// <summary>Before a send: sets a big pending set aside in order, then feeds the pending set from what is aside.</summary>
-        public static void Prepare(ZDOMan man, PeerSync ps)
+        public void Prepare(ZDOMan man, PeerSync ps, Vector3 refPos, float time)
         {
             if (ps.Pending.Count > BigSet)
             {
-                SetAside(man, ps);
+                SetAside(man, ps, refPos, time);
             }
             FeedPending(ps);
         }
@@ -44,11 +47,9 @@ namespace HighSeat
         }
 
         // The pending set and what is left aside, each object once, sorted into a new backlog; the pending set emptied.
-        private static void SetAside(ZDOMan man, PeerSync ps)
+        private void SetAside(ZDOMan man, PeerSync ps, Vector3 refPos, float time)
         {
             _count = 0;
-            Vector3 refPos = ps.Peer.m_peer.GetRefPos();
-            float time = Time.time;
             foreach (ZDOID id in ps.Pending)
             {
                 AddKeyed(man, ps, id, refPos, time);
@@ -64,7 +65,7 @@ namespace HighSeat
             Store(ps);
         }
 
-        private static void Store(PeerSync ps)
+        private void Store(PeerSync ps)
         {
             ps.Backlog.Clear();
             for (int i = 0; i < _count; i++)
@@ -74,27 +75,42 @@ namespace HighSeat
             ps.BacklogAt = 0;
             ps.Pending.Clear();
             ps.Pending.TrimExcess();
+            ps.Holds.Clear();
         }
 
         // Keeps the object, with its place in the send order, if the player still wants it (as the send itself checks).
-        private static void AddKeyed(ZDOMan man, PeerSync ps, ZDOID id, Vector3 refPos, float time)
+        private void AddKeyed(ZDOMan man, PeerSync ps, ZDOID id, Vector3 refPos, float time)
         {
-            ZDO zdo = man.GetZDO(id);
-            byte level = zdo == null ? AreaShape.Out : ps.LevelOf(zdo);
-            if (level == AreaShape.Out || !ps.Peer.ShouldSend(zdo))
+            byte level = man.m_objectsByID.TryGetValue(id, out ZDO zdo) ? ps.LevelOf(zdo) : AreaShape.Out;
+            if (level == AreaShape.Out)
             {
                 return;
             }
             bool has = ps.Peer.m_zdos.TryGetValue(id, out ZDOMan.ZDOPeer.PeerZDOInfo info);
+            if (has && !Newer(zdo, info))
+            {
+                return;
+            }
+            Grow();
+            double key = SendOrder.Key(ps.Peer.m_peer.m_uid, zdo, refPos, time, has, info.m_syncTime);
+            _keys[_count] = level == AreaShape.Distant ? key + DistantAfter : key;
+            _ids[_count] = id;
+            _count++;
+        }
+
+        // ZDOPeer.ShouldSend's rule for an object the player has: a newer owner revision or newer data.
+        private static bool Newer(ZDO zdo, ZDOMan.ZDOPeer.PeerZDOInfo info)
+        {
+            return zdo.OwnerRevision > info.m_ownerRevision || zdo.DataRevision > info.m_dataRevision;
+        }
+
+        private void Grow()
+        {
             if (_count == _keys.Length)
             {
                 Array.Resize(ref _keys, _count * 2);
                 Array.Resize(ref _ids, _count * 2);
             }
-            double key = SendOrder.Key(ps.Peer.m_peer.m_uid, zdo, refPos, time, has, info.m_syncTime);
-            _keys[_count] = level == AreaShape.Distant ? key + DistantAfter : key;
-            _ids[_count] = id;
-            _count++;
         }
 
         // Tops the pending set up from the front of what is aside; an emptied backlog lets go of its memory.

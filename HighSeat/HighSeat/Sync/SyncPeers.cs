@@ -6,10 +6,10 @@ namespace HighSeat
     /// <summary>
     /// The players the send loop serves: one <see cref="PeerSync"/> for each peer in the game's own list
     /// (ZDOMan.m_peers, which ZDOMan.AddPeer fills once a player is accepted), in the order they joined. At the start of
-    /// each round that list is read again: a new peer gets its state, and its whole area is checked as it is first
-    /// registered in <see cref="Interest"/> (it has nothing yet, so everything there is pending); a peer no longer on the
-    /// list loses its state (ZDOMan.RemovePeer normally dropped it already, <see cref="PeerLeft"/>); and every peer's area
-    /// is brought up to date, a cheap test unless their zone or simulation distance changed.
+    /// each round that list is read again: a new peer gets its state, and a peer no longer on the list loses its state
+    /// (ZDOMan.RemovePeer normally dropped it already, <see cref="PeerLeft"/>). Every peer's area is then brought up to
+    /// date over the round's first frames (<see cref="RoundStart"/>): a new peer's whole area is checked as it is first
+    /// registered in <see cref="Interest"/> (it has nothing yet, so everything there is pending).
     /// </summary>
     internal static class SyncPeers
     {
@@ -30,10 +30,6 @@ namespace HighSeat
                 ps.Seen = _stamp;
             }
             DropUnseen();
-            foreach (PeerSync ps in All)
-            {
-                Interest.Update(man, ps);
-            }
         }
 
         /// <summary>The game removed this player (they left or were disconnected).</summary>

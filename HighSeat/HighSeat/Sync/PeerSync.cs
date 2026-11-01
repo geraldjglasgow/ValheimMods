@@ -22,6 +22,9 @@ namespace HighSeat
 
         public int BacklogAt;
 
+        /// <summary>Pending objects the update rate holds back for a later round (<see cref="Holds"/>).</summary>
+        public readonly Holds Holds = new Holds();
+
         /// <summary>True once the player is registered in <see cref="Interest"/> for <see cref="Zone"/> and <see cref="Shape"/>.</summary>
         public bool HasArea;
 
@@ -72,6 +75,7 @@ namespace HighSeat
             Pending.Clear();
             Backlog.Clear();
             BacklogAt = 0;
+            Holds.Clear();
         }
     }
 }

@@ -11,12 +11,19 @@ namespace HighSeat
     /// so it never flips between players. While the server is over its frame budget (<see cref="FrameGuard"/>) a
     /// creature it does not run yet goes as the game decides; one it runs stays. With "Creatures only where shared" on,
     /// creatures follow <see cref="SharedRule"/> instead (the server's where two or more players share them), and the
-    /// pass's players are listed once at its first call; spawners and everything else go as above.
+    /// pass's players are listed once at its first call; spawners and everything else go as above. A player in a zone
+    /// already done in this pass (the same frame) is passed over: their area is the same, so what is free there went to
+    /// the first player and an owner in the area keeps what it owns. The one difference from the game: something a later
+    /// player owns in the scanned ring just outside the area is not let go by their pass; any other player near it still
+    /// takes it over, and with nobody near it no one runs it either way. 100 players in one zone scanned it 100 times
+    /// every 2 s (measured 2026-10-31).
     /// </summary>
     [HarmonyPatch(typeof(ZDOMan), nameof(ZDOMan.ReleaseNearbyZDOS))]
     internal static class Ownership
     {
         private static readonly List<ZDO> Near = new List<ZDO>();
+        private static readonly HashSet<Vector2s> Done = new HashSet<Vector2s>();
+        private static int _pass = -1;
 
         private static bool Prefix(ZDOMan __instance, Vector3 refPosition, long uid)
         {
@@ -30,12 +37,27 @@ namespace HighSeat
                 SharedRule.BeginPass();
             }
             Vector2s zone = ZoneSystem.GetZone(refPosition);
+            if (!FirstInZone(zone))
+            {
+                return false;
+            }
             SimulationDistance synced = ZNet.instance.GetSyncedSimulationDistance();
             Near.Clear();
             __instance.FindSectorObjects(zone, new SimulationDistance(synced.NearSimulationDistance, 0, synced.IsClassic), Near);
             Release(__instance, zone, uid, shared);
             Near.Clear();
             return false;
+        }
+
+        // The game makes every call of a pass in one frame (ZDOMan.ReleaseZDOS): a new frame is a new pass.
+        private static bool FirstInZone(Vector2s zone)
+        {
+            if (_pass != Time.frameCount)
+            {
+                _pass = Time.frameCount;
+                Done.Clear();
+            }
+            return Done.Add(zone);
         }
 
         private static void Release(ZDOMan man, Vector2s zone, long uid, bool shared)

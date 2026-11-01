@@ -21,6 +21,9 @@ namespace HighSeat
     [HarmonyPatch(typeof(ZNet), nameof(ZNet.RPC_PeerInfo))]
     internal static class PlayerCap
     {
+        // Harmony runs every transpiler again whenever another mod patches the same method, so the line is said once.
+        private static bool _told;
+
         /// <summary>The cap, read by the patched check each time a player joins.</summary>
         public static int Limit() => Settings.MaxPlayers.Value;
 
@@ -34,7 +37,7 @@ namespace HighSeat
                 {
                     CodeInstruction limit = CodeInstruction.Call(typeof(PlayerCap), nameof(Limit));
                     code[at] = limit.MoveLabelsFrom(code[at]).MoveBlocksFrom(code[at]);
-                    HighSeat.Log.LogInfo($"player cap: Max players ({Limit()}), not the game's {ZNet.ServerPlayerLimit}");
+                    TellOnce();
                     return code;
                 }
             }
@@ -46,6 +49,15 @@ namespace HighSeat
             HighSeat.Log.LogWarning("the game's player cap check was not found (a game update, or another mod changed it): " +
                 "Max players is not applied and the game's own limit stays");
             return code;
+        }
+
+        private static void TellOnce()
+        {
+            if (!_told)
+            {
+                _told = true;
+                HighSeat.Log.LogInfo($"player cap: Max players ({Limit()}), not the game's {ZNet.ServerPlayerLimit}");
+            }
         }
 
         // The index of the one 10 compared with GetNrOfPlayers(); -1 when there is none, or more than one.

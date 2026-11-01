@@ -4,7 +4,8 @@ namespace HighSeat
 {
     /// <summary>
     /// The CPU guard: the server's frame time, smoothed over about a second. Busy only once the average has stayed above
-    /// the budget for a few seconds, so one long frame (a world save) does not count; measured only while players are on.
+    /// the budget for a few seconds, so one long frame (a world save) does not count; measured only while players are on
+    /// and not while a hosting player's own game loads (the world at start, a far jump), which is slow by nature.
     /// While busy the server takes on no more creatures (<see cref="Ownership"/>); those it runs stay, so nothing flips
     /// back and forth while it recovers.
     /// </summary>
@@ -19,7 +20,7 @@ namespace HighSeat
 
         public static void Measure()
         {
-            if (!ServerRun.Active || ZNet.instance.GetNrOfPlayers() == 0)
+            if (!ServerRun.Active || ZNet.instance.GetNrOfPlayers() == 0 || HostLoading())
             {
                 Reset();
                 return;
@@ -47,6 +48,12 @@ namespace HighSeat
                 _overSince = Time.unscaledTime;
             }
             return Time.unscaledTime - _overSince >= SustainSeconds;
+        }
+
+        private static bool HostLoading()
+        {
+            Player own = Player.m_localPlayer;
+            return !ZNet.instance.IsDedicated() && (own == null || own.IsTeleporting());
         }
 
         private static void Reset()

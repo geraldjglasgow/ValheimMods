@@ -125,7 +125,7 @@ namespace HighSeat
                     }
                     if (now > was && OnGrid(x, y))
                     {
-                        FullCheck.Sector(man, ps, x, y, now == AreaShape.Near);
+                        FullCheck.Sector(ps, x, y, now == AreaShape.Near);
                     }
                 }
             }
