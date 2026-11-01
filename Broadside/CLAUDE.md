@@ -4,8 +4,10 @@ Ship building: a dry dock, hull tools that make every keel, rib, plank run, deck
 fittings (post caps, hatches, rudders, a captain's wheel) and a blueprint table that saves, builds back and shares designs; and every saved
 design in the hammer, built on the water as a real ship that floats on its own hull, sails, and is steered by a
 helmsman at its rudder's tiller or at its captain's wheel; and ship cannons, the only pieces built on a launched ship's
-deck, manned, fired, hauled about the deck and fired as a broadside from the helm (`Cannons/`, "Cannons" below). Version 0.1.0, unreleased, never run in game as its own mod. GUID
-`milkyteam.broadside`, namespace `Broadside`, no .cfg (no settings). Required on the server and every client: the
+deck unless the .cfg allows any, manned, fired, hauled about the deck and fired as a broadside from the helm (`Cannons/`, "Cannons" below). Version 0.1.0, unreleased, never run in game as its own mod. GUID
+`milkyteam.broadside`, namespace `Broadside`. The .cfg (`milkyteam.broadside.cfg`, `KwSettings`, SyncedConfig: the
+server's values bind every player while `Lock Configuration` is on) has one setting, `Ships` / `AllowBuildingOnShips`
+(false). Required on the server and every client: the
 pieces and the ship are networked prefabs and the server keeps the shared ships.
 
 Built as the Broadside prototype ("fit kit") inside the dev-only AssetLab mod and moved out on 2026-10-24 with the
@@ -73,12 +75,17 @@ deck in place of the deck tiller. The ship formulas are in
   slots beside the workbench; the rest are checked and taken at the click, the game's way (`KwGamePay`: `Player.HaveRequirements` and `ConsumeResources`, so a mod that builds from nearby chests counts there too; every Broadside cost, a mast put back and an edit at sea as well). The launched ship (`KW_ship`) broken up with
   the hammer's remove gives all of it back, in full, in the game's floating cargo crates (`KwShipBreak`, below); wrecked
   or cleared with `kwship clear` it gives nothing; its boarding ladder (the karve's own, remade) is not a saved part and costs nothing.
-- **Built aboard once launched: ship cannons only.** The dock designs the whole ship; the only pieces built with the
-  hammer on a launched ship are Broadside's ship cannons (`BS_cannon_*`, `KwShipRiderRules`), which ride it
-  (`KwShipRider`) at their own cost and with the game's own removal (2026-10-26, the user's words: "We also need to not
-  allow building with the vanilla Valheim pieces on the ship, but you should be allowed to build cannons on your ship").
-  The game's pieces and every other mod's are refused there ("Only ship cannons are built on a launched ship"); pieces
-  already riding a ship stay. Ship cannons are built nowhere else (not on the dock's design parts, not on land:
+- **Built aboard once launched: ship cannons only, unless the .cfg allows any piece.** The dock designs the whole ship;
+  by default the only pieces built with the hammer on a launched ship are Broadside's ship cannons (`BS_cannon_*`,
+  `KwShipRiderRules`), which ride it (`KwShipRider`) at their own cost and with the game's own removal (2026-10-26, the
+  user's words: "We also need to not allow building with the vanilla Valheim pieces on the ship, but you should be allowed
+  to build cannons on your ship"). The game's pieces and every other mod's are refused there ("Only ship cannons are
+  built on a launched ship"); pieces already riding a ship stay. With `AllowBuildingOnShips` on (2026-11-01, after a
+  player asked to "build on these boats like any other structure. I want to live on board"; the user's words: "if true
+  players can place objects on the ship without restriction") every piece rides, the game's and every other mod's, but
+  for one that moves or floats itself (a ship, a cart, an item) or stands in water ("This is not built on a launched
+  ship"); the game's own checks (wards, clipping, a fire kept off a wooden floor or the deck) still run. Turning it off
+  takes nothing off a ship. Ship cannons are built nowhere else (not on the dock's design parts, not on land:
   `KwArmPlace`). Broadside's own dock pieces are never built there (its tools edit a launched ship their own way), and
   blueprints never carry riders.
 - **Own code only.** Nothing from another mod is compiled in (the prototype used Elite Creatures Pack's `Core`);
@@ -249,7 +256,7 @@ deck in place of the deck tiller. The ship formulas are in
 - Pieces built on a launched ship (riders, 2026-10-26, the user's words: "build things like cannons and the weapon mounts
   on the ship after it is built, and not while it is being built on the keel guide with keel blocks. I really want the
   keel guide and keel blocks to create the entirety of the ship"): since the ship cannons came in the same day, only
-  those (`KwShipRiderRules`; any other piece aimed at a launched ship is taken by the placement ray too, so its ghost
+  those, or any piece with `AllowBuildingOnShips` (`KwShipRiderRules`; any other piece aimed at a launched ship is taken by the placement ray too, so its ghost
   stands on the deck refused, and placing it says why, `KwShipRiderGhost`, `KwShipRiderRefused`; pieces already riding
   stay and work as before). The game drops every placement hit on a collider with a
   body (`Player.PieceRayTest`), so nothing could be built aboard; for the local player a hit on a launched ship is taken
@@ -354,7 +361,9 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
 - `Pieces/`: making the prefabs and putting them in the hammer. `KwPrefabs` (copies of `wood_floor` with a generated
   mesh, the longship's hull material and the floor's wood, free; and the launched ship's prefab), `KwCatalogue` (every
   `KwDef`: dock, tools and parts, fittings), `KwFeatures` (caps, rudders, hatches, windlass, table), `KwHammer` (Misc tab, build
-  order, the saved ships last), `KwSnaps`/`KwSnapRules` (snap points and which may meet), `KwIcons` (rendered hammer
+  order, the saved ships last), `KwBuildMenu` (the build menu's Categories tab: picking Transportation opens a
+  "Broadside" sublist under it with every Broadside piece, the saved ships and cannons included; Transportation keeps
+  the rest; an own tag id, `KwBuildMenu.TagId`, past the game's usage indexes), `KwSnaps`/`KwSnapRules` (snap points and which may meet), `KwIcons` (rendered hammer
   icons), `KwPaintedIcons` (painted tool and piece icons, `assets/kw_*.png`), `KwIcons` with `KwIconRig`, `KwIconSubject`, `KwIconLight`, `KwIconPicture` (rendered icons, isolated light), `KwTextures` (embedded textures; one over 256 px compressed on the
   graphics card and let go from memory, `Settle`), `KwRelief` (a normal map from an embedded relief, the workshop's
   way), `KwBuildView` (zoom out, pan, turn while

@@ -81,8 +81,9 @@ namespace Broadside
 
     /// <summary>
     /// The rules for a ghost standing on a launched ship (after the game's own checks): only Broadside's ship cannons are
-    /// built there (<see cref="KwShipRiderRules"/>; any other piece's ghost is refused, and placing it says why,
-    /// <see cref="KwShipRiderRefused"/>), a piece the game keeps off wood floors (a fire) is kept off the deck too, and
+    /// built there, or any piece with AllowBuildingOnShips (<see cref="KwShipRiderRules"/>; any other piece's ghost is
+    /// refused, and placing it says why, <see cref="KwShipRiderRefused"/>), a piece the game keeps off wood floors (a fire)
+    /// is kept off the deck too, and
     /// nothing is built aboard a ship whose owner has not yet given it its id (<see cref="KwShipRiders.IdKey"/>: a moment
     /// after it comes into the scene), since its riders could not find it.
     /// </summary>
@@ -110,12 +111,12 @@ namespace Broadside
             __instance.SetPlacementGhostValid(false);
         }
 
-        // Why a ghost is refused aboard: a piece that is not a ship cannon (said), the ship without its id or a piece kept
+        // Why a ghost is refused aboard: a piece that may not ride (said), the ship without its id or a piece kept
         // off wood (silently, ""); null when it may be built.
         private static string? Why(Piece? building, KwShipRiders ship)
         {
             if (building != null && KwShipRiderRules.Refused(building))
-                return KwShipRiderRules.OnlyCannons;
+                return KwShipRiderRules.Refusal;
             return building == null || ship.Id == 0L || building.m_notOnWood && KwShipRiderAim.OnDeck ? "" : null;
         }
     }

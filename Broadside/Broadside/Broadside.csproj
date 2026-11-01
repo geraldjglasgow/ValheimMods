@@ -6,7 +6,7 @@
     <RootNamespace>Broadside</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.3.4</Version>
+    <Version>0.4.0</Version>
     <Product>Broadside</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -38,6 +38,9 @@
 
   <ItemGroup>
     <ProjectReference Include="$(ModLibsPath)\PatchGuard\PatchGuard.csproj" />
+    <!-- SyncedConfig: the .cfg bound to the server's values (Charter), hot reloaded; it brings ConfigReload, YamlConfig and YamlDotNet -->
+    <ProjectReference Include="$(ModLibsPath)\Charter\Charter.csproj" />
+    <ProjectReference Include="$(ModLibsPath)\SyncedConfig\SyncedConfig.csproj" />
     <!-- BundlePrefabs: prefab copies on the bench and their registration with the network scene on every peer -->
     <ProjectReference Include="$(ModLibsPath)\BundlePrefabs\BundlePrefabs.csproj" />
     <!-- BlueprintShelf: the blueprint table's window and sharing (it brings WindowInput and PlateColumn) -->

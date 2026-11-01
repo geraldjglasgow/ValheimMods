@@ -71,7 +71,8 @@ only stone shot, the two small ones iron balls, the large one only the flametal 
   on the ship this frame, `KwShipRiderAim`), where each then rides the ship (`KwShipRider`). On a Broadside dock's design
   parts "Build cannons on the ship once it is launched"; anywhere else (the ground, the game's floors) "Ship cannons are
   built on a launched ship's deck"; the game's own ships never take a ghost. On a launched ship nothing else is built
-  (Broadside's `KwShipRiderRules`: "Only ship cannons are built on a launched ship"); pieces already aboard stay.
+  (Broadside's `KwShipRiderRules`: "Only ship cannons are built on a launched ship"), unless the .cfg's
+  `AllowBuildingOnShips` is on; pieces already aboard stay.
 - **Ship cannon**: built on a launched Broadside ship's deck. A breech-loader with a long barrel (each shape's `Long` stretch, `Guns/KwStretch.cs`:
   the reinforce drawn out behind the trunnions and the chase ahead of them, rings, hoops, breech and muzzle unchanged) on
   a long, low naval truck carriage made in code to the proportions of a photographed naval gun (below): two brackets

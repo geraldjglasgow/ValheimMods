@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.0
+
+- `AllowBuildingOnShips` (off): build any piece on a launched ship, not only cannons; it sails with the ship.
+- The hammer's Categories tab has a Broadside entry under Transportation holding every Broadside piece.
+- Players now need the server's Broadside version to join.
+
 ## 0.3.4
 
 - Fixed: ships loading in no longer stall a frame on their holes, rig damage and sails; the work is spread out.

@@ -16,11 +16,14 @@ Watch the ship cannons video: https://www.youtube.com/watch?v=8zDX1wglYUQ
 - Blueprint table: save the ship on the dock, build a saved one back onto it, share designs with the server, and see a
   ship's speed, stability, weight and cost before you build it.
 - Launch from the hammer: every saved ship is built on the water near a workbench, for what its parts cost.
+- Hammer menu: every Broadside piece under its own Broadside entry, beneath Transportation.
 - Real sailing: the ship floats on its own hull; square sails want the wind behind, gaff sails and jibs sail closer to it.
 - Steering by tiller, or a captain's wheel with working steering gear; anchor windlass, hatches, crow's nests, pennants.
 - Ship panel: speed, top speed for the wind and sails you have now, explore radius, health and your guns' reloads.
 - Log off aboard a ship and you log back in on the same spot on deck.
-- Ship cannons, built on a launched ship (the only piece built aboard): bronze with stone shot, or iron with iron shot.
+- Ship cannons, built on a launched ship: bronze with stone shot, or iron with iron shot.
+- Build aboard (off by default): with `AllowBuildingOnShips` on, walls, floors, chests, beds and any other piece are
+  built on a launched ship and sail with it.
 - Broadside from the helm: U fires the side you look toward, J shows the shot arcs.
 - Battle damage: holes through the hull, flooding, bailing, holed sails and falling masts; wooden repair kits patch
   leaks at sea and the hammer mends the rest.
@@ -47,7 +50,8 @@ Needed on every client and the server. Install with r2modman or the Thunderstore
 `BepInEx/plugins`.
 
 ## Configuration
-No settings. Saved ships are JSON files in `BepInEx/config/Broadside.Ships`, sail pictures PNG files in
+`BepInEx/config/milkyteam.broadside.cfg`. Every setting is described in the file and applies without a restart; the
+server's values bind every player. Saved ships are JSON files in `BepInEx/config/Broadside.Ships`, sail pictures PNG files in
 `BepInEx/config/Broadside.Sails`.
 
 ## Links

@@ -8,6 +8,11 @@
     <ItemGroup>
       <InputAssemblies Include="$(TargetPath)" />
       <InputAssemblies Include="$(OutDir)PatchGuard.dll" />
+      <InputAssemblies Include="$(OutDir)SyncedConfig.dll" />
+      <InputAssemblies Include="$(OutDir)YamlConfig.dll" />
+      <InputAssemblies Include="$(OutDir)ConfigReload.dll" />
+      <InputAssemblies Include="$(OutDir)Charter.dll" />
+      <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
       <InputAssemblies Include="$(OutDir)BundlePrefabs.dll" />
       <InputAssemblies Include="$(OutDir)BlueprintShelf.dll" />
       <InputAssemblies Include="$(OutDir)WindowInput.dll" />
