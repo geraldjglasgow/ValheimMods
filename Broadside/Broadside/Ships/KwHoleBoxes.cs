@@ -8,20 +8,24 @@ namespace Broadside
     /// A launched ship's boxes opened where its holes are (<see cref="KwHullHoles"/>), on every peer, a dedicated server
     /// included, so shots, thrown things and small objects pass through a hole as through an opening. The ship's boxes
     /// (<see cref="KwShipColliders"/>, <see cref="KwShipHouses"/>) are known as built; the boxes a hole reaches and its gaps
-    /// in them (<see cref="KwHoleGaps"/>) are worked out once for each hole and size, and when the holes change only a box
-    /// whose holes changed is made again: switched off and stood in for by boxes round its gaps (named as it is, on its
-    /// layer), or switched on again once its holes are mended. The body's mass and turning are kept as they were
-    /// (<see cref="KwBodyMass"/>), so a hole never changes how the ship floats; the water it lets in does
-    /// (<see cref="KwShipFlood"/>).
+    /// in them (<see cref="KwHoleGaps"/>) are worked out once for each hole and size, one hole at a time while the frame's
+    /// share lasts (<see cref="KwFrameShare.Boxes"/>: a ship loaded with many holes takes a few frames, not one long one),
+    /// and once every hole's are known only a box whose holes changed is made again: switched off and stood in for by boxes
+    /// round its gaps (named as it is, on its layer), or switched on again once its holes are mended. The body's mass and
+    /// turning are kept as they were (<see cref="KwBodyMass"/>), so a hole never changes how the ship floats; the water it
+    /// lets in does (<see cref="KwShipFlood"/>).
     /// </summary>
     public sealed class KwHoleBoxes : MonoBehaviour
     {
+        // A box no hole reaches: no holes, no gaps (only read).
+        private static readonly (StringBuilder Key, List<Rect> Gaps) Unreached = (new StringBuilder(), new List<Rect>());
         private readonly List<(BoxCollider Box, KwHoleSlab Slab)> boxes = new List<(BoxCollider Box, KwHoleSlab Slab)>();
         private readonly Dictionary<int, (string Key, List<GameObject> Pieces)> cut = new Dictionary<int, (string Key, List<GameObject> Pieces)>();
         private Dictionary<string, List<(int Box, List<Rect> Gaps)>> reached = new Dictionary<string, List<(int Box, List<Rect> Gaps)>>();
         private Transform? holder;
         private KwHullHoles? holes;
         private int done = -1;
+        private bool due;
 
         public static void Add(Transform ship, KwHullHoles holes)
         {
@@ -82,20 +86,47 @@ namespace Broadside
 
         private void Update()
         {
-            if (holes == null || holder == null || holes.Version == done)
+            if (holes == null || holder == null)
                 return;
-            done = holes.Version;
-            Matrix4x4 into = holder.worldToLocalMatrix * transform.localToWorldMatrix;
+            if (holes.Version != done)
+                (done, due) = (holes.Version, true);
+            while (due && KwFrameShare.Boxes.Open())
+            {
+                long start = System.Diagnostics.Stopwatch.GetTimestamp();
+                due = !Step();
+                KwFrameShare.Boxes.Spend(System.Diagnostics.Stopwatch.GetTimestamp() - start);
+            }
+        }
+
+        // One step: the boxes the next hole not known yet reaches worked out (false), or, every hole's known, the boxes
+        // opened as the holes now leave them (true).
+        private bool Step()
+        {
+            foreach (KwHullHole h in holes!.Holes)
+            {
+                if (reached.ContainsKey(h.Key))
+                    continue;
+                Matrix4x4 into = holder!.worldToLocalMatrix * transform.localToWorldMatrix;
+                reached[h.Key] = Reach(KwHoleShape.Of(h).Moved(into.MultiplyPoint3x4, into.MultiplyVector));
+                return false;
+            }
+            Open();
+            return true;
+        }
+
+        // The boxes the holes reach (every hole's known) made again where their holes changed, the body's mass kept.
+        private void Open()
+        {
             Dictionary<string, List<(int Box, List<Rect> Gaps)>> now = new Dictionary<string, List<(int Box, List<Rect> Gaps)>>();
-            foreach (KwHullHole h in holes.Holes)
-                now[h.Key] = reached.TryGetValue(h.Key, out var known) ? known : Reach(KwHoleShape.Of(h).Moved(into.MultiplyPoint3x4, into.MultiplyVector));
+            foreach (KwHullHole h in holes!.Holes)
+                now[h.Key] = reached[h.Key];
             reached = now;
             Rigidbody? body = GetComponent<Rigidbody>();
             KwBodyMass kept = KwBodyMass.Of(body);
             Dictionary<int, (StringBuilder Key, List<Rect> Gaps)> gaps = Gaps();
             bool changed = false;
             for (int i = 0; i < boxes.Count; i++)
-                changed |= Box(i, gaps.TryGetValue(i, out var mine) ? mine : (new StringBuilder(), new List<Rect>()));
+                changed |= Box(i, gaps.TryGetValue(i, out var mine) ? mine : Unreached);
             if (changed)
                 kept.Put(body);
         }

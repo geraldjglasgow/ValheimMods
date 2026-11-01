@@ -9,8 +9,9 @@ namespace Broadside
     /// cutout, ragged and with a darker frayed rim (<see cref="KwWearHole"/>), where the shot passed, sized by its ball
     /// (<see cref="KwRigDamageCuts.HoleRadius"/>). A hole's place is kept as a place in the cloth's texture
     /// (<see cref="Uv"/>), so it moves with the cloth as the sail is reefed or furled, and every peer that draws cuts the
-    /// same (each hole's outline from its own seed). A holed sail wears its own copy of its material (<see cref="Holed"/>),
-    /// its texture read back from the one it wore and cut; mended, it wears that one again.
+    /// same (each hole's outline from its own seed). A holed sail wears its own copy of its material (<see cref="Made"/>),
+    /// its texture read back from the one it wore (<see cref="Pixels"/>) and cut (<see cref="Cut"/>, plain arithmetic on the
+    /// pixels, which <see cref="KwSailHoling"/> runs off the main thread); mended, it wears that one again.
     /// </summary>
     public static class KwSailDamageHoles
     {
@@ -68,15 +69,20 @@ namespace Broadside
             return shade >= 1f && !gone ? c : KwWearNoise.Shade(c, new Vector3(shade, shade, shade), gone ? (byte)0 : c.a);
         }
 
-        /// <summary>A copy of a sail's material wearing its texture with its holes cut; null when it cannot be read.</summary>
-        public static Material? Holed(Material worn, KwSailSpec spec, List<KwRigMark> holes)
+        /// <summary>The pixels of a sail's material's texture at <see cref="KwSailLooks.Size"/>, to cut its holes into; null when it cannot be read.</summary>
+        public static Color32[]? Pixels(Material worn)
         {
             Texture? source = worn.mainTexture;
             if (source == null || !KwSailPixels.Drawn)
                 return null;
+            return KwSailPixels.Read(source, KwSailLooks.Size, KwSailLooks.Size);
+        }
+
+        /// <summary>A copy of a sail's material wearing its texture's pixels with its holes cut (<see cref="Cut"/> of <see cref="Pixels"/>).</summary>
+        public static Material Made(Material worn, Color32[] pixels)
+        {
+            Texture source = worn.mainTexture;
             int size = KwSailLooks.Size;
-            KwSailFrame frame = KwSailFrame.Of(spec.Shape, spec.Width, spec.Height);
-            Color32[] pixels = Cut(KwSailPixels.Read(source, size, size), size, frame, spec.Height, holes);
             Texture2D texture = new Texture2D(size, size, TextureFormat.RGBA32, true, false)
             {
                 name = "broadside_sail_holed", wrapMode = TextureWrapMode.Clamp, filterMode = source.filterMode, anisoLevel = source.anisoLevel,

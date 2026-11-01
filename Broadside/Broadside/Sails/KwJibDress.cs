@@ -36,8 +36,11 @@ namespace Broadside
         public const string HolderName = "jibs";
         private const float OverClub = 0.045f;
 
-        /// <summary>Makes the jibs, every one fully set; none when the plan has none.</summary>
-        public static List<KwJib> Dress(Transform frame, KwBowsprit spec, KwJibStay stay)
+        /// <summary>
+        /// Makes the jibs, every one fully set, or set to the hoist given (a launched ship's as its speed sets them,
+        /// <see cref="KwShipJibs"/>); none when the plan has none.
+        /// </summary>
+        public static List<KwJib> Dress(Transform frame, KwBowsprit spec, KwJibStay stay, float hoist = 1f)
         {
             Clear(frame);
             List<KwJib> jibs = new List<KwJib>();
@@ -51,7 +54,7 @@ namespace Broadside
                 Ropes(holder, cuts[i], i);
             }
             foreach (KwJib jib in jibs)
-                Pose(jib, 1f);
+                Pose(jib, hoist);
             return jibs;
         }
 

@@ -112,8 +112,9 @@ namespace Broadside
 
         /// <summary>
         /// A mast's sails' cloth, lashings and ropes (its mast and spars are in the ship's look, but for a boom, which swings
-        /// with its sail to the wind, <see cref="KwBoomSwing"/>), raised by the ship's speed; also made again for a mast
-        /// changed at sea (<see cref="KwSeaRigLayers"/>).
+        /// with its sail to the wind, <see cref="KwBoomSwing"/>), raised by the ship's speed: dressed as the speed sets them
+        /// now (<see cref="KwShipSail.Stages"/>), so they are not dressed full and set again on the next frame; also made
+        /// again for a mast changed at sea (<see cref="KwSeaRigLayers"/>).
         /// </summary>
         internal static void Sail(Transform holder, KwBpPiece piece)
         {
@@ -121,8 +122,10 @@ namespace Broadside
             made.SetParent(holder, false);
             made.SetLocalPositionAndRotation(piece.Position, piece.Rotation);
             string saved = KwShipParts.Saved(piece);
-            KwBoomSwing.Dress(made, saved);
-            made.gameObject.AddComponent<KwShipSail>().Saved = saved;
+            float[] stages = KwShipSail.Stages(holder.GetComponentInParent<Ship>(), saved);
+            KwBoomSwing.Dress(made, saved, System.Array.ConvertAll(stages, KwShipSail.HoistOf));
+            KwShipSail sail = made.gameObject.AddComponent<KwShipSail>();
+            (sail.Saved, sail.Dressed) = (saved, stages);
         }
 
         // The onboard trigger round the hull, from a metre under the keel line to Aloft over the sheer (cabin roofs, masts

@@ -6,17 +6,22 @@ namespace Broadside
     /// <summary>
     /// A launched ship's mast's sails as its damage leaves them (<see cref="KwRigDamageLooks"/>), on the screens that draw
     /// them, on the mast's sail fitting (<see cref="KwShipFittings"/>): each sail's holes cut in its own copy of its
-    /// material (<see cref="KwSailDamageHoles"/>), its cloth drooping where it is no longer fastened
+    /// material (<see cref="KwSailHoling"/>, the cut off the main thread), its cloth drooping where it is no longer fastened
     /// (<see cref="KwSailDamageDroop"/>), its yard's lashings and its boom's lacing drawn without the broken rings, and its
-    /// boom and gaff notched or broken off (<see cref="KwSailDamageRings"/>). Made again only when the mast's marks change;
-    /// mended, each part wears what it wore before.
+    /// boom and gaff notched or broken off (<see cref="KwSailDamageRings"/>). Made again only when the mast's marks change,
+    /// a sail a step (<see cref="Step"/>), and a sail's holes only when its own changed; mended, each part wears what it
+    /// wore before.
     /// </summary>
     public sealed class KwSailDamageCloth : MonoBehaviour
     {
-        private readonly Dictionary<int, (Renderer Cloth, Material Worn, Material? Holed)> holed = new Dictionary<int, (Renderer, Material, Material?)>();
+        private readonly KwSailHoling holing = new KwSailHoling();
         private readonly Dictionary<string, (MeshFilter Filter, Mesh Whole)> meshes = new Dictionary<string, (MeshFilter, Mesh)>();
         private KwRigPiece piece = null!;
-        private string shown = "";
+
+        // The mast's marks all its sails show (null while a pass shows them, sail by sail, the marks it is for).
+        private string? shown = "";
+        private string showing = "";
+        private int next;
 
         /// <summary>Its mast's index in the ship's blueprint.</summary>
         public int Index => piece.Index;
@@ -29,36 +34,40 @@ namespace Broadside
             return cloth;
         }
 
-        /// <summary>The sails as the rig's condition leaves them, made again only when the mast's marks changed.</summary>
-        public void Show(KwRigCondition condition)
+        /// <summary>
+        /// One step of showing the sails as the rig's condition leaves them: a sail (its holes, which may take a few steps
+        /// while they are cut, its droop and its fastenings along the ship), then the lashings; true once all are shown, at
+        /// once when the mast's marks are the ones shown. Marks that change on the way start it again from the first sail
+        /// (a sail whose holes did not change keeps its texture).
+        /// </summary>
+        public bool Step(KwRigCondition condition)
         {
             string key = KwRigLookKey.Sails(condition, piece);
             if (key == shown)
-                return;
-            shown = key;
-            for (int i = 0; i < piece.Sails.Count; i++)
+                return true;
+            if (shown != null || key != showing)
+                (shown, showing, next) = (null, key, 0);
+            if (next < piece.Sails.Count)
             {
-                KwSailHurt hurt = condition.Sail(piece.Index, i);
-                Holes(i, condition.Holes(piece.Index, i));
-                Droop(i, hurt);
-                if (!piece.Sails[i].Square)
-                    KwSailDamageRings.Along(this, piece, i, hurt, condition);
+                if (Sail(next, condition))
+                    next++;
+                return false;
             }
             KwSailDamageRings.Lashings(this, piece, condition);
+            shown = showing;
+            return true;
         }
 
-        // A sail's holes cut in its own material, or its own material again with none.
-        private void Holes(int i, List<KwRigMark> holes)
+        // Sail i as the condition leaves it: its holes (false while they are cut), its droop and its fastenings along the ship.
+        private bool Sail(int i, KwRigCondition condition)
         {
-            Renderer? cloth = transform.Find(KwSailDress.Cloth(i))?.GetComponent<Renderer>();
-            if (cloth == null)
-                return;
-            if (!holed.TryGetValue(i, out (Renderer Cloth, Material Worn, Material? Holed) was))
-                was = (cloth, cloth.sharedMaterial, null);
-            Forget(was.Holed);
-            Material? made = holes.Count > 0 ? KwSailDamageHoles.Holed(was.Worn, piece.Sails[i].Spec, holes) : null;
-            cloth.sharedMaterial = made ?? was.Worn;
-            holed[i] = (cloth, was.Worn, made);
+            if (!holing.Wear(transform, i, piece.Sails[i].Spec, condition.Holes(piece.Index, i)))
+                return false;
+            KwSailHurt hurt = condition.Sail(piece.Index, i);
+            Droop(i, hurt);
+            if (!piece.Sails[i].Square)
+                KwSailDamageRings.Along(this, piece, i, hurt, condition);
+            return true;
         }
 
         // A sail drooping where it is no longer fastened, or set as the wind has it.
@@ -83,14 +92,6 @@ namespace Broadside
             filter.sharedMesh = mesh != null ? mesh : was.Whole;
         }
 
-        private static void Forget(Material? material)
-        {
-            if (material == null)
-                return;
-            Destroy(material.mainTexture);
-            Destroy(material);
-        }
-
         // Its own meshes and materials let go with the fitting (the parts' own owners let go what they wear then).
         private void OnDestroy()
         {
@@ -99,8 +100,7 @@ namespace Broadside
                 if (filter != null && whole != null && filter.sharedMesh != whole)
                     Destroy(whole);
             }
-            foreach ((Renderer _, Material _, Material? made) in holed.Values)
-                Forget(made);
+            holing.Forget();
         }
     }
 }

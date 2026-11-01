@@ -21,8 +21,12 @@ namespace Broadside
 
         private static string Gaff(int sail) => GaffName + sail;
 
-        /// <summary>Makes or remakes a mast's cloths, lashings and ropes from what its piece saves, every sail fully set; the sails' layouts, or null when it saves nothing readable.</summary>
-        public static List<KwSailLayout>? Dress(Transform piece, string saved)
+        /// <summary>
+        /// Makes or remakes a mast's cloths, lashings and ropes from what its piece saves, every sail fully set, or set to the
+        /// hoist given for it (a launched ship's sails as its speed sets them, <see cref="KwShipSail"/>); the sails' layouts,
+        /// or null when it saves nothing readable.
+        /// </summary>
+        public static List<KwSailLayout>? Dress(Transform piece, string saved, float[]? hoists = null)
         {
             if (!KwMastSpec.TryParse(saved, out KwMastSpec mast))
                 return null;
@@ -40,7 +44,7 @@ namespace Broadside
             KwPennant.Add(piece, mast);
             KwMastClimb.Add(piece, mast, piece.GetComponentInParent<Ship>() != null);
             for (int i = 0; i < sails.Count; i++)
-                Pose(piece, sails, i, 1f);
+                Pose(piece, sails, i, hoists != null && i < hoists.Length ? hoists[i] : 1f);
             return sails;
         }
 

@@ -10,6 +10,8 @@ namespace Broadside
     /// their foremast's lower sails by the ship's speed, as the game's ships set theirs (<see cref="KwShipSail.Share"/>),
     /// each easing over a second or so, and sheeted to leeward of the apparent wind (<see cref="KwJibSwing"/>). Every peer
     /// reads the speed the game syncs; only drawn, so never on a dedicated server. The bowsprit's spar is in the ship's look.
+    /// The jibs are dressed as the speed sets them when the ship is built, so the first look at the speed sets them again
+    /// only when it changed since (as <see cref="KwShipSail"/>'s sails).
     /// </summary>
     public sealed class KwShipJibs : MonoBehaviour
     {
@@ -18,7 +20,7 @@ namespace Broadside
         private Ship? ship;
         private KwMastSpec? mast;
         private List<KwJib> jibs = new List<KwJib>();
-        private float stage = -1f;
+        private float stage = -1f, dressed = -1f;
         private bool broken;
 
         /// <summary>A blueprint's bowsprit's jibs on the ship, under its fittings; nothing with no jib or no foremast.</summary>
@@ -33,7 +35,9 @@ namespace Broadside
             made.SetParent(holder, false);
             made.SetLocalPositionAndRotation(piece.Position, piece.Rotation);
             KwShipJibs set = made.gameObject.AddComponent<KwShipJibs>();
-            (set.mast, set.jibs) = (stay.Mast, KwJibDress.Dress(made, spec, stay));
+            Ship? game = holder.GetComponentInParent<Ship>();
+            set.dressed = game != null ? KwShipSail.Share(stay.Mast, 0, game.GetSpeedSetting()) : 1f;
+            (set.mast, set.jibs) = (stay.Mast, KwJibDress.Dress(made, spec, stay, KwShipSail.HoistOf(set.dressed)));
             KwJibSwing.Add(made, set.jibs);
         }
 
@@ -49,6 +53,7 @@ namespace Broadside
             broken = false;
         }
 
+        // The jibs eased to their share at the speed; the first time set there at once (nothing to do when dressed there).
         private void Hoist()
         {
             if (ship == null || mast == null || jibs.Count == 0)
@@ -56,9 +61,12 @@ namespace Broadside
             float target = KwShipSail.Share(mast, 0, ship.GetSpeedSetting());
             if (stage >= 0f && Mathf.Approximately(stage, target))
                 return;
-            stage = stage < 0f ? target : Mathf.MoveTowards(stage, target, PerSecond * Time.deltaTime);
+            bool first = stage < 0f;
+            stage = first ? target : Mathf.MoveTowards(stage, target, PerSecond * Time.deltaTime);
+            if (first && Mathf.Approximately(dressed, target))
+                return;
             foreach (KwJib jib in jibs)
-                KwJibDress.Pose(jib, Mathf.SmoothStep(0f, 1f, stage));
+                KwJibDress.Pose(jib, KwShipSail.HoistOf(stage));
         }
     }
 }

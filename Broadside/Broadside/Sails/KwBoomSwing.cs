@@ -41,10 +41,13 @@ namespace Broadside
             }
         }
 
-        /// <summary>A launched ship's mast's sails dressed with their booms apart (<see cref="KwSailDress.Dress"/>), the sail along the ship swung to the wind.</summary>
-        public static void Dress(Transform made, string saved)
+        /// <summary>
+        /// A launched ship's mast's sails dressed with their booms apart (<see cref="KwSailDress.Dress"/>), each at the hoist
+        /// given for it, the sail along the ship swung to the wind.
+        /// </summary>
+        public static void Dress(Transform made, string saved, float[] hoists)
         {
-            Apart(() => KwSailDress.Dress(made, saved));
+            Apart(() => KwSailDress.Dress(made, saved, hoists));
             if (KwMastSpec.TryParse(saved, out KwMastSpec mast))
                 made.gameObject.AddComponent<KwBoomSwing>().Make(made, mast);
         }

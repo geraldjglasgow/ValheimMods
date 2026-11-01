@@ -22,8 +22,11 @@ namespace Broadside
             List<int> kept = new List<int>(triangles.Length);
             for (int k = 0; k + 2 < triangles.Length; k += 3)
             {
-                if (keep(kit[triangles[k]], kit[triangles[k + 1]], kit[triangles[k + 2]]))
-                    kept.AddRange(new[] { triangles[k], triangles[k + 1], triangles[k + 2] });
+                if (!keep(kit[triangles[k]], kit[triangles[k + 1]], kit[triangles[k + 2]]))
+                    continue;
+                kept.Add(triangles[k]);
+                kept.Add(triangles[k + 1]);
+                kept.Add(triangles[k + 2]);
             }
             return kept;
         }

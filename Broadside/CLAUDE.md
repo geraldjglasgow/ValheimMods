@@ -711,7 +711,10 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   4 ms a frame, its colliders and tuning always on the first, `Built` once all have run: `KwShipFittings.Steps` a piece's
   fitting a step, `KwSeaShip.Steps` and `KwSeaKind.Building`, `KwSeaOpeningLooks.Building` a part's look a step; its body's
   centre of mass and inertia off automatic before a box is added, and the colliders made switched off and switched on
-  once, 2026-10-27: a Little Gull from 906 ms in one frame to a few frames), `KwShipParts` (a blueprint piece's sizes, prefab copies, the
+  once, 2026-10-27: a Little Gull from 906 ms in one frame to a few frames; what its damage draws and opens once built,
+  its holes, rig marks and boxes, goes on in pieces within `KwFrameShare`, its long cuts off the main thread through
+  `KwOffMain`, 2026-10-31: 100 players joining a HighSeat host made it load their areas' ships, whose first hole cuts,
+  rig looks and sail poses took 15 to 66 ms in one frame), `KwShipParts` (a blueprint piece's sizes, prefab copies, the
   rudder's post), `KwShipTuning` + `KwShipHydro` + `KwHullSlices` + `KwSectionBlend` + `KwSectionMath` (how it floats:
   the hull in slices, each shaped as the hull is at its middle, Archimedes; over a zone not loaded, at the edge of the
   area round a player, the calm sea's height, so a long hull's end there keeps its lift), `KwShipWeight` (its weight, the water
@@ -735,7 +738,8 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   cabin roof's edge over a raised side; the ship as it sees it `KwShipLadderShip` (the rope tie places of `KwRigShip`,
   decks and hold floors, fittings, `KwShipLadderHoles` openings, the anchor's lead), `KwShipLadderRoom` (what is in the
   ladder's way, where a person stands), `KwShipLadderSides` (the hull's outside), the result `KwShipLadderPlan`),
-  `KwShipSail` (sails set by speed, mast by mast), `KwShipHelm` + `KwShipTiller` (where the helm is),
+  `KwShipSail` (sails set by speed, mast by mast; dressed at the speed's share when built, `Stages`, so its first look
+  poses nothing), `KwShipHelm` + `KwShipTiller` (where the helm is),
   `KwShipWheel` (a captain's wheel turned by the ship's helm; the helm at it when its gear reaches the rudder,
   `TakesHelm`) + `KwShipGear` (the rudder built with its steering gear, saved or laid out from the blueprint).
   `KwShipDress` (from `KwShipFittings.Fit`): `KwShipShields` (every railing's shield hooks, the owner's confirmation),
@@ -786,8 +790,11 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   inner radius), `KwHoleLooks` (on the look's holder: the hull's own looks, kept apart by `KwBpMeshSet.Apart`, packed by
   `KwHoleChunks` into a few meshes a material of at most 32000 vertices along the ship (decks; planking parts and cabins
   are drawn alone by `KwSeaOpeningLooks` and handed in by index, `Own`, so a sea edit replaces one part); a chunk a hole
-  comes near is cut again), `KwHolePart` (a chunk's renderer, whole mesh and bounds) + `KwHolePatches` (its holes cut a group at a time, the
-  holes whose triangles meet together, each group's patch kept by its holes' keys, joined onto the whole mesh), `KwHoleCut`
+  comes near is given its new holes and waits its turn: a step at a time within `KwFrameShare.Looks`, 3 ms a frame), `KwHolePart` (a chunk's
+  renderer, whole mesh and bounds; `Want`, then `Step`: the mesh read at its first hole, each cut off the main thread through
+  `KwOffMain`, at most 2 jobs at once, the cut mesh written on the main thread) + `KwHolePatches` (its holes cut a group at a time, the
+  holes whose triangles meet together, each group's patch kept by its holes' keys, joined onto the whole mesh; pure, its
+  index made at its first cut), `KwHoleCutLog` (a slow run of cuts told in the log: off and on the main thread, the most in a frame), `KwHoleCut`
   (`Patch`: the triangles within a hole's depths, 8 cm out of the face to 15 cm in, less its outline, `KwHoleClip`: the
   wedges outside the star, three cuts each; `Join`; `KwHoleIndex`, the triangles' bounding spheres; `KwHolePatch`),
   `KwHoleRim` + `KwRimProbe` + `KwHoleSplinter` (the broken board end through the thickness in the part's own wood, in 3.5 cm
@@ -795,7 +802,8 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   `KwHoleMesh` + `KwHoleMeshes` (a mesh as lists, read from and written to Unity's), `KwHoleBoxes` + `KwHoleGaps` (every
   box a hole's wall is, its thin side within 60 degrees of the hole and its middle plane within 0.25 m, stood in for by
   boxes round the hole's passage: three rectangles inside the outline seen on the box, carried along the normal through
-  the box no deeper than the hole's cut; each hole's boxes worked out once; the body's mass kept).
+  the box no deeper than the hole's cut; each hole's boxes worked out once, a hole a step within `KwFrameShare.Boxes`, 2 ms a
+  frame, on a dedicated server too; the body's mass kept).
   The black mark (`KwHoleLook`) is gone.
   Patches and repairs (2026-10-26; Multiplayer above), added by `KwShipDamage`: `KwHullPatches` (on the ship: the patches
   from its ZDO, `Leaking` for the flood, the patch calls, the owner's tidying) + `KwHullPatchText` (the ZDO text; which
@@ -846,12 +854,15 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   `KwRigDamageDrive` + `KwRigPower` + `KwRigSteering` (the push by the sails still working, whole exactly the mix's; the
   steering by the blade left, `Floor` 0.12), `KwRigDamageMend` + `KwRigMendAsk` (the hammer: its hover on the rig, and what a repair click asks, `KwShipRepair`),
   `KwRigBlade` (a rudder blade's box, area left, where a chunk broke it, ragged board by board). Drawn only:
-  `KwRigDamageLooks` (on the visual holder), `KwRigLook` + `KwRigLookPlan` + `KwRigSparDraw` + `KwRigLookKey` (each mast,
+  `KwRigDamageLooks` (on the visual holder; each look, mast's sails and rudder shown in turn within `KwFrameShare.Looks`, as
+  the marks are when its turn comes, the jibs once all are), `KwRigLook` + `KwRigLookPlan` + `KwRigSparDraw` + `KwRigLookKey` (each mast,
   bowsprit and cap drawn on its own, `KwShipFittings.Moves`, cut by its plan: spars that go, broken hoops, spars drawn
   again, a fallen piece's high part), `KwRigDamageSpar` (a notched spar's mesh, splintered ends), `KwRigDamageMesh`
   (triangles kept, craters, joins), `KwMastFall` + `KwRigSound` (the fall, 6 to 9 s, the ropes' whip, the game's sounds made local, scaled in volume and pitch; the heavy gate's creak found in `darkwood_gate`'s door effects) + `KwMastCreak` (the wood creaking and splintering as it leans, most when about halfway over; a ship's timber crash where it lands) + `KwMastFallSplit` (only what is above the break goes),
   `KwRigDamageRudder` + `KwRigBladeCut` (the blade sliced by height and clipped, broken boards' ends); in `Sails/`
-  `KwSailDamageCloth` (a mast's sails: holes, droop, rings), `KwSailDamageHoles` (the texture place, the cut, the holed
+  `KwSailDamageCloth` (a mast's sails: holes, droop, rings; a sail a `Step`), `KwSailHoling` (each sail's holed copy of its
+  material, cut again only when its own holes change, the pixels cut off the main thread through `KwOffMain`),
+  `KwSailDamageHoles` (the texture place, the pixels read, the cut, the holed
   material), `KwSailDamageDroop` + `KwSailDroopAlong` (through `KwSailMotion.Bend`, `IKwClothBend`), `KwSailDamageRings`
   (lashings and lacing without the broken rings, booms and gaffs notched or broken), `KwSailDamagePierce` (a shot through a
   sail). Numbers: a small iron ball's bite 0.1 m each side; dead centre at 5 m it fells a 13 m mast (0.20 m at its foot),

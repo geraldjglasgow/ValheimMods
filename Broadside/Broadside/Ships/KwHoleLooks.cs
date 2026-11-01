@@ -11,19 +11,24 @@ namespace Broadside
     /// every cabin) are kept apart from the ship's combined meshes (<see cref="KwShipLook"/>, through
     /// <see cref="KwBpMeshSet.Apart"/>) and packed into a few meshes of their own a material, neighbours along the ship
     /// together (<see cref="KwHoleChunks"/>), each its own renderer. When the ship's holes change
-    /// (<see cref="KwHullHoles.Version"/>) every chunk a hole comes near is cut with the holes near it (<see cref="KwHolePart"/>:
-    /// only the group of holes that changed is cut again), so a hole at a seam goes through both parts there; a chunk
-    /// whose holes are all mended wears its whole mesh again. Each hole's ragged outline is <see cref="KwHoleShape"/>'s,
-    /// the same on every peer. Only where there is a screen; the colliders are <see cref="KwHoleBoxes"/>'.
+    /// (<see cref="KwHullHoles.Version"/>) every chunk a hole comes near is given the holes near it to wear
+    /// (<see cref="KwHolePart"/>: only the group of holes that changed is cut again), so a hole at a seam goes through both
+    /// parts there; a chunk whose holes are all mended wears its whole mesh again. The chunks given new holes get there a
+    /// step at a time while the frame's share lasts (<see cref="KwFrameShare.Looks"/>), each cut itself off the main thread
+    /// (<see cref="KwOffMain"/>): a ship loaded with its holes (every peer that loads it cuts them all, as when many players
+    /// arrive and the server loads their areas) or a volley's holes never hold a frame up. Each hole's ragged outline is
+    /// <see cref="KwHoleShape"/>'s, the same on every peer. Only where there is a screen; the colliders are
+    /// <see cref="KwHoleBoxes"/>'.
     /// </summary>
     public sealed class KwHoleLooks : MonoBehaviour
     {
-        private const double Slow = 8.0;
         private readonly List<KwHolePart> chunks = new List<KwHolePart>();
 
         // The parts drawn on their own by their blueprint index (planking and cabins, KwSeaOpeningLooks), so an edit at sea
         // draws one part again and its ghost hides just that part.
         private readonly Dictionary<int, List<KwHolePart>> own = new Dictionary<int, List<KwHolePart>>();
+        private readonly List<KwHolePart> waiting = new List<KwHolePart>();
+        private readonly KwHoleCutLog log = new KwHoleCutLog();
         private KwHullHoles? holes;
         private Transform? ship;
         private int drawn = -1;
@@ -58,7 +63,7 @@ namespace Broadside
         /// <summary>
         /// A part drawn on its own (by its blueprint index; its meshes' renderers made by the caller under the look's holder)
         /// taken as hull meshes holes are cut into, in place of the ones it had, which are let go with their objects; the
-        /// holes cut into it on the next frame. Nothing where the ship has no hull looks (no screen).
+        /// holes cut into it from the next frame. Nothing where the ship has no hull looks (no screen).
         /// </summary>
         public static void Own(Transform visual, int index, List<KwHolePart> made)
         {
@@ -66,7 +71,7 @@ namespace Broadside
             if (looks == null)
                 return;
             if (looks.own.TryGetValue(index, out List<KwHolePart> old))
-                old.ForEach(Gone);
+                old.ForEach(looks.Gone);
             looks.own[index] = made;
             looks.drawn = -1;
         }
@@ -81,9 +86,10 @@ namespace Broadside
             return renderers;
         }
 
-        // A part's mesh let go with its object.
-        private static void Gone(KwHolePart part)
+        // A part's mesh let go with its object, waiting no more (a cut still running for it is dropped when it ends).
+        private void Gone(KwHolePart part)
         {
+            waiting.Remove(part);
             part.Let();
             if (part.Filter != null)
                 Destroy(part.Filter.gameObject);
@@ -101,52 +107,106 @@ namespace Broadside
 
         private void Update()
         {
-            if (holes == null || ship == null || holes.Version == drawn)
+            if (holes == null || ship == null)
                 return;
-            drawn = holes.Version;
-            Stopwatch watch = Stopwatch.StartNew();
-            int changed = Refresh(holes.Holes);
-            if (watch.Elapsed.TotalMilliseconds > Slow)
-                Log.Info($"Broadside: {changed} of a ship's hull meshes cut again for its holes in {watch.Elapsed.TotalMilliseconds:0.0} ms");
+            if (holes.Version != drawn)
+                Plan();
+            if (waiting.Count > 0)
+                Work();
         }
 
-        // Every chunk whose holes near it are not those it was last cut with, cut again; how many.
-        private int Refresh(List<KwHullHole> now)
+        // Every chunk whose holes near it are not the ones it was last given, given them and waiting for its turn.
+        private void Plan()
         {
+            drawn = holes!.Version;
+            List<KwHullHole> now = holes.Holes;
             Matrix4x4 into = transform.worldToLocalMatrix * ship!.localToWorldMatrix;
             List<KwHoleShape> shapes = now.ConvertAll(h => KwHoleShape.Of(h).Moved(into.MultiplyPoint3x4, into.MultiplyVector));
-            int changed = 0;
+            if (waiting.Count == 0)
+                log.Start();
             foreach (KwHolePart chunk in chunks.Concat(own.Values.SelectMany(p => p)))
             {
                 List<int> near = Enumerable.Range(0, shapes.Count).Where(i => chunk.Near(shapes[i])).ToList();
                 List<string> keys = near.ConvertAll(i => now[i].Key);
-                if (string.Join(";", keys) == chunk.Key)
+                if (string.Join(";", keys) == chunk.Wanted)
                     continue;
-                Guarded(chunk, near.ConvertAll(i => shapes[i]), keys);
-                changed++;
+                chunk.Want(near.ConvertAll(i => shapes[i]), keys);
+                if (!waiting.Contains(chunk))
+                    waiting.Add(chunk);
             }
-            return changed;
         }
 
-        // One chunk cut; a throw logged and the chunk left whole.
-        private static void Guarded(KwHolePart chunk, List<KwHoleShape> shapes, List<string> keys)
+        // The waiting chunks stepped on in turn while the frame's share lasts; one that wears its holes waits no more.
+        private void Work()
+        {
+            for (int i = 0; i < waiting.Count && KwFrameShare.Looks.Open(); i++)
+            {
+                KwHolePart chunk = waiting[i];
+                long start = Stopwatch.GetTimestamp();
+                bool done = Stepped(chunk);
+                long took = Stopwatch.GetTimestamp() - start;
+                KwFrameShare.Looks.Spend(took);
+                log.Step(took);
+                if (!done)
+                    continue;
+                log.Cut(chunk.TakeAway());
+                waiting.RemoveAt(i--);
+            }
+            log.Frame(waiting.Count == 0);
+        }
+
+        // One chunk's step; a throw logged and the chunk left whole.
+        private static bool Stepped(KwHolePart chunk)
         {
             try
             {
-                chunk.Cut(shapes, keys);
+                return chunk.Step();
             }
             catch (System.Exception e)
             {
-                Log.Warn($"Broadside: a hole could not be cut into the hull: {e.Message}");
-                chunk.Cut(new List<KwHoleShape>(), new List<string>());
+                chunk.Fail(e);
+                return true;
             }
         }
 
         private void OnDestroy()
         {
+            waiting.Clear();
             chunks.ForEach(c => c.Let());
             foreach (List<KwHolePart> parts in own.Values)
                 parts.ForEach(p => p.Let());
         }
+    }
+
+    /// <summary>
+    /// What cutting a ship's holes into its hull cost (<see cref="KwHoleLooks"/>), told in the log once a run of cuts is
+    /// done, when it took more than <see cref="Slow"/> ms in all: how many meshes, the time off the main thread and on it,
+    /// over how many frames, and the most of it in one frame (which the frame's share, <see cref="KwFrameShare"/>, keeps small).
+    /// </summary>
+    internal sealed class KwHoleCutLog
+    {
+        private const double Slow = 8.0;
+        private int meshes, frames;
+        private long away, main, frame, most;
+
+        /// <summary>A run of cuts begins: counted afresh.</summary>
+        public void Start() => (meshes, frames, away, main, frame, most) = (0, 0, 0L, 0L, 0L, 0L);
+
+        /// <summary>A step's time on the main thread (stopwatch ticks).</summary>
+        public void Step(long ticks) => (main, frame) = (main + ticks, frame + ticks);
+
+        /// <summary>A mesh done, its cuts' time off the main thread (stopwatch ticks).</summary>
+        public void Cut(long ticks) => (meshes, away) = (meshes + 1, away + ticks);
+
+        /// <summary>A frame's steps done; at the end of a run, told when it was slow.</summary>
+        public void Frame(bool end)
+        {
+            (most, frames, frame) = (System.Math.Max(most, frame), frames + 1, 0L);
+            double off = Ms(away), on = Ms(main);
+            if (end && off + on > Slow)
+                Log.Info($"Broadside: {meshes} of a ship's hull meshes cut again for its holes in {off:0.0} ms off the main thread and {on:0.0} ms on it, over {frames} frames (at most {Ms(most):0.0} ms in one)");
+        }
+
+        private static double Ms(long ticks) => ticks * 1000.0 / Stopwatch.Frequency;
     }
 }

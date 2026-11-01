@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.4
+
+- Fixed: ships loading in no longer stall a frame on their holes, rig damage and sails; the work is spread out.
+
 ## 0.3.3
 
 - Fixed: a saved ship's whole cost now counts items in nearby chests when a craft-from-containers mod is installed.
