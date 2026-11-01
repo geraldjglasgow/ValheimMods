@@ -162,6 +162,21 @@ Found while building: a boss's one-per-player drop counts every player online (`
 user chose players within 100 m instead (`PerPlayerDrops`, switch `Boss drops for players nearby`). The game sends the whole player list to every peer every 2 s (about 100 bytes a player). The game's own crossplay
 (PlayFab) lobby and network stay at 10 players.
 
+## After 0.3.0 (2026-10-31, unreleased, in the working tree)
+
+Measured with DevBridge's fake players on a hosted world, then improved: crowd ranks and a server-wide upload ceiling;
+packages written straight to the socket (no ZRpc copy; Steam send without the managed copy; broadcasts written once;
+Jotunn's buffering prefix allowed beside them); round start spread over frames; held-back objects cost one lookup;
+per-player preparation on 4 worker threads; deltas for players with HighSeatPlus (proven against the server with
+DevBridge's verifying fakes: 311,384 objects, 0 mismatches); ownership and ground passes once per zone; objects
+created to a time budget; player history sent with places kept (piece creatorIndex) and the 2 s list rebuild without
+garbage; quiet server creatures skip bone writes; records written without ZDO.Serialize's garbage, made ahead on the
+worker threads. Numbers so far (100 fakes crowded): 0.4 updates/s per player with the game's loop, 7.1 with the new
+loop and deltas at 35 KB/s each; the 100-player join went from 36 to 41 fps before the last batch. Also fixed for
+crowds: EliteEquipment's first fitted-leggings build (prepared behind the loading screen) and Broadside's first look
+of newly loaded ships (spread over frames, cuts off the main thread). Still to run: the full check of the last batch
+(correctness, the join profile, 10 and 25 players spread with quiet animation on and off), then a real Steam player.
+
 ## Milestones
 
 1. The load harness in DevBridge (fake players and characters); vanilla numbers at 10, 25, 50 and 100.

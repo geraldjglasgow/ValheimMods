@@ -5,7 +5,7 @@
     <AssemblyName>HighSeatPlus</AssemblyName>
     <RootNamespace>HighSeatPlus</RootNamespace>
     <LangVersion>latest</LangVersion>
-    <Version>0.1.0</Version>
+    <Version>0.2.0</Version>
     <Product>HighSeatPlus</Product>
     <Description>HighSeatPlus: the players' half of HighSeat for big servers</Description>
     <GenerateAssemblyInfo>true</GenerateAssemblyInfo>

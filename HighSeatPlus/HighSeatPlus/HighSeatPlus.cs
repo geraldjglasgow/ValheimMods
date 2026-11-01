@@ -16,7 +16,7 @@ namespace HighSeatPlus
     {
         public const string PluginGuid = "com.HighSeatPlus";
         public const string PluginName = "HighSeatPlus";
-        public const string PluginVersion = "0.1.0";
+        public const string PluginVersion = "0.2.0";
 
         public static ManualLogSource Log { get; private set; } = null!;
 

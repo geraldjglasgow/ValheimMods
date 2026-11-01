@@ -6,6 +6,8 @@ everyone else see, and every building's support, stay exactly the game's.
 
 ## Features
 
+- Smaller world updates: on a server running HighSeat, only the changed parts of each object are sent to you,
+  about a fifth of the data in a crowd. Your game rebuilds the rest exactly as a full update would.
 - Building support on change: pieces standing on the ground or leaning on rock and trees search for their support
   again only when something near them changes (a piece placed, removed or damaged, the ground dug), not every second.
 - Combined building meshes: a settled building is drawn as a few combined meshes instead of one per piece, split back
@@ -16,8 +18,9 @@ everyone else see, and every building's support, stay exactly the game's.
 
 ## Install
 
-Optional, on players' PCs. Made for servers running HighSeat, and works on any server; a player without it plays as
-today. Install with r2modman or the Thunderstore app, or put `HighSeatPlus.dll` in `BepInEx/plugins`.
+Optional, on players' PCs. Made for servers running HighSeat (the smaller updates need HighSeat 0.4.0 or later there),
+and works on any server; a player without it plays as today. Install with r2modman or the Thunderstore app, or put
+`HighSeatPlus.dll` in `BepInEx/plugins`.
 
 ## Configuration
 

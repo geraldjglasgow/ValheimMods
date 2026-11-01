@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.2.0
+
+- On a HighSeat server the world arrives as small updates, only what changed in each object.
+
 ## 0.1.0
 
 - First release.
