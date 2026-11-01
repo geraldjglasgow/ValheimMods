@@ -6,8 +6,8 @@ namespace HighSeat
     /// <summary>
     /// Who is near what, for "Creatures only where shared": the players of one ownership pass (every ready player's
     /// reference position, and on a hosted game the host's own, whose id is the server's), each listed once under every
-    /// zone its active area can reach, so a creature asks only the few players of its own zone. Built once per pass (the
-    /// game's ReleaseZDOS runs all its ReleaseNearbyZDOS calls in one frame), never per creature per peer. "Near" is the
+    /// zone its active area can reach, so a creature asks only the few players of its own zone. Built once per pass (at
+    /// the start of each <see cref="OwnershipRounds"/> round), never per creature per peer. "Near" is the
     /// game's own test, ZNetScene.InActiveArea around the player's zone: at most 96 m from the zone's centre on either
     /// axis (64 m at the smallest simulation distance), so the zones within <see cref="Reach"/> of a player's own are the
     /// ones it can reach. Also asked between passes with the players' live positions (<see cref="CountLive"/>), for a
@@ -19,7 +19,6 @@ namespace HighSeat
         private static readonly List<Vector2s> Zones = new List<Vector2s>();
         private static readonly Dictionary<Vector2s, List<int>> ByZone = new Dictionary<Vector2s, List<int>>();
         private static readonly Stack<List<int>> Spare = new Stack<List<int>>();
-        private static int _builtFrame = -1;
 
         /// <summary>The players of this pass.</summary>
         public static int Count => Uids.Count;
@@ -31,14 +30,9 @@ namespace HighSeat
         /// <summary>How many zones out from a player's own its active area reaches: 2, or 1 at the smallest distance.</summary>
         public static int Reach(SimulationDistance sim) => sim.NearSimulationDistance <= 1 ? 1 : 2;
 
-        /// <summary>Lists this pass's players, once per frame; true when it was built just now.</summary>
-        public static bool Build()
+        /// <summary>Lists this pass's players.</summary>
+        public static void Build()
         {
-            if (_builtFrame == Time.frameCount)
-            {
-                return false;
-            }
-            _builtFrame = Time.frameCount;
             Clear();
             int reach = Reach(ZNet.instance.GetSyncedSimulationDistance());
             if (!ZNet.instance.IsDedicated())
@@ -52,7 +46,6 @@ namespace HighSeat
                     Add(peer.m_uid, peer.GetRefPos(), reach);
                 }
             }
-            return true;
         }
 
         /// <summary>The players of this pass with <paramref name="point"/> in their active area; the one when exactly one.</summary>

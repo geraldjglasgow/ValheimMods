@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1
+
+- Fixed: players spread over the world no longer freeze the server for 30-40 s while their ground loads.
+- Fixed: a far player leaving a hosted game no longer unloads the host's area and leaves the host on a loading screen.
+- No more short stutter every 2 s with many players: the ownership pass is spread over frames.
+
 ## 0.4.0
 
 - Players with HighSeatPlus get only what changed in each object: about a fifth of the data in a crowd.

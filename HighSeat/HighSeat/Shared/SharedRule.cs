@@ -34,15 +34,12 @@ namespace HighSeat
         private static int _pass = -1;
         private static float _now;
 
-        /// <summary>The start of a pass (asked by every ReleaseNearbyZDOS call; works once per pass).</summary>
+        /// <summary>The start of a pass: once per ownership round (<see cref="OwnershipRounds"/>).</summary>
         public static void BeginPass()
         {
-            if (!NearPlayers.Build())
-            {
-                return;
-            }
+            NearPlayers.Build();
             int last = _pass;
-            _pass = Time.frameCount;
+            _pass = OwnershipRounds.Round;
             _now = Time.time;
             DropTimers(last);
             MarkCompany();
