@@ -78,7 +78,7 @@ namespace OpenKeep.Store
         private void Report()
         {
             if (Moved > 0)
-                Messages.Center(Lang.Format(word, Moved, StoreTargets.Name(container)));
+                MoveMessages.Center(Lang.Format(word, Moved, StoreTargets.Name(container)));
         }
     }
 }

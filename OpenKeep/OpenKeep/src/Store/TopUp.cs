@@ -32,8 +32,10 @@ namespace OpenKeep.Store
                 else
                     units += batch.Moved;
             }
-            if (units > 0 || !waiting)
-                Messages.Center(units > 0 ? Lang.Format(StoreWords.ToppedUp, units) : StoreWords.Nothing);
+            if (units > 0)
+                MoveMessages.Center(Lang.Format(StoreWords.ToppedUp, units));
+            else if (!waiting)
+                Messages.Center(StoreWords.Nothing);
         }
 
         /// <summary>The free units per kind over the inventory's partial stacks.</summary>

@@ -1,5 +1,10 @@
 # Changelog
 
+## 5.2.0
+
+- Store: `Move Messages` off hides the messages saying what moved; messages saying why nothing moved still show.
+- Fixed: OpenKeep's hotkeys work again right after closing the console.
+
 ## 5.1.3
 
 - Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.

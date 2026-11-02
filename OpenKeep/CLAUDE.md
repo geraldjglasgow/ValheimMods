@@ -113,6 +113,8 @@ OpenKeep/OpenKeep/src/
     StoreTargets.cs          the open container and the nearby ones: usable now or shared (Full mode)
     ChestBatch.cs           one action's writes to one container through Shared.ChestWriter, with the summary
     StackMover.cs           stacks with a put under way (never moved twice), the end-of-action message
+    MoveMessages.cs         what moved (Moved, Sent, Stored one, Topped up, Sorted) only while Move Messages is on;
+                            refusals and "Nothing to move" always show (a player's request, 2026-11-02)
     StoreActions.cs          quick stack, store all, dump, the Take all key (the game's OnTakeAll, so Shared routes it); SpillOver: a shared chest's leftover goes on to later holders
     Overflow.cs             one stack through a line of containers: the chosen one, then every later one holding the
                             item, nearest first, until placed; one put per step, a shared chest's answer continues it
@@ -408,7 +410,7 @@ Startup order in `Plugin.Awake`: `Synced.BindLocking` (General / Lock Configurat
 `CoreModule.Initialize`, `ReachModule.Initialize`, `StoreModule.Initialize`, `SalvageModule.Initialize`,
 `StacksModule.Initialize`, `CapacityModule.Initialize`, `CartsModule.Initialize`, `SignsModule.Initialize`,
 `HomesteadModule.Initialize`, `SharedModule.Initialize` (the spec's order), `BatchModule.Initialize`,
-`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings and registers its YAML set), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 5.1.3]` line, `Guard.Install` last.
+`CameraModule.Initialize`, `RecipeListModule.Initialize`, `TrackerModule.Initialize` (each binds its settings and registers its YAML set), every patch class on its own, `Synced.Finish`, the `Loading [OpenKeep 5.2.0]` line, `Guard.Install` last.
   Blueprints/               section 14 (moved from EarthWright 2026-10-05; design in ../SPEC-Blueprints.md), off by default
     BlueprintsModule.cs     binds the settings, the Sites, Planner and Copy modules, adds BlueprintRunner
     BlueprintSettings.cs    14. Blueprints / Enabled and Build Without Materials, and BlueprintRules (numbers, fixed keys)
@@ -671,7 +673,7 @@ Chests`: the enum `Off`, `View`, `Full`, default `Off`), `1. Reach` (`Enabled`, 
 `Link Seconds`, `Requirement Display`, `Storage Colour`, `Flash On Pull`), `2. Store` (`Enabled`, `Quick Stack
 Nearby`, `Nearby Range`, `Ground Pickup`, `Pickup Range`, `Pickup Interval`, `Pickup Delay`, `Pickup Only Held
 Items`, `Auto Tidy` false; unsynced every key, `Sort Order`, `Sort Favourite Items`, `Auto Sort Containers`, `Auto Sort Inventory`, `Confirm Trash`, `Trash
-Uses Salvage`, `Cycle With Wheel`, `Show Favourites`, `Button Row Offset`, `Trash Can On Stat Column`), `3. Salvage` (`Enabled`, `Return Fraction`, `Rounding`, `At
+Uses Salvage`, `Cycle With Wheel`, `Show Favourites`, `Button Row Offset`, `Trash Can On Stat Column`, `Move Messages`), `3. Salvage` (`Enabled`, `Return Fraction`, `Rounding`, `At
 Least One`, `Upgrade Materials`, `Require Known Recipe`, `Require Station`, `Skip Items With Mod Data`, `Mod Data
 Prefixes`; unsynced `Salvage Key`), `4. Stacks`
 (`Enabled`, `Stack Multiplier`, `Weight Multiplier`, `Ignore Teleport Restriction`, `Merge Into Chests`, `Per Item
@@ -2351,7 +2353,7 @@ Mímir's Chest (2026-10-06, never run in game yet):
 Launch through the r2modman profile `LocalTesting` (the build copies the DLL there). Never start or kill the game
 from a script.
 
-1. Log shows `Loading [OpenKeep 5.1.3]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
+1. Log shows `Loading [OpenKeep 5.2.0]` without failed patches; `milkyteam.openkeep.cfg` and the seven YAML files
    appear in `BepInEx/config`; after a world loads `OpenKeep.Items.txt` is written and `OpenKeep.Containers.yml`
    lists every container prefab commented out (chests, `VikingShip`, `Cart`); with an edited file, a container of a
    mod installed afterwards is appended at its end on the next world load, and nothing else in the file changes.

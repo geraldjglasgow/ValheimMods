@@ -129,7 +129,7 @@ namespace OpenKeep.Store
             Overflow.Send(player, item, item.m_stack, null, later, sent =>
             {
                 if (sent.Took.Count > 0)
-                    Messages.TopLeft(Routing.SentWords(sent, name));
+                    MoveMessages.TopLeft(Routing.SentWords(sent, name));
             });
         }
 

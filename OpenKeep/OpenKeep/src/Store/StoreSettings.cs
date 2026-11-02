@@ -53,6 +53,7 @@ namespace OpenKeep.Store
         public static ConfigEntry<int> ButtonRowOffset { get; private set; }
         public static ConfigEntry<bool> TrashOnStatColumn { get; private set; }
         public static ConfigEntry<bool> AutoTidy { get; private set; }
+        public static ConfigEntry<bool> MoveMessages { get; private set; }
 
         public static void Bind(SyncedConfiguration synced)
         {
@@ -84,6 +85,8 @@ namespace OpenKeep.Store
             NearbyRange = synced.Bind(Section, "Nearby Range", 20f,
                 "Metres from the player for quick stack, top up, dump, route, find and cycle.",
                 acceptableValues: new AcceptableValueRange<float>(1f, 100f));
+            MoveMessages = synced.Bind(Section, "Move Messages", true,
+                "A message after every move saying what moved (Moved n stacks, Sent Wood to Chest, Stored one, Topped up, Sorted). Off hides them; messages saying why nothing moved still show.", synced: false);
             ButtonRowOffset = synced.Bind(Section, "Button Row Offset", 0,
                 "Moves the Store button row up (positive) or down (negative) by this many pixels from its default place under the container panel.", synced: false);
             TrashOnStatColumn = synced.Bind(Section, "Trash Can On Stat Column", true,

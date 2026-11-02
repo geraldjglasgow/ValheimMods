@@ -67,7 +67,7 @@ namespace OpenKeep.Store
         private static void Report(Overflow sent, string success)
         {
             if (sent.Took.Count > 0)
-                Messages.Center(success);
+                MoveMessages.Center(success);
             else if (!sent.RefusalSaid)
                 Messages.Center(StoreWords.Nothing);
         }

@@ -32,7 +32,10 @@ namespace OpenKeep.Store
         /// <summary>The centre message of a move action: "Moved n stacks" or "Nothing to move".</summary>
         public static void Report(int stacks)
         {
-            Messages.Center(stacks > 0 ? Lang.Format(StoreWords.Moved, stacks) : StoreWords.Nothing);
+            if (stacks > 0)
+                MoveMessages.Center(Lang.Format(StoreWords.Moved, stacks));
+            else
+                Messages.Center(StoreWords.Nothing);
         }
 
         /// <summary>
