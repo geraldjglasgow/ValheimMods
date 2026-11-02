@@ -1,5 +1,12 @@
 # Changelog
 
+## 0.6.0
+
+- `Open server`: a dedicated server asks nobody for a password, whatever password it was started with.
+- A dedicated server shows its real player limit in the server list (0/50, not 0/10).
+- A public dedicated server started without a password now starts instead of quitting.
+- Fixed: the faster player history update failed on dedicated servers and fell back to the game's own code.
+
 ## 0.5.0
 
 - `Creatures only where shared` is removed and always on: the server runs spawners and every creature players share; a creature near one player runs on that player's game.

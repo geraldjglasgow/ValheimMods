@@ -22,6 +22,8 @@ group. HighSeat makes the server run every creature players share, the way most 
   when a player arrives.
 - Boss drops for players nearby: a boss's once-per-player item drops for the players near the fight, not for everyone
   online.
+- Open server: a dedicated server can run without a password, whatever its host panel passes, and lists its real
+  player limit.
 - Frame budget: a server that falls behind leaves new creatures to players, as the game does, until it recovers.
 - Send rate: raised to 500 KB/s per player from the game's 150, never lowered below what another mod set.
 
@@ -38,7 +40,7 @@ A crossplay server stays at the game's 10 players.
 ## Configuration
 
 `BepInEx/config/com.HighSeat.cfg`: `Server runs creatures`, `Server frame budget ms`, and under Big servers
-`Max players`, `Big server sync`, `Night skip vote`, `Kept places` and `Boss drops for players nearby`. All are described in the file and apply without a restart.
+`Max players`, `Big server sync`, `Open server`, `Night skip vote`, `Kept places` and `Boss drops for players nearby`. All are described in the file and apply without a restart.
 
 ## Links
 

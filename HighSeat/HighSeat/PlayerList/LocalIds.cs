@@ -6,7 +6,7 @@ namespace HighSeat
     /// The platform's local user id (PlatformManager.DistributionPlatform.LocalUser.PlatformUserID), which the game reads
     /// at every player list and history update; on Steam each read writes the Steam ID out as a new string. It does not
     /// change while the game runs once it is valid, so it is read until valid and then kept for the session (a new world
-    /// reads it again).
+    /// reads it again). A dedicated server has no local user: the id is then none (it matches no player).
     /// </summary>
     internal static class LocalIds
     {
@@ -21,7 +21,12 @@ namespace HighSeat
             {
                 return _id;
             }
-            PlatformUserID id = PlatformManager.DistributionPlatform.LocalUser.PlatformUserID;
+            var user = PlatformManager.DistributionPlatform?.LocalUser;
+            if (user == null)
+            {
+                return default;
+            }
+            PlatformUserID id = user.PlatformUserID;
             if (id.IsValid)
             {
                 _id = id;

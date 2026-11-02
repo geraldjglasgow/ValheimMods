@@ -15,6 +15,7 @@ namespace HighSeat
         public static ConfigEntry<int> FrameBudgetMs = null!;
         public static ConfigEntry<int> MaxPlayers = null!;
         public static ConfigEntry<bool> BigServerSync = null!;
+        public static ConfigEntry<bool> OpenServer = null!;
         public static ConfigEntry<bool> NightSkipVote = null!;
         public static ConfigEntry<bool> KeptPlaces = null!;
         public static ConfigEntry<bool> DropsForPlayersNearby = null!;
@@ -40,6 +41,9 @@ namespace HighSeat
                 "Every player is sent the world every round (20 a second) with their own share of the send rate: only what " +
                 "changed since the last round, and things far from them less often; the server's sends also skip the game's " +
                 "extra copies of each package. Off: the game's own loop, which serves one player a frame.");
+            OpenServer = config.Bind(BigServers, "Open server", false,
+                "On a dedicated server: nobody is asked for a password, whatever password the server was started with, and " +
+                "the server list shows no lock. Applies at the next start. Off: the password the server was started with.");
             NightSkipVote = config.Bind(BigServers, "Night skip vote", true,
                 "The night is skipped once more than half of the players online vote for it: lying in bed is a vote, and so " +
                 "is saying !sleep in chat. Off: the game's own rule, every player in bed.");

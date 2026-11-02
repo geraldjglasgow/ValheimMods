@@ -15,10 +15,11 @@ Install on the server only: a dedicated server, or the player who hosts. Players
 [*][b]Night skip vote[/b]: lying in bed or saying !sleep in chat is a vote; more than half of the players online skips the night.
 [*][b]Kept places[/b]: the busiest places and fresh death spots stay loaded on the server, so creatures there start at once when a player arrives.
 [*][b]Boss drops for players nearby[/b]: a boss's once-per-player item drops for the players near the fight, not for everyone online.
+[*][b]Open server[/b]: a dedicated server can run without a password, whatever its host panel passes, and lists its real player limit.
 [*][b]Frame budget[/b]: a server that falls behind leaves new creatures to players, as the game does, until it recovers.
 [*][b]Higher send rate[/b]: 500 KB/s per player instead of the game's 150, never lowered below what another mod set.
 [/list]
-Settings in BepInEx/config/com.HighSeat.cfg: Server runs creatures, Server frame budget ms, Max players, Big server sync, Night skip vote, Kept places, Boss drops for players nearby.
+Settings in BepInEx/config/com.HighSeat.cfg: Server runs creatures, Server frame budget ms, Max players, Big server sync, Open server, Night skip vote, Kept places, Boss drops for players nearby.
 
 [size=4][b]Requirements[/b][/size]
 BepInExPack Valheim on the server. The server does more work, so give it a good CPU and plenty of memory, especially for big groups. A crossplay server stays at the game's 10 players.

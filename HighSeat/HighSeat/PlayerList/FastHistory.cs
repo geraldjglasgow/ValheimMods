@@ -54,7 +54,7 @@ namespace HighSeat
             HistoryIndex.Sync(history);
             SyncMet(net.m_recentPlayers);
             PlatformUserID local = LocalIds.Id();
-            IMatchmakingProvider matchmaking = PlatformManager.DistributionPlatform.MatchmakingProvider;
+            IMatchmakingProvider matchmaking = PlatformManager.DistributionPlatform?.MatchmakingProvider; // none on a dedicated server
             NewlyMet.Clear();
             foreach (ZNet.PlayerInfo player in net.m_players)
             {
