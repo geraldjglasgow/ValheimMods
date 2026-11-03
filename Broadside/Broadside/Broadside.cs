@@ -19,7 +19,7 @@ namespace Broadside
     {
         public const string PluginGuid = "milkyteam.broadside";
         public const string PluginName = "Broadside";
-        public const string PluginVersion = "0.4.1";
+        public const string PluginVersion = "0.5.0";
 
         private void Awake()
         {
@@ -30,6 +30,9 @@ namespace Broadside
             int failed = PatchEverything(harmony);
             KwPrefabs.Install(harmony);
             KwCannonPrefabs.Install(harmony);
+            KwCrates.Install(harmony);
+            KwPiles.Install(harmony);
+            KwCargoPrefabs.Install(harmony);
             KwRepairKit.Install(harmony);
             KwBpCamera.Install();
             KwHelmKeys.Install();

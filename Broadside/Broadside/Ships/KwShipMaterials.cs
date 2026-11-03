@@ -33,10 +33,13 @@ namespace Broadside
             }
         }
 
-        // The ship copy of a piece-shader material (made once); any other material as it is.
-        private static Material Ship(Material source)
+        /// <summary>
+        /// The ship copy of a piece-shader material (made once and kept); any other material, or one already set as a ship's
+        /// (a moving piece's own copy, such as a slatted crate's, <see cref="KwCrateCoat"/>), as it is.
+        /// </summary>
+        public static Material Ship(Material source)
         {
-            if (!source.HasProperty("_ValueNoise") || !source.HasProperty("_MoveableObject"))
+            if (!source.HasProperty("_ValueNoise") || !source.HasProperty("_MoveableObject") || source.IsKeywordEnabled("_MOVEABLEOBJECT_ON"))
                 return source;
             if (copies.TryGetValue(source, out Material made) && made != null)
                 return made;

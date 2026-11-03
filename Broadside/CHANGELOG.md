@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.5.0
+
+- Storage crates: small and large rope-lashed crates, and small and large slatted crates, each slatted crate marked its own way.
+- Cannonball pile and black powder pile: ammunition stores that fill up visibly as you stock them.
+- The captain's broadside reloads from the piles on his ship first, then from his pack.
+- Crates and ammunition piles can be built on a launched ship.
+- Cargo crane: a land crane that lifts its cargo crate, its boom reaching out 12 m.
+
 ## 0.4.1
 
 - Fixed: the Storm Petrel's hold was too low to walk in; it is now 2.1 m high.

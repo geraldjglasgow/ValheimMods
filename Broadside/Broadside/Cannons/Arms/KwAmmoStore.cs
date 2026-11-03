@@ -4,9 +4,8 @@ namespace Broadside
 {
     /// <summary>
     /// What a cannon's reload takes its balls and powder from (<see cref="KwArmReload"/>), counted and taken by the item's
-    /// name as the game keeps it in inventories: a player's pack (<see cref="KwPackStore"/>: the gunner's, or the captain's
-    /// for his broadside's reloads, <see cref="KwBroadsideReload.Store"/>), or a tally over another store counting off what
-    /// earlier loads would take (<see cref="KwAmmoTally"/>, the broadside's forecast). A ship's chest would be one more.
+    /// name as the game keeps it in inventories: a player's pack (<see cref="KwPackStore"/>: the gunner's), the captain's ammunition piles aboard and then his pack for his broadside's loads (<see cref="KwPileStore"/>),
+    /// or a tally over another store counting off what earlier loads would take (<see cref="KwAmmoTally"/>, the broadside's forecast).
     /// </summary>
     public abstract class KwAmmoStore
     {

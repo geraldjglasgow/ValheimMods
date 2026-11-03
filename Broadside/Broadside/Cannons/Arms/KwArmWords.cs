@@ -91,7 +91,7 @@ namespace Broadside
         }
 
         /// <summary>The helm key list's broadside line (beside its key cap, <see cref="KwHelmRows"/>).</summary>
-        public const string BroadsideRow = "Fire the broadside you look toward (loads from your pack)";
+        public const string BroadsideRow = "Fire the broadside you look toward (loads from the ship's piles, then your pack)";
 
         /// <summary>The helm key list's shot arcs line, on or off (<see cref="KwShotArcs"/>).</summary>
         public static string ArcsRow(bool on) => on ? "Shot arcs: on" : "Shot arcs: off";

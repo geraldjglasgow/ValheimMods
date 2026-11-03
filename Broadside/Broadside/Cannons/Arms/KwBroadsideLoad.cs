@@ -10,7 +10,8 @@ namespace Broadside
     /// <see cref="Every"/> seconds, bow to stern, the first cannon that wants a load (empty and not loading, nobody mans or
     /// hauls it, not tipped, no reload of the broadside's queued for it) has its load begun from his pack by the
     /// broadside's own reload step (<see cref="KwBroadsideReload.Begin"/>: a gunner's reload in every way, the same rest
-    /// after a shot, the items taken and the step written in one frame), one a count, so the loads roll down the ship. One
+    /// after a shot, the items taken and the step written in one frame; the ammunition piles aboard first, a pile another
+    /// peer owns asked of its owner and briefly waited for, <see cref="KwPileAsk"/>), one a count, so the loads roll down the ship. One
     /// his game does not own is asked of its owner (<see cref="KwArmLink.Load"/>, at most once every <see cref="Again"/>
     /// seconds a cannon), who hands it over as the called shot does when it is still empty and free (<see cref="Asked"/>).
     /// Short of a load it stays empty (the reload lines say so) and is tried again every <see cref="Again"/> seconds. While
@@ -70,7 +71,8 @@ namespace Broadside
                 shortAt[arm] = Time.time;
             else
                 shortAt.Remove(arm);
-            return made == KwReload.Begun;
+            // waiting for a pile another peer owns counts as this look's load: the same cannon is looked at again next time
+            return made == KwReload.Begun || made == KwReload.Asked;
         }
 
         // Whether the cannon may be asked for now (not within Again of the last ask), noting the ask.

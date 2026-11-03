@@ -28,7 +28,7 @@ ValheimMods/
   Hearthhold/        Stardew-style quality stars on food (needs GrindstoneSkills): fortune, professions, crate, friendship, cask
   HighSeat/          server-run creatures and big servers: player cap, send loop, night vote, kept places (server only)
   HighSeatPlus/      the players' half of HighSeat for big servers (100+): big bases and crowds cheaper on players' PCs
-  Broadside/        ship building: a dry dock, hull tools, fittings, a blueprint table; saved ships built and sailed from the hammer; ship cannons
+  Broadside/        ship building: a dry dock, hull tools, fittings, a blueprint table; saved ships built and sailed from the hammer; ship cannons; storage crates
   ValheimModLibs/    shared libraries, merged into each mod DLL by ILRepack, never shipped alone
   DevBridge/         test bridge: drive the running game over localhost HTTP (for agents), internal: never released to a store
   AssetLab/          dev-only mod, gitignored: unreleased workshop assets tested and balanced in game, never shipped
@@ -159,9 +159,11 @@ a saved one back onto it and shares designs through the BlueprintShelf library, 
 (the BuildCamera library). Designing on the dock is free. Every saved ship is also in the hammer: built on the water
 near a workbench for what its parts cost, it floats on its own hull, sails, and is steered by a helmsman at its rudder's
 tiller or a captain's wheel (his hands by the LimbIk library). Ship cannons (three sizes, iron cannonballs, black
-powder; MannedWeapons library) are built only on a launched ship, which takes no other hammer piece; the captain fires
+powder; MannedWeapons library) are built only on a launched ship, which takes no other hammer piece but storage crates and ammunition piles
+(cannonballs and black powder, which the captain's reloads take from first); the captain fires
 the broadside on the side he looks toward (U), shows shot arcs (J), and a ship panel under the minimap gives speed,
-speed against a karve, explore radius, health and the guns' reloads. Named Keelwright until 2026-10-26 (internal ids
+speed against a karve, explore radius, health and the guns' reloads. Storage crates (rope-lashed, and slatted ones each with
+its own knots and stains) are built on land or aboard a launched ship, and a cargo crane on land lifts its cargo crate. Named Keelwright until 2026-10-26 (internal ids
 stay `KW_`/`kw_`; cannons and their items `BS_`/`bs_`). Built as a prototype in AssetLab and moved out on 2026-10-24
 (the cannons followed from AssetLab's bench on 2026-10-26); the prototype's storage, hammocks and other fittings stay
 archived, uncompiled, in `AssetLab/AssetLab/Keelwright/`. Required on the server and every client. Code map and rules
@@ -188,6 +190,7 @@ versions. `ValheimModLibs/CLAUDE.md` carries the design rules and per-library do
 | Hotkeys | hotkeys read one way: shortcuts fire while W is held, only their own modifiers count, nothing fires while the player types |
 | AreaLoading | arriving somewhere far: land and objects loaded fast during a jump or respawn, the server-objects settle check, distance-scaled waits |
 | WindowInput | a mod's own window treated like the game's while open: free cursor, no attacks, mouse look or zoom, Esc closes it |
+| HaloRing | a radial ring the mod opens itself (HaloMenu's ring): icons round the centre, the mouse or stick direction picks, hover look, Esc cancels, input held back while open |
 | MapClicks | a click on a mod's own map icon waits out the double click window; the game's pins under it can still be placed and removed |
 | EliteCraftingLink | EliteCrafting's public API by reflection: typed wrappers (classes, inscriptions, items, hooks) that do nothing without EliteCrafting |
 | RecipeCounts | starred eggs (and any single-quality item) count for recipes: the game counted an egg only at quality 1 |

@@ -71,7 +71,7 @@ only stone shot, the two small ones iron balls, the large one only the flametal 
   on the ship this frame, `KwShipRiderAim`), where each then rides the ship (`KwShipRider`). On a Broadside dock's design
   parts "Build cannons on the ship once it is launched"; anywhere else (the ground, the game's floors) "Ship cannons are
   built on a launched ship's deck"; the game's own ships never take a ghost. On a launched ship nothing else is built
-  (Broadside's `KwShipRiderRules`: "Only ship cannons are built on a launched ship"), unless the .cfg's
+  (Broadside's `KwShipRiderRules`: "Only ship cannons, crates and ammunition piles are built on a launched ship"), unless the .cfg's
   `AllowBuildingOnShips` is on; pieces already aboard stay.
 - **Ship cannon**: built on a launched Broadside ship's deck. A breech-loader with a long barrel (each shape's `Long` stretch, `Guns/KwStretch.cs`:
   the reinforce drawn out behind the trunnions and the chase ahead of them, rings, hoops, breech and muzzle unchanged) on
@@ -178,7 +178,7 @@ library's `MannedWeapon`; `KwArmDesigns` makes each kind's design from its defin
 - **Reload**: one step, the shot's reload less its motion (6.8, 5.8 and 8.8 s), begun once the shot's motion (1.2 s) has
   run, taking the powder and a ball as it begins (`KwArmReload`, from a store: the gunner's pack, `KwAmmoStore`), so a
   cannon fires every 8, 7 and 10 s; letting go mid-reload leaves it to run out (taking hold again never cuts it short).
-  A cannon the captain's broadside fired reloads the same way from the captain's pack (below).
+  A cannon the captain's broadside fired reloads the same way from the ammunition piles aboard, then the captain's pack (below).
 - **Rest lay** (asked for on 2026-10-26: "when a player is done using a cannon, the aim ... needs to have some set
   position it reverts back to ... so the captain knows where his cannons are likely to fire"): whenever nobody mans a
   cannon (its gunner let go, walked off, died or left the game), its owner turns it back to the middle of its arc
@@ -254,7 +254,7 @@ while the first ripple runs, the second runs beside it (the queue is looked thro
 sides can be firing at once. Decided on the captain's game, then ordered of each cannon's owner exactly as before, so
 nothing new is sent. His top line names the side ("Port broadside: 3 of 3 cannons fired, 3 reloading."; "Starboard
 broadside: no cannons on the starboard side."), and the helm key list's line reads "Fire the broadside you look toward
-(loads from your pack) [U]". The shot arcs still show every cannon aboard, both sides.
+(loads from the ship's piles, then your pack) [U]". The shot arcs still show every cannon aboard, both sides.
 
 **When U "does nothing"** (the user, the same evening: "it says that all of my port and starboard side guns are ready,
 but I'm pressing [U] and nothing is happening"; later "it might not fire when you're working on stuff"). Checked live
@@ -284,10 +284,11 @@ cannons should auto reload if the captain is firing ... have the reloading mater
 "a hot key to see the cannon trajectories ... You tap it, you see them, you tap it, you turn them off"):
 
 - **Reloads** (`KwBroadsideReload`): every cannon the broadside fired reloads by itself afterwards, a gunner's reload
-  in every way, its balls and powder taken from the captain's own pack. His game, which owns the cannon's ZDO from the
+  in every way, its balls and powder taken from the ammunition piles riding the ship first, then the captain's own pack
+  ("Ammunition piles" below). His game, which owns the cannon's ZDO from the
   called shot on, queues it as it fires; once it has rested after the shot (the shot's motion, 1.2 s) it takes the
-  load for the shot it fired, else its other shot's (`KwArmReload.Load`, from `KwBroadsideReload.Store`: the captain's
-  pack, `KwAmmoStore`; a ship's chest aboard would go there, asked of the chest's own owner first) and writes the load
+  load for the shot it fired, else its other shot's (`KwArmReload.Load`, from `KwPileStore`: the piles aboard, then the
+  captain's pack; a pile another peer owns asked of its owner first, `KwPileAsk`) and writes the load
   and the reload step's start to the cannon's ZDO as a gunner's reload does, so every peer, a dedicated server too,
   draws the breech's reload motion (the only reload look a cannon has; it plays no sound) and counts it loaded once the
   step has run (6.8, 5.8, 8.8 s), with no further write. It takes only while his game still owns the cannon, nobody
@@ -300,14 +301,26 @@ cannons should auto reload if the captain is firing ... have the reloading mater
   are loading on port side but not the starboard side": the starboard six had never been fired, so they were never
   loaded and U skipped them as empty). While he steers, every 0.2 s, bow to stern, the first cannon aboard that is
   empty and not loading, that nobody mans or hauls, upright, with no broadside reload queued for it, has its load begun
-  from his pack by the same reload step (`KwBroadsideReload.Begin`: the same rest after a shot, the items taken and
+  from the piles aboard and his pack by the same reload step (`KwBroadsideReload.Begin`: the same rest after a shot, the items taken and
   the step written in one frame, so nothing is taken twice), one a count, so the loads roll bow to stern. One his game
   does not own is asked of its owner (`BS_Arm_Load`, once every 2 s a cannon at most), who hands it over the way the
   called shot does (the ZDO sent first) while it is still empty and free; his game begins the load once it owns it. A
   gunner who takes it meanwhile wins, as for the reloads. Short of a load it stays empty, the reload lines show it red
   "empty", and it is tried again every 2 s (it loads once he picks up the items). While a broadside reload is queued
   nothing new is begun, so the reloads its message promised come first. U then fires whatever is loaded.
-- **His top line**, as U is pressed (the reloads forecast from his pack, bow to stern, the order they reload in; a
+- **Ammunition piles** (2026-11-02, the user's words: "We also need a cannonball pile and blackpowder pile, where you
+  can store blackpowder and cannonballs. When captain the ship cannons autoreloading should take from these stores";
+  Broadside's `Stores/`, `KwPiles`): the Cannonball pile (`BS_pile_cannonballs`, only the cannons' balls: every item of
+  ammo type `$bs_ammo_cannonball`) and the Black powder pile (`BS_pile_powder`, only `BS_BlackPowder`), 4 x 2 slots
+  each, built at a workbench on land or on a launched ship's deck, which they ride like the cannons. Every load of the
+  captain's (the broadside's reloads and the empty cannons' loads above) takes the balls from the cannonball piles and
+  the powder from the powder piles riding the cannon's own ship first, and only what they are short of from his pack
+  (`KwPileStore`; never a pile on another ship). A pile his game owns is taken from at once; one another peer owns (the
+  player who has it open, or whoever the game made its owner) is asked of its owner (`KwPileAsk`, `BS_Pile_Take`): the
+  load waits for the answer at most 1.5 s, then goes on with what came and his pack (a pile whose owner never answers
+  is left out for 10 s). A gunner manning a cannon still reloads from his own pack. Anything else is refused going in
+  (`KwPileFilter`: the game's "Wrong item"). Each pile shows how full it is (`KwPileFill`).
+- **His top line**, as U is pressed (the reloads forecast from the piles aboard and his pack, bow to stern, the order they reload in; a
   manned cannon counts among those fired, but its gunner reloads it, so it is in neither the reloads nor the short):
   "Port broadside: 4 of 6 cannons fired, 3 reloading, 1 short of Iron cannonball (1 still reloading, 1 not loaded)"
   (that side's cannons only). U again while some reload fires only the loaded ones and counts the rest: "still
@@ -315,7 +328,7 @@ cannons should auto reload if the captain is firing ... have the reloading mater
 - **The helm key list**: Broadside lists a helm's keys at the bottom right of the screen while a launched ship is
   steered (its `KwHelmKeys`: the strip where the game's own key hints sit, which the game hides at a helm, in their
   look). The cannons add two lines to it (`KwHelmRows`: the list is `Broadside_HelmKeys` under the game's key hints,
-  each line a copy of the game's own hint; the cannons copy the first line and give it their words): "Fire the broadside you look toward (loads from your pack) [U]" (was
+  each line a copy of the game's own hint; the cannons copy the first line and give it their words): "Fire the broadside you look toward (loads from the ship's piles, then your pack) [U]" (was
   "Fire broadside (loads from your pack)" until U fired one side) and "Shot arcs: on/off [J]", hidden without cannons
   aboard. The old once-a-helm hint on the top line went with it.
 - **Shot arcs** (`KwShotArcs`, `KwShotPath`, `KwBall`, `KwShotArcLook`): **J** at the helm turns them on and off
@@ -540,11 +553,20 @@ hull takes the full damage each time and the speed at impact (39, 14 m/s) for it
   taking hold does, and his game writes the shot and flies it; a manned cannon's ordered shot is fired by its gunner's
   game, which owns it while he holds it, so one machine decides each shot and it never fires twice.
 - The broadside's reload runs where the cannon's state is decided after the called shot, the captain's game (its ZDO's
-  owner then), which also owns his inventory: the load is taken from his pack and the step written to the ZDO in the
+  owner then), which also owns his inventory: the load is taken from the ammunition piles aboard and his pack and the step written to the ZDO in the
   same frame, only while his game still owns the cannon and nobody mans it, so nothing is taken for a cannon another
   peer has, nothing twice, and nothing is lost (a step in the ZDO always finishes). Every peer draws the reload and
   counts it loaded from the ZDO alone. An empty cannon another peer owns is asked of it (`BS_Arm_Load`, one ask a
   cannon every 2 s at most) and handed to the captain's game the called shot's way before it loads it.
+- An ammunition pile's items are in its own ZDO (the game's Container), written only by its owner. The captain's game
+  takes from a pile it owns directly; one another peer owns (a player who has it open, or whoever the game made its
+  owner, a dedicated server too where it has the pile's object) is asked of that owner (`BS_Pile_Take(id, item,
+  amount)`, the id from a counter), who takes what it holds of it and always answers what it took (`BS_Pile_Took(id,
+  item, taken)`, nothing when it no longer owns the pile). His game counts an answer only for an id it asked, that item
+  and no more than asked, once; what came is held for the load (`KwPileCredit`), and whatever a load did not use (an
+  answer after the load went on from his pack) goes into his pack, or at his feet without room, once nothing waits, so
+  nothing taken is lost. Every peer loads the pile's inventory from the ZDO and shows its fill from it; nothing else is
+  sent or saved.
 - The rest lay is decided by the cannon's owner, whoever that is when nobody mans it (the gunner's game as he lets go,
   the server or another player once he has left), and kept in the ZDO's aim; every peer eases after it.
 - The helm key list, the shot arcs and the reload lines are the captain's own screen: nothing of them is sent or saved;

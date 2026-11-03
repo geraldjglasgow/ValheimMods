@@ -22,9 +22,13 @@ Watch the ship cannons video: https://www.youtube.com/watch?v=8zDX1wglYUQ
 - Ship panel: speed, top speed for the wind and sails you have now, explore radius, health and your guns' reloads.
 - Log off aboard a ship and you log back in on the same spot on deck.
 - Ship cannons, built on a launched ship: bronze with stone shot, or iron with iron shot.
+- Storage: rope-lashed and slatted crates (every slatted crate has its own knots and stains), a cannonball pile and a
+  black powder pile that fill up as you stock them; all built on land or on a launched ship.
+- Cargo crane: a land crane worked like a helm that lifts its cargo crate, its boom reaching out 12 m.
 - Build aboard (off by default): with `AllowBuildingOnShips` on, walls, floors, chests, beds and any other piece are
   built on a launched ship and sail with it.
-- Broadside from the helm: U fires the side you look toward, J shows the shot arcs.
+- Broadside from the helm: U fires the side you look toward and reloads from the ship's piles, then your pack; J shows
+  the shot arcs.
 - Battle damage: holes through the hull, flooding, bailing, holed sails and falling masts; wooden repair kits patch
   leaks at sea and the hammer mends the rest.
 - Edit at sea: railings, ladders, doors, windows, masts and sails can be changed while the ship is afloat.

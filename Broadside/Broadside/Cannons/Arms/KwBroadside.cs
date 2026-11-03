@@ -16,7 +16,7 @@ namespace Broadside
     /// MannedWeapons library's ordered shot (<see cref="MannedWeapons.MannedWeapon.OrderShot"/>), and the owner decides: one
     /// nobody mans is handed to the captain's game, which fires it where it points as its gunner's lanyard would (the shot,
     /// the muzzle's blast and sound, a ship cannon's recoil, every peer from the cannon's ZDO), and then reloads it from his
-    /// pack (<see cref="KwBroadsideReload"/>); one a gunner mans is fired on the gunner's game, where he has it laid, as his
+    /// pack, the ammunition piles aboard first (<see cref="KwBroadsideReload"/>, <see cref="KwPileStore"/>); one a gunner mans is fired on the gunner's game, where he has it laid, as his
     /// own pull of the lanyard would, and he reloads it as always. One still reloading or empty is skipped, and his top line
     /// says how many fired, how many reload from his pack and what the rest are short of (<see cref="KwArmWords.Broadside"/>).
     /// Meanwhile every empty cannon aboard nobody mans is loaded from his pack (<see cref="KwBroadsideLoad"/>).
@@ -74,6 +74,7 @@ namespace Broadside
             Fire(captain);
             KwBroadsideReload.Tick();
             KwBroadsideLoad.Tick(captain, cannons ? aboard : null);
+            KwPileAsk.Tick();
             KwShotArcs.Tick(captain, ship, cannons ? aboard : null);
             KwReloadRows.Tick(ship, cannons ? aboard : null);
         }
@@ -132,7 +133,7 @@ namespace Broadside
                     his.Add(arm);
                 volley.Fired++;
             }
-            volley.Reloads = KwBroadsideReload.Forecast(his, KwBroadsideReload.Store(captain), out volley.ShortOf);
+            volley.Reloads = KwBroadsideReload.Forecast(his, KwBroadsideReload.Store(captain, ship.GetComponent<KwShipRiders>()), out volley.ShortOf);
             volley.Short = his.Count - volley.Reloads;
             captain.Message(MessageHud.MessageType.TopLeft, KwArmWords.Broadside(volley));
         }

@@ -18,7 +18,8 @@ the hammer?", and the hammer's saved-ship entries and launched ships came back f
 the `KwBp*` entry files), with what they cost, the helmsman at a tiller and the prototype's later fixes. The prototype
 stays on disk, gitignored and no longer compiled, in `AssetLab/AssetLab/Keelwright/` as the archive of what is still
 left out: the weapon mounts and the other ship weapons (`Arms/`, with `ANIMATION.md`; its cannons came back as the ship
-cannons on 2026-10-26, from the AssetLab Cannons bench that had tried them out), storage (and with it a ship's hold), hammocks,
+cannons on 2026-10-26, from the AssetLab Cannons bench that had tried them out), storage (and with it a ship's hold; two
+storage crates came back on 2026-11-02, `Storage/`, the user's words: "make a large and small storage crate for broadside"), hammocks,
 lanterns, seats and benches, paddle ports, ship pushing and the table's Launch button. Anything from there comes
 back only as a new, deliberate change: the captain's wheel came back on 2026-10-25 (the user's words: "We also need
 the steering wheel back. We also need a way that the rudder connects to the steering wheel, so maybe on the underside
@@ -75,12 +76,12 @@ deck in place of the deck tiller. The ship formulas are in
   slots beside the workbench; the rest are checked and taken at the click, the game's way (`KwGamePay`: `Player.HaveRequirements` and `ConsumeResources`, so a mod that builds from nearby chests counts there too; every Broadside cost, a mast put back and an edit at sea as well). The launched ship (`KW_ship`) broken up with
   the hammer's remove gives all of it back, in full, in the game's floating cargo crates (`KwShipBreak`, below); wrecked
   or cleared with `kwship clear` it gives nothing; its boarding ladder (the karve's own, remade) is not a saved part and costs nothing.
-- **Built aboard once launched: ship cannons only, unless the .cfg allows any piece.** The dock designs the whole ship;
-  by default the only pieces built with the hammer on a launched ship are Broadside's ship cannons (`BS_cannon_*`,
-  `KwShipRiderRules`), which ride it (`KwShipRider`) at their own cost and with the game's own removal (2026-10-26, the
+- **Built aboard once launched: ship cannons, storage crates and ammunition piles only, unless the .cfg allows any piece.** The dock designs the whole ship;
+  by default the only pieces built with the hammer on a launched ship are Broadside's ship cannons (`BS_cannon_*`),
+  storage crates (`BS_crate_*`) and ammunition piles (`BS_pile_*`; both since 2026-11-02; `KwShipRiderRules`), which ride it (`KwShipRider`) at their own cost and with the game's own removal (2026-10-26, the
   user's words: "We also need to not allow building with the vanilla Valheim pieces on the ship, but you should be allowed
-  to build cannons on your ship"). The game's pieces and every other mod's are refused there ("Only ship cannons are
-  built on a launched ship"); pieces already riding a ship stay. With `AllowBuildingOnShips` on (2026-11-01, after a
+  to build cannons on your ship"). The game's pieces and every other mod's are refused there ("Only ship cannons,
+  crates and ammunition piles are built on a launched ship"); pieces already riding a ship stay. With `AllowBuildingOnShips` on (2026-11-01, after a
   player asked to "build on these boats like any other structure. I want to live on board"; the user's words: "if true
   players can place objects on the ship without restriction") every piece rides, the game's and every other mod's, but
   for one that moves or floats itself (a ship, a cart, an item) or stands in water ("This is not built on a launched
@@ -309,6 +310,9 @@ deck in place of the deck tiller. The ship formulas are in
   the library's ordered and called shots (`bs_arm_order`, `bs_arm_call`, `bs_arm_called`): one nobody mans is handed to
   the captain's game, fired there and reloaded from his pack in the same frame its ZDO is his; a manned one is fired on
   its gunner's game. An empty cannon another peer owns is asked for (`BS_Arm_Load`) before the captain's pack loads it.
+  The captain's loads take from the ammunition piles riding the cannon's ship first: a pile his game owns directly, one
+  another peer owns asked of its owner (`BS_Pile_Take`, answered `BS_Pile_Took` with what it took, waited for 1.5 s at
+  most), never written by his game (`Cannons/CANNONS.md`, "Multiplayer").
   The rest lay is its owner's, a dedicated server too. The helm key lines, the shot arcs and the reload lines are the
   captain's screen only, read from the cannons' ZDOs; nothing of them is sent or saved.
 - Logging off aboard (2026-10-27, `KwShipLogout`): each save of the local player aboard a launched ship keeps the
@@ -344,9 +348,11 @@ deck in place of the deck tiller. The ship formulas are in
 | Launched ship | `KW_ship` (a copy of the game's `Karve`, never in the hammer); broken up into the game's `CargoCrate`s; `KW_sea_gone` (a removed part's tombstone in its blueprint, no prefab) |
 | Ship cannons (hammer, Misc tab, after the dock pieces; only on a launched ship's deck) | `BS_cannon_bronze` ("Bronze ship cannon", Black Forest: 10 bronze, 20 fine wood; the small iron cannon's design in bronze on fine wood, firing stone shot) and `BS_cannon_small_iron` ("Small iron ship cannon", Swamp: 14 iron, 22 ancient bark; released 2026-10-28), the two in the hammer for now (`KwTiers.Offered`, the Swamp); held back for a later release, out of the hammer but registered so built ones load: `BS_cannon_small` ("Small ship cannon", Plains: 14 black metal, 8 tar, 24 wood, 4 linen thread), `BS_cannon_large` ("Large ship cannon", Ashlands: 18 flametal, 6 surtling cores, 26 blackwood, 6 linen thread); each a copy of `wood_floor` (a workbench in range), its cost refunded on removal; shots `BS_shot_cannon_bronze`, `_small_iron`, `_small`, `_large` and their bursts `BS_burst_<same>` |
 | Cannon items | `BS_CannonballStone` ("Stone cannonball", the bronze cannon: 2 stone make 4 at the workbench; the game's `Stone` item's material), `BS_CannonballIron` ("Iron cannonball", the two small cannons: 1 iron makes 4 at the forge, level 2), `BS_CannonballFlametal` ("Flametal cannonball", the large cannon: 1 flametal and 2 grausten would make 4 at the black forge, level 2), all of ammo type `$bs_ammo_cannonball` (copies of `Catapult_ammo`); the flametal ball has no recipe for now (registered, so stacks load); `BS_BlackPowder` ("Black powder": 2 coal and 1 resin make 4 at the forge, level 1; one, two or three a shot); recipes `Recipe_<name>` in every ObjectDB |
+| Storage crates (hammer, Misc tab, after the cannons; on land or a launched ship's deck) | `BS_crate_small` ("Small storage crate", 4 x 2 slots, 8 `Wood` and 2 `LeatherScraps`) and `BS_crate_large` ("Large storage crate", 6 x 3, 10 `FineWood` and 4 `LeatherScraps`), `BS_crate_slat_small` ("Small slatted crate", 4 x 2, 10 `Wood`) and `BS_crate_slat_large` ("Large slatted crate", 6 x 3, 12 `FineWood`; each slatted crate's own marks from its ZDO int `bs_crate_seed`, rolled once by its owner), copies of `piece_chest_wood` at a workbench, their recipe given back when removed; looks the bundles `bs_crate_small`, `bs_crate_large`, `bs_crate_slat_small` and `bs_crate_slat_large` when embedded (the slatted ones also carry the readable `<bundle>_clean`, `<bundle>_marksmask` and `bs_crate_marks`) (resources `Broadside.assets.bs_crate_<size>.windows` and `.linux`: prefab of the bundle's name with `model`, `lid`, `col_box_body`; sprite `<bundle>_icon`) |
+| Ammunition piles (hammer, Misc tab, after the storage crates; on land or a launched ship's deck) | `BS_pile_cannonballs` ("Cannonball pile", only items of ammo type `$bs_ammo_cannonball`, 8 `Wood` and 4 `Stone`) and `BS_pile_powder` ("Black powder pile", only `BS_BlackPowder`, 10 `Wood` and 2 `LeatherScraps`), 4 x 2 slots each, copies of `piece_chest_wood` at a workbench, their recipe given back when removed; anything else refused going in ("$msg_wrongitem"); the captain's broadside loads from those riding its ship first; looks the bundles `bs_pile_cannonballs` and `bs_pile_powder` when embedded (resources `Broadside.assets.bs_pile_<id>.windows` and `.linux`: prefab of the bundle's name with `model`, `fill_0` to `fill_9` (shown in order as it fills), `col_box_body`; sprite `<bundle>_icon`) |
 | Items | `KW_RepairKit_Wood` ("Wooden Repair Kit", a copy of the game's `FineWood`; 4 `Wood` and 2 `Resin` at a workbench of level 1, stacks of 10, weight 2; recipe `Recipe_KW_RepairKit_Wood`); its look the bundle `kw_repairkit` when embedded (resources `Broadside.assets.kw_repairkit.windows` and `.linux`: prefabs `kw_repairkit_wood`, `kw_hullpatch_wood`, sprite `kw_repairkit_wood_icon`) |
 | ZDO keys | `kw_span` (a part's saved text), `kw_tier` (biome tier id: `meadows`, `blackforest`, `swamp`, `mountains`, `plains`, `mistlands`, `ashlands`; new work only the first two), `kw_rudder_lay`, `kw_rudder_gear` (a rudder's steering gear to a captain's wheel, or why not), `kw_rudder_water` (the design waterline over a dock rudder's point, a float), `kw_helm` and `kw_helmsman` (a dock wheel's helm and who holds it), `kw_hatch_open`, `kw_sail_hoist`, `kw_ship` (on a piece: the build id of a ship built from a blueprint on the dock; on a `KW_ship`: its packed blueprint), `kw_hatch<n>_open` (a launched ship's hatch n), `kw_open<id>` (a dock opening's leaf, an int on its part); on a `KW_ship` also `kw_ship_open<n>` (a covered opening's leaf: 0 shut, 1 or -1 open), `kw_anchor_down`, `kw_anchor_at`, `kw_ship_load`, `kw_ship_by`, `kw_ship_helm`, `kw_ship_name`, `kw_holes`, `kw_hull_wear`, `kw_flood`, `kw_flood_parts` (its holes, its parts' wear, the water in its hold and in each of its compartments; never in a blueprint), `kw_rails_broken` (its broken railing stretches, "piece:part;..." with part = run × 1000 + stretch; never in a blueprint), `kw_hull_patches` (its patched holes, "id,radius;...", the hole's number and its radius when patched; never in a blueprint), `kw_rig_damage` (its rig's damage marks, "type,piece,part,a,b,c,d,seed;...", `KwRigMark`; never in a blueprint); `kw_name` (a name board's, and a `KW_ship`'s name), `kw_shields` (a railing's or a `KW_ship`'s hung shields; in a blueprint as data only); `kw_ship_uid` (a `KW_ship`'s own id, a random long its owner writes once); `kw_ship_rev` (a `KW_ship`'s sea edits' revision, written with `kw_ship`); on any piece built on a launched ship `kw_rider` (its ship's `kw_ship_uid`; 0 once it is an ordinary piece again), `kw_rider_pos`, `kw_rider_rot` (its pose in the ship's frame); on a ship cannon `bs_arm_user`, `bs_arm_yaw`, `bs_arm_pitch`, `bs_arm_loaded`, `bs_arm_step`, `bs_arm_load_at`, `bs_arm_shots`, `bs_arm_shot_at` (the MannedWeapons library's, from the prefix `bs_arm`), `bs_arm_kind`, `bs_arm_load_kind`, `bs_arm_ammo`, `bs_arm_tower` (who hauls it), `bs_arm_untied` (its breeching left unmade) |
-| RPCs | `KW_HatchToggle`, `KW_SailHoist`, `KW_Helm`, `KW_HelmTurn`, `KW_HelmReply` (a dock wheel's helm), `KW_Hatch<n>_Toggle`, `KW_OpeningUse` (a dock opening's leaf), `KW_ShipOpeningUse` (a launched ship's), `KW_AnchorToggle`, `KW_ShipLoad`, `KW_Bail`, `KW_HoleMend` (one hole, by its number), `KW_HolePatch`, `KW_HolePatched` (a repair kit's patch, asked and answered), `KW_ShipShot` (a heavy shot, to the owner), `KW_RailMend`, `KW_SailShot`, `KW_RigMend`, `KW_RigRaise`, `KW_RigRaised` (the rig's damage), `KW_ShipName`, `KW_ShieldHang`, `KW_ShieldHung`, `KW_ShieldUndo`, `KW_ShieldTake`, `KW_ShieldGiven` (on a `KW_ship`), `KW_ShieldOwn` (a dock railing), `KW_ShipWhere`, `KW_ShipsAre`, `KW_ShipLaunched` (routed, the ship pins), `KW_SeaEdit`, `KW_SeaEdited` (a sea edit asked of a `KW_ship`'s owner and answered), `KW_Bench*` (BlueprintShelf: `List`, `Listing`, `Put`, ...); on a ship cannon `bs_arm_request`, `bs_arm_release`, `bs_arm_answer`, `bs_arm_call`, `bs_arm_called`, `bs_arm_order` (the MannedWeapons library's, named from its key prefix), `BS_Arm_Tow`, `BS_Arm_TowDenied`, `BS_Arm_Load` |
+| RPCs | `KW_HatchToggle`, `KW_SailHoist`, `KW_Helm`, `KW_HelmTurn`, `KW_HelmReply` (a dock wheel's helm), `KW_Hatch<n>_Toggle`, `KW_OpeningUse` (a dock opening's leaf), `KW_ShipOpeningUse` (a launched ship's), `KW_AnchorToggle`, `KW_ShipLoad`, `KW_Bail`, `KW_HoleMend` (one hole, by its number), `KW_HolePatch`, `KW_HolePatched` (a repair kit's patch, asked and answered), `KW_ShipShot` (a heavy shot, to the owner), `KW_RailMend`, `KW_SailShot`, `KW_RigMend`, `KW_RigRaise`, `KW_RigRaised` (the rig's damage), `KW_ShipName`, `KW_ShieldHang`, `KW_ShieldHung`, `KW_ShieldUndo`, `KW_ShieldTake`, `KW_ShieldGiven` (on a `KW_ship`), `KW_ShieldOwn` (a dock railing), `KW_ShipWhere`, `KW_ShipsAre`, `KW_ShipLaunched` (routed, the ship pins), `KW_SeaEdit`, `KW_SeaEdited` (a sea edit asked of a `KW_ship`'s owner and answered), `KW_Bench*` (BlueprintShelf: `List`, `Listing`, `Put`, ...); on a ship cannon `bs_arm_request`, `bs_arm_release`, `bs_arm_answer`, `bs_arm_call`, `bs_arm_called`, `bs_arm_order` (the MannedWeapons library's, named from its key prefix), `BS_Arm_Tow`, `BS_Arm_TowDenied`, `BS_Arm_Load`; on an ammunition pile `BS_Pile_Take`, `BS_Pile_Took` (a load's items asked of the pile's owner by the captain's game, and what it took answered) |
 | UI objects (the captain's screen) | `Broadside_HelmKeys` (the helm key list) with the cannons' `Broadside_FireBroadside` and `Broadside_ShotArcs` lines; `Broadside_CannonsTicker` (the broadside's keys and ticks); `Broadside_ShotArcLines`; the reload lines: rows `cannons.port` and `cannons.starboard` of Broadside's own ship panel (`KwShipPanel`) |
 | Folders | `BepInEx/config/Broadside.Ships/` (the player's ships, `.json`, folders kept); the server's `BepInEx/config/Broadside.SharedShips/<world>/`; `BepInEx/config/Broadside.Sails/` (the player's PNG pictures for sail emblems); `BepInEx/cache/Broadside.Icons/` (rendered hammer and item icons, `KwIconCache`; the carried ones are `Broadside.icons.<name>@<hash>.icon`) |
 | Player save | `broadside_aboard_<worldUID>` in the player's custom data: the launched ship he was saved aboard and his place on it (`KwShipLogout`) |
@@ -892,6 +898,46 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   dedicated server). Other mods add lines by name only: the list is `Broadside_HelmKeys` under the game's `KeyHints`,
   every child a copy of the game's hint ("Text" beside "key_bkg"/"Key"); a mod copies the first line, renames it and
   sets its words (the ship cannons' U broadside and J shot arcs, `KwHelmRows`).
+- `Crane/` (2026-11-02, an Asset Lab bench until then; `CRANE.md` there has identity, controls, multiplayer): the cargo
+  crane (`KWC_cargo_crane`, a land piece worked like a helm: turn, a boom sliding 0 to 8.5 m, hoist) and the cargo crate it
+  lifts (`KWC_cargo_crate`, 6 x 4, rope sling loops; the only crate it lifts). `KWC_`, not `KW_`: not ship parts. Not
+  built on a launched ship (the rider rule refuses them there).
+- `Storage/` (2026-11-02): the storage crates. `KwCrates` (the two crates as `KwCrateDef`s, plain data: prefab, bundle,
+  name, slots, recipe; made once when the network scene first wakes, after the cannons, each a copy of the game's wood
+  chest: its Container, items in its ZDO, placement, health, wear and sounds; registered every wake on every peer),
+  `KwCrateModel` (the bundle's prefab under the stripped copy as `crate`, on the piece's layer, its box the collider,
+  the wear states pointed at it, `m_wet` and `m_fragmentRoots` null; dressed on a screen in the wood chest's body
+  material `woodchest` with the bundle's maps; the bundle's icon; without the bundle the wood chest's look and one
+  warning), `KwCrateLid` (the lid eased open over 0.4 s while the crate is open: the Container on its owner, the ZDO's
+  in-use value elsewhere; sends nothing, off on a server and a ghost), `KwCrateHammer` (into the hammer after the
+  cannons with their recipes). The slatted crates (2026-11-02, the user's words: "have a texture like the cows, where
+  every crate has a different pattern ... dark spots, wood knots"): `KwCrateCoat` (the seed `bs_crate_seed`, rolled
+  by the owner in Awake, read by every peer, waited for a second at a time; one crate dressed a frame, its own material
+  copies wearing its albedo; off on a server and a ghost, which wear the bundle's default-seed albedo), `KwCratePattern`
+  (each bundle's readable sources read once, each seed's texture made, compressed, shared and counted, destroyed with
+  its last crate), `KwCrateMarks` (the composite in plain integers, `seed.py`'s byte for byte: window, flips, tone).
+  Slatted crates wear the materials' ship copies everywhere, and `KwShipMaterials.Ship` copies no material already
+  set as a ship's, so a crate's own copies are never copied again aboard. Aboard a launched ship a crate rides it like a cannon (`KwShipRiderRules`), its
+  materials swapped for the ship's copies by the rider, its contents spilled into the cargo crates when the ship is
+  broken up (`KwShipRiderBreak.Gather`).
+- `Stores/` (2026-11-02, the user's words: "We also need a cannonball pile and blackpowder pile, where you can store
+  blackpowder and cannonballs. When captain the ship cannons autoreloading should take from these stores"): the
+  ammunition piles and the captain's loads from them (`Cannons/CANNONS.md`, "Ammunition piles"). `KwPiles` (the two
+  piles as `KwPileDef`s, plain data: prefab, bundle, name, what it holds, recipe; made once when the network scene first
+  wakes, after the crates, each a copy of the game's wood chest, 4 x 2 slots; registered every wake on every peer),
+  `KwPileModel` (the bundle's prefab under the stripped copy as `pile`, its fill steps hidden in the prefab, dressed on
+  a screen in the wood chest's `woodchest` material with the bundle's maps and the metal mask's shine; without the
+  bundle the wood chest's look and one warning), `KwPileHammer` (into the hammer after the crates with their recipes),
+  `KwPile` (on each pile with a ZDO: the loaded piles' list, `OnShip` the piles riding a ship as this game owns them or
+  not; the owner's side of `BS_Pile_Take`/`BS_Pile_Took`), `KwPileFill` (on a screen, `fill_i` shown once the pile is
+  (i + 1) / 10 full, at least `fill_0` with anything in it, from the inventory's change callback only), `KwPileFilter`
+  (prefixes on the item-data `Inventory.AddItem` overloads, `Inventory.CanAddItem` and `InventoryGrid.DropItem`: a pile
+  takes only its own sort, never refused while the Container loads it from the ZDO), and the captain's side:
+  `KwPileStore` (the `KwAmmoStore` his loads take from: what piles handed over, then the piles aboard the cannon's ship
+  his game owns, then his pack; planning counts every pile aboard and notes the asks), `KwPileAsk` (a cannon's round of
+  asks to piles another peer owns: ids from a counter, answers checked against them, 1.5 s patience, a silent owner's
+  pile left out 10 s; `KwReload.Asked` keeps the reload waiting) and `KwPileCredit` (what came and is unused, into his
+  pack, or at his feet, once nothing waits).
 - `Cannons/` (2026-10-26; `CANNONS.md` there has the behaviour in full): the four ship cannons, three graduated from the
   AssetLab Cannons bench (its mounts, mounted cannons and field cannons left out) and the bronze one made from the small
   iron one's design the same day; only the bronze and small iron cannons, stone and iron shot and black powder offered for
@@ -1133,12 +1179,24 @@ hovered, not its ship; postfix, low priority: the hole aimed at with nothing els
 view's zoom and the build view's; postfix: the eyes below decks, the steady height, the build view's pan),
 `GameCamera.GetCameraPosition` (prefix, postfix and finalizer: the camera on a launched ship), `PlayerController.InInventoryEtc`,
 `PlayerController.TakeInput`, `Player.CanRotatePiece` (the build view), `TextInput.IsVisible` and `InventoryGui.Update`
-(the sizes window and the figures panel's boxes take the keys); BlueprintShelf, WindowInput and BuildCamera add their own (BuildCamera's:
+(the sizes window and the figures panel's boxes take the keys), `Inventory.AddItem` (its three item-data overloads),
+`Inventory.CanAddItem(ItemData, int)` and `InventoryGrid.DropItem` (prefixes: an ammunition pile takes only its own sort,
+`KwPileFilter`); BlueprintShelf, WindowInput and BuildCamera add their own (BuildCamera's:
 `GameCamera.GetCameraPosition`, `GameCamera.UpdateListner`, `LightLod.GetLightReferencePoint`, `Player.SetMouseLook`,
 `Player.SetControls`, `Player.Update`, `Player.PieceRayTest`, `Player.RemovePiece`, `Player.CopyPiece`,
 `Player.UpdateWearNTearHover`, `Menu.Update`).
 
 ## Not checked yet
+
+The ammunition piles (2026-11-02) are compiled only, not yet seen in game: the models, icons and fill steps (their
+bundles not yet embedded: the wood chest's look until they are), the item filter by every route (dragging both ways,
+shift-click, placing stacks, another mod's quick stack), building one on land and on a launched ship's deck, the
+captain's loads taking from piles his game owns and from piles another player or a dedicated server owns (the ask,
+the answer, the 1.5 s fallback to his pack, a late answer going into his pack), and a pile on another ship left alone.
+
+The cargo crane and its crate (2026-11-02) were never run in game, as the Asset Lab bench or here (its boom slides
+8.5 m since that day). The storage crates (2026-11-02) are compiled only, not yet seen in game: the models and icons, the lid's swing (seen by
+a second player), building one on land and on a launched ship's deck, sailing with one full, removing and breaking one; the slatted crates' marks (each crate its own, the same on every screen, the composite against `seed.py`).
 
 The bronze ship cannon and stone shot (2026-10-26) are compiled only, not yet seen in game: the bronze and fine wood
 looks, the stone material on the ball, its icon and the shot in flight, the hammer showing it alone. The ship cannons (2026-10-26) were tried in game as the AssetLab Cannons bench (`AL_` names, built anywhere) and

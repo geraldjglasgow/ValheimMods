@@ -6,7 +6,7 @@
     <RootNamespace>Broadside</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.4.1</Version>
+    <Version>0.5.0</Version>
     <Product>Broadside</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -75,6 +75,13 @@
     <EmbeddedResource Include="assets\bundles\kw_postheads.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
     <!-- The Wooden Repair Kit and its hull patch, one bundle per platform (ValheimAssets Assets/Items/Keelwright/RepairKit), read as Broadside.assets.kw_repairkit.<platform> -->
     <EmbeddedResource Include="assets\bundles\kw_repairkit.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <!-- The storage crates, small and large, one bundle each per platform (ValheimAssets Assets/Ships/Keelwright/StorageCrates), read as Broadside.assets.bs_crate_<size>.<platform> -->
+    <EmbeddedResource Include="assets\bundles\bs_crate_*.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <!-- The cargo crane and its cargo crate, one bundle each per platform (ValheimAssets Assets/Ships/Keelwright/CargoCrane and CargoCrate; Crane/CRANE.md) -->
+    <EmbeddedResource Include="assets\bundles\kw_cargocrane.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <EmbeddedResource Include="assets\bundles\kw_cargocrate.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <!-- The ammunition piles, cannonballs and black powder, one bundle each per platform (ValheimAssets workshop), read as Broadside.assets.bs_pile_<id>.<platform> -->
+    <EmbeddedResource Include="assets\bundles\bs_pile_*.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
   </ItemGroup>
 
   <ItemGroup>

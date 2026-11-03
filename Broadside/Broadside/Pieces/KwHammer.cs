@@ -8,8 +8,9 @@ namespace Broadside
 {
     /// <summary>
     /// Broadside's pieces at the end of the hammer's Misc tab, in build order (<see cref="Steps"/>), every one free
-    /// (<see cref="KwPrefabs"/>: design mode); the generated parts the tools make are never in it. Then the ship cannons,
-    /// at their own cost (<see cref="KwCannonHammer"/>). The saved ships come
+    /// (<see cref="KwPrefabs"/>: design mode); the generated parts the tools make are never in it. Then the ship cannons
+    /// the storage crates and the ammunition piles, at their own cost (<see cref="KwCannonHammer"/>, <see cref="KwCrateHammer"/>,
+    /// <see cref="KwPileHammer"/>). The saved ships come
     /// after them, put in by <see cref="KwBpHammer"/>, each costing what its parts do. Refreshed when the item database
     /// wakes and after the pieces are made, whichever comes last. Idempotent.
     /// </summary>
@@ -38,7 +39,9 @@ namespace Broadside
                     pieces.Add(prefab);
             }
             KwCannonHammer.Add(database!, pieces);
-            Log.Info($"Broadside: {KwPrefabs.All.Count} pieces and {KwCannonHammer.Offered} of {KwCannonPrefabs.All.Count} cannons in the hammer's Misc tab.");
+            KwCrateHammer.Add(database!, pieces);
+            KwPileHammer.Add(database!, pieces);
+            Log.Info($"Broadside: {KwPrefabs.All.Count} pieces, {KwCannonHammer.Offered} of {KwCannonPrefabs.All.Count} cannons, {KwCrates.All.Count} storage crates and {KwPiles.All.Count} ammunition piles in the hammer's Misc tab.");
         }
 
         // The build order: the dock (keel block guide, keel block), the keel tool, the name board, the rib tool, the
