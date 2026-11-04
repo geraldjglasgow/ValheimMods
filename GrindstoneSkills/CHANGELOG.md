@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.20.5
+
+- Ukrainian translation updated: Fog Lift, diving and Water Builder now in Ukrainian, with reworded lines throughout.
+
 ## 0.20.4
 
 - Fixed: on Valheim 1.0.21 cooking stations and ovens cook again, with no error logged on every update.
