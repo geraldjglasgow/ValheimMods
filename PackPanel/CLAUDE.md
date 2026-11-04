@@ -1210,7 +1210,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
   held (`Hotkey.ModifiersHeld`; a key without modifiers: while it is held itself): with the defaults, Alt + 1 to 8
   never touch the hotbar. Only with PackPanel's `Enabled` on (the keys read nothing otherwise). Left Alt is unbound in the game; in the workspace
   only OpenKeep's Alt + D/R/L and its held Pull Modifier, EarthWright's Alt modifiers (hoe in hand, where these keys
-  stand down) and unreleased HaloMenu's ring (Left Alt alone, held) use it.
+  stand down) and HaloMenu's ring (Left Alt alone, held; HaloMenu retired and deleted 2026-11-02) used it.
 - Stuck Alt (the user, 2026-10-05, sev 1 on 0.11.0: "when i use 1,2,3 its not equiping my weapon, its trying to drink
   mead"): the config and the hotbar were right; the Hotkeys library read Shift, Ctrl and Alt through Unity's old
   `Input`, which keeps Alt held after the window loses focus with it down (Alt + Tab out, back with the mouse) until
@@ -1252,7 +1252,7 @@ re-placed from the game's layout once, and test copies of `OpenKeep_*` backpacks
 Nothing here has been played through in game yet; before the move the section was only looked at through DevBridge
 screenshots. Items 1 to 3 are new with the split; the rest came from OpenKeep's list (its items 46 to 78).
 
-1. Log shows `Loading [PackPanel 0.17.1]` without failed patches, eight `... ready` lines for the backpacks, and
+1. Log shows `Loading [PackPanel 0.17.2]` without failed patches, eight `... ready` lines for the backpacks, and
    `milkyteam.packpanel.cfg` with the sections `1. Inventory` to `5. Look` and `PackPanel.Backpacks.yml` are written.
    OpenKeep's own log line shows no failed patches either, and OpenKeep's cfg has no `10. Inventory` section any more.
 2. Without OpenKeep (disable it in r2modman): the player panel ends just under the grid (no empty strip), no buttons;

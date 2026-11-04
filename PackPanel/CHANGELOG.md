@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.17.2
+
+- Fixed: hotkeys work right after closing the console.
+
 ## 0.17.1
 
 - Fixed: translated text no longer turns back to English with OdinHorse or similar mods installed.
