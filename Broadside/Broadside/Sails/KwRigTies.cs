@@ -9,9 +9,11 @@ namespace Broadside
     /// same on every peer. A rope to a side (a shroud, a brace, a sheet) ties to the top of the ship's side on the side it
     /// aims at, at the place along the ship it aims at: on a deck, the hull's side (its gunwale, or its railing); on a cabin's
     /// roof, that roof's outer edge (its railing's), or, where the edge is too near for a sensible angle (out less than
-    /// <see cref="Sensible"/> of the rope's height), the hull's side beyond the cabin when that is clear. Never through a deck,
-    /// a cabin, a railing, a sail, a yard or a mast (<see cref="KwRigClear"/>): when the straight way is blocked, the nearest
-    /// clear place along the side. A rope down the middle (a forestay, a boom's sheet) ties to the deck or roof under it.
+    /// <see cref="Sensible"/> of the rope's height), the hull's side beyond the cabin when that is clear. Where the hull's side
+    /// at that place is under a cabin or not clear, the top of a cabin standing there (its roof's edge, or its roof railing),
+    /// any mast's, when that is clear (<see cref="AtAim"/>). Never through a deck, a cabin, a railing, a sail, a yard or a mast
+    /// (<see cref="KwRigClear"/>): when the straight way is blocked, the nearest clear place along the side. A rope down the
+    /// middle (a forestay, a boom's sheet) ties to the deck or roof under it.
     /// </summary>
     public static class KwRigTies
     {
@@ -20,6 +22,9 @@ namespace Broadside
 
         /// <summary>How near another rope's foot a rope's may be.</summary>
         public const float Spacing = 0.25f;
+
+        /// <summary>How far along the side from where a rope aims a tie is still at its place.</summary>
+        public const float Here = 0.5f;
 
         // How far along the side a tie may move from where it aims on a deck, and to the hull's side past a roof's edge.
         private const float DeckReach = 6f, PastRoof = 1.5f;
@@ -42,30 +47,39 @@ namespace Broadside
             return tie ?? Down(ship, from, aim);
         }
 
-        // A mast on a cabin's roof: the roof's edge at a sensible angle; else the hull's side just past it; else the roof's
-        // edge anyway (its nearest clear place, else where it aims).
+        // A mast on a cabin's roof: the roof's edge at a sensible angle; else the hull's side just past it, or another
+        // cabin's top there; else the roof's edge anyway (its nearest clear place, else where it aims).
         private static KwRigTie OnRoof(KwRigAsk ask, float along, float side, KwRigEdge edge)
         {
             KwRigTie own = ask.At(edge);
             if (Angled(ask.From, own.End) && ask.Free(own) && ask.Clear(own))
                 return own;
             KwRigCabin roof = edge.Roof!;
-            return Search(ask, along, side, e => e.Roof == null, PastRoof, true)
+            return AtAim(ask, along, side, true, roof)
+                ?? Search(ask, along, side, e => e.Roof == null, PastRoof, true)
                 ?? Search(ask, along, side, e => e.Roof == roof, float.MaxValue, false)
                 ?? own;
         }
 
-        // A mast on a deck: the hull's side near where it aims; else a cabin roof's edge there at a sensible angle; else the
-        // nearest clear place on the hull's side, or a roof's edge, anywhere; else the hull's side anyway.
+        // A mast on a deck: the hull's side at where it aims, or a cabin's top there; else the hull's side near it; else a
+        // cabin roof's edge there at a sensible angle; else the nearest clear place on the hull's side, or a roof's edge,
+        // anywhere; else the hull's side anyway.
         private static KwRigTie? OnDeck(KwRigAsk ask, float along, float side)
         {
-            KwRigTie? tie = Search(ask, along, side, e => e.Roof == null, DeckReach, false)
+            KwRigTie? tie = AtAim(ask, along, side, false, null)
+                ?? Search(ask, along, side, e => e.Roof == null, DeckReach, false)
                 ?? Search(ask, along, side, e => e.Roof != null, DeckReach, true)
                 ?? Search(ask, along, side, e => e.Roof == null, float.MaxValue, false)
                 ?? Search(ask, along, side, e => e.Roof != null, float.MaxValue, false);
             KwRigEdge? nearest = tie == null ? Nearest(ask.Ship, e => e.Roof == null && e.Side == side, along) : null;
             return tie ?? (nearest != null ? ask.At(nearest) : null);
         }
+
+        // At the aim's place along the side (within Here): the hull's side; else, where that is under a cabin or not clear,
+        // the top of a cabin standing there (its roof's edge or its railing, at a sensible angle), not the piece's own roof.
+        private static KwRigTie? AtAim(KwRigAsk ask, float along, float side, bool angled, KwRigCabin? own) =>
+            Search(ask, along, side, e => e.Roof == null, Here, angled)
+            ?? Search(ask, along, side, e => e.Roof != null && e.Roof != own, Here, true);
 
         // The clear, free place nearest the aim along one side among some edges, within a reach of it.
         private static KwRigTie? Search(KwRigAsk ask, float along, float side, Predicate<KwRigEdge> which, float reach, bool angled)

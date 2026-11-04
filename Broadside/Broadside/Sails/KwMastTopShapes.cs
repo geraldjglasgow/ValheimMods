@@ -16,6 +16,9 @@ namespace Broadside
     {
         private const float Floor = 0.08f, TopFloor = 0.1f, Post = 0.03f, PegEvery = 0.38f, PegOut = 0.16f;
 
+        // The pennant's staff: from this far over the masthead (its cap's top), this thick there, tapering to its top.
+        private const float StaffFrom = 0.07f, StaffFoot = 0.035f, StaffHead = 0.022f;
+
         public static void Shape(MeshBuilder b, KwMastSpec mast)
         {
             KwMastTops tops = mast.Tops;
@@ -137,9 +140,15 @@ namespace Broadside
         // The pennant's staff over the masthead cap up to its top, with a round truck on it.
         private static void Staff(MeshBuilder b, float mast, float top)
         {
-            KwRound.Taper(b, new Vector3(0f, 0f, mast + 0.07f), new Vector3(0f, 0f, top), 0.035f, 0.022f, 6);
+            KwRound.Taper(b, new Vector3(0f, 0f, mast + StaffFrom), new Vector3(0f, 0f, top), StaffFoot, StaffHead, 6);
             KwRound.Taper(b, new Vector3(0f, 0f, top), new Vector3(0f, 0f, top + 0.05f), 0.05f, 0.05f, 8);
         }
+
+        /// <summary>
+        /// The pennant staff's radius at a height z on it (its top at top over a masthead of that height), where the pennant's
+        /// hoist sits on it (<see cref="KwPennantHoist"/>): 3.5 cm on the masthead's cap, tapering evenly to 2.2 cm at its top.
+        /// </summary>
+        public static float StaffRadius(float mast, float top, float z) => Mathf.Lerp(StaffFoot, StaffHead, Mathf.InverseLerp(mast + StaffFrom, top, z));
 
         /// <summary>A flat floor of this outline (seen from above) between two heights: its top, its underside and its edges.</summary>
         public static void Slab(MeshBuilder b, List<Vector2> outline, float low, float high)

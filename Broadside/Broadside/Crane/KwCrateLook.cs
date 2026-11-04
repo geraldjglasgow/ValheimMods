@@ -1,69 +1,91 @@
-using BundlePrefabs;
+using System.Linq;
 using PatchGuard;
 using UnityEngine;
-using UnityEngine.Rendering;
 
 namespace Broadside
 {
     /// <summary>
-    /// Where a crate is drawn, on every peer, from what is already replicated. Hanging (<see cref="KwCrate.HangingFrom"/>):
-    /// its sling's meeting point under the crane's hook, turned with the turret, the four sling ropes drawn from its corner
-    /// loops up to the hook. Free: at its ZDO's place, falling there under gravity when that is lower (set down from a
-    /// hook), moved there at once otherwise, and riding the waves when afloat. The lid opens while someone has the crate
-    /// open, as a chest's does. Sends nothing; on a dedicated server it only places the crate.
+    /// Where a crate the crane lifts is drawn (<see cref="KwCrate"/>), on every peer, from what is already replicated.
+    /// Riding a launched ship (its rider record in its ZDO, <see cref="KwShipRider.ShipKey"/>): the rider places it, and this
+    /// only makes the record and the rider agree here at once, so a crate set down on a deck by another game rides here
+    /// too (a rider added) and one hooked off its ship by another game lets go of it here (its rider released) rather than
+    /// a second later; the same for the game's cart (its link in its ZDO, <see cref="KwCargoCart.CartHash"/>, and
+    /// <see cref="KwCartRider.Agree"/>). Hanging (<see cref="KwCrate.HangingFrom"/>): its lift point under the crane's hook, turned with the
+    /// turret, in its rope sling (<see cref="KwCrateSling"/>). Free: at its ZDO's place, falling there under gravity when
+    /// that is lower (set down from a hook), moved there at once otherwise, and riding the waves when afloat. While it hangs
+    /// its boxes are triggers (<see cref="Hung"/>), so they push nothing. At rest, with
+    /// nothing new in its ZDO, it does nothing. The lid is <see cref="KwCrateLid"/>'s. Sends nothing; a dedicated server
+    /// only places the crate.
     /// </summary>
     public sealed class KwCrateLook : MonoBehaviour
     {
-        public const string SlingPrefix = "kwc_sling_", LidName = "lid";
-        private const float Gravity = 9.81f, Slide = 6f, Turn = 240f, LidTime = 0.4f;
-        /// <summary>The lid's opening turn about its hinge (the workshop's report gives its sign).</summary>
-        private static readonly Vector3 LidOpen = new Vector3(-100f, 0f, 0f);
+        private const float Gravity = 9.81f, Slide = 6f, Turn = 240f;
 
         private KwCrate? crate;
-        private Transform? lid, lift;
-        private readonly Transform?[] corners = new Transform?[4];
-        private readonly LineRenderer?[] slings = new LineRenderer?[4];
-        private Quaternion lidRest;
-        private float fall, open;
-        private bool screens, broken;
+        private KwCrateSling? sling;
+        private Collider[] solid = new Collider[0];
+        private float fall;
+        private uint seen;
+        private bool screens, tried, still, broken, hung;
 
         private void Start() => Guard.Run("Broadside crate look", static l => l.Init(), this);
 
         private void Init()
         {
             crate = GetComponent<KwCrate>();
-            screens = SystemInfo.graphicsDeviceType != GraphicsDeviceType.Null;
-            lid = GameMaterials.Find(transform, LidName);
-            lidRest = lid != null ? lid.localRotation : Quaternion.identity;
-            lift = GameMaterials.Find(transform, KwCrate.LiftName);
-            for (int i = 0; i < corners.Length; i++)
-            {
-                corners[i] = GameMaterials.Find(transform, "sling_" + i);
-                Transform? line = transform.Find(SlingPrefix + i);
-                slings[i] = screens && line != null ? line.GetComponent<LineRenderer>() : null;
-            }
+            screens = KwCargoModel.Screens;
+            solid = GetComponentsInChildren<Collider>(true).Where(c => !c.isTrigger).ToArray();
         }
 
-        // After the cranes have set their hooks this frame. A throw is reported once and stops this crate's look.
+        // After the cranes have set their hooks this frame; at rest with nothing new in the ZDO, nothing. A throw is
+        // reported once and stops this crate's look.
         private void LateUpdate()
         {
-            if (broken || crate == null || crate.View == null || !crate.View.IsValid())
+            ZNetView? view = crate != null ? crate.View : null;
+            if (broken || view == null || !view.IsValid() || still && view.GetZDO().DataRevision == seen)
                 return;
             broken = true;
-            Guard.Run("Broadside crate look", static l => l.Draw(Time.deltaTime), this);
+            Guard.Run("Broadside crate look", static (l, zdo) => l.Draw(zdo, Time.deltaTime), this, view.GetZDO());
             broken = false;
         }
 
-        private void Draw(float dt)
+        private void Draw(ZDO zdo, float dt)
         {
-            KwCrane? crane = crate!.HangingFrom();
+            seen = zdo.DataRevision;
+            bool aboard = Aboard(zdo) | KwCartRider.Agree(gameObject, zdo);
+            KwCrane? crane = aboard ? null : crate!.HangingFrom();
+            Hung(crane != null);
             if (crane != null)
                 Hang(crane);
-            else
-                Free(dt);
-            Slings(crane);
-            if (screens)
-                Lid(dt);
+            still = aboard || crane == null && Free(zdo, dt) && crate!.Crane.IsNone();
+            Sling(crane);
+        }
+
+        // The rider record and the rider agree on this peer: set down on a deck by the crate's owner, it rides here too;
+        // hooked off its ship, it lets go here now (its rider would within a second). Whether it rides.
+        private bool Aboard(ZDO zdo)
+        {
+            bool record = zdo.GetLong(KwShipRider.ShipHash, 0L) != 0L;
+            KwShipRider? rider = TryGetComponent(out KwShipRider found) ? found : null;
+            if (record && rider == null)
+                gameObject.AddComponent<KwShipRider>();
+            else if (!record && rider != null && rider.Ship != 0L)
+                rider.Release();
+            return record;
+        }
+
+        // Hanging, its boxes push nothing: moved with the hook, swung into a hull or held on a deck it held a ship's body
+        // fast where it hung (a player's report, 2026-11-04). Set down or riding, solid again.
+        private void Hung(bool now)
+        {
+            if (now == hung)
+                return;
+            hung = now;
+            foreach (Collider box in solid)
+            {
+                if (box != null)
+                    box.isTrigger = now;
+            }
         }
 
         private void Hang(KwCrane crane)
@@ -73,50 +95,36 @@ namespace Broadside
             fall = 0f;
         }
 
-        // To the ZDO's place: down under gravity, sideways and up quickly; afloat, on the waves where it floats.
-        private void Free(float dt)
+        // To the ZDO's place: down under gravity, sideways and up quickly; afloat, on the waves where it floats. Whether
+        // it is at rest there (not afloat, nothing left to move).
+        private bool Free(ZDO zdo, float dt)
         {
-            ZDO zdo = crate!.View!.GetZDO();
             Vector3 at = zdo.GetPosition(), now = transform.position;
-            float? waves = crate.Afloat ? KwCargoCast.Water(at, 1f) : null;
+            float? waves = crate!.Afloat ? KwCargoCast.Water(at, 1f) : null;
             if (waves.HasValue)
                 at.y = waves.Value - KwCrateRest.Draft;
             fall = now.y > at.y + 0.01f ? fall + Gravity * dt : 0f;
             float y = fall > 0f ? Mathf.Max(at.y, now.y - fall * dt) : at.y;
             Vector3 across = Vector3.MoveTowards(new Vector3(now.x, 0f, now.z), new Vector3(at.x, 0f, at.z), Slide * dt);
+            Vector3 to = new Vector3(across.x, y, across.z);
             Quaternion turn = Quaternion.RotateTowards(transform.rotation, zdo.GetRotation(), Turn * dt);
-            if ((new Vector3(across.x, y, across.z) - now).sqrMagnitude > 1e-8f || Quaternion.Angle(turn, transform.rotation) > 0.01f)
-                transform.SetPositionAndRotation(new Vector3(across.x, y, across.z), turn);
+            bool moves = (to - now).sqrMagnitude > 1e-8f || Quaternion.Angle(turn, transform.rotation) > 0.01f;
+            if (moves)
+                transform.SetPositionAndRotation(to, turn);
+            return !moves && !waves.HasValue;
         }
 
-        // The four ropes from the corner loops up to the hook, only while it hangs.
-        private void Slings(KwCrane? crane)
+        // The rope sling while it hangs from a crane, on a screen: made the first time, hidden when it does not.
+        private void Sling(KwCrane? crane)
         {
-            for (int i = 0; i < slings.Length; i++)
+            if (crane == null)
             {
-                LineRenderer? line = slings[i];
-                if (line == null || corners[i] == null)
-                    continue;
-                line.enabled = crane != null;
-                if (crane == null)
-                    continue;
-                line.positionCount = 2;
-                line.SetPosition(0, corners[i]!.position);
-                line.SetPosition(1, lift != null ? lift.position : crate!.LiftPoint);
+                sling?.Hide();
+                return;
             }
-        }
-
-        // The lid eases open while the crate is open (its owner's flag, or the game's in-use value elsewhere).
-        private void Lid(float dt)
-        {
-            if (lid == null)
-                return;
-            bool inUse = crate!.View!.IsOwner() ? crate.Box != null && crate.Box.IsInUse() : crate.View.GetZDO().GetInt(ZDOVars.s_inUse) == 1;
-            float goal = inUse ? 1f : 0f;
-            if (Mathf.Approximately(open, goal))
-                return;
-            open = Mathf.MoveTowards(open, goal, dt / LidTime);
-            lid.localRotation = lidRest * Quaternion.Euler(LidOpen * Mathf.SmoothStep(0f, 1f, open));
+            if (sling == null && screens && !tried)
+                (tried, sling) = (true, KwCrateSling.Make(crate!));
+            sling?.Show(crate!.HangYaw);
         }
     }
 }

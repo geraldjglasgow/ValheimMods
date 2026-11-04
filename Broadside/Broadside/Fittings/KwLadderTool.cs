@@ -38,7 +38,9 @@ namespace Broadside
     /// roof railing that railing gets a gap, in the same undo step (<see cref="KwLadderGaps"/>). The same climbable ladder
     /// either way (<see cref="KwLadderClimb"/>), on the dock and on a launched ship. A click on a ladder edits its length
     /// (<see cref="KwLadderEdit"/>). Runs on the clicking player's game. Aimed at a launched ship the same click, hover and
-    /// edit are worked out from the ship's blueprint and asked of its owner (<see cref="KwSeaLadderTool"/>).
+    /// edit are worked out from the ship's blueprint and asked of its owner (<see cref="KwSeaLadderTool"/>). Aimed at a dock
+    /// built with the Dock tool (or a game floor's edge over the water), the same click hangs a paid dock ladder down to the
+    /// water instead (<see cref="KwPierLadderTool"/>).
     /// </summary>
     public static class KwLadderTool
     {
@@ -53,6 +55,8 @@ namespace Broadside
 
         public static void Click(Player player)
         {
+            if (KwPierLadderTool.Click(player))
+                return;
             KwLadderPlan? plan = Plan(KwLadderAim.Of(player), out string why, out _);
             if (plan == null)
             {

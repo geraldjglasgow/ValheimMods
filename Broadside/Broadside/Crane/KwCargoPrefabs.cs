@@ -83,8 +83,6 @@ namespace Broadside
                 return null;
             GameObject copy = Strip(PrefabBench.Copy(chest, KwCargo.CratePrefab));
             KwCargoModel.Dress(KwCargoModel.Wear(copy, source), chest, ChestBody, null);
-            for (int i = 0; i < 4; i++)
-                KwCargoModel.Line(copy.transform, KwCrateLook.SlingPrefix + i, scene);
             Setup(copy, KwCrate.Label, KwCraneText.CrateDescription, KwCargo.CrateBundle);
             Container box = copy.GetComponent<Container>();
             (box.m_name, box.m_width, box.m_height, box.m_open, box.m_closed) = (KwCrate.Label, 6, 4, null, null);
@@ -93,6 +91,7 @@ namespace Broadside
             (wear.m_noSupportWear, wear.m_supports) = (false, false);
             copy.AddComponent<KwCrate>();
             copy.AddComponent<KwCrateLook>();
+            copy.AddComponent<KwCrateLid>();
             Log.Info($"Broadside: {KwCargo.CratePrefab} built.");
             return copy;
         }

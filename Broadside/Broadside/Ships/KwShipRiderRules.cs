@@ -9,7 +9,7 @@ namespace Broadside
     /// ship cannons came into Broadside the same day, only those (<see cref="KwArmDef.CannonPrefix"/>; the user's words:
     /// "We also need to not allow building with the vanilla Valheim pieces on the ship, but you should be allowed to build
     /// cannons on your ship"); since 2026-11-02 Broadside's storage crates (<see cref="KwCrates.Prefix"/>) and ammunition piles
-    /// (<see cref="KwPiles.Prefix"/>) too. With the .cfg's AllowBuildingOnShips on (<see cref="KwSettings.BuildingOnShips"/>, the
+    /// (<see cref="KwPiles.Prefix"/>) too, and since 2026-11-03 its hammock (<see cref="KwHammocks.Prefix"/>) and net winch (<see cref="KwTrawl.Prefix"/>). With the .cfg's AllowBuildingOnShips on (<see cref="KwSettings.BuildingOnShips"/>, the
     /// server's value; 2026-11-01) any piece rides again, the game's and every other mod's, but for what moves or floats
     /// itself (a ship, a cart, an item) and what stands in water. Any other piece aimed at a launched ship is refused there
     /// (<see cref="Refused"/>: its ghost stands on the deck, red, and placing it says <see cref="Refusal"/>), but not
@@ -23,7 +23,7 @@ namespace Broadside
         public const float Patience = 60f;
 
         /// <summary>What placing a refused piece on a launched ship says, building on ships not allowed.</summary>
-        public const string OnlyCannons = "Only ship cannons, crates and ammunition piles are built on a launched ship";
+        public const string OnlyCannons = "Only ship cannons, crates, ammunition piles, hammocks and net winches are built on a launched ship";
 
         /// <summary>What it says with building on ships allowed: only a piece that moves itself or stands in water is refused.</summary>
         public const string NotAboard = "This is not built on a launched ship";
@@ -32,13 +32,15 @@ namespace Broadside
         public static string Refusal => KwSettings.BuildingOnShips ? NotAboard : OnlyCannons;
 
         /// <summary>
-        /// The rule as plain data, for offline checks: Broadside's own ship cannons, storage crates and ammunition piles, or with <paramref name="anyPiece"/>
+        /// The rule as plain data, for offline checks: Broadside's own ship cannons, storage crates, ammunition piles and hammocks, or with <paramref name="anyPiece"/>
         /// (AllowBuildingOnShips) every piece but Broadside's dock pieces; never one that stands in water, works the ground
         /// or moves itself.
         /// </summary>
         public static bool Rides(string prefab, bool waterPiece, bool groundPiece, bool movesItself, bool anyPiece) =>
             (prefab.StartsWith(KwArmDef.CannonPrefix, StringComparison.Ordinal) || prefab.StartsWith(KwCrates.Prefix, StringComparison.Ordinal) ||
-             prefab.StartsWith(KwPiles.Prefix, StringComparison.Ordinal) || anyPiece && !Dock(prefab)) &&
+             prefab.StartsWith(KwPiles.Prefix, StringComparison.Ordinal) || prefab.StartsWith(KwHammocks.Prefix, StringComparison.Ordinal) ||
+             prefab.StartsWith(KwTrawl.Prefix, StringComparison.Ordinal) ||
+             anyPiece && !Dock(prefab)) &&
             !waterPiece && !groundPiece && !movesItself;
 
         /// <summary>Whether a piece (its prefab or its placement ghost) may be built on a launched ship.</summary>

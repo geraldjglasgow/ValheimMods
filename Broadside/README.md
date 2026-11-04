@@ -6,12 +6,10 @@ and fight: shots punch holes, the sea floods in, and wrecked ships sink.
 
 [![Broadside - Ship Cannons](https://img.youtube.com/vi/8zDX1wglYUQ/maxresdefault.jpg)](https://www.youtube.com/watch?v=8zDX1wglYUQ)
 
-Watch the ship cannons video: https://www.youtube.com/watch?v=8zDX1wglYUQ
-
 ## Features
 - Dry dock: keel block guides and keel blocks to build on; designing is free.
 - Hull tools: keel, rib, planking, deck, railing, ladder, cabin, masts and sails, bowsprit, post caps, doors and windows,
-  each sized in a small window. Undo with Ctrl + Z, and any part can be edited after it is built.
+  each sized in a small window and editable after it is built.
 - Meadows and Black Forest woods and fittings, a rudder for each, and raw hide sails.
 - Blueprint table: save the ship on the dock, build a saved one back onto it, share designs with the server, and see a
   ship's speed, stability, weight and cost before you build it.
@@ -20,13 +18,14 @@ Watch the ship cannons video: https://www.youtube.com/watch?v=8zDX1wglYUQ
 - Real sailing: the ship floats on its own hull; square sails want the wind behind, gaff sails and jibs sail closer to it.
 - Steering by tiller, or a captain's wheel with working steering gear; anchor windlass, hatches, crow's nests, pennants.
 - Ship panel: speed, top speed for the wind and sails you have now, explore radius, health and your guns' reloads.
-- Log off aboard a ship and you log back in on the same spot on deck.
+- Log off aboard and you log back in on the same spot on deck.
 - Ship cannons, built on a launched ship: bronze with stone shot, or iron with iron shot.
-- Storage: rope-lashed and slatted crates (every slatted crate has its own knots and stains), a cannonball pile and a
-  black powder pile that fill up as you stock them; all built on land or on a launched ship.
-- Cargo crane: a land crane worked like a helm that lifts its cargo crate, its boom reaching out 12 m.
-- Build aboard (off by default): with `AllowBuildingOnShips` on, walls, floors, chests, beds and any other piece are
-  built on a launched ship and sail with it.
+- Storage: rope-lashed and slatted crates, a cannonball pile and a black powder pile that fill up as you stock them;
+  all built on land or on a launched ship.
+- Cargo crane: lifts any crate onto and off ships and carts; dropped from too high, a crate breaks.
+- Aboard: hammocks (your spawn point sails with the ship) and trawl net winches that haul fish onto the deck.
+- Docks: a dock tool for piers in three woods, 34 dockside decorations and an auto-decorate tool.
+- Build aboard: `AllowBuildingOnShips` (off) lets any piece be built on a launched ship.
 - Broadside from the helm: U fires the side you look toward and reloads from the ship's piles, then your pack; J shows
   the shot arcs.
 - Battle damage: holes through the hull, flooding, bailing, holed sails and falling masts; wooden repair kits patch

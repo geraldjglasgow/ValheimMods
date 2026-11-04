@@ -76,7 +76,9 @@ namespace Broadside
 
         private void Dress(int rolled)
         {
-            Renderer[] renderers = GetComponentsInChildren<Renderer>(true);
+            // the model's renderers only (a crane's rope sling under the crate is not the crate's wood)
+            Transform? look = transform.Find(KwCrateModel.LookName);
+            Renderer[] renderers = (look != null ? look : transform).GetComponentsInChildren<Renderer>(true);
             Texture2D? albedo = renderers.Length > 0 ? KwCratePattern.Take(Bundle, rolled, renderers[0].sharedMaterial?.mainTexture) : null;
             if (albedo == null)
                 return;

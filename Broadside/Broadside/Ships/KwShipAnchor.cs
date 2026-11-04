@@ -10,22 +10,24 @@ namespace Broadside
     /// ship's owner (<see cref="Call"/>), who flips it. While it is down the owner's physics step rides the ship to it
     /// (<see cref="Holding"/>, called from <see cref="KwShipDrive"/> in place of the sail's, rudder's and oars' pushes, so
     /// sailing at anchor moves nothing; <see cref="KwMooring"/>), and the helmsman is told why the ship will not sail. The
-    /// cable leaves the ship where its windlass's lead puts it (<see cref="Hawse"/>: the fairlead nearest the windlass,
-    /// <see cref="KwAnchorPlan"/>, worked out from the blueprint on every peer), the anchor is let go under it and the ship
-    /// rides to it there; with no lead found, at the bow's stem head, the top of the hull's foremost section.
+    /// cable leaves the ship where its windlass's lead puts it (<see cref="Hawse"/>: the fairlead nearest the windlass, or
+    /// with none clear the one straight out abeam to the nearest side, <see cref="KwAnchorPlan"/>, worked out from the
+    /// blueprint on every peer), the anchor is let go under it and the ship rides to it there; with no lead worked out at
+    /// all (no hull round the windlass), at the top of the hull's side nearest the windlass, straight out abeam of it.
+    /// Never the bow's stem head.
     /// </summary>
     public sealed class KwShipAnchor : MonoBehaviour
     {
         public const string DownKey = "kw_anchor_down", AtKey = "kw_anchor_at";
         private const string Call = "KW_AnchorToggle";
-        private const float WarnEvery = 6f, UnderHead = 0.15f, AheadOfStem = 0.1f, NoGround = 10f;
+        private const float WarnEvery = 6f, UnderSheer = 0.15f, OutOfSide = 0.1f, NoGround = 10f;
         private static readonly int DownHash = DownKey.GetStableHashCode(), AtHash = AtKey.GetStableHashCode();
 
         private ZNetView? view;
         private Ship? ship;
         private float warned = -99f;
 
-        /// <summary>Where the cable leaves the ship, in its own frame: at its fairlead, or at the stem head, a little ahead of it.</summary>
+        /// <summary>Where the cable leaves the ship, in its own frame: at its fairlead, or abeam of the windlass at the sheer.</summary>
         public Vector3 Hawse { get; private set; }
 
         public bool Down => view != null && view.IsValid() && view.GetZDO().GetBool(DownHash);
@@ -33,26 +35,42 @@ namespace Broadside
         /// <summary>Where the anchor lies on the sea floor (the ship's place when nothing is saved).</summary>
         public Vector3 At => view != null && view.IsValid() ? view.GetZDO().GetVec3(AtHash, transform.position) : transform.position;
 
-        /// <summary>Sets the anchor up on its ship: the cable leaving it at a fairlead (the ship's frame) or, with none, at the stem head.</summary>
-        public void Set(Ship game, KwShipHydro hydro, Vector3? fairlead)
+        /// <summary>
+        /// Sets the anchor up on its ship: the cable leaving it at a fairlead (the ship's frame) or, with none, at the hull's
+        /// side nearest the windlass's drum (the ship's frame), straight out abeam of it.
+        /// </summary>
+        public void Set(Ship game, KwShipHydro hydro, Vector3? fairlead, Vector3 drum)
         {
             ship = game;
             view = GetComponent<ZNetView>();
-            Hawse = fairlead ?? Bow(hydro);
+            Hawse = fairlead ?? Abeam(hydro, drum);
             if (view != null && view.GetZDO() != null)
                 view.Register(Call, _ => Guard.Run("Broadside anchor", Flip));
         }
 
-        // The top of the foremost hull section, a little under it and ahead of it.
-        private static Vector3 Bow(KwShipHydro hydro)
+        // The top of the hull's side nearest a point, at the section nearest it along the ship, a little under and out of it.
+        private static Vector3 Abeam(KwShipHydro hydro, Vector3 drum)
         {
-            if (hydro.Slices.Count == 0)
-                return new Vector3(0f, hydro.Waterline + 1f, 1f);
-            KwHullSlice last = hydro.Slices[hydro.Slices.Count - 1];
-            float top = hydro.Waterline;
-            foreach (Vector2 p in last.Shape)
-                top = Mathf.Max(top, p.y);
-            return new Vector3(0f, top - UnderHead, last.Z + last.Length / 2f + AheadOfStem);
+            float side = drum.x < 0f ? -1f : 1f, off = float.MaxValue;
+            Vector2 top = new Vector2(side, hydro.Waterline + 1f);
+            foreach (KwHullSlice slice in hydro.Slices)
+            {
+                if (Mathf.Abs(slice.Z - drum.z) < off && Sheer(slice.Shape, side) is Vector2 sheer)
+                    (off, top) = (Mathf.Abs(slice.Z - drum.z), sheer);
+            }
+            return new Vector3(top.x + side * OutOfSide, top.y - UnderSheer, drum.z);
+        }
+
+        // A section's highest point on one side (the outer of two as high); null with none on that side.
+        private static Vector2? Sheer(Vector2[] shape, float side)
+        {
+            Vector2? best = null;
+            foreach (Vector2 p in shape)
+            {
+                if (p.x * side > 0f && (best == null || p.y > best.Value.y || (p.y == best.Value.y && Mathf.Abs(p.x) > Mathf.Abs(best.Value.x))))
+                    best = p;
+            }
+            return best;
         }
 
         /// <summary>Asks the ship's owner to drop the anchor, or to weigh it.</summary>

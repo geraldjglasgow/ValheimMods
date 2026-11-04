@@ -9,23 +9,31 @@ namespace Broadside
     /// chock on the sheer or a hawse pipe, <see cref="Spot"/>, held out on an arm of <see cref="Reach"/> when the hull below
     /// needs it), the cable's fixed points on deck from the drum to the fairlead (a deck lead among them when it has one),
     /// where the cable leaves the ship (<see cref="Hawse"/>) and where the weighed anchor's ring hangs, its stock along
-    /// <see cref="Stock"/> and its shank along <see cref="Up"/>. Or, when no clear place was found, none, with why: the
-    /// anchor then stays stowed on the deck.
+    /// <see cref="Stock"/> and its shank along <see cref="Up"/>. When no clear place was found, the one straight out abeam to
+    /// the nearest side (<see cref="KwAnchorAbeam"/>), with what is in the way (<see cref="Clear"/> false, <see cref="Why"/>);
+    /// with no hull at all, none, with why: the anchor then stays stowed on the deck.
     /// </summary>
     public sealed class KwAnchorLead
     {
         private KwAnchorLead(string why) => Why = why;
 
-        public KwAnchorLead(KwAnchorSpot spot, List<Vector3> deck, float reach, Vector3 ring, Vector3 stock, Vector3 up)
+        /// <summary>A lead through a place; with why when it is not clear (what is in the way of the nearest clear one).</summary>
+        public KwAnchorLead(KwAnchorSpot spot, List<Vector3> deck, float reach, Vector3 ring, Vector3 stock, Vector3 up, string why = "")
         {
-            (Spot, Deck, Reach, Ring, Stock, Up, Why) = (spot, deck, reach, ring, stock, up, "");
+            (Spot, Deck, Reach, Ring, Stock, Up, Why) = (spot, deck, reach, ring, stock, up, why);
             Hawse = spot.Outer + spot.Outward * reach;
         }
 
         /// <summary>None found, with why (for the windlass's hover).</summary>
         public static KwAnchorLead Stowed(string why) => new KwAnchorLead(why);
 
+        /// <summary>Led overboard through a fairlead, clear or not.</summary>
         public bool Found => Spot != null;
+
+        /// <summary>Led through a place clear all the way (not straight across whatever is in the way).</summary>
+        public bool Clear => Found && Why.Length == 0;
+
+        /// <summary>Why it is not clear, or not led at all; empty for a clear lead.</summary>
         public string Why { get; }
         public KwAnchorSpot? Spot { get; }
 
@@ -72,8 +80,8 @@ namespace Broadside
         private const int Sags = 8;
 
         public override string ToString() => !Found ? "stowed: " + Why
-            : $"{(Spot!.Pipe ? "hawse pipe" : Spot.Railed ? "chock on the railing" : "chock on the sheer")} at {F(Spot.At)}, cable {KwAnchorRoute.Length(Deck):0.00} m"
-              + $"{(DeckLead.HasValue ? " by a deck lead" : "")}, arm {Reach:0.00} m, ring {F(Ring)}";
+            : $"{(Clear ? "" : "straight abeam (" + Why + "): ")}{(Spot!.Pipe ? "hawse pipe" : Spot.Railed ? "chock on the railing" : "chock on the sheer")} at {F(Spot.At)}, "
+              + $"cable {KwAnchorRoute.Length(Deck):0.00} m{(DeckLead.HasValue ? " by a deck lead" : "")}, arm {Reach:0.00} m, ring {F(Ring)}";
 
         private static string F(Vector3 v) => string.Format(CultureInfo.InvariantCulture, "({0:0.00}, {1:0.00}, {2:0.00})", v.x, v.y, v.z);
     }

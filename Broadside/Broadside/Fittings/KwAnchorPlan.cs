@@ -12,7 +12,9 @@ namespace Broadside
     /// with no chock clear), a turn at a deck lead counted as <see cref="TurnCost"/> of cable and an arm out from the hull
     /// as cable twice over, so either is fitted only when it must be or is clearly shorter, and a little more for a place
     /// off to the side of the drum (<see cref="Aside"/>). So a windlass facing the side leads its cable straight out over
-    /// the side before it. Without one, why (what stood in the way of the nearest).
+    /// the side before it; one on a cabin's roof over that roof's edge where it is the ship's side (<see cref="KwAnchorRoofSpots"/>).
+    /// Without a clear one, straight out abeam to the nearest side anyway, with why (what stood in the way of the nearest,
+    /// <see cref="KwAnchorAbeam"/>), never to the bow; stowed only with no hull round it.
     /// </summary>
     public static class KwAnchorPlan
     {
@@ -34,7 +36,8 @@ namespace Broadside
             string? why = null;
             KwAnchorLead? lead = ship.Housed ? null : Best(ship, KwAnchorSpots.Chocks(ship), ref why);
             lead ??= Best(ship, KwAnchorSpots.Pipes(ship), ref why);
-            return lead ?? KwAnchorLead.Stowed(why ?? $"no side of the ship is within {KwAnchorSpots.Reach:0} m");
+            why ??= $"no side of the ship is within {KwAnchorSpots.Reach:0} m";
+            return lead ?? KwAnchorAbeam.For(ship, why) ?? KwAnchorLead.Stowed(why);
         }
 
         // The clear place with the shortest cable, nearest first; a place is passed by once even its straight way is longer.
@@ -72,7 +75,12 @@ namespace Broadside
                 why ??= Words(hit, true);
                 return null;
             }
-            KwAnchorLead lead = new KwAnchorLead(spot, deck, hang.Value.Reach, hang.Value.Ring, hang.Value.Stock, hang.Value.Up);
+            return Kneed(ship, new KwAnchorLead(spot, deck, hang.Value.Reach, hang.Value.Ring, hang.Value.Stock, hang.Value.Up));
+        }
+
+        /// <summary>The lead with a knee under its arm, when it is held out far enough to need one.</summary>
+        public static KwAnchorLead Kneed(KwAnchorShip ship, KwAnchorLead lead)
+        {
             if (lead.Reach > KneeFrom)
                 lead.Knee = Knee(ship, lead);
             return lead;

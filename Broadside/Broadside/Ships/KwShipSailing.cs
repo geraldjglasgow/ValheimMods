@@ -6,7 +6,8 @@ namespace Broadside
     /// What a launched ship needs for sailing it as a ship of one's own, added on every peer once it floats
     /// (<see cref="KwShipBody"/>, after its tuning and fittings): its keys for the map pin (<see cref="KwShipKeys"/>), its
     /// cargo (<see cref="KwShipCargo"/>), and with an anchor windlass in its blueprint its anchor
-    /// (<see cref="KwShipAnchor"/>, its cable leaving the ship at the first windlass's fairlead, <see cref="KwAnchorPlan"/>)
+    /// (<see cref="KwShipAnchor"/>, its cable leaving the ship at the first windlass's fairlead over the side nearest it,
+    /// <see cref="KwAnchorPlan"/>)
     /// and, where there is a screen, its working windlasses (<see cref="KwShipWindlass"/>, the first showing the anchor and
     /// its cable). Its tier's perks come with its stats (<see cref="KwShipPerks"/>).
     /// </summary>
@@ -27,7 +28,7 @@ namespace Broadside
             Transform holder = ship.Find(KwShipPrefab.Fittings);
             Vector3? hawse = lead.Found ? ship.InverseTransformPoint(holder.TransformPoint(first.Position + first.Rotation * KwMesh.ToUnity(lead.Hawse))) : (Vector3?)null;
             KwShipAnchor anchor = ship.gameObject.AddComponent<KwShipAnchor>();
-            anchor.Set(game, hydro, hawse);
+            anchor.Set(game, hydro, hawse, ship.InverseTransformPoint(holder.TransformPoint(first.Position)));
             if (KwShipBody.Drawn)
                 KwShipBody.Step("Broadside ship windlass", () => Windlasses(holder, blueprint, anchor, lead));
         }
@@ -41,7 +42,7 @@ namespace Broadside
             }
             catch (System.Exception e)
             {
-                Log.Warn($"Broadside anchor: no lead overboard worked out ({e.Message}); its cable goes over the stem head.");
+                Log.Warn($"Broadside anchor: no lead overboard worked out ({e.Message}); its cable goes over the side abeam of the windlass.");
                 return KwAnchorLead.Stowed("its lead could not be worked out");
             }
         }

@@ -33,6 +33,9 @@ namespace Broadside
         /// <summary>On a launched ship, the blueprint piece it was made from (<see cref="KwSeaLadderLook"/>).</summary>
         public KwBpPiece? Piece;
 
+        /// <summary>A dock ladder down into the water (<see cref="KwPierLadder"/>): climbing down leaves the player facing the ladder, to climb back up.</summary>
+        public bool IntoWater;
+
         private float Length
         {
             get
@@ -55,7 +58,7 @@ namespace Broadside
             if (up)
                 OpenAbove();
             Vector3 to = up ? Top(player) : Foot(player, length);
-            Vector3 facing = up ? Away(to) : transform.forward;
+            Vector3 facing = up ? Away(to) : IntoWater ? -transform.forward : transform.forward;
             player.transform.rotation = Quaternion.LookRotation(facing);
             player.SetLookDir(facing);
             KwClimbRoom.Place(player, to);

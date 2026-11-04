@@ -37,6 +37,23 @@ namespace Broadside
                 ships[id] = Time.time;
         }
 
+        /// <summary>On the server: the ZDO of the ship of this own id (<see cref="KwShipRiders.IdKey"/>), among the known ships; null when none.</summary>
+        public static ZDO? ById(long id)
+        {
+            if (!Serving || id == 0L)
+                return null;
+            ZDOMan man = ZDOMan.instance;
+            if (scanned != man)
+                Scan(man);
+            foreach (ZDOID ship in ships.Keys)
+            {
+                ZDO? zdo = man.GetZDO(ship);
+                if (zdo != null && zdo.GetPrefab() == Hash && zdo.GetLong(KwShipRiders.IdHash, 0L) == id)
+                    return zdo;
+            }
+            return null;
+        }
+
         // A player's ships, each its id, its place and its name, back to the asking game.
         private static void Answer(long sender, long player)
         {

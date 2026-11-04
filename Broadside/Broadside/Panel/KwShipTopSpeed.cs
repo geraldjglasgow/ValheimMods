@@ -29,14 +29,14 @@ namespace Broadside
         // Under oars: the oars' push a physics step (their force by the step) against the drag's share of the speed squared.
         private static float Rowing(Ship ship)
         {
-            float drag = Mathf.Max(ship.m_dampingForward * KwShipDrive.DragShare, 1e-9f);
+            float drag = Mathf.Max(KwShipTrim.Of(ship).ForwardDrag(ship) * KwShipDrive.DragShare, 1e-9f);
             return Mathf.Sqrt(Mathf.Max(0f, ship.m_backwardForce) * Time.fixedDeltaTime / drag);
         }
 
         // Under sail: the speed where the sails' push ahead (by the apparent wind at that speed) meets the drag, halved to it.
         private static float Sailing(Ship ship, KwSailMix mix, bool half)
         {
-            float drag = Mathf.Max(ship.m_dampingForward * KwShipDrive.DragShare, 1e-9f), lo = 0f, hi = 45f;
+            float drag = Mathf.Max(KwShipTrim.Of(ship).ForwardDrag(ship) * KwShipDrive.DragShare, 1e-9f), lo = 0f, hi = 45f;
             if (Excess(ship, mix, half, drag, 0.01f) <= 0f)
                 return 0f;
             for (int i = 0; i < Steps; i++)
@@ -56,7 +56,7 @@ namespace Broadside
             Vector3 forward = Vector3.ProjectOnPlane(ship.transform.forward, Vector3.up).normalized;
             KwApparentWind air = KwShipWind.Air(forward * speed, forward);
             float ahead = Vector3.Dot(KwRigDamageDrive.Push(ship, mix, air, half), forward);
-            return ahead * air.Strength * ship.m_sailForceFactor * (half ? 0.5f : 1f) - drag * speed * speed;
+            return ahead * air.Strength * KwShipTrim.Of(ship).SailForce(ship) * (half ? 0.5f : 1f) - drag * speed * speed;
         }
     }
 }

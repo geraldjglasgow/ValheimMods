@@ -20,8 +20,8 @@ namespace Broadside
     /// (<see cref="Free"/>), nor hauls one being manned. A captain at a ship's helm fires the loaded ones aboard
     /// (<see cref="KwBroadside"/>, the library's ordered shot: whatever the load is for), an unmanned one on his game
     /// (<see cref="ShootCalled"/>), reloaded from his pack (<see cref="KwBroadsideReload"/>), a manned one on its gunner's
-    /// where he has it laid (<see cref="ShootOrdered"/>), reloaded by him. Unmanned it goes back to its rest lay (the
-    /// library's <see cref="WeaponDesign.Rest"/>, <see cref="KwArmDesigns.RestPitch"/>).
+    /// where he has it laid (<see cref="ShootOrdered"/>), reloaded by him. Unmanned it keeps its last gunner's lay; never
+    /// aimed it lies at its rest lay (the library's <see cref="WeaponDesign.Rest"/>, <see cref="KwArmDesigns.RestPitch"/>).
     /// </summary>
     public sealed class KwArm : MannedWeapon
     {

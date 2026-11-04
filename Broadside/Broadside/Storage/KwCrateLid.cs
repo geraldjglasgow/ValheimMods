@@ -5,9 +5,10 @@ using UnityEngine;
 namespace Broadside
 {
     /// <summary>
-    /// A storage crate's lid on every peer: open while someone has the crate open, from the Container on its owner and the
-    /// game's own in-use value in the ZDO elsewhere (the owner writes it), eased over 0.4 s about its hinge; settled, it
-    /// does nothing. Sends nothing. A placement ghost (no ZDO), a dedicated server or a model without a lid leaves it shut.
+    /// A storage crate's lid, and the cargo crate's, on every peer: open while someone has the crate open, from the Container
+    /// on its owner and the game's own in-use value in the ZDO elsewhere (the owner writes it), eased over 0.4 s about its
+    /// hinge; settled, it does nothing. Sends nothing. A placement ghost (no ZDO), a dedicated server or a model without a
+    /// lid leaves it shut.
     /// </summary>
     public sealed class KwCrateLid : MonoBehaviour
     {
@@ -27,8 +28,7 @@ namespace Broadside
         {
             view = GetComponent<ZNetView>();
             box = GetComponent<Container>();
-            Transform? look = transform.Find(KwCrateModel.LookName);
-            lid = look != null ? GameMaterials.Find(look, LidName) : null;
+            lid = GameMaterials.Find(transform, LidName);
             rest = lid != null ? lid.localRotation : Quaternion.identity;
             if (view == null || view.GetZDO() == null || lid == null || !KwIcons.CanRender)
                 enabled = false;

@@ -88,9 +88,12 @@ namespace Broadside
             return true;
         }
 
-        // The ladder tool: the ladder at the snapped spot nearest the aim, on a hatch or an open edge, down to what it stands on.
+        // The ladder tool: the ladder at the snapped spot nearest the aim, on a hatch or an open edge, down to what it stands
+        // on; on a dock, the dock ladder (KwPierLadderTool).
         private static void Ladder(Player player)
         {
+            if (KwPierLadderTool.Preview(player))
+                return;
             KwLadderPlan? plan = KwLadderTool.Hover(player);
             if (plan == null)
                 Hide();

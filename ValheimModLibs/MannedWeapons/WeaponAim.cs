@@ -11,11 +11,15 @@ namespace MannedWeapons;
 /// <see cref="ViewTilt"/>), so the crosshair is never on what the weapon cannot reach. It goes to the ZDO when it has
 /// moved a little; every other peer eases toward that. From the trigger until the shot has left
 /// (<see cref="MannedWeapon.Steady"/>) it stays laid on what the crosshair was on as the trigger was pulled
-/// (<see cref="Mark"/>). Each drawn frame on every peer the yaw and pitch parts are turned to it, a shot's kick on top.
+/// (<see cref="Mark"/>). Each drawn frame on every peer the yaw and pitch parts are turned to it, a shot's kick on top;
+/// the first frame a peer draws the weapon (it came into range, or the peer joined) takes the ZDO's lay at once, so a
+/// weapon left laid is drawn there rather than swinging to it from (0, 0). A mod may set the lay of a weapon nobody mans
+/// on its owner (<see cref="Set"/>).
 /// </summary>
 public sealed class WeaponAim
 {
 	private float shownYaw, shownPitch;
+	private bool drawn;
 
 	/// <summary>The operator's aim, degrees from where the weapon was placed (yaw to the right, pitch up), ahead of what the ZDO has sent.</summary>
 	public float Yaw { get; private set; }
@@ -51,7 +55,28 @@ public sealed class WeaponAim
 		}
 	}
 
-	/// <summary>The operator's own aim, worked out here each frame (on the mark while <see cref="MannedWeapon.Steady"/>, held still without one); anyone else's eased toward the ZDO's; the kick on top.</summary>
+	/// <summary>
+	/// On the weapon's owner while nobody mans it: its lay set at once, written to the ZDO (held within the arcs) and drawn
+	/// there on this machine without easing; every other peer eases to it as to any lay. For a mod turning the piece under
+	/// the weapon by the same yaw, so the weapon itself stays where it is drawn (Broadside folds a ship cannon's lay into
+	/// its facing as it is hauled). False when it was not set: no valid ZDO here, another machine owns it, or someone mans it.
+	/// </summary>
+	public bool Set(MannedWeapon weapon, float yaw, float pitch)
+	{
+		if (!weapon.Net.IsValid() || !weapon.Net.IsOwner() || weapon.Manned)
+		{
+			return false;
+		}
+		WeaponArcs arcs = weapon.Design.Aim;
+		(yaw, pitch) = (arcs.ClampYaw(yaw), Mathf.Clamp(pitch, arcs.PitchDown, arcs.PitchUp));
+		ZDO zdo = weapon.Net.GetZDO();
+		zdo.Set(weapon.Design.Keys.Yaw, yaw);
+		zdo.Set(weapon.Design.Keys.Pitch, pitch);
+		(Yaw, Pitch, shownYaw, shownPitch, drawn) = (yaw, pitch, yaw, pitch, true);
+		return true;
+	}
+
+	/// <summary>The operator's own aim, worked out here each frame (on the mark while <see cref="MannedWeapon.Steady"/>, held still without one); anyone else's eased toward the ZDO's (taken at once the first frame it is drawn); the kick on top.</summary>
 	internal void Turn(MannedWeapon weapon, WeaponFrame frame, in WeaponState s, Player? operating)
 	{
 		if (operating != null)
@@ -61,9 +86,10 @@ public sealed class WeaponAim
 		}
 		else
 		{
-			float ease = 1f - Mathf.Exp(-weapon.Design.Aim.Follow * Time.deltaTime);
+			float ease = drawn ? 1f - Mathf.Exp(-weapon.Design.Aim.Follow * Time.deltaTime) : 1f;
 			(shownYaw, shownPitch) = (Mathf.LerpAngle(shownYaw, s.Yaw, ease), Mathf.LerpAngle(shownPitch, s.Pitch, ease));
 		}
+		drawn = true;
 		float kick = weapon.Kick(s);
 		frame.Yaw.localRotation = Quaternion.Euler(0f, shownYaw, 0f);
 		frame.Pitch.localRotation = Quaternion.Euler(-(shownPitch + kick), 0f, 0f);

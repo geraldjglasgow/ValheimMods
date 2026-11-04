@@ -12,7 +12,10 @@ namespace Broadside
     /// copies of the game's wood chest (its Container, whose items the game keeps in the ZDO so every player sees the
     /// same, its placement, health, wear and sounds) wearing their workshop models (<see cref="KwCrateModel"/>), the lid
     /// opening while someone has the crate open (<see cref="KwCrateLid"/>). Built on land like any chest and, unlike the
-    /// game's pieces, on a launched ship too, which it then rides (<see cref="KwShipRiderRules"/>). Made once when the
+    /// game's pieces, on a launched ship too, which it then rides (<see cref="KwShipRiderRules"/>). A cargo crane lifts it
+    /// as it lifts the cargo crate (<see cref="KwCrate"/>, <c>Crane/CRANE.md</c>): off a ship's deck and onto one, which it
+    /// then rides as if built there, contents and all; like that crate it comes down when nothing is left under it, rather
+    /// than wearing away for want of support. Made once when the
     /// network scene first wakes, after the cannons, on every peer (the dedicated server too), registered every time it
     /// wakes; then the hammer is refreshed (<see cref="KwCrateHammer"/>). Every name starts with <c>BS_</c>, never
     /// <c>KW_</c> (a ship part's). Without its bundle a crate keeps the wood chest's look (logged once).
@@ -78,7 +81,18 @@ namespace Broadside
             copy.AddComponent<KwCrateLid>();
             if (def.Marked)
                 copy.AddComponent<KwCrateCoat>().Bundle = def.Bundle;
+            Liftable(copy);
             return copy;
+        }
+
+        // The crane's crate parts (its box and lift point read from the model's col_box_body); it hangs in the air and
+        // moves, so no wear for want of support (the settle check brings a crate with nothing under it down instead).
+        private static void Liftable(GameObject copy)
+        {
+            if (copy.TryGetComponent(out WearNTear wear))
+                wear.m_noSupportWear = false;
+            copy.AddComponent<KwCrate>();
+            copy.AddComponent<KwCrateLook>();
         }
     }
 }

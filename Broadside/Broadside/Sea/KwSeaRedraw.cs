@@ -4,8 +4,8 @@ namespace Broadside
 {
     /// <summary>
     /// What every sea edit redraws besides the kinds' own parts, on every peer: the ship's figures from its blueprint as it
-    /// is now (<see cref="KwShipStats"/>: its speed, its sails' push and its sails by kind, its health; its steering, which
-    /// only the rudder sets, untouched, and its weight, which is its hull's water, unchanged), and its ladder over the side
+    /// is now (<see cref="KwShipStats"/>: its speed, its sails' push and its sails by kind, its health, its steering;
+    /// its weight, which is its hull's water, unchanged), and its ladder over the side
     /// placed again a frame later (<see cref="KwShipLadder"/>: it keeps clear of posts, shield hooks, openings and ladders), its old mesh
     /// let go; the shadow's boxes made again the frame after (<see cref="KwShipShadow"/>), so no one frame takes them all; the body's mass, centre and turning put back as they were (<see cref="KwBodyMass"/>).
     /// </summary>
@@ -33,7 +33,7 @@ namespace Broadside
             KwShipShadow.Add(ship.transform, ship.Blueprint);
         }
 
-        /// <summary>The ship's figures again: what its build sets, but its steering (multiplied in once, at launch).</summary>
+        /// <summary>The ship's figures again: what its build sets, onto its trim (<see cref="KwShipTrim"/>).</summary>
         public static void Stats(KwSeaShip ship)
         {
             Ship game = ship.GetComponent<Ship>();
@@ -41,13 +41,9 @@ namespace Broadside
             if (game == null || hydro == null)
                 return;
             KwShipStats stats = KwShipStats.Of(ship.Blueprint, ship.Hull, KwShipWeight.Sized(hydro.Slices, ship.Hull));
-            game.m_sailForceFactor = stats.SailFactor;
-            (game.GetComponent<KwShipWind>() ?? game.gameObject.AddComponent<KwShipWind>()).Mix = stats.Mix;
-            game.m_dampingForward = KwShipStats.KarveDrag / (stats.Speed * stats.Speed);
-            WearNTear? wear = ship.GetComponent<WearNTear>();
-            if (wear != null)
-                wear.m_health = stats.Health;
-            KwShipPerks.Apply(game, wear, stats);
+            stats.Trim(game);
+            KwShipTrim.Of(game).Hold();
+            KwShipPerks.Apply(game, ship.GetComponent<WearNTear>(), stats);
         }
 
         /// <summary>The ladder over the side placed again from the blueprint as it is now, its old mesh let go.</summary>

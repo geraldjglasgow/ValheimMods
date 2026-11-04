@@ -114,16 +114,22 @@ namespace Broadside
             return model;
         }
 
+        /// <summary>The child holding a piece's placing box (<see cref="Anchor"/>), the one collider its ghost keeps (<see cref="KwGhostPlace"/>).</summary>
+        public const string PlaceName = "kw_place";
+
         /// <summary>
         /// The box a piece's ghost is placed by. The game places a ghost by the point of its colliders nearest the aim, and
         /// skips concave mesh colliders: with only the mesh collider it found none and threw the ghost to twice the aim's
-        /// world position, and with boxes only (the blueprint table's) it takes the nearest box's corner, a leg's foot, and
-        /// shifts the piece sideways. A 10 cm box at the piece's origin (its lowest point) is what it places by; the mesh
-        /// collider or the boxes stay for walking.
+        /// world position, and with boxes (the blueprint table's legs, a pile's or crate's body) it takes the nearest box's
+        /// corner and shifts the piece sideways, jumping corner to corner as the ground or a rocking deck tilts. A 10 cm box
+        /// at the piece's origin (its lowest point), on its own child <see cref="PlaceName"/>, is what it places by: the
+        /// ghost keeps only it (<see cref="KwGhostPlace"/>); the mesh collider or the boxes stay for walking.
         /// </summary>
         public static void Anchor(GameObject model)
         {
-            BoxCollider anchor = model.AddComponent<BoxCollider>();
+            GameObject place = new GameObject(PlaceName) { layer = model.layer };
+            place.transform.SetParent(model.transform, false);
+            BoxCollider anchor = place.AddComponent<BoxCollider>();
             // standing on the origin (its bottom face there), so a piece aimed at a floor sits on it, not 5 cm above
             anchor.center = new Vector3(0f, 0.05f, 0f);
             anchor.size = Vector3.one * 0.1f;

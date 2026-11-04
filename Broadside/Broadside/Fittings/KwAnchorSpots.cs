@@ -12,7 +12,8 @@ namespace Broadside
     /// hull's side (or a cabin's raised side) at the drum's height. Never at a rib, on a railing's post, where the hung
     /// anchor would cover an opening cut in that side (or an opened cover's swing), or where a cabin's raised side stands on
     /// the sheer. Beside a shield hook a chock counts a little more (<see cref="EmptyHook"/>, a shield hung there later
-    /// would hang over the cable), and beside a hook with a shield hung on it much more (<see cref="HookCost"/>).
+    /// would hang over the cable), and beside a hook with a shield hung on it much more (<see cref="HookCost"/>). For a
+    /// windlass on a cabin's roof, the chocks along that roof's edge where it is the ship's side too (<see cref="KwAnchorRoofSpots"/>).
     /// </summary>
     public static class KwAnchorSpots
     {
@@ -42,8 +43,20 @@ namespace Broadside
                 foreach (bool far in new[] { false, true })
                     Transom(hull, far, spots);
             }
+            KwAnchorRoofSpots.Add(ship, spots);
             return Nearest(spots);
         }
+
+        /// <summary>A chock at x on one side's sheer (the part's kit), on the railing's cap where one stands there, whatever is in the way.</summary>
+        public static KwAnchorSpot Abeam(KwAnchorShip ship, KwAnchorHull hull, float side, float x)
+        {
+            Vector2 e = hull.Sheer(x);
+            return Chock(hull, side, x, Railing(ship, hull.Pose.Out(new Vector3(x, side * e.x, e.y)), out _, out _) != null);
+        }
+
+        /// <summary>A hawse pipe at x on one side at the drum's height (the part's kit); null where the side has no room for one.</summary>
+        public static KwAnchorSpot? PipeAt(KwAnchorShip ship, KwAnchorHull hull, float side, float x) =>
+            Pipe(ship, hull, side, x, hull.Pose.Local(new Vector3(0f, 0f, PipeHigh)).z);
 
         /// <summary>The hawse pipes through the sides at the drum's height (every second step), nearest first.</summary>
         public static List<KwAnchorSpot> Pipes(KwAnchorShip ship)
@@ -103,8 +116,8 @@ namespace Broadside
             return Apart(places);
         }
 
-        // The places in order along the side, one of any two within a centimetre left out (two railings' end posts at a joint).
-        private static List<float> Apart(List<float> places)
+        /// <summary>The places in order along the side, one of any two within a centimetre left out (two railings' end posts at a joint).</summary>
+        public static List<float> Apart(List<float> places)
         {
             places.Sort();
             List<float> apart = new List<float>(places.Count);
@@ -203,9 +216,11 @@ namespace Broadside
                 if (Mathf.Abs(hull.Pose.Local(rib).x - x) < RibGap)
                     return false;
             }
-            string wall = side > 0f ? KwOpening.Port : KwOpening.Starboard;
-            return !hull.Openings.Exists(o => o.Wall == wall && Meets(o, x, top));
+            return !Opened(hull.Openings, side > 0f ? KwOpening.Port : KwOpening.Starboard, x, top);
         }
+
+        /// <summary>Whether an opening in a wall comes within reach of a fairlead at x and height top (their frame).</summary>
+        public static bool Opened(List<KwOpening> openings, string wall, float x, float top) => openings.Exists(o => o.Wall == wall && Meets(o, x, top));
 
         // Whether an opening (its frame, shutters opened out to its sides, a lid flapped up over it) comes within reach of a
         // fairlead at x and height top (the part's kit): along the side, and up to the anchor hung under it or the fairlead.

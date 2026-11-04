@@ -42,7 +42,7 @@ namespace Broadside
             if (player == null || type != MessageHud.MessageType.Center)
                 return false;
             Piece? piece = player.InPlaceMode() ? player.GetSelectedPiece() : null;
-            return KwForm.IsOpen || (piece != null && piece.name.StartsWith(KwToolPieces.ToolPrefix, StringComparison.Ordinal));
+            return KwForm.IsOpen || (piece != null && piece.name.StartsWith(KwToolPieces.ToolPrefix, StringComparison.Ordinal)) || KwDecorTool.Is(piece);
         }
 
         // The text on the line; false when there is no line to show it on (the game's own message shows instead).

@@ -1,5 +1,18 @@
 # Changelog
 
+## 0.6.0
+
+- Dock tool: level piers on pilings in wood, core wood or fine wood, branching off existing docks.
+- 34 dockside decorations, and an auto-decorate tool that fills an area round docks and paths.
+- Hammock: a bed built on a launched ship; your spawn point sails with it.
+- Trawl net winch: cast a net astern while sailing, then haul the catch onto the deck.
+- The cargo crane lifts every crate, onto and off ships and the game's cart, which now carries crates.
+- A crate dropped from over 2 m breaks and spills.
+- Cannons keep the aim their gunner left; Shift snaps a cannon into a gunport.
+- Ships sail faster: a big, well-rigged ship is about as fast as a karve.
+- ShipConfig's `KW_ship` settings and other mods' sailing bonuses now apply to Broadside ships.
+- Fixed: a crate set on a ship's deck no longer holds the ship still.
+
 ## 0.5.0
 
 - Storage crates: small and large rope-lashed crates, and small and large slatted crates, each slatted crate marked its own way.

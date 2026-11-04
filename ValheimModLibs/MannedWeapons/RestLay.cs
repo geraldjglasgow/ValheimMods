@@ -3,12 +3,14 @@ using UnityEngine;
 namespace MannedWeapons;
 
 /// <summary>
-/// An unmanned weapon going back to its rest lay (<see cref="WeaponDesign.Rest"/>), on its owner, each physics step: when
-/// no valid operator holds it (he let go, walked off, died or left the game, the owner then being whoever the game gave
-/// the ZDO to, a dedicated server too) and its aim is off the rest lay, the aim is turned toward it at the weapon's own
-/// turn and tilt rates and written to the ZDO, every peer easing after it as after an operator's aim. At rest nothing is
-/// written, and it is looked at again only every <see cref="Idle"/> seconds. Nothing else writes the aim: a called shot
-/// fires where the weapon points, and a reload leaves it alone.
+/// An unmanned weapon going back to its rest lay (<see cref="WeaponDesign.Rest"/>, one that <see cref="WeaponRest.Returns"/>),
+/// on its owner, each physics step: when no valid operator holds it (he let go, walked off, died or left the game, the
+/// owner then being whoever the game gave the ZDO to, a dedicated server too) and its aim is off the rest lay, the aim is
+/// turned toward it at the weapon's own turn and tilt rates and written to the ZDO, every peer easing after it as after an
+/// operator's aim. At rest nothing is written, and it is looked at again only every <see cref="Idle"/> seconds. Nothing
+/// else writes the aim but a mod's own <see cref="WeaponAim.Set"/>: a called shot fires where the weapon points, and a
+/// reload leaves it alone. The rest lay is also the lay of a weapon never aimed (<see cref="Lay"/>, read by
+/// <see cref="WeaponState"/>), whether it returns or not.
 /// </summary>
 internal static class RestLay
 {

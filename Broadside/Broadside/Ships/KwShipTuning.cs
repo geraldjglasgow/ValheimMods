@@ -27,7 +27,7 @@ namespace Broadside
             ship.gameObject.AddComponent<KwShipHydro>().Set(blueprint, hull);
             Ship game = ship.GetComponent<Ship>();
             game.m_stearForceOffset = -hull.Length / 2f;
-            game.m_sailForceOffset = Mathf.Clamp(0.2f * hull.Depth, 0.5f, 2f);
+            KwShipTrim.Of(game).SailOffset = Mathf.Clamp(0.2f * hull.Depth, 0.5f, 2f);
             float sized = KwShipWeight.Sized(ship.GetComponent<KwShipHydro>().Slices, hull);
             KwShipStats.Of(blueprint, hull, sized).Apply(game, ship.GetComponent<WearNTear>());
         }

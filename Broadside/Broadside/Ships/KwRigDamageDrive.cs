@@ -21,7 +21,6 @@ namespace Broadside
         public const float Floor = 0.12f;
 
         private static readonly ConditionalWeakTable<KwRigDamage, KwRigPower> powers = new ConditionalWeakTable<KwRigDamage, KwRigPower>();
-        private static readonly ConditionalWeakTable<Ship, KwRigSteering> steering = new ConditionalWeakTable<Ship, KwRigSteering>();
 
         /// <summary>The sails' push ahead and to leeward per unit of sail force, at an apparent wind, at full or half sail.</summary>
         public static Vector3 Push(Ship ship, KwSailMix mix, KwApparentWind air, bool halfSail)
@@ -45,7 +44,7 @@ namespace Broadside
             return power;
         }
 
-        /// <summary>The ship's steering scaled by its rudders' blades left (all of it when whole), from the values its build gave it.</summary>
+        /// <summary>The ship's steering scaled by its rudders' blades left (all of it when whole): the trim's share (<see cref="KwShipTrim.Rig"/>).</summary>
         public static void Steer(KwRigDamage damage)
         {
             Ship? ship = damage.GetComponent<Ship>();
@@ -61,26 +60,7 @@ namespace Broadside
                 rudders++;
             }
             float share = rudders > 0 ? Floor + (1f - Floor) * left / rudders : 1f;
-            steering.GetValue(ship, s => new KwRigSteering()).Set(ship, share);
-        }
-    }
-
-    /// <summary>
-    /// A ship's steering as its build set it (<see cref="KwShipStats.Apply"/>), and the share of it the rudders' damage
-    /// leaves (<see cref="KwRigDamageDrive.Steer"/>); taken again if anything set the ship's own values since.
-    /// </summary>
-    internal sealed class KwRigSteering
-    {
-        private float push, row, helm, share = 1f;
-        private bool known;
-
-        public void Set(Ship ship, float now)
-        {
-            bool moved = known && (!Mathf.Approximately(ship.m_stearVelForceFactor, push * share) || !Mathf.Approximately(ship.m_stearForce, row * share));
-            if (!known || moved)
-                (push, row, helm, known) = (ship.m_stearVelForceFactor, ship.m_stearForce, ship.m_rudderSpeed, true);
-            share = now;
-            (ship.m_stearVelForceFactor, ship.m_stearForce, ship.m_rudderSpeed) = (push * share, row * share, helm * share);
+            KwShipTrim.Of(ship).Rig = share;
         }
     }
 

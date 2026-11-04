@@ -22,7 +22,7 @@ namespace Broadside
         [HarmonyPostfix]
         private static void Postfix(Hud __instance, Piece piece) => Guard.Run("Broadside tool panel", () => Fit(__instance.m_pieceDescription, IsTool(piece)));
 
-        private static bool IsTool(Piece? piece) => piece != null && piece.name.StartsWith(KwToolPieces.ToolPrefix, StringComparison.Ordinal);
+        private static bool IsTool(Piece? piece) => piece != null && (piece.name.StartsWith(KwToolPieces.ToolPrefix, StringComparison.Ordinal) || KwDecorTool.Is(piece));
 
         // The box grown for a tool, or as the game made it for anything else.
         private static void Fit(TMP_Text text, bool tool)

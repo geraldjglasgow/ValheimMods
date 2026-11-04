@@ -18,18 +18,19 @@ namespace Broadside
     /// <see cref="WeaponDesign.MostUse"/> of the stand point (brought there at once, round the gun) and counted as its
     /// gunner within <see cref="HolderRange"/> of it. The view tilts with the barrel (<see cref="WeaponArcs.ViewTiltStops"/>,
     /// on by default): no further than the barrel can lay itself on what the crosshair is on, no faster than it tilts.
-    /// Unmanned it goes back to its rest lay, the middle of its arc at <see cref="RestPitch"/> (the library's
-    /// <see cref="WeaponDesign.Rest"/>, on its owner, at its own turn and tilt speeds). Its keys and calls are every
-    /// cannon's (<see cref="KwArmLink.Keys"/>).
+    /// Unmanned it keeps the lay its last gunner left it at (the user, 2026-11-02: "Keep the cannon in the position the
+    /// player aimed it"; the library's <see cref="WeaponRest.Returns"/> off), in its ZDO for every peer; a cannon never aimed
+    /// lies at its rest lay, the middle of its arc at <see cref="RestPitch"/> (the library's <see cref="WeaponDesign.Rest"/>).
+    /// Its keys and calls are every cannon's (<see cref="KwArmLink.Keys"/>).
     /// </summary>
     public static class KwArmDesigns
     {
         private const float Reach = 250f, HolderRange = 5f;
 
         /// <summary>
-        /// The rest lay's elevation, degrees: unmanned, every cannon goes back to the middle of its arc (straight out of its
-        /// port, the way it was placed facing) at this, so a broadside fires where the captain expects (CLAUDE.md,
-        /// "Cannons"). One degree up: from a 1.5 m deck (the muzzle 2.2 to 2.5 m over a calm sea) the ball is
+        /// The rest lay's elevation, degrees: a cannon never aimed lies in the middle of its arc (straight out of its port,
+        /// the way it was placed facing) at this; once aimed it keeps its gunner's lay (until 2026-11-02 every unmanned
+        /// cannon went back here). One degree up: from a 1.5 m deck (the muzzle 2.2 to 2.5 m over a calm sea) the ball is
         /// still about 2 m over the sea 30 m out (a hull's side) and meets it 53 to 55 m out from the small iron cannons, 68
         /// to 72 m from the others (offline, the real flight).
         /// </summary>
@@ -53,7 +54,7 @@ namespace Broadside
         {
             Aim = Arcs(def),
             Reload = new ReloadCycle(Mathf.Max(0.1f, def.Primary.Reload - def.FireTime)) { Rest = def.FireTime, FinishOnLetGo = false },
-            Rest = new WeaponRest(0f, RestPitch),
+            Rest = new WeaponRest(0f, RestPitch) { Returns = false },
             Body = new OperatorBody { Facing = def.Facing, Elbows = ElbowHint.Square },
             Words = new WeaponWords { Name = def.Label, NoAmmo = "Out of ammunition." },
             UseRange = WeaponDesign.MostUse,

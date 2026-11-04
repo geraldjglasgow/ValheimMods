@@ -59,7 +59,7 @@ namespace Broadside
             bool half = sailSize < 0.99f;
             // the mix's push, less what shot-down, holed and drooping sails no longer give (KwRigDamageDrive)
             Vector3 push = KwRigDamageDrive.Push(ship, wind.Mix, air, half);
-            Vector3 target = push * (air.Strength * ship.m_sailForceFactor * sailSize);
+            Vector3 target = push * (air.Strength * KwShipTrim.Of(ship).SailForce(ship) * sailSize);
             ship.m_sailForce = Vector3.SmoothDamp(ship.m_sailForce, target, ref ship.m_windChangeVelocity, 1f, 99f, dt);
             return ship.m_sailForce;
         }

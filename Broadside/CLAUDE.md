@@ -19,7 +19,10 @@ the `KwBp*` entry files), with what they cost, the helmsman at a tiller and the 
 stays on disk, gitignored and no longer compiled, in `AssetLab/AssetLab/Keelwright/` as the archive of what is still
 left out: the weapon mounts and the other ship weapons (`Arms/`, with `ANIMATION.md`; its cannons came back as the ship
 cannons on 2026-10-26, from the AssetLab Cannons bench that had tried them out), storage (and with it a ship's hold; two
-storage crates came back on 2026-11-02, `Storage/`, the user's words: "make a large and small storage crate for broadside"), hammocks,
+storage crates came back on 2026-11-02, `Storage/`, the user's words: "make a large and small storage crate for broadside"), hammocks
+(back on 2026-11-03 as the hammock, `Hammock/`, the user's words: "we need the ship hammock in broadside"; not the
+archive's two hook pieces with a hammock spawned between them, but one piece placed by its two ends, each a post on a
+floor or an iron hook in anything else),
 lanterns, seats and benches, paddle ports, ship pushing and the table's Launch button. Anything from there comes
 back only as a new, deliberate change: the captain's wheel came back on 2026-10-25 (the user's words: "We also need
 the steering wheel back. We also need a way that the rudder connects to the steering wheel, so maybe on the underside
@@ -52,7 +55,7 @@ deck in place of the deck tiller. The ship formulas are in
   sail added to a linen or scale hide mast is raw hide. Post caps, the anchor windlass and a cap at sea take the look
   of the tier they stand on; nothing else a player picks needs a higher-tier item (a frame's "Iron-banded" costs the
   tier's hull fittings, resin or bronze nails, no iron). The ship cannons and their shot and powder are the
-  cannons' own (`Cannons/`, "Cannons" below), not limited here.
+  cannons' own (`Cannons/`, "Cannons" below), not limited here. The hammock is wood, deer hide and leather scraps.
 - **Real ships from the hammer.** A saved design (`KW_bp_<path>`) is built on the water like the game's own ships: a
   workbench in range (the game's own check, the karve's station), and its cost, what its parts would have cost built by
   hand (`KwBpCost`): each planking, deck, keel or rib part its tier's two materials by its size (`KwBiomeCost`); each
@@ -76,12 +79,12 @@ deck in place of the deck tiller. The ship formulas are in
   slots beside the workbench; the rest are checked and taken at the click, the game's way (`KwGamePay`: `Player.HaveRequirements` and `ConsumeResources`, so a mod that builds from nearby chests counts there too; every Broadside cost, a mast put back and an edit at sea as well). The launched ship (`KW_ship`) broken up with
   the hammer's remove gives all of it back, in full, in the game's floating cargo crates (`KwShipBreak`, below); wrecked
   or cleared with `kwship clear` it gives nothing; its boarding ladder (the karve's own, remade) is not a saved part and costs nothing.
-- **Built aboard once launched: ship cannons, storage crates and ammunition piles only, unless the .cfg allows any piece.** The dock designs the whole ship;
+- **Built aboard once launched: ship cannons, storage crates, ammunition piles, hammocks and net winches only, unless the .cfg allows any piece.** The dock designs the whole ship;
   by default the only pieces built with the hammer on a launched ship are Broadside's ship cannons (`BS_cannon_*`),
-  storage crates (`BS_crate_*`) and ammunition piles (`BS_pile_*`; both since 2026-11-02; `KwShipRiderRules`), which ride it (`KwShipRider`) at their own cost and with the game's own removal (2026-10-26, the
+  storage crates (`BS_crate_*`) and ammunition piles (`BS_pile_*`; both since 2026-11-02) and the hammock (`BS_hammock`, since 2026-11-03) and the net winch (`BS_trawl_winch`, since 2026-11-03, `Trawl/`; `KwShipRiderRules`), which ride it (`KwShipRider`) at their own cost and with the game's own removal (2026-10-26, the
   user's words: "We also need to not allow building with the vanilla Valheim pieces on the ship, but you should be allowed
   to build cannons on your ship"). The game's pieces and every other mod's are refused there ("Only ship cannons,
-  crates and ammunition piles are built on a launched ship"); pieces already riding a ship stay. With `AllowBuildingOnShips` on (2026-11-01, after a
+  crates, ammunition piles, hammocks and net winches are built on a launched ship"); pieces already riding a ship stay. With `AllowBuildingOnShips` on (2026-11-01, after a
   player asked to "build on these boats like any other structure. I want to live on board"; the user's words: "if true
   players can place objects on the ship without restriction") every piece rides, the game's and every other mod's, but
   for one that moves or floats itself (a ship, a cart, an item) or stands in water ("This is not built on a launched
@@ -89,13 +92,32 @@ deck in place of the deck tiller. The ship formulas are in
   takes nothing off a ship. Ship cannons are built nowhere else (not on the dock's design parts, not on land:
   `KwArmPlace`). Broadside's own dock pieces are never built there (its tools edit a launched ship their own way), and
   blueprints never carry riders.
+- **Docks are real pieces, paid for** (2026-11-03, `Docks/DOCKS.md`, the user's words: "We also need some kind of dock
+  tool that can be used to build docks ... Also needs to be able to be made from wood, core wood, fine wood."): the Dock
+  tool builds docks on the shore and out over the water at a workbench, each costing its size in its material's one item
+  (wood, core wood or fine wood: Meadows and Black Forest), all of it given back when removed. Never on a launched ship (a
+  start or end aimed at one is refused). Plain wood is the rough, cheapest tier (2026-11-03, "It's the crappiest tier of
+  dock": uneven, crooked boards of odd sizes, pole pilings, rope lashings, an odd curb; its look only, `KwPierRough`).
+  The kit's ladder tool aimed at a dock's edge (or a game floor's over the water) hangs a paid dock ladder down to under
+  the water (2026-11-03, "if you place it kind of on the side of a dock, it will get a length that goes down to the
+  water"; `Docks/DOCKS.md`, "Dock ladders"): one of the dock's material a metre, held up by its dock; the dry dock's
+  design ladders are as before.
+- **A hammock hangs by its two ends** (2026-11-03, `Hammock/`, the user's words: "I think the only way that there should
+  be a free standing piece is if you are trying to put one end or both ends of the hammock on the ground. If you try
+  putting it on the ceiling or a different freestanding piece, then it should actually just be a hook."): placed by two
+  clicks, the points 2.2 to 4 m apart (level). An end aimed at the ground or at a face looking up (a floor, a deck, a
+  walkable top) stands on a free-standing post; any other (a wall, beam, ceiling, post, mast, cabin side, rock) takes an
+  iron hook fixed into it. So two posts, a post and a hook, or two hooks. A hook end comes down with what holds it (the
+  hammock broken, its recipe dropped); posts stand on their own. One piece, one recipe, at a workbench, aboard too.
 - **Own code only.** Nothing from another mod is compiled in (the prototype used Elite Creatures Pack's `Core`);
   logging is the mod's own `Log`.
 - **Assets ship with the mod.** The textures and tool icons in `Broadside/assets` (copied from
   `ValheimAssets/Assets/Ships/Keelwright`) are embedded as `Broadside.assets.<file>`. A repainted texture is copied
   in again by hand. The planking's are long (`kw_<tier>_hull.png`, 2048 by 512 px, from `tier_planking/make.py` there):
   the albedo as 256 colours, its relief as 256 greys (`_h.png`, the normal map made from it on load, `KwRelief`), its
-  metal mask and glow map; 5.7 MB for all seven tiers. The blueprint table's model is a bundle per platform in `Broadside/assets/bundles`
+  metal mask and glow map; 5.7 MB for all seven tiers. The docks' atlases (`bs_pier_<material>.png` and `_n.png`,
+  1024 px, from `PierPlanks/make.py` there) are 5.0 MB for the three (wood's repainted rougher with pole, rope and
+  narrow board strips on 2026-11-03). The blueprint table's model is a bundle per platform in `Broadside/assets/bundles`
   (`kw_bptable.windows` and `.linux`, the dedicated server's; built in `ValheimAssets/Assets/Ships/Keelwright/BlueprintTable`
   with `build.ps1 -SkipBlender -Bundle` and checked with its `verify_bundle.py`), embedded as
   `Broadside.assets.kw_bptable.<platform>`; a rebuilt bundle is copied in again by hand, both files together. The
@@ -109,7 +131,10 @@ deck in place of the deck tiller. The ship formulas are in
   there is a screen. The Wooden Repair Kit's model, icon and hull patch are the bundle `kw_repairkit` (`.windows` and
   `.linux`, built in ValheimAssets, embedded as `Broadside.assets.kw_repairkit.<platform>` once copied in with its csproj
   line; `KwRepairKitLook`, loaded on every peer, the server's Linux one too); without it the kit wears fine wood's look and
-  the patches are generated boards.
+  the patches are generated boards. The dockside decorations' tier albedos (`bs_dock_<id>_albedo_core.png` and `_fine.png`,
+  256 px, from each piece's `out/` in `ValheimAssets/Assets/Ships/Keelwright/Dockside`, `wood_tiers.py`) and the dock
+  lantern's head (`bs_dock_lanternhead.windows` and `.linux`, from the workshop's `out/bundles`) are copied in by hand the
+  same way.
 - The workspace rules hold: methods at most 24 lines brace to brace (lambdas count), classes at most 300 lines,
   prefix/postfix patches only, multiplayer when first built.
 
@@ -225,7 +250,8 @@ deck in place of the deck tiller. The ship formulas are in
   (`img/<name>.png` in `BepInEx/config/Broadside.Sails/`) and painted only where that file is.
 - Sailing (`KwShipSailing`): the anchor's state is in the ship's ZDO (`kw_anchor_down`, `kw_anchor_at`), flipped by the
   owner on `KW_AnchorToggle`, held by the owner's physics step; the windlasses and the drawn anchor and cable are
-  screens only. Where the cable leaves the ship (the first windlass's fairlead, `KwAnchorPlan`) is worked out from the
+  screens only. Where the cable leaves the ship (the first windlass's fairlead, `KwAnchorPlan`; with none clear, straight
+  out abeam to the side nearest it, `KwAnchorAbeam`; never the bow) is worked out from the
   blueprint on every peer, the server too, plain maths only, so the owner lets go and rides to the anchor there; on the
   dock each screen works it out from the dock's pieces (`KwAnchorDock`); nothing is sent or saved for it. Cargo: each
   player's own game reports its inventory weight to the ship's owner (`KW_ShipLoad`, every 3 s while aboard), at most a full pack (450 kg, `KwShipCargo.FullPack`: a mod's unlimited weight would sink every ship to its lowest); the owner adds the carts on deck, changes the body's mass and the drag by what it added before,
@@ -313,11 +339,65 @@ deck in place of the deck tiller. The ship formulas are in
   The captain's loads take from the ammunition piles riding the cannon's ship first: a pile his game owns directly, one
   another peer owns asked of its owner (`BS_Pile_Take`, answered `BS_Pile_Took` with what it took, waited for 1.5 s at
   most), never written by his game (`Cannons/CANNONS.md`, "Multiplayer").
-  The rest lay is its owner's, a dedicated server too. The helm key lines, the shot arcs and the reload lines are the
+  An unmanned cannon keeps its last gunner's lay in its ZDO (2026-11-02; nobody turns it back), drawn there by every
+  peer, a late joiner at once; the hauler's game folds the lay's bearing into the piece as it takes the cannon up
+  (`KwDeckHaul.Square`, the aim and the rider record's turn in one frame). Snapping a cannon's ghost into a gunport with
+  Shift is the placing player's screen only. The helm key lines, the shot arcs and the reload lines are the
   captain's screen only, read from the cannons' ZDOs; nothing of them is sent or saved.
 - Logging off aboard (2026-10-27, `KwShipLogout`): each save of the local player aboard a launched ship keeps the
   ship's id and his place on it in his own save, per world; spawning there again he is put back on that spot once the
   ship is built. Local only: nothing is sent, his own sync carries him.
+- The hammock and beds aboard (2026-11-03, `Hammock/`): the hammock is a copy of the game's bed, so its owner is the
+  bed's (`owner`, `ownerName` in its ZDO, set by the game's own `SetOwner` call to the ZDO's owner) and sleeping is the
+  game's; built aboard it is a rider like a crate. It is placed through the game's own placement on the placing player's
+  game (`Player.PlacePiece` where the plan stands as the ship is drawn, the recipe then taken by the game as any piece's)
+  and its shape (`bs_hammock`: both ends in its own frame, each a post or a hook, and the bars' height) written to its new
+  ZDO in the same frame; every peer builds it from that ZDO, its colliders everywhere (a dedicated server too: the game's
+  support and the hook check need them) and its look where there is a screen. Its owner (a player's game or a dedicated
+  server) looks once a second whether what each hook is fixed into is still there and, missing on two looks running,
+  breaks it the game's way (`WearNTear.ApplyDamage` past its health: the game's destroy and drop). The two clicks, the
+  preview, the panel lines and the cancel are the placing player's screen only. Its sling hanging plumb is each screen's
+  own, from the ship as it draws it; nothing kept or sent. A spawn point on a bed riding a ship (the hammock, or any bed with
+  `AllowBuildingOnShips`) is the local player's profile and save only (`broadside_bed_<worldUID>`): the ship's id and
+  the point in its frame, the profile's point moved with the ship while his game has it. Respawning after death at such
+  a bed while his game does not have the ship, his game asks the server once where it is (`BS_BedShipWhere`, the ship's
+  id), and the server answers that game alone from its own ZDOs (`BS_BedShipIs`: found, place, turn; `KwShipFinder.ById`).
+  Nothing else is sent; a dedicated server only answers.
+- Crates on the game's cart and crates breaking (2026-11-03, `Cart/`, `Crane/`; `Crane/CRANE.md`, "Multiplayer", has it in
+  full): a crate on a cart keeps the link in its own ZDO (`kwc_cart`: the cart's own id `kwc_cart_uid`, a random long the
+  cart's owner writes once; `kwc_cart_slot`, `kwc_cart_yaw`), written by the crate's owner with its place in one ZDO write
+  as the crane lets it go over the cart; every peer, a late joiner too, makes it the cart's child at that place
+  (`KwCartRider`), so the cart's owner moves the cart the game's way and every screen draws its crates from it; the
+  crate's owner keeps the crate's ZDO place with the cart (at once when it stands, every 8 m while pulled). Unloading
+  (Shift+E) is one call to the crate's owner (`KWC_Unload`, the spot found by the asking game); hooking it off is the
+  crane's handshake, the link cleared in the hook's write. The cart's crates are let go before the game destroys its
+  object; a cart destroyed or gone 30 s has each crate's owner clear the link. Its mass is its owner's, counting the
+  crates' inventories as that game has them. A crate let go from a crane over 2 m above where it lands is broken by its
+  owner alone, once, at landing: its items dropped whole as the game's networked drops first (`kwc_heap` marking a stack,
+  whose heap of model copies every screen draws from the drop's own synced stack), then the game's `WearNTear.Remove`;
+  `kwc_break` in its ZDO tells every screen to let it fall there and shuts it meanwhile, and a new owner mid-fall
+  breaks it. A dedicated server only keeps the ZDOs and places the crates.
+- Docks (2026-11-03, `Docks/DOCKS.md`, "Multiplayer"): each section is placed through the game's own placement
+  (`Player.PlacePiece`) on the building player's game and its shape (`bs_pier`: length, width, joined, seed, each
+  station's piling feet, cast once by the builder) written to its new ZDO in the same frame; every peer builds its
+  colliders and snap points from it (a dedicated server too: the owner's support check needs the pilings) and its mesh
+  where there is a screen; its requirements are its own cost on every peer, so the game's removal and break drops refund
+  it on whoever owns it. Where sections meet (a branch off a side) each peer cuts the curb itself from the sections it
+  has loaded (`KwPierGaps`), when one builds and again when one meeting it comes or goes; never saved or sent. The tool's
+  clicks, preview, wheel and cancel are the builder's screen only; nothing else is sent. A dock ladder (the ladder tool
+  on a dock) is placed the same way, its length (found once by the builder from the water and the sea floor) and seed in
+  its ZDO (`bs_pier_ladder`); every peer builds its climb box and look from it and cuts the curb round it itself; its
+  support is checked on its owner from the sections loaded there (`KwPierLadderSupport`); climbing is the climber's own.
+- Dockside decorations (2026-11-02 and 11-03, `Dockside/`): ordinary pieces, placed, paid, removed and saved the game's
+  way. What moves or glows is each screen's own from what every peer already has: the vane from the game's wind, the
+  lantern pole from the world's clock (`EnvMan.IsNight`), the tar pot's and steam box's fires and steam always; the
+  beacon's fire is the game's Fireplace in its ZDO. The signal bell is the one call: `BS_dock_bell_ring`, routed to every
+  peer that has the bell loaded, each swinging it and sounding the game's bell there; nothing kept. A dedicated server
+  makes no effect, light or sound. The wood tiers are their own prefabs (the tier is the piece). The dock lantern's post
+  (length, material, seed, dock or floor) is written by the placing player to its new ZDO in the placing frame
+  (`bs_dock_lantern`) and built from it on every peer (its box on a dedicated server too, its requirements everywhere);
+  its section holds it up on its owner (`Docks/DOCKS.md`, "Support"). A mooring post over a dock's piling is an ordinary
+  piece; each peer cuts the curb round it itself from where it stands, nothing saved or sent.
 - Sea edits (2026-10-26, the user's words: "I might want to edit the railing to add another cannon, so I want to remove some
   of my railing so there's a gap for the cannon on the deck. Or I might want to add in a porthole window": railings, doors
   and windows, ladders, masts and sails, post caps and the bowsprit, with the dock's tools and windows; nothing else, and
@@ -334,6 +414,17 @@ deck in place of the deck tiller. The ship formulas are in
   packed (`KwBpFile.Exact`: no piece left out, none turned round), copied entry by entry into the live one and each kind
   redraws only its own changed parts; then the ship's figures at once, its ladder over the side and its shadow boxes a frame
   later each. A peer loading the ship later builds the edited ship. Ghosts and hiding are this screen's only.
+- Trawling (2026-11-03, `Trawl/TRAWL.md`, "Multiplayer", has it in full): the net winch's state is in its own ZDO
+  (`bs_trawl_*`: the step, when it began by the network clock, the catch, the way to the next fish, how it fares),
+  written only by the winch's owner, who also decides the catch and spawns the fish; E is asked of it (`BS_Trawl_Use`,
+  routed). Every peer draws the net from the ZDO's step and the time in it, and works the net's place in the water out
+  itself from the sheave as drawn and the ship's speed as it sees it (nothing sent per frame); a late joiner sees the
+  net out or the fish on the deck at once. The nets' drag is taken off the ship's speed on the ship's owner only. The
+  fish landed are the game's own networked items, made once on the winch's owner, whose ZDO records the ship's own id
+  and their place in its frame (`bs_catch_*`): on every peer each is held still out of the physics and put where the
+  ship is drawn each frame, its owner keeping its ZDO's place with the ship, so it rides the ship until picked up. A
+  logout with the net out keeps it out; it catches only while the winch's owner has the ship in its scene. Nothing is
+  drawn and no net loaded on a dedicated server.
 
 ## Identity
 
@@ -350,12 +441,17 @@ deck in place of the deck tiller. The ship formulas are in
 | Cannon items | `BS_CannonballStone` ("Stone cannonball", the bronze cannon: 2 stone make 4 at the workbench; the game's `Stone` item's material), `BS_CannonballIron` ("Iron cannonball", the two small cannons: 1 iron makes 4 at the forge, level 2), `BS_CannonballFlametal` ("Flametal cannonball", the large cannon: 1 flametal and 2 grausten would make 4 at the black forge, level 2), all of ammo type `$bs_ammo_cannonball` (copies of `Catapult_ammo`); the flametal ball has no recipe for now (registered, so stacks load); `BS_BlackPowder` ("Black powder": 2 coal and 1 resin make 4 at the forge, level 1; one, two or three a shot); recipes `Recipe_<name>` in every ObjectDB |
 | Storage crates (hammer, Misc tab, after the cannons; on land or a launched ship's deck) | `BS_crate_small` ("Small storage crate", 4 x 2 slots, 8 `Wood` and 2 `LeatherScraps`) and `BS_crate_large` ("Large storage crate", 6 x 3, 10 `FineWood` and 4 `LeatherScraps`), `BS_crate_slat_small` ("Small slatted crate", 4 x 2, 10 `Wood`) and `BS_crate_slat_large` ("Large slatted crate", 6 x 3, 12 `FineWood`; each slatted crate's own marks from its ZDO int `bs_crate_seed`, rolled once by its owner), copies of `piece_chest_wood` at a workbench, their recipe given back when removed; looks the bundles `bs_crate_small`, `bs_crate_large`, `bs_crate_slat_small` and `bs_crate_slat_large` when embedded (the slatted ones also carry the readable `<bundle>_clean`, `<bundle>_marksmask` and `bs_crate_marks`) (resources `Broadside.assets.bs_crate_<size>.windows` and `.linux`: prefab of the bundle's name with `model`, `lid`, `col_box_body`; sprite `<bundle>_icon`) |
 | Ammunition piles (hammer, Misc tab, after the storage crates; on land or a launched ship's deck) | `BS_pile_cannonballs` ("Cannonball pile", only items of ammo type `$bs_ammo_cannonball`, 8 `Wood` and 4 `Stone`) and `BS_pile_powder` ("Black powder pile", only `BS_BlackPowder`, 10 `Wood` and 2 `LeatherScraps`), 4 x 2 slots each, copies of `piece_chest_wood` at a workbench, their recipe given back when removed; anything else refused going in ("$msg_wrongitem"); the captain's broadside loads from those riding its ship first; looks the bundles `bs_pile_cannonballs` and `bs_pile_powder` when embedded (resources `Broadside.assets.bs_pile_<id>.windows` and `.linux`: prefab of the bundle's name with `model`, `fill_0` to `fill_9` (shown in order as it fills), `col_box_body`; sprite `<bundle>_icon`) |
+| Hammock (hammer, Misc tab, after the ammunition piles; on land or aboard a launched ship; placed by its two ends) | `BS_hammock` ("Hammock": 6 `Wood`, 2 `DeerHide`, 2 `LeatherScraps`, at a workbench, given back when removed or broken), a copy of the game's `bed` (its Bed, comfort 1 in the bed group, health, wear and sounds kept, and its `PlayerBase` child as the bed has it: switched off, so a hammock marks no base, as a bed marks none) wearing a model made in code from its shape: each end a free-standing post in the plank wood (a round post on a foot across and a toe in, braced, its peg reaching to its rope point) or an iron hook in the game's iron (`model/hooks`: a washer, a shank and an eye), a hide sling on spreader bars roped to them (`model/sling`), its spawn point (`model/sling/spawnpoint`) over the cloth's middle; its origin on the floor (the ground, a deck) under the middle of the line between the two rope points, its forward along the span, level (a ship's up aboard); ZDO string `bs_hammock` (`hm1|bars|P;rope;base;face|H;rope;base;face`, `KwHammockSpec`: each end a post or a hook, its rope point, its base and its surface's way out, in the hammock's kit frame, metres); with no text two posts 2.6 m apart, pegs at 1.25 m (the prefab's look and icon, `KwHammockSpec.Standard`); in Broadside's build menu entry and the game's Furniture filter; hovered as "Hammock" |
+| Trawl net winch (hammer, Misc tab, after the hammock; on land, working only on a launched ship's deck; `Trawl/TRAWL.md`) | `BS_trawl_winch` ("Trawl net winch", 10 `Wood`, 6 `FineWood`, 2 `Bronze`, 12 `LeatherScraps`), a copy of `wood_floor` stripped, its parts made in code (`KwTrawlShapes`: `model`, `drum`, `davit`), at a workbench, its recipe given back when removed; the towed net drawn from the bundle `bs_trawlnet` (resources `Broadside.assets.bs_trawlnet.windows` and `.linux`, the workshop's `va_trawlnet_v001` renamed; prefab `va_trawlnet_v001`, its tow eye `tow_attach`), a copy `bs_trawlnet` in the world, never networked; ZDO keys on the winch `bs_trawl_state`, `bs_trawl_at`, `bs_trawl_catch`, `bs_trawl_part`, `bs_trawl_fare`, on a landed fish `bs_catch_ship`, `bs_catch_pos`, `bs_catch_rot`, `bs_catch_fall`, `bs_catch_at`; RPC `BS_Trawl_Use` (on the winch, to its owner: 1 cast, 2 haul) |
+| Dockside decorations (hammer, Misc tab, after the ammunition piles; Broadside's build menu entry and the game's Decoration filter; on land, aboard a launched ship only with `AllowBuildingOnShips`) | `BS_dock_mooringpost` ("Mooring post", 6 `Wood`, 2 `LeatherScraps`), `BS_dock_anchor` ("Stone anchor", 6 `Stone`, 4 `Wood`, 2 `LeatherScraps`), `BS_dock_oarrack` ("Oar rack", 12 `Wood`), `BS_dock_shieldrack` ("Shield rack", 10 `Wood`, 2 `Resin`, 4 `LeatherScraps`), `BS_dock_netrack` ("Net drying rack", 6 `Wood`, 4 `LeatherScraps`, 2 `Stone`), `BS_dock_creels` ("Lobster pots", 6 `Wood`, 3 `LeatherScraps`, 2 `Resin`), `BS_dock_vane` ("Weather vane", 6 `Wood`, 4 `Stone`, 2 `Bronze`); since 2026-11-03 the yard's `BS_dock_sawhorses` ("Sawhorses", 8 `Wood`, 1 `Bronze`), `BS_dock_dryingrack` ("Timber drying rack", 14 `Wood`, 4 `RoundLog`), `BS_dock_steambox` ("Steam box", 12 `Wood`, 2 `Bronze`, 4 `Stone`), `BS_dock_scaffold` ("Scaffold", 14 `Wood`, 4 `RoundLog`, 4 `LeatherScraps`), `BS_dock_hullribs` ("Hull frames", 20 `Wood`, 12 `RoundLog`), `BS_dock_leanto` ("Lean-to shed", 20 `Wood`, 4 `RoundLog`), `BS_dock_toolwall` ("Tool wall", 6 `Wood`, 2 `Bronze`), `BS_dock_shavings` ("Wood shavings", 2 `Wood`), `BS_dock_ropecoils` ("Rope coils", 2 `Wood`, 6 `LeatherScraps`), `BS_dock_ropespool` ("Rope spool", 8 `Wood`, 4 `LeatherScraps`), `BS_dock_ropewalk` ("Rope walk", 10 `Wood`, 6 `LeatherScraps`, 2 `Stone`, 1 `Bronze`), `BS_dock_sparrack` ("Spar rack", 14 `Wood`, 6 `RoundLog`), `BS_dock_sailbolts` ("Sail bolts", 6 `DeerHide`, 2 `Wood`, 2 `LeatherScraps`), `BS_dock_sailframe` ("Sail frame", 10 `Wood`, 4 `DeerHide`, 4 `LeatherScraps`) and the quay's `BS_dock_tarpot` ("Tar pot", 4 `Stone`, 2 `Bronze`, 4 `Resin`, 4 `Wood`), `BS_dock_nailbarrels` ("Nail barrels", 8 `Wood`, 10 `BronzeNails`), `BS_dock_ironanchor` ("Ship's anchor", 4 `Bronze`, 2 `Wood`), `BS_dock_fenders` ("Fenders", 6 `Wood`, 6 `LeatherScraps`), `BS_dock_pilings` ("Pilings", 6 `RoundLog`, 2 `Resin`, 2 `LeatherScraps`), `BS_dock_gangplank` ("Gangplank", 10 `Wood`, 2 `LeatherScraps`), `BS_dock_salvage` ("Salvage heap", 12 `Wood`, 4 `LeatherScraps`, 2 `DeerHide`), `BS_dock_hangnet` ("Hanging net", 3 `Wood`, 5 `LeatherScraps`, 2 `Stone`), `BS_dock_lanternpole` ("Lantern pole", 6 `Wood`, 4 `Stone`, 2 `Bronze`, 2 `Resin`; also the Lighting filter; on a dock near a side seated over a piling, its cairn left off), `BS_dock_bell` ("Signal bell", 6 `Bronze`, 8 `Wood`, 2 `LeatherScraps`), `BS_dock_pennants` ("Pennant line", 6 `Wood`, 3 `LeatherScraps`, 2 `DeerHide`), `BS_dock_noticeboard` ("Notice board", 8 `Wood`, 1 `DeerHide`); since 2026-11-03 the wood tiers (`KwDockTiers`): `BS_dock_<id>_core` and `_fine` ("Mooring post (core wood)", "Mooring post (fine wood)", ...) of the mooring post, stone anchor, net drying rack, lobster pots, harbour beacon, fenders and signal bell, each right after its plain piece, its recipe the plain one's with the `Wood` as `RoundLog` (core) or `FineWood` (fine), its metadata the plain one's, the plain bundle wearing the tier's albedo (`Broadside.assets.bs_dock_<id>_albedo_core.png`, `_fine.png`, point filtered, screens only), its icon rendered from the piece; and `BS_dock_lantern` ("Dock lantern", after the lantern pole: the bundle `bs_dock_lanternhead` 1.8 m up on a post of the dock's wood made in code, standing just off a dock's side, `Docks/DOCKS.md` "Dock lanterns"; one of the dock's item per 2 m of post (at least 2), 2 `Bronze`, 2 `Resin`, the hammer showing the aimed dock's; its icon rendered): all copies of `piece_table` without its comfort (the tar pot and steam box kept off wooden floors, `m_notOnWood`); `BS_dock_beacon` ("Harbour beacon", 10 `Wood`, 2 `Bronze`), a copy of `piece_brazierfloor01` with its Fireplace, fuel and comfort; all at a workbench, their recipe given back when removed; looks the bundles `bs_dock_<id>` (resources `Broadside.assets.bs_dock_<id>.windows` and `.linux`: prefab of the bundle's name with `model`, `col_*` boxes, the beacon's, tar pot's and steam box's `glow_embers` and point `fire`, the steam box's point `steam`, the lantern pole's and lantern head's `glass` (see-through, its own material), `glow_wick` and point `light`, the vane's part `vane`, the bell's part `bell`; sprite `<bundle>_icon`); the shavings' `hit_floor` and the bell's `hit_bell` boxes on `piece_nonsolid` made in code; a decoration whose bundle is missing is left out; the mooring post, the stone anchor, the ship's anchor, the fenders and the pilings (made for the water, `KwDecorFit.Wet`) also at the waterline and in water (`m_noInWater` cleared); RPC `BS_dock_bell_ring` (routed to every peer) |
+| Auto-decorate (hammer, Misc tab, after the dockside decorations; Broadside's build menu entry and the game's Decoration filter; `Decorate/DECORATE.md`) | the tool `BS_tool_decorate` ("Auto-decorate", a copy of `wood_floor` stripped to its placing box, never placed itself, free, no station, not turning, so the plain wheel zooms); it places the dockside decorations as scenes (`KwDecorScenes`) and quay furniture along docks (`KwDecorQuay`: mooring posts over a dock section's pilings, dock lanterns beside its sides), those of a dock's wood in the tier going with where they stand (`KwDecorTiers`), each piece by its metadata (`KwDockDef.Decor`, a `KwDecorFit`), as ordinary pieces; no ZDO keys or RPCs of its own |
+| Docks (hammer, Misc tab, after the dockside decorations; `Docks/DOCKS.md`) | the tool `BS_tool_pier` ("Dock tool", never placed itself) and the sections it builds, never in the hammer: `BS_pier_wood`, `BS_pier_corewood`, `BS_pier_finewood` ("Dock (wood)", ...; copies of `wood_floor`, health 1000, 1500 and 1200, at a workbench), each costing its size in `Wood`, `RoundLog` or `FineWood`, given back when removed; ZDO string `bs_pier` (`pier1|length|width|joined|seed|l,r;...`, `KwPierSpec`); the dock ladders, never in the hammer (the kit's ladder tool hangs them from a dock's edge): `BS_pier_ladder_wood`, `_corewood`, `_finewood` ("Dock ladder (wood)", ...; copies of `wood_floor` with the kit's `KwLadderClimb`, at a workbench), one of the material's item a metre, given back when removed; ZDO string `bs_pier_ladder` (`ladder1|length|seed|dock` or `floor`, `KwPierLadderSpec`) |
 | Items | `KW_RepairKit_Wood` ("Wooden Repair Kit", a copy of the game's `FineWood`; 4 `Wood` and 2 `Resin` at a workbench of level 1, stacks of 10, weight 2; recipe `Recipe_KW_RepairKit_Wood`); its look the bundle `kw_repairkit` when embedded (resources `Broadside.assets.kw_repairkit.windows` and `.linux`: prefabs `kw_repairkit_wood`, `kw_hullpatch_wood`, sprite `kw_repairkit_wood_icon`) |
-| ZDO keys | `kw_span` (a part's saved text), `kw_tier` (biome tier id: `meadows`, `blackforest`, `swamp`, `mountains`, `plains`, `mistlands`, `ashlands`; new work only the first two), `kw_rudder_lay`, `kw_rudder_gear` (a rudder's steering gear to a captain's wheel, or why not), `kw_rudder_water` (the design waterline over a dock rudder's point, a float), `kw_helm` and `kw_helmsman` (a dock wheel's helm and who holds it), `kw_hatch_open`, `kw_sail_hoist`, `kw_ship` (on a piece: the build id of a ship built from a blueprint on the dock; on a `KW_ship`: its packed blueprint), `kw_hatch<n>_open` (a launched ship's hatch n), `kw_open<id>` (a dock opening's leaf, an int on its part); on a `KW_ship` also `kw_ship_open<n>` (a covered opening's leaf: 0 shut, 1 or -1 open), `kw_anchor_down`, `kw_anchor_at`, `kw_ship_load`, `kw_ship_by`, `kw_ship_helm`, `kw_ship_name`, `kw_holes`, `kw_hull_wear`, `kw_flood`, `kw_flood_parts` (its holes, its parts' wear, the water in its hold and in each of its compartments; never in a blueprint), `kw_rails_broken` (its broken railing stretches, "piece:part;..." with part = run × 1000 + stretch; never in a blueprint), `kw_hull_patches` (its patched holes, "id,radius;...", the hole's number and its radius when patched; never in a blueprint), `kw_rig_damage` (its rig's damage marks, "type,piece,part,a,b,c,d,seed;...", `KwRigMark`; never in a blueprint); `kw_name` (a name board's, and a `KW_ship`'s name), `kw_shields` (a railing's or a `KW_ship`'s hung shields; in a blueprint as data only); `kw_ship_uid` (a `KW_ship`'s own id, a random long its owner writes once); `kw_ship_rev` (a `KW_ship`'s sea edits' revision, written with `kw_ship`); on any piece built on a launched ship `kw_rider` (its ship's `kw_ship_uid`; 0 once it is an ordinary piece again), `kw_rider_pos`, `kw_rider_rot` (its pose in the ship's frame); on a ship cannon `bs_arm_user`, `bs_arm_yaw`, `bs_arm_pitch`, `bs_arm_loaded`, `bs_arm_step`, `bs_arm_load_at`, `bs_arm_shots`, `bs_arm_shot_at` (the MannedWeapons library's, from the prefix `bs_arm`), `bs_arm_kind`, `bs_arm_load_kind`, `bs_arm_ammo`, `bs_arm_tower` (who hauls it), `bs_arm_untied` (its breeching left unmade) |
-| RPCs | `KW_HatchToggle`, `KW_SailHoist`, `KW_Helm`, `KW_HelmTurn`, `KW_HelmReply` (a dock wheel's helm), `KW_Hatch<n>_Toggle`, `KW_OpeningUse` (a dock opening's leaf), `KW_ShipOpeningUse` (a launched ship's), `KW_AnchorToggle`, `KW_ShipLoad`, `KW_Bail`, `KW_HoleMend` (one hole, by its number), `KW_HolePatch`, `KW_HolePatched` (a repair kit's patch, asked and answered), `KW_ShipShot` (a heavy shot, to the owner), `KW_RailMend`, `KW_SailShot`, `KW_RigMend`, `KW_RigRaise`, `KW_RigRaised` (the rig's damage), `KW_ShipName`, `KW_ShieldHang`, `KW_ShieldHung`, `KW_ShieldUndo`, `KW_ShieldTake`, `KW_ShieldGiven` (on a `KW_ship`), `KW_ShieldOwn` (a dock railing), `KW_ShipWhere`, `KW_ShipsAre`, `KW_ShipLaunched` (routed, the ship pins), `KW_SeaEdit`, `KW_SeaEdited` (a sea edit asked of a `KW_ship`'s owner and answered), `KW_Bench*` (BlueprintShelf: `List`, `Listing`, `Put`, ...); on a ship cannon `bs_arm_request`, `bs_arm_release`, `bs_arm_answer`, `bs_arm_call`, `bs_arm_called`, `bs_arm_order` (the MannedWeapons library's, named from its key prefix), `BS_Arm_Tow`, `BS_Arm_TowDenied`, `BS_Arm_Load`; on an ammunition pile `BS_Pile_Take`, `BS_Pile_Took` (a load's items asked of the pile's owner by the captain's game, and what it took answered) |
+| ZDO keys | `kw_span` (a part's saved text), `kw_tier` (biome tier id: `meadows`, `blackforest`, `swamp`, `mountains`, `plains`, `mistlands`, `ashlands`; new work only the first two), `kw_rudder_lay`, `kw_rudder_gear` (a rudder's steering gear to a captain's wheel, or why not), `kw_rudder_water` (the design waterline over a dock rudder's point, a float), `kw_helm` and `kw_helmsman` (a dock wheel's helm and who holds it), `kw_hatch_open`, `kw_sail_hoist`, `kw_ship` (on a piece: the build id of a ship built from a blueprint on the dock; on a `KW_ship`: its packed blueprint), `kw_hatch<n>_open` (a launched ship's hatch n), `kw_open<id>` (a dock opening's leaf, an int on its part); on a `KW_ship` also `kw_ship_open<n>` (a covered opening's leaf: 0 shut, 1 or -1 open), `kw_anchor_down`, `kw_anchor_at`, `kw_ship_load`, `kw_ship_by`, `kw_ship_helm`, `kw_ship_name`, `kw_holes`, `kw_hull_wear`, `kw_flood`, `kw_flood_parts` (its holes, its parts' wear, the water in its hold and in each of its compartments; never in a blueprint), `kw_rails_broken` (its broken railing stretches, "piece:part;..." with part = run × 1000 + stretch; never in a blueprint), `kw_hull_patches` (its patched holes, "id,radius;...", the hole's number and its radius when patched; never in a blueprint), `kw_rig_damage` (its rig's damage marks, "type,piece,part,a,b,c,d,seed;...", `KwRigMark`; never in a blueprint); `kw_name` (a name board's, and a `KW_ship`'s name), `kw_shields` (a railing's or a `KW_ship`'s hung shields; in a blueprint as data only); `kw_ship_uid` (a `KW_ship`'s own id, a random long its owner writes once); `kw_ship_rev` (a `KW_ship`'s sea edits' revision, written with `kw_ship`); on any piece built on a launched ship `kw_rider` (its ship's `kw_ship_uid`; 0 once it is an ordinary piece again), `kw_rider_pos`, `kw_rider_rot` (its pose in the ship's frame); on a hammock `bs_hammock` (its shape, `KwHammockSpec`); on a dock lantern `bs_dock_lantern` (`lantern1|length|material|seed|dock` or `floor`, `KwDockLanternSpec`); on a dock section `bs_pier` (`KwPierSpec`) and on a dock ladder `bs_pier_ladder` (`ladder1|length|seed|dock`, `KwPierLadderSpec`); on a ship cannon `bs_arm_user`, `bs_arm_yaw`, `bs_arm_pitch`, `bs_arm_loaded`, `bs_arm_step`, `bs_arm_load_at`, `bs_arm_shots`, `bs_arm_shot_at` (the MannedWeapons library's, from the prefix `bs_arm`), `bs_arm_kind`, `bs_arm_load_kind`, `bs_arm_ammo`, `bs_arm_tower` (who hauls it), `bs_arm_untied` (its breeching left unmade); the cargo crane's and its crates' `kwc_*` keys (`Crane/CRANE.md`, Identity), among them on a crate `kwc_cart`, `kwc_cart_slot`, `kwc_cart_yaw` (the game's cart it rides, its bed cells and turn), `kwc_break` (falling to break), on the game's `Cart` `kwc_cart_uid` (its own id, written once by its owner) and on a drop spilled from a broken crate `kwc_heap` |
+| RPCs | `KW_HatchToggle`, `KW_SailHoist`, `KW_Helm`, `KW_HelmTurn`, `KW_HelmReply` (a dock wheel's helm), `KW_Hatch<n>_Toggle`, `KW_OpeningUse` (a dock opening's leaf), `KW_ShipOpeningUse` (a launched ship's), `KW_AnchorToggle`, `KW_ShipLoad`, `KW_Bail`, `KW_HoleMend` (one hole, by its number), `KW_HolePatch`, `KW_HolePatched` (a repair kit's patch, asked and answered), `KW_ShipShot` (a heavy shot, to the owner), `KW_RailMend`, `KW_SailShot`, `KW_RigMend`, `KW_RigRaise`, `KW_RigRaised` (the rig's damage), `KW_ShipName`, `KW_ShieldHang`, `KW_ShieldHung`, `KW_ShieldUndo`, `KW_ShieldTake`, `KW_ShieldGiven` (on a `KW_ship`), `KW_ShieldOwn` (a dock railing), `KW_ShipWhere`, `KW_ShipsAre`, `KW_ShipLaunched` (routed, the ship pins), `KW_SeaEdit`, `KW_SeaEdited` (a sea edit asked of a `KW_ship`'s owner and answered), `KW_Bench*` (BlueprintShelf: `List`, `Listing`, `Put`, ...); on a ship cannon `bs_arm_request`, `bs_arm_release`, `bs_arm_answer`, `bs_arm_call`, `bs_arm_called`, `bs_arm_order` (the MannedWeapons library's, named from its key prefix), `BS_Arm_Tow`, `BS_Arm_TowDenied`, `BS_Arm_Load`; on an ammunition pile `BS_Pile_Take`, `BS_Pile_Took` (a load's items asked of the pile's owner by the captain's game, and what it took answered); `BS_BedShipWhere`, `BS_BedShipIs` (where a bed's ship is, asked of the server by a game respawning at a bed aboard, and answered to it); the cargo crane's `KWC_Operate`, `KWC_OperateReply`, `KWC_Hooked`, `KWC_Hook`, `KWC_Release` and `KWC_Unload` (a crate on the game's cart set down beside it, to the crate's owner); `BS_dock_bell_ring` (the signal bell rung, to every peer: the swing and the bell's sound) |
 | UI objects (the captain's screen) | `Broadside_HelmKeys` (the helm key list) with the cannons' `Broadside_FireBroadside` and `Broadside_ShotArcs` lines; `Broadside_CannonsTicker` (the broadside's keys and ticks); `Broadside_ShotArcLines`; the reload lines: rows `cannons.port` and `cannons.starboard` of Broadside's own ship panel (`KwShipPanel`) |
 | Folders | `BepInEx/config/Broadside.Ships/` (the player's ships, `.json`, folders kept); the server's `BepInEx/config/Broadside.SharedShips/<world>/`; `BepInEx/config/Broadside.Sails/` (the player's PNG pictures for sail emblems); `BepInEx/cache/Broadside.Icons/` (rendered hammer and item icons, `KwIconCache`; the carried ones are `Broadside.icons.<name>@<hash>.icon`) |
-| Player save | `broadside_aboard_<worldUID>` in the player's custom data: the launched ship he was saved aboard and his place on it (`KwShipLogout`) |
+| Player save | `broadside_aboard_<worldUID>` in the player's custom data: the launched ship he was saved aboard and his place on it (`KwShipLogout`); `broadside_bed_<worldUID>`: his spawn point on a bed riding a launched ship, "ship;x;y;z;x;y;z" (the ship's own id, the point in its frame, where the profile last had it; `KwBedSpawn`) |
 | Console | `kwship clear` (every `KW_` piece within 40 m, launched ships too); a cheat |
 | Harmony ids | `milkyteam.broadside`, `.shelf` (BlueprintShelf's patches), `.form` (WindowInput's), `.camera` (BuildCamera's) |
 
@@ -365,7 +461,9 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
 `KwPrefabs.Install`, `Guard.Install` last); `Log.cs` the logger.
 
 - `Pieces/`: making the prefabs and putting them in the hammer. `KwPrefabs` (copies of `wood_floor` with a generated
-  mesh, the longship's hull material and the floor's wood, free; and the launched ship's prefab), `KwCatalogue` (every
+  mesh, the longship's hull material and the floor's wood, free; and the launched ship's prefab; `Anchor`, the 10 cm
+  placing box on its own `kw_place` child, the only collider a piece's ghost keeps, `KwGhostPlace` on
+  `Player.SetupPlacementGhost`: body boxes made ghosts jump corner to corner), `KwCatalogue` (every
   `KwDef`: dock, tools and parts, fittings), `KwFeatures` (caps, rudders, hatches, windlass, table), `KwHammer` (Misc tab, build
   order, the saved ships last), `KwBuildMenu` (the build menu's Categories tab: picking Transportation opens a
   "Broadside" sublist under it with every Broadside piece, the saved ships and cannons included; Transportation keeps
@@ -520,7 +618,8 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   the edit kind (style, length, size, lean, facing), old hammer caps rebuilt as tool caps; the wheel
   through `Tools/KwToolNotches`: a stepping tool turns, so the game counts the notches into its placement rotation,
   taken back off before the ghost is placed), hatches
-  (`KwHatch`, `KwHatchCover`, `KwHatchPlace`), ladders (`KwLadder`, `KwLadderClimb`; `KwLadderTool`, one click:
+  (`KwHatch`, `KwHatchCover`, `KwHatchPlace`), ladders (`KwLadder`, `KwLadderClimb` (also the dock ladders', `IntoWater`:
+  climbing down leaves the player facing it); `KwLadderTool` (aimed at a dock, `Docks/KwPierLadderTool` first), one click:
   `KwLadderAim` what is aimed at, `KwLadderSpots` the five spots an edge of a hatch's opening and the 0.25 m snap along an
   open edge, `KwLadderEdges` a deck's ends no other deck carries on and a cabin roof's sides, each a `KwLadderEdge` (a
   run of stretches, a side along the hull's line joined whole, its ends named hull side or corner), `KwLadderDrop` its
@@ -546,11 +645,21 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   riding turns, one crossing over, about 2,600 triangles), `KwAnchorPlace`: on decks only; its lead overboard,
   2026-10-25: `KwAnchorPlan` (the clear place with the least cost: cable, 0.6 m a deck-lead turn, 0.3 per metre to
   the side of the drum, so straight out from the drum wins), `KwAnchorShip` (the ship round the windlass in its frame from blueprint
-  pieces: `KwAnchorHull` planking girth in and out, `KwAnchorRail`, `KwAnchorDeck` + `KwAnchorCabin`, `KwAnchorFixtures`
-  and `KwAnchorSolids`), `KwAnchorSpots` + `KwAnchorSpot` (chocks along the sheer, railing caps and transoms, snug
-  beside each post; hawse pipes), `KwAnchorRoute` (the cable on deck off the drum within 45 degrees of square to it,
+  pieces: `KwAnchorHull` planking girth in and out, `KwAnchorRail`, `KwAnchorDeck` + `KwAnchorCabin`, `KwAnchorRoofRail`
+  (a roof railing's cap, top rail and posts), `KwAnchorFixtures` and `KwAnchorSolids`; `Roof`, the cabin whose roof the
+  windlass stands on, solid only up to its roof's top, where any other cabin is solid a metre over it), `KwAnchorSpots`
+  + `KwAnchorSpot` (chocks along the sheer, railing caps and transoms, snug
+  beside each post; hawse pipes), `KwAnchorRoofSpots` (2026-11-03, the user's report: a windlass on a cabin's roof, a
+  ready-made ship's forecastle, found "a cabin" in the way and its anchor went to the bow: chocks along that roof's edge
+  where it is the ship's side, on the roof railing's cap reaching out over the raised side's top, or on that top where
+  no rail stands; the main deck's rule), `KwAnchorRoute` (the cable on deck off the drum within 45 degrees of square to it,
   else a deck lead), `KwAnchorHang` (the weighed anchor plumb, leaning on the hull or on an arm; the cable let go clear
-  of the hull down to the keel), `KwAnchorLead` (the result), `KwAnchorLeadShapes` + `KwAnchorLook` (drawn), `KwAnchorDock`
+  of the hull down to the keel), `KwAnchorAbeam` (2026-11-03: with no clear place, the lead straight out abeam from the
+  drum to the side nearest the windlass, through whatever is in the way: a chock on its roof's edge, a hawse pipe for one
+  in a cabin, else a chock on the sheer, the anchor hung there and let go there like any lead; it keeps why, for the
+  dock's hover; before, the anchor stayed stowed and was let go over the stem head), `KwAnchorLead` (the result, `Clear`
+  or not; stowed only with no hull round it, when `KwShipAnchor` lets go abeam of the windlass at the sheer),
+  `KwAnchorLeadShapes` + `KwAnchorLook` (drawn), `KwAnchorDock`
   (on the dock, its hover)), the name board (`KwNameBoard`, its mesh and
   frame; `KwNameText`, the game sign's TextMeshPro copied onto both faces; `KwNameBoardPiece`, E on the dock), shields
   on the railing (`KwShieldSlots`, a hook every 1.2 m a side; `KwShieldRecord`, the hung items as ZDO text;
@@ -607,8 +716,10 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   and decks, `KwRigCabin`/`KwRigRoofRail`/`KwRigSails` solids, the cabin it stands on), `KwRigEdges` + `KwRigEdge` (tie
   places every 0.1 m along the sheer and each roof's outline, railed or not, none under a cabin or a higher planking
   part), `KwRigTies` (the rules: its side's sheer at the aim's place on a deck; its roof's edge on a roof, the hull past
-  it when the roof's edge is out less than a quarter of the rope's height; the nearest clear and free place when
-  blocked; a rope down the middle to the deck under it) + `KwRigClear` (sampled every 0.1 m with its sag against the
+  it when the roof's edge is out less than a quarter of the rope's height; where the sheer at the aim's place (within
+  `Here`, 0.5 m) is under a cabin or not clear, for any mast, that cabin's top there, its roof's edge or roof railing
+  (2026-11-03, the user's "ropes ... on the side/rail of the top of a cabin too"), before any wider search; the nearest
+  clear and free place when blocked; a rope down the middle to the deck under it) + `KwRigClear` (sampled every 0.1 m with its sag against the
   solids), `KwRigTie` (the fitting's place), `KwTieShapes` + `KwTieLook` (deadeyes on a chainplate, cleats, eyebolts;
   drawn only, no colliders), `KwRigSource` + `KwRigState` (the pieces: a launched ship's `KwShipBody.Blueprint`, the
   dock's; on the dock re-tied when a piece round the mast comes or goes), `KwRigGhost` (ropes and fittings as meshes in
@@ -641,8 +752,12 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   "pennant,colour"), `KwSailTopsForm` (the page), `KwMastTopFit` (heights clear of the sails, the window's note),
   `KwMastTopShapes` (their meshes and the climbing pegs, in the mast's mesh), `KwMastTopColliders` (a launched ship's
   boxes for them), `KwMastClimb` (E / Shift + E up and down the pegs), `KwPennant` + `KwPennantLook` (the streaming
-  pennant, from the game's wind and the network clock alone; offered none or the sails' cloth, a dyed one only on a
-  mast saved with it), `KwClothField` (the windows' cloth choice: the offered cloths, and a sail's own after them).
+  pennant, from the game's wind and the network clock alone; its hoist on the staff's face, its first tenth (at least
+  the hoist's width) straight out square to the staff, the droop and waves building up past it; white vertex colours
+  and tangents as the sails' cloth has, or the cloth shader draws it near black; offered none or the sails' cloth, a
+  dyed one only on a mast saved with it), `KwPennantHoist` (its size, its head 1.2 cm under the staff's truck, its edge
+  3 mm off the staff's face, `KwMastTopShapes.StaffRadius`; the rope lashings, a child of the pennant: two turns of
+  1.2 cm line flush with its head and foot, and at its middle on a hoist 30 cm wide or more), `KwClothField` (the windows' cloth choice: the offered cloths, and a sail's own after them).
   Bowsprit and
   jibs: `KwBowspritTool` + `KwBowspritForm` (click a stem post's top; length, rise, jibs, cloth), `KwBowsprit`
   ("bowsprit|length|rise|jibs|cloth", the spar), `KwJibStay` (the stay's upper end, found from the ship's pieces when
@@ -738,7 +853,7 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   the hull in slices, each shaped as the hull is at its middle, Archimedes; over a zone not loaded, at the edge of the
   area round a player, the calm sea's height, so a long hull's end there keeps its lift), `KwShipWeight` (its weight, the water
   displaced to the design waterline, and the weight's centre straight over that water's middle, 35% up to the
-  waterline, so it floats level; the one reckoning for the ship, the dock waterline and the table's figures), `KwShipDrive` (its physics step; its sails' push from `KwShipWind`), `KwShipStats` (speed, sail push, steering, health, its sails by kind), `KwShipWind` (the ship's sails by kind and apparent wind on every peer; the owner's sail push by kind, eased as the game's), `KwShipLook`
+  waterline, so it floats level; the one reckoning for the ship, the dock waterline and the table's figures), `KwShipDrive` (its physics step; its sails' push from `KwShipWind`), `KwShipStats` (speed, sail push, steering, health, its sails by kind; speed retuned 2026-11-03, the user: "we need to be more generous with the formula for ship speed": a full rig, half the karve's sail power for its length × depth, pushes 1.25 times the karve's sail, size and depth slow a hull only gently, so a big, well-rigged ship sails about as fast as a karve and a small light one 10 to 15% faster; the formula in its summary), `KwShipTrim` (since 2026-11-04 the build's figures, the load's drag, the rudders' damage, the health and the sail offset are kept there as shares of the karve's and multiplied onto the game's Ship fields where the step uses them, never written into the fields: ShipConfig's `KW_ship` values and other mods' raises of the fields for a step, such as Path of Valheiman's talents, carry over; `KwShipDrive`'s prefix runs last for that), `KwShipWind` (the ship's sails by kind and apparent wind on every peer; the owner's sail push by kind, eased as the game's), `KwShipLook`
   (combined look), `KwShipColliders` (decks, hold floors, keels as boxes; the planking's sides and keel strip from
   `KwHullSkin`, boxes lying on the drawn strakes' face, named "hull": `KwSkinSheet` + `KwSkinQuad` (the face as the strakes
   are drawn, carried past rib ends and under raised sides), `KwSkinFit` + `KwSkinBox` + `KwSkinQuad2` (a box over a stretch,
@@ -774,7 +889,7 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   riders as children, `Take`/`Drop` keeping the body's mass with `KwBodyMass`, `LetGo`, `Shown`: a hit carried to the
   drawn pose), `KwShipRider` (on the piece: its record, aboard, parked, the owner's upkeep, `Release`, a pose written
   again taken), `KwShipRiderMove` (that pose eased to on every peer but its owner's), `KwShipRiderRules`
-  (which pieces ride: the ship cannons only; which are refused aboard; when a parked one is let go; plain data), `KwShipRiderPose` (the pose maths, plain arithmetic),
+  (which pieces ride: the ship cannons, storage crates, ammunition piles and the hammock; which are refused aboard; when a parked one is let go; plain data), `KwShipRiderPose` (the pose maths, plain arithmetic),
   `KwShipRiderPlace` (`KwShipRiderAim` the placement ray, `KwShipRiderGhost` the rules on the ghost, `KwShipRiderPlaced`
   the piece placed, `KwShipRiderRefused` why a piece was refused aboard), `KwShipRiderScene` (`KwShipRiderWake`, and the riders let go before the game destroys the ship's
   object), `KwShipRiderFind` (a ship's ZDO by its id near a point), `KwShipRiderBreak` (broken up into the crates,
@@ -899,9 +1014,63 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   every child a copy of the game's hint ("Text" beside "key_bkg"/"Key"); a mod copies the first line, renames it and
   sets its words (the ship cannons' U broadside and J shot arcs, `KwHelmRows`).
 - `Crane/` (2026-11-02, an Asset Lab bench until then; `CRANE.md` there has identity, controls, multiplayer): the cargo
-  crane (`KWC_cargo_crane`, a land piece worked like a helm: turn, a boom sliding 0 to 8.5 m, hoist) and the cargo crate it
-  lifts (`KWC_cargo_crate`, 6 x 4, rope sling loops; the only crate it lifts). `KWC_`, not `KW_`: not ship parts. Not
-  built on a launched ship (the rider rule refuses them there).
+  crane (`KWC_cargo_crane`, a land piece worked like a helm: turn, a boom sliding 0 to 8.5 m, hoist) and the crates it
+  lifts: its own cargo crate (`KWC_cargo_crate`, 6 x 4) and, since the same day (the user's call), every storage crate
+  (`Storage/`); no other chest. `KWC_`, not `KW_`: not ship parts. Not built on a launched ship (the rider rule refuses
+  them there). `KwCrate` (on every liftable crate: the hook handshake, its box from `col_box_body` and its lift point from
+  the model's `lift` or over the box's top; hooked anywhere over its top, 0.25 m round it; set down by its owner on what
+  is under it, afloat, or aboard a launched ship), `KwCrateLook` (every peer: hanging under the hook, free at its ZDO's
+  place, and the ship hand-off: a rider added or released at once as the crate's rider record says), `KwCrateRest` (where
+  it comes to rest; `Board` and `Unboard`, the rider's own record, `KwShipRider.Place` and `Release`), `KwCrateSling` (on a
+  screen while it hangs: two rope bands round the body like a parcel's, four legs to an eye over the top, the hook through
+  the eye; three line renderers in the game's rope under `kwc_sling`) and `KwCrateSlingFit` (the bands' taut path over the
+  model's latch, lid lip and handles, once per prefab). A crate riding a ship neither settles nor is drawn free: its rider
+  keeps it. The crane's works and its operator's hands (2026-11-03, the user's words: "gears, poles, ropes, and controls,
+  so when you do different things to the crane your character accurately is grabbing and moving controls"; `CRANE.md`,
+  "The works and the operator's hands"): `KwCraneRig` (the parts posed from the pose, the drum by `DrumAngle`, winding in
+  +X; `Arrange` hangs the works under the turret and each grip under its control; `Posed`, the pose drawn),
+  `KwCraneWorks` (the controls `ctl_slew`, `ctl_boom`, `ctl_hook`, the crank `ctl_hoist` and the gears `gear_drum`,
+  `gear_crank`, `gear_slew`, `gear_boom` turned from the pose and `kwc_crate`: the gear trains by their ratios, the hoist
+  a step-up since 2026-11-03 (the crank's 21-tooth wheel on the drum's 7-tooth pinion: the crank a third of the drum the
+  other way, about half a turn a second at the hoist's 1.5 m/s, the pinion whirling with the drum), the levers
+  leaning up to 20° with the turn and the slide, the latch's flick; whether it is hoisting or the latch is worked),
+  `KwCraneHands` (on a screen within 50 m, after the animator: the operator `kwc_operator` names, his fists on the grips
+  by the helmsman's `KwHelmPose`, the LimbIk library: left on the slew lever or the crank while hoisting, right on the
+  boom lever or the latch while it flicks; his lean over the console) and `KwCraneHand` (one fist's move over to another
+  grip in 0.2 s, in the turret's frame). Nothing new is sent; a dedicated server adds no `KwCraneHands`.
+  Breaking (2026-11-03, the user's words: "if a crate is dropped from a crane from higher than 2 meters, then it breaks on
+  impact and the contents go all over. Stackable items should show as stacks"; `CRANE.md`, "How it plays"): `KwCrate.Rest`
+  now `Rest(fromCrane)`, where it comes to rest worked out while it still hangs (`KwCrateRest.Find`, a `KwCrateTarget`:
+  place, turn, afloat, a launched ship or a cart and its place) and put (`KwCrateRest.Put`); `KwCrateBreak` (a fall of
+  more than 2 m from a crane's let-go, never onto water: the landing and `kwc_break` written, broken on the owner as its
+  drawn crate lands; `Keep` for an owner changed mid-fall), `KwCrateSpill` (each slot dropped whole by
+  `ItemDrop.DropItem` within 1.5 m of the landing: in sight of it, clear, on the surface, over water floating; then the
+  inventory emptied), `KwCrateHeap` + `KwCrateHeapParts` (woken by `Pieces/KwItemDropWake`; a spilled stack's heap: copies of the
+  drop's nearest-detail meshes, one per doubling of the stack up to four, under the drop on every screen, from the drop's
+  synced stack; `ItemDrop.Awake` postfix for drops marked `kwc_heap`). `KwCargoCast`'s box casts also stop on the game's
+  cart's load space (its storage's box over the bed, the "item" layer; any other hit there passed over).
+- `Cart/` (2026-11-03, the user's words: "we also need to allow lowering a crate with the crane onto a cart, and the cart
+  accepts the crate as cargo. The players could remove or add items to the crate on the cart. The cart wouldn't have
+  storage anymore, just crates. Players need to be able to drop crates off from the cart, or use the crane again to remove
+  them"; the user decided to change the game's own `Cart`; `Crane/CRANE.md`, "How it plays" and "Multiplayer"): the game's
+  cart carrying crates. `KwCargoCart` (names, keys, the RPC, the numbers; not `KwCart`, the cannons' carriage maths),
+  `KwCartShape` (the bed in the cart's frame, measured once from the first cart's own colliders, the game's numbers if
+  that fails or is more than 0.25 m off; four cells, the shapes a crate takes, a footprint's fit and turn, a mask's
+  middle; plain data but `Measure`), `KwCartBed` (on each game `Cart`, every peer: its id written once by its owner, its
+  crates as children with the body's centre of mass kept, `LetGo`, their weight, the cells taken; its storage's inventory
+  known, `Refuses`), `KwCartLoad` (`KwCartPlace`, `KwCartFit`: the place a crate takes, nearest where it hung, `Board`
+  writing it with the link, `Refusal` for the operator's Block, `Onto` where a crate let go over a cart rests),
+  `KwCartRider` (on a crate with a link, every peer: the cart's child at its place, eased there, parked while the cart is
+  away, the owner's upkeep of the ZDO place, two crates on one place, `Release`; `Agree` from `KwCrateLook`, `Unload`
+  from the hook and the unload), `KwCartFind` (a cart's ZDO by its id near a point, for a parked crate's owner),
+  `KwCartUnload` (Shift+E: the spot beside the cart found by the asking game, `KWC_Unload` to the owner, `Apply`; `Off`
+  for a crate whose place was taken; `Spot` also for a crate let go over a full cart), `KwCartHover` (a crate on a cart
+  hovered through the cart's body and storage box, from `KwShipRiderHover`'s postfix), `KwCartStore` (the cart's own
+  storage: `Container.GetHoverText` postfix, a crate's unload line too; `Forward`, E on the empty storage the cart's own
+  use, from `KwCratePatches`' `Container.Interact` prefix), `KwCartScene` (`Vagon.Awake` postfix: the bed; `Vagon.UpdateMass`
+  postfix: the crates' contents in the mass; `ZNetScene.Destroy`/`OnZDODestroyed` prefixes and `RemoveObjects` postfix:
+  the crates let go first), `KwCartText` (the words). The refusals of the cart's storage ride `KwPileFilter`'s inventory
+  prefixes (one patch a method).
 - `Storage/` (2026-11-02): the storage crates. `KwCrates` (the two crates as `KwCrateDef`s, plain data: prefab, bundle,
   name, slots, recipe; made once when the network scene first wakes, after the cannons, each a copy of the game's wood
   chest: its Container, items in its ZDO, placement, health, wear and sounds; registered every wake on every peer),
@@ -917,9 +1086,13 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   (each bundle's readable sources read once, each seed's texture made, compressed, shared and counted, destroyed with
   its last crate), `KwCrateMarks` (the composite in plain integers, `seed.py`'s byte for byte: window, flips, tone).
   Slatted crates wear the materials' ship copies everywhere, and `KwShipMaterials.Ship` copies no material already
-  set as a ship's, so a crate's own copies are never copied again aboard. Aboard a launched ship a crate rides it like a cannon (`KwShipRiderRules`), its
+  set as a ship's, so a crate's own copies are never copied again aboard (and only the model's renderers are dressed, not
+  the crane's sling). Aboard a launched ship a crate rides it like a cannon (`KwShipRiderRules`), its
   materials swapped for the ship's copies by the rider, its contents spilled into the cargo crates when the ship is
-  broken up (`KwShipRiderBreak.Gather`).
+  broken up (`KwShipRiderBreak.Gather`). Every storage crate is liftable by the cargo crane (`KwCrates.Liftable`: the
+  crane's `KwCrate` and `KwCrateLook`, `m_noSupportWear` off as the cargo crate's, a crate with nothing under it coming
+  down instead; `Crane/CRANE.md`): off a ship's deck and onto one, which it then rides. `KwCrateLid` serves the cargo
+  crate's lid too (the lid found anywhere under the piece).
 - `Stores/` (2026-11-02, the user's words: "We also need a cannonball pile and blackpowder pile, where you can store
   blackpowder and cannonballs. When captain the ship cannons autoreloading should take from these stores"): the
   ammunition piles and the captain's loads from them (`Cannons/CANNONS.md`, "Ammunition piles"). `KwPiles` (the two
@@ -938,6 +1111,237 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   asks to piles another peer owns: ids from a counter, answers checked against them, 1.5 s patience, a silent owner's
   pile left out 10 s; `KwReload.Asked` keeps the reload waiting) and `KwPileCredit` (what came and is unused, into his
   pack, or at his feet, once nothing waits).
+- `Hammock/` (2026-11-03, the user's words: "we need the ship hammock in broadside"; the archive's hammock between two
+  hooks, `AssetLab/AssetLab/Keelwright/KwHammock*.cs`, gave the sling's shape and the cloth's material, written again for
+  one piece; its ends since the same day, the user's words: "If you try putting it on the ceiling or a different
+  freestanding piece, then it should actually just be a hook."): the hammock and beds aboard a launched ship.
+  `KwHammocks` (the piece, plain data and its making: made once when the network scene first wakes, after the piles, a
+  copy of the game's `bed`, in Broadside's build menu entry and the game's Furniture filter; registered every wake on
+  every peer; no bed, no hammock, logged), `KwHammockSpec` + `KwHammockMount` (its shape as built and its ZDO text
+  `bs_hammock`: the two ends in its kit frame, each a post or a hook, its rope point, base and surface's way, the bars'
+  height; `Standard`, two posts 2.6 m apart, for the prefab and a hammock with no text; plain data), `KwHammockRules`
+  (the limits and plain maths in the world: post or hook, the posts' pegs matched to the other end, the rope points, the
+  bars' range from the ropes' least and longest drop), `KwHammockSling` (the sling's maths in the hammock's frame: the
+  cloth's length for the span, the catenary solved once for its sag, cradling across, the bars, the four ropes, where a
+  sleeper lies; its own frame on the rope line, `Rest` its turn along the line, `In`), `KwHammockShape` (the cloth and
+  bars as meshes in the sling's frame, and in the hammock's for the preview; `Stamp`, raised with any change to the look
+  so the kept icon is rendered again; `Kit`, Unity to kit axes), `KwHammockParts` (the ends: a post on its foot and toe,
+  braced, its peg turned up at its tip, in the plank wood; a hook's washer, shank and eye in iron, `HookRope` the eye's
+  bottom; their solid boxes, a hook's into its surface), `KwHammockModel` (the bed copy stripped but its `PlayerBase`
+  child, switched off as in the bed; `Dress` from a shape, the parts it wore let go: `model` with the posts on its own
+  mesh in the plank wood, `hooks` in the game's iron (`KwOpeningLooks.Iron`), the ends' boxes and a box over the cloth on
+  `piece_nonsolid` (hovered there, walked through: a player waking falls from it to the floor); under it `sling` on the
+  rope line with the cloth, the bars, the ropes in the game's rope (`KwSailRigging.Line`) and the bed's `spawnpoint`,
+  level, no collider; the wear states the model, no wet, snow or fragments, the support's colliders read again; no
+  placing box: the ghost is hidden while the hammock is in hand; meshes only where there is a screen), `KwHammockCloth` (a
+  matte copy of the plank wood wearing a deer hide painted at load: mottle, grain, a seam across, stitched hems; plain on
+  a server), `KwHammock` (on each hammock, every peer: its shape from its ZDO when it wakes, `Take` in the placing frame;
+  once a second its rider looked for and `KwHammockHold` on its owner; on a screen, while it rides a ship, the sling
+  turned about the rope line until plumb, at most 40 degrees, eased 0.35 s, within 40 m of the camera; at rest
+  otherwise), `KwHammockHold` (on the owner: each hook's point looked at for a solid thing not the hammock, aboard at the
+  ship's body pose; missing twice running, `WearNTear.ApplyDamage` past its health; never in its first 10 s or 10 s after
+  boarding or leaving a ship, while the area loads, before its ship is built or while parked), `KwHammockHover`
+  (`Bed.GetHoverName`/`GetHoverText` postfixes: "Hammock" for the bed's word), `KwHammockHammer` (into the hammer after
+  the piles with its recipe). Placing it by its two ends (the Dock tool's pattern): `KwHammockTool` (`Player.TryPlacePiece`
+  prefix for `BS_hammock`: the first click keeps an end and costs nothing, the second plans and hangs it through
+  `Player.PlacePiece` with the game's building statistics, `KwHammock.Take`, `KwShipRider.Place` aboard, and returns true
+  so the game takes the recipe), `KwHammockAim` + `KwHammockClick` (the aim: the first solid thing or the water within the
+  game's reach, triggers passed; a post where the face looks up or on the ground, else a hook; on a launched ship kept in
+  its body's frame; `Drawn` a body pose carried to the drawn one), `KwHammockPlan` (the hammock two ends make: rope points,
+  the floor under the rope line's middle as its origin, bars, its shape; refused with the first reason and still laid out
+  for the preview; kept in the ship's frame), `KwHammockChecks` (the floor, the clearance under the cloth, a sleeper's room,
+  the ropes and the posts clear, the thing in the way named, no-build places and wards at both ends and the origin),
+  `KwHammockPreview` (`Player.UpdatePlacementGhost` postfix: the game's ghost and marker hidden, the preview, the panel's
+  lines as the hammock's description, the first end dropped when it is put away), `KwHammockView` (the see-through
+  preview: the whole hammock, red while refused, or one end), `KwHammockCancel` (`Menu.Update` and
+  `Player.UpdateBuildGuiInput` prefixes: Esc and right click forget a first end), `KwHammockWords` (what it says). Beds riding a ship, any bed: `KwBedAboard`
+  (`Bed.CheckFire` prefix: no fire needed aboard; every other check the game's), `KwBedSpawn` (the spawn point kept with
+  the ship: `Bed.Interact` postfix records it, `Bed.IsCurrent` prefix and once a second move the profile's point with the
+  ship, a point set elsewhere or cleared ends it; saved at `Player.Save`, read at `Player.OnSpawned`), `KwBedRecord`
+  (the record, plain data and its text), `KwBedRespawn` (`Game.FindSpawnPoint` prefix on a respawn after death: the ship
+  here, the point moved with it and the respawn held until it is built and 0.5 s more; not here, the server asked once
+  and the respawn held up to 3 s for the answer, the point moved there or, the ship gone, the record ended; never more
+  than 20 s), `KwBedShipWhere` (the server's lookup, `BS_BedShipWhere`/`BS_BedShipIs`, and the once-a-second keeper; made
+  in a `ZNet.Awake` postfix, `KwBedShipWhereWake`).
+- `Trawl/` (2026-11-03, the user's words: "we need to have some kind of mechanism for casting out a net on a boat while
+  sailing to trawl, then some mechanism to hoist the net up onto the deck and the fish drop out onto the deck for players
+  to pick up"; `TRAWL.md` there has how it plays, the contract, multiplayer and the numbers): the net winch and its towed
+  net. `KwTrawl` (the piece made once when the network scene first wakes, after the hammock, registered every wake on every
+  peer; its recipe), `KwTrawlBuild` (a copy of `wood_floor` stripped, the parts under it: `model` with its boxes and
+  placing box, the turning `drum` with its `roll` of net, the swinging `davit` with its `sheave`), `KwTrawlShapes` (their
+  meshes in kit axes, the drum the anchor windlass's sizes), `KwTrawlHammer` (into the hammer after the hammock),
+  `KwTrawlNet` (the bundle's net dressed in the game's `logwall` and copies wearing its hemp and stone maps, then the
+  ship's copies; a template, screens only), `KwTrawlWinch` (on the piece, every peer: hover, E, the ship it rides, the
+  speed, the tow, the owner's side, the look, a word when the net snags or fills), `KwTrawlState` (the ZDO keys, steps and
+  fares), `KwTrawlTune` (the numbers and every step's timing: rope out, roll, swing, the net's size), `KwTrawlOwner` (the
+  owner's steps), `KwTrawlCast` (E, and why a cast is refused: not aboard, the arm over the ship, too shallow),
+  `KwTrawlCatch` (once a second: how it fares, the catch), `KwTrawlFish` (the game's fish by biome, by chance),
+  `KwTrawlSea` (sea level, the floor, the biome), `KwTrawlTow` (where the net is in the water, plain maths) with
+  `KwTrawlSpeed` (the ship's speed as this peer sees it move), `KwTrawlDrag` (on the ship: the nets' drag on its owner),
+  `KwTrawlLook` + `KwTrawlLines` (screens: the drum, crank, roll, sheave and davit turned, the net placed, the ropes),
+  `KwTrawlDrop` (the owner lands the catch, or spills it from a winch removed), `KwTrawlDeck` (a landed fish riding its
+  ship on every peer; added by `Pieces/KwItemDropWake`, Broadside's one `ItemDrop.Awake` postfix) and `KwTrawlWords` (every word).
+- `Dockside/` (2026-11-02, the user asked for the workshop's eight dockside decorations under Broadside's build menu;
+  decoration only, no storage, no station; the models in `ValheimAssets/Assets/Ships/Keelwright/Dockside`, its
+  `BRIEF.md` and each piece's `HANDOFF.md`; 26 more on 2026-11-03, the user's words: "also make all these decorations").
+  `KwDockside` (the first eight as `KwDockDef`s, then `KwDockYard`'s and `KwDockQuay`'s, `Defs`; plain data: prefab, bundle, name,
+  base piece, metal gloss, recipe, `Fit`; made once when the network scene first wakes, after the piles, each a copy of
+  the game's `piece_table` (wood furniture: placement, health 100, wear and sounds; its comfort taken off) or, for the
+  beacon, of the standing brazier `piece_brazierfloor01`; in Broadside's build menu entry (Transportation's flag, the
+  copy's own flags replaced) and the game's Decoration filter (and Lighting, the beacon), at a workbench; registered every
+  wake on every peer; one whose bundle or base is missing, or that throws, left out with a warning, the others made),
+  `KwDockModel` (the bundle's prefab under the copy as `dock`, on the piece's layer, its `col_*` boxes the colliders;
+  dressed on a screen in `piece_chest_wood`'s `woodchest` material with the bundle's maps and the metal mask's shine at
+  the HANDOFF's gloss (post 0.4, anchor 0.6, shield bosses 0.3, beacon basket 0.4, vane 0.7), a `glow_` part in its own
+  emissive material; then the def's `Fit`, then the base's children, root drawing parts and solid colliders stripped
+  (a trigger on the root kept); `KwPrefabs.Anchor` for the placing box; the wear states the model, `m_wet` and
+  `m_fragmentRoots` null; the bundle's icon), `KwDockFire` (the beacon's `Fit`: the brazier's Fireplace kept, with its
+  fuel item, fuel and burn time; the objects the Fireplace switches (its fire, low and high flames, smoke spawner) and,
+  of the rest of the brazier, the highest objects carrying a particle system, light, ZSFX, effect area or Aoe moved
+  under the model's `fire` point at their height over the brazier's ash bed (`ashlayer`, -0.32 under its pivot), so
+  none of its bowl comes along; the player base area kept at the foot; `glow_embers` under the Fireplace's
+  enabled object so it glows only while burning; the roof and rain check (`m_coverCheckOffset`) 0.2 m over the fire point,
+  since a ray up from the foot would hit the beacon's own post and put it out, the buried check at the fire's height, the
+  ignite capsule raised with it; the hover named "Harbour beacon"; nothing sent but what the Fireplace syncs),
+  `KwDockVane` (the vane's `Fit`: the `vane` part turned about the post's axis so its plate, toward -Z at rest, trails
+  down the game's wind, `EnvMan.GetWindDir` read in the post's axes, turn = atan2(-x, -z); eased with
+  `SmoothDampAngle`, 2.5 s in a calm to 0.8 s in a gale, at most 120 degrees a second, a few degrees of gust swing on a
+  beat of its own from its position; every frame within 40 m, ten a second to 150 m, not at all beyond or out of view;
+  nothing kept or sent; off on a dedicated server), `KwDockHammer` (into the hammer after the piles with their
+  recipes, `KwHammer`; `KwBuildMenu.Owns` counts them). Not riders by name (`KwShipRiderRules`): refused aboard a
+  launched ship unless the .cfg's `AllowBuildingOnShips` lets every piece ride. Each def's `Decor` (a `KwDecorFit`,
+  `Decorate/`) is its auto-decorate metadata (footprint, kinds of place, spacing); a `Wet` one (the
+  mooring post, the stone anchor) has its `m_noInWater` cleared in `Configure`, so it is placed at the waterline and in
+  shallow water by hand too. Set 2 (2026-11-03): `KwDockYard` (the shipwright's yard, plain data: sawhorses, timber drying
+  rack, steam box, scaffold, hull frames, lean-to, tool wall, wood shavings, then rope and sail: rope coils, rope spool,
+  rope walk, spar rack, sail bolts, sail frame) and `KwDockQuay` (tar pot, nail barrels, ship's anchor, fenders, pilings,
+  gangplank, salvage heap, hanging net, then lantern pole, signal bell, pennant line, notice board), all copies of
+  `piece_table`, recipes of Meadows and Black Forest items only, each `Decor` DECORATE.md's entry sized from its HANDOFF
+  (the gangplank none: placed by hand); the anchor, fenders and pilings `Wet`; the tar pot and steam box `NotOnWood`
+  (`KwDockDef.NotOnWood`, `m_notOnWood` as the game's fires). `KwDockHearth` (the tar pot's and steam box's `Fit`: on each
+  screen as the piece wakes, never a ghost or a dedicated server, a LocalEffects copy (`AttachScaled`, never networked)
+  of the game campfire's full fire, `fire_pit`'s Fireplace `m_enabledObjectHigh`, at the model's `fire` point, scaled
+  0.32 (tar pot) and 0.22 (steam box, its flames licking the kettle's bottom), its warmth and burn areas, area damage,
+  smoke spawner, cinders and ground-glow quad destroyed before it wakes (no fuel, heat, burning, cooking, shelter or
+  rest), its light shadowless at 4 and 3 m, 1.5 bright, `LightLod` within 40 m, its crackle at half; the steam box's
+  `steam` point the game cauldron's `HaveFire/steam` at 0.6, its cone up; `glow_embers` always lit), `KwDockLantern` (the
+  lantern pole's `Fit`, and the dock lantern's: since 2026-11-03 a small torch flame, a LocalEffects copy (`AttachScaled`,
+  never networked) of the game wall torch's flames, `piece_walltorch`'s Fireplace `m_enabledObject`/`fx_Torch_Basic`
+  (flame balls and their glow only: none of the torch's light, warmth or sound), at 0.2 under the `light` point in the
+  lantern's oil cup, no particle wider than 0.17 m (the torch's 2 m glow held to the 0.215 m inside), its renderers'
+  `sortingFudge` 1 lower so it draws after the glass round it (whole through the glass from every side), and a warm point
+  light made in code under the same point (7 m, 1.3, no shadow, the game's `LightLod` within 40 m and `LightFlicker`,
+  fading in 1.5 s), both on from dusk to dawn, `EnvMan.IsNight` read every 2 s: the world's shared clock, so every screen
+  agrees; nothing sent; screens only; no flame, warned once, without the game's torch; the model's `glow_wick` ember
+  always lit; until 2026-11-03 `glow_lamp` windows on horn panes), the lanterns' `glass` kept on the bundle's own
+  see-through material by `KwDockModel` (Standard transparent mode built into the bundle; never the piece material; no
+  shadow),
+  `KwDockBell` (the bell's `Fit`: E rings it, `BS_dock_bell_ring` routed to every peer (`ZNetView.Everybody`; a peer
+  without the bell loaded drops it), each screen swinging the `bell` part about its X axis, first toward the front
+  (negative), 32 degrees dying away over 1.6 s at a 1.8 s beat, eased in from where it hung, settled after 7 s, and
+  playing the game's own bell, `sfx_fader_bell` (the Fader's, pitched up by half, at 0.45 of its loudness; the metal
+  clang `sfx_metal_blocked` without it) as a plain local copy of the sound prefab; a bell rung within 3 s is not rung
+  again, a ring within 1 s of the last ignored; nothing kept; a dedicated server only registers the RPC; the bell and
+  rope hovered and aimed at through `hit_bell`, a box on `piece_nonsolid`), and in `KwDockModel` `HitBox` (a box on
+  `piece_nonsolid`: characters and items pass through, the hammer's, placing and hover rays hit it), `FlatBox` (the
+  shavings' 2 cm box over their 1.9 by 1.86 m footprint, so the hammer can remove them), `Underfoot` (a piece with no
+  solid box of its own, the shavings, has its 10 cm placing box on `piece_nonsolid` too: nobody trips on it, the ghost and
+  the wear's ground check still use it) and `Flush` (a hung piece's,
+  `KwDecorFit.Hangs`: the tool wall, the hanging net, the fenders, placed by a box in front of its origin, so aimed at a
+  wall its back lies on the wall's face at the aimed height; the player turns it to face out). The pennants are still
+  (one mesh, no parts to sway). The wood tiers (2026-11-03, the user's words: "We also need fine wood, core wood and
+  regular wood mooring posts, those types of versions for things that do have wood, so the decorations that go on the
+  docks match the dock"): `KwDockTier` + `KwDockTiers` (core and fine: the dock material each goes with, its words, its
+  wood; the seven tiered decorations; `Expand` puts each tier copy after its plain def in `Defs`; `Albedo` the embedded
+  tier albedo, loaded once, point filtered; `Icons` the tier pieces' and the dock lantern's hammer icons rendered from the
+  piece), `KwDockDef.In` (a plain def's copy in a tier: prefab `_core`/`_fine`, "(core wood)", the plain `Wood` as the
+  tier's, the rest shared), `KwDockModel.Dress` (a tier copy's dressed material wearing its tier albedo). The dock
+  lantern (2026-11-03, `Docks/DOCKS.md` "Dock lanterns"): `KwDockLanternPiece` (one in the world: the prefab's `Fit` lifts
+  the head 1.8 m and adds a short wood post and its box; built from its ZDO, `Take`, `Loaded`, `Held`), `KwDockLanternSpec`
+  (its saved post and cost), `KwDockLanternShape` (the post per material: a lashed rough pole, a log, a planed post),
+  `KwDockLanternLook` (the post in the hammer's ghost), `KwDockLanternSite` +
+  `KwDockLanternEdge` + `KwDockLanternAim` (the aim's site on a dock section's side or end or a game floor's edge over the
+  water, the rules, the post's cast; `At` for the Auto-decorate tool), `KwDockLanternClick` (`Player.TryPlacePiece`
+  prefix and postfix: refused with its reason, the post written once placed; `Hover`, the ghost at its site and the
+  piece's requirements its cost). Mooring posts on a dock (2026-11-03, `Docks/DOCKS.md` "Mooring posts on a dock"):
+  `KwDockMooring` (the mooring posts' `Fit`, and the lantern pole's with its light: listed once placed, so the section
+  under one cuts its curb round it, `KwPierGaps`, by its `Outward`; `Hover` and `Over`, snapped over the nearest free
+  piling station: the lantern pole on the piling's axis, its lamp (-X) toward the dock's middle, a mooring post moved in
+  until its back is flush with the deck's side; `Seated`), `KwDockTrim` (2026-11-03, the user: the lights "literally need
+  to attach to the existing docks pole. And not create a brand new pole": the lantern pole over a piling without its stone
+  cairn, a trimmed copy of its mesh made once and its cairn's box off, decided on each peer from where it and the sections
+  stand, the ghost and previews set by their placing code). `KwDockPlace` (the one `Player.UpdatePlacementGhost` postfix
+  for them: the dock lantern's site, a mooring post's or lantern pole's snap; any other piece left at once).
+- `Docks/` (2026-11-03; `DOCKS.md` there has how it plays, the contract, reading a dock, multiplayer and what is not
+  checked): the Dock tool and the docks it builds. `KwPierKind` + `KwPierKinds` (the three materials: item, health,
+  sizes; plain data), `KwPierSpec` (a section's saved text), `KwPierCost` (its cost and requirements), `KwPierPrefabs`
+  (the three section prefabs and the tool, copies of `wood_floor`; the tool's resting description and shown cost),
+  `KwPierToolLook` (the tool's own small dock and rendered icon), `KwPierHammer` (into the hammer after the dockside
+  decorations, from `KwHammer`; `KwBuildMenu.Owns` counts them), `KwPier` (a section in the world: built once from its
+  ZDO; `Take`, written and built in the placing frame; `Loaded`; its curbs and timbers made again when its joints
+  change), `KwPierGaps` (where other loaded sections meet its edges: the curb cut there, every peer alike, never saved;
+  `Touch` tells the sections a new or gone one meets), `KwPierBody` (colliders, snap points, the support
+  check asked again), `KwPierShape` + `KwPierMesh` + `KwPierUv` + `KwPierAtlas` (its timbers, the mesh, each
+  part's strip of its material's atlas chosen from the seed, the atlas layout), the rough wood (2026-11-03): `KwPierRough`
+  (its deck: rows of odd boards, offcuts; its draws the same whatever opens a side), `KwPierRoughFrame` (joists, caps,
+  the odd curb), `KwPierRoughPole` (crooked pole pilings, rope lashings), `KwPierBlock` (a crooked board or timber by its
+  eight corners), `KwPierRope` (rope tubes); `KwPierLooks` (the plank wood material
+  dressed in each material's atlas), `KwPierDeck` + `KwPierEdges` (a loaded section's deck,
+  read-only, for other code such as `Decorate/`), the tool: `KwPierTool` (the clicks, width and material, build and
+  pay), `KwPierAim` + `KwPierStart` + `KwPierJoin` (what the aim means: a start on the ground, continuing or branching
+  off a dock; the end), `KwPierPlan` + `KwPierChecks` (the dock a click would make, its sections, piling casts and
+  limits; wards, no-build places, other docks), `KwPierBuild` (the sections placed the game's way), `KwPierPreview` +
+  `KwPierView` (every frame: the preview at the tool's width and material, in the material's texture as tiled over a
+  depth pass, the panel's lines, the shown cost), `KwToolWheel` (the wheel owned: material, Alt + width),
+  `KwPierCancel` (Esc and right click), `KwPierWords` (what it says). Dock ladders (2026-11-03): `KwPierLadderTool`
+  (the kit's ladder tool on a dock: hover and click, from `KwLadderTool.Click` and `KwPreview`), `KwPierLadderAim` +
+  `KwPierLadderEdge` + `KwPierLadderSite` (the edge aimed at on a dock or a game floor, the rules, the length down to
+  the water or the sea floor), `KwPierLadderSpec` (its saved text and cost), `KwPierLadderPrefabs`, `KwPierLadder` (one in
+  the world: built from its ZDO, `Take`, `Loaded`, `Held`), `KwPierLadderBody` (its climb box), `KwPierLadderShape` (its
+  look per material), `KwPierLadderSupport` (held by its section; since 2026-11-03 the one `WearNTear.UpdateSupport`
+  prefix for every dock rule: a dock ladder and a dock lantern held by their section, a piece resting on a deck at its
+  own full support, `KwPierRest`: its boxes as the game reads them meeting a built section's deck box, near ones only, a
+  level distance from the section's middle first, `KwPier.Middle` and `Reach`); `KwPierGaps.Ladders` (the curb open round
+  each, and round each mooring post over a side's piling, `KwPierGaps.PostSpan`); `KwPierDeck.PilingIn`, `CapFoot` and
+  `Pilings` (the piling stations along a side, read-only, for the mooring posts).
+- `Decorate/` (2026-11-03; `DECORATE.md` there has how it plays, the reading rules, the scenes and the quay with their
+  rules, densities, the metadata, how to add a decoration or a scene, multiplayer, the offline checks and what is not
+  checked; the user's words: "an auto decorate tool for a shipyard, where you kinda have an area selector like with the
+  EarthWright area thing and it auto fills in decorations, maybe allowing the player to easily use the scroll wheel to
+  have more or fewer decorations"; reworked the same day: "the alt scroll should then allow to add or remove the
+  decoration density ... you need the regular scroll wheel to actually zoom ... We need it to look like an actual
+  functioning shipyard ... way larger and also to work on docks ... The pieces need to make sense and be grouped"): the
+  Auto-decorate tool. `KwDecorTool` (the hammer piece, not turning: the plain wheel zooms), `KwDecorInput` (`KwDecorClick`
+  the click: read an area, or place its layout; `KwToolWheel` Alt + wheel owned; `KwDecorHold` the driver made;
+  `KwDecorEscape` Esc), `KwDecorDriver` (the frame: keys, 4 ms of work, the aim, the square, previews, lines, the placing
+  queue), `KwDecorSession` (size 6 to 64 m, density 1 to 5, `Turn`: Alt + wheel or [ ] the size before the click and the
+  density after; the locked area's reading and layout, roll and seed), `KwDecorAim` (the aim, the frame from a dock
+  section's way (`KwPierDeck`) or a piece's turn, the cells' anchor). Reading the area, a pass a step over frames
+  (`KwDecorRead` into `KwDecorArea`): `KwDecorGrid` + `KwDecorCell` (0.5 m cells, 128 by 128 at 64 m), `KwDecorRays` +
+  `KwDecorSurface` (a ray down each cell, the band growing with the area, the surface nearest the aim's height with
+  headroom; floors, obstacles, the game's water level, painted paths), `KwDecorWalls` (wall faces), `KwDecorDecks`
+  (floors: docks and walkways with their lane, edge band, end and tip, edges and access; open floors and boardwalks),
+  `KwDecorGround` (paths, distance and way to water, the shore), `KwDecorRuns` (runs and the spread),
+  `KwDecorKeepClear` + `KwDecorClearRules` (the pieces round the area, 48 a step: doors, ladders and stairs, stations,
+  chests, beds, portals, signs, fires, ships and carts, the dry dock; decorations standing), `KwDecorClear` (the ways
+  between path ends, the zones drawn into the cells), `KwDecorFields` + `KwDecorTable` (path and wall fields, the yard's
+  heart, its entrances, summed tables). The layout (`KwDecorLayout`, tasks over frames, every piece carrying the density
+  that first shows it): scenes, small hand-made arrangements placed whole or not at all (`KwDecorScene`, the eleven in
+  `KwDecorScenes`: a carpentry yard, a fishing corner, a ship slip, steam bending, rope works, a ship gear store, a sail
+  loft, a notice board, a weather vane, a salvage heap, a ship's anchor by the quay; `KwDecorShape` a scene as this game
+  has it and at a place, `KwSiteSearch` + `KwDecorFacing` in `KwDecorSites` its search, `KwDecorLikes` its needs and
+  likes, `KwDecorStage` it tried whole), and the quay along the docks' edges (`KwDecorEdges` the runs, `KwDecorQuay`
+  posts, fenders and lights, `KwDecorMoorings` each mooring post over a dock section's piling station, else against the
+  edge, `KwDecorLights` each lantern pole over a piling station of a water side or a narrow end's corner, facing the
+  dock's middle, `KwDecorHeads` the pier heads' beacon, bell, end light and pilings and
+  fishing gear on a wide pier), and last `KwDecorTiers` (each decoration of a dock's wood in the tier going with where
+  it stands: the dock section it is on or beside, a game floor's wood, the nearest dock's on the shore, else plain). `KwDecorKind` (the decorations with metadata, `Find`, their solid boxes), `KwDecorPlan` (+ `KwSlot`,
+  `KwDecorFoot`, `KwDecorPose`), `KwDecorFitCheck` (cells, a dock lane's reach, spacing), `KwDecorWorld` (+
+  `KwDecorRules`, `KwDecorSolids`: the game's rules, the solid test, an edge's line by rays), `KwDecorBox`. Shown:
+  `KwDecorGhosts` (see-through previews, only the difference stood, a few a frame), `KwDecorOutline` (the square),
+  `KwDecorHud` (the lines), `KwDecorWords`. Placing: `KwDecorCost` (the sum, the game's check, the part that can be
+  paid, the workbench), `KwDecorPlacer` (two a frame through `Player.PlacePiece`, paid through `KwGamePay`),
+  `KwDecorUndo` (Ctrl + Z: the last batch removed the hammer's way, refunded).
 - `Cannons/` (2026-10-26; `CANNONS.md` there has the behaviour in full): the four ship cannons, three graduated from the
   AssetLab Cannons bench (its mounts, mounted cannons and field cannons left out) and the bronze one made from the small
   iron one's design the same day; only the bronze and small iron cannons, stone and iron shot and black powder offered for
@@ -947,7 +1351,10 @@ All in `Broadside/Broadside/`, one namespace. `Broadside.cs` is the plugin (patc
   `Arms/`: the manned-weapon framework on the MannedWeapons library (`KwArm` the cannon, `KwArmDef`/`KwArmory`/
   `KwArmBuild`/`KwArmDesigns` its definition and piece, `KwArmMotion*`/`KwArmMover`/`KwTrack` its moving parts,
   `KwArmHands`, `KwArmReload`/`KwAmmoStore`, `KwArmTrigger`/`KwArmLaunch`, `KwArmLook`, `KwArmLink` its keys and calls,
-  `KwArmWords` every word, `KwArmControls` the hauler's controls, `KwArmPlace` only on a launched ship's deck), the shots
+  `KwArmWords` every word, `KwArmControls` the hauler's controls, `KwArmPlace` only on a launched ship's deck,
+  `KwArmPortSnap` + `KwArmPortGhost` the ghost set square in a gunport while AltPlace (Shift) is held, `KwGunports` +
+  `KwGunport` a launched ship's openings but doorways as cannon spots from its openings' plan, where a cannon stands run
+  out behind one, the deck under it), the shots
   (`KwShot`, `KwShots`, `KwShooter`, `KwShotLook`, `KwShotHits`, `KwShotWater`), the captain's broadside (`KwBroadside`
   U, `KwBroadsideReload`, `KwBroadsideLoad`), the shot arcs (`KwShotArcs` J, `KwShotPath`, `KwBall`, `KwShotArcLook`), the
   helm key lines (`KwHelmRows`) and the reload lines (`KwReloadRows`, `KwReloadCount`: rows `cannons.port`/`cannons.starboard` of Broadside's own
@@ -1170,10 +1577,11 @@ the helmsman walked to the tiller), `Character.UpdateRotation` (prefix: the helm
 (postfixes: the rules on a ghost aboard, the piece placed rides the ship), `Player.TryPlacePiece` (postfix: why a piece was
 refused aboard, `KwShipRiderRefused`; why a cannon was refused off a ship, `KwArmPlaceMessage`), the ship cannons'
 (`Cannons/CANNONS.md`, Identity: `Player.SetControls` prefix and postfix, the hauler's; `Player.UpdatePlacementGhost`
-postfix, only on a launched ship's deck; `Projectile.OnHit` prefix and postfix, a ball's hit on structures and under
+postfix, only on a launched ship's deck; `Player.PieceRayTest` postfix at low priority and `Player.UpdatePlacementGhost`
+postfix, a cannon's ghost set square in a gunport with Shift, `KwArmPortSnap`; `Projectile.OnHit` prefix and postfix, a ball's hit on structures and under
 water; `ObjectDB.Awake` and `ObjectDB.CopyOtherDB` postfixes, the cannon items and recipes; and the MannedWeapons
 library's `Player.SetControls`, `Player.SetMouseLook`, `Character.UpdateRotation`, `Projectile.OnHit`), `Player.FindHoverObject` (postfix: a rider
-hovered, not its ship; postfix, low priority: the hole aimed at with nothing else hovered, `KwHullPatchHover`), `Piece.Awake` (postfix: a rider rides), `ZNetScene.Destroy(GameObject)` and
+hovered, not its ship; postfix, low priority: the hole aimed at with nothing else hovered, `KwHullPatchHover`), `Piece.Awake` (postfix: a rider rides), `ItemDrop.Awake` (one postfix, `KwItemDropWake`: a fish the trawl landed rides its ship; a broken crate's spilled stack gets its heap), `ZNetScene.Destroy(GameObject)` and
 `ZNetScene.OnZDODestroyed` (prefixes) and `ZNetScene.RemoveObjects` (postfix): a ship's riders let go before its object goes,
 `ZSyncAnimation.SetBool(string, bool)` (prefix: no empty pose name), `GameCamera.UpdateCamera` (prefix: the helm
 view's zoom and the build view's; postfix: the eyes below decks, the steady height, the build view's pan),
@@ -1181,12 +1589,120 @@ view's zoom and the build view's; postfix: the eyes below decks, the steady heig
 `PlayerController.TakeInput`, `Player.CanRotatePiece` (the build view), `TextInput.IsVisible` and `InventoryGui.Update`
 (the sizes window and the figures panel's boxes take the keys), `Inventory.AddItem` (its three item-data overloads),
 `Inventory.CanAddItem(ItemData, int)` and `InventoryGrid.DropItem` (prefixes: an ammunition pile takes only its own sort,
-`KwPileFilter`); BlueprintShelf, WindowInput and BuildCamera add their own (BuildCamera's:
+and the game's cart's own storage nothing, `KwPileFilter`), the cargo crane's crates and the game's cart (`Crane/CRANE.md`,
+Identity: `Container.Interact`, `RPC_RequestOpen`, `RPC_RequestStack`, `RPC_RequestTakeAll` prefixes, a hooked or
+breaking crate shut, a crate on a cart unloaded with the alternate use, an empty cart's storage the cart's own use;
+`Container.GetHoverText` postfix, a crate's unload line and the cart's storage; `Piece.CanBeRemoved` postfix; `Vagon.Awake`
+postfix, the cart's bed; `Vagon.UpdateMass` postfix, its crates in its mass; `ZNetScene.Destroy(GameObject)` and
+`ZNetScene.OnZDODestroyed` prefixes and `ZNetScene.RemoveObjects` postfix, a cart's crates let go first; `ItemDrop.Awake`
+postfix, a spilled stack's heap (in the one `KwItemDropWake`); the crate on a cart hovered through `KwShipRiderHover`'s
+`Player.FindHoverObject` postfix), the hammock and beds aboard (`Hammock/`: `Bed.CheckFire` prefix, no fire needed aboard; `Bed.Interact`
+postfix and `Bed.IsCurrent` prefix, a spawn point kept with its ship; `Bed.GetHoverName` and `Bed.GetHoverText` postfixes,
+"Hammock"; `Game.FindSpawnPoint` prefix, a respawn held for a bed's ship; `Player.Save` prefix and `Player.OnSpawned`
+postfix, the bed's record in the save; `ZNet.Awake` postfix, its server lookup; `Player.TryPlacePiece` prefix, the
+hammock's two clicks; `Player.UpdatePlacementGhost` postfix, its ghost hidden, its preview and panel lines; `Menu.Update`
+and `Player.UpdateBuildGuiInput` prefixes, Esc and right click forget a first end), the dock lantern and mooring posts (`Dockside/`: `Player.UpdatePlacementGhost` postfix, the dock lantern's ghost at its site and its cost shown, a mooring post snapped over a piling, `KwDockPlace`; `Player.TryPlacePiece` prefix and postfix, a dock lantern refused with its reason and its post written once placed, `KwDockLanternClick`), the Dock tool (`Docks/`: `WearNTear.UpdateSupport` prefix, a dock ladder or dock lantern held by its section and a piece resting on a deck at full support (`KwPierLadderSupport`, `KwPierRest`);
+`Player.TryPlacePiece` prefix, its clicks; `Player.UpdatePlacementGhost` postfix,
+its preview, panel and wheel; `ZInput.Internal_GetMouseScrollWheel` postfix (the inner reader: the 21-byte public one can be copied into the camera's zoom past a patch), the wheel owned (`Tools/KwToolWheel`, the one patch both tools share); `Menu.Update` and
+`Player.UpdateBuildGuiInput` prefixes, Esc and right click cancel a first click), the Auto-decorate tool (`Decorate/`:
+`Player.TryPlacePiece` prefix, its click; Alt + wheel owned while it is in hand through the shared `KwToolWheel`;
+`Player.UpdatePlacementGhost` prefix, its driver made; `Menu.Update` prefix, Esc lets a locked area go); BlueprintShelf, WindowInput and BuildCamera add their own (BuildCamera's:
 `GameCamera.GetCameraPosition`, `GameCamera.UpdateListner`, `LightLod.GetLightReferencePoint`, `Player.SetMouseLook`,
 `Player.SetControls`, `Player.Update`, `Player.PieceRayTest`, `Player.RemovePiece`, `Player.CopyPiece`,
 `Player.UpdateWearNTearHover`, `Menu.Update`).
 
 ## Not checked yet
+
+The Dock tool and its docks (2026-11-03, `Docks/`) were first tried by the user on 2026-11-03 (docks and branches
+build; the curb across a branch and the preview ignoring the wheel on a dock were fixed the same day, compiled only:
+`Docks/DOCKS.md`, "Tried in game"); not checked yet (`Docks/DOCKS.md`, "Not checked yet"): the three looks and the
+tool's icon, the preview's new look and panel lines, the joints in game, Alt + wheel, the wheel owned and Esc or right
+click cancelling, the starts (shore, a dock's end, start and side), the piling casts and the
+support, ships bumping the pilings, the cost shown, taken and refunded, snapping to the deck, and two players and a
+dedicated server. The rough wood look and the dock ladders (2026-11-03) are compiled and checked offline only (built by
+the mod's own mesh code outside the game and rendered with the atlases: `ValheimAssets/Assets/Ships/Keelwright/
+PierPlanks/out/review/rough/`); not seen in game: the look under the game's light, the ladder's hover, click, cost,
+length in waves, climbing from the water and the deck, the curb cut, its support and fall with its section, and the
+kit's ladder tool on the dry dock unchanged (`Docks/DOCKS.md`, "Not checked yet").
+
+The dockside decorations' wood tiers, the dock lantern, mooring posts over a dock's pilings, the Auto-decorate tool's
+tiers, lanterns and posts, and the dock support fix (2026-11-03) are compiled (no warnings) and their patches checked
+offline (104 patch classes, no problems); the lantern posts and the mooring posts over the pilings with the curb cut
+round them were built by the mod's own mesh code outside the game and rendered with the workshop's lantern head and
+mooring post (the session's scratchpad, `lanternharness/out`). Not seen in game (`Docks/DOCKS.md` and
+`Decorate/DECORATE.md`, "Not checked yet"): the 14 tier pieces' looks (each tier albedo on its model under the game's
+light, the metal shine kept), their rendered icons, recipes and hammer order; the dock lantern's ghost snapping beside a
+dock and a game floor, its words, its shown and taken cost, its post's length and look, its light at night, its fall
+with its section; a mooring post snapping over a piling and the curb opened and closed round it; the Auto-decorate
+tool's tier choice, dock lanterns and posts over the pilings (previews, cost, placing); pieces far along a 12 m section
+staying up, and falling once it is removed; two players, a late joiner and a dedicated server.
+
+The lanterns' glass and flame (2026-11-03: the lantern pole and the dock lantern, both bundles rebuilt with clear glass on
+the bundle's own Standard transparent material, read back clean, its premultiplied variants found in the Windows bundle;
+`KwDockLantern`'s wall torch flame) are compiled (no warnings) and seen only in Blender (`ValheimAssets/Assets/Ships/
+Keelwright/Dockside/<asset>/out/glass_close.png`). Not seen in game: the glass drawing (see-through, its sheen, not pink
+or black, on Windows and Linux), the flame's size in the cup and that it stays inside the glass, the flame showing
+through the glass from every side (its sorting bias) and against water and other see-through things behind, the flame
+and light coming on at dusk and going out at dawn on every screen, the ember by day, a risen lantern pole's flame
+moving with its lamp, the rendered dock lantern icon, two players and a dedicated server (nothing made there).
+
+The trawl (2026-11-03, `Trawl/`) is compiled only, never run in game (`Trawl/TRAWL.md`, "Not checked yet"): the net
+winch's generated look and icon, placing it at a stern and a side rail, the arm-over-water check, the cast, the
+workshop net under water (its first use in gameplay: materials, bunched and whole, trailing, drooping, turning), the
+tow rope, the drag (about 15%), the speed band and catch rate against real sailing, snags over shallows, the haul and
+the davit's swing, the fish falling onto the deck and riding a sailing ship on two screens, picked up by E and the auto
+pickup, a late joiner, a dedicated server owning the winch, a logout with the net out, and the spill from a winch
+removed with fish in its net.
+
+The hammock (2026-11-03) is compiled only, never run in game. Its first shape (two posts on a beam) was rendered offline
+in headless Blender; its ends (placed by two clicks, posts or hooks, the same day) are compiled only, their patch targets
+the Dock tool's (`Player.TryPlacePiece`, `Player.UpdatePlacementGhost`, `Menu.Update`, `Player.UpdateBuildGuiInput`).
+Not yet seen in game: the two clicks, the see-through preview (whole, one end, red with its reason) and the panel lines;
+which faces count as a floor (a beam's or a post's top takes a post, its side or underside a hook); a hook's look (washer,
+shank, eye) in the game's iron and its rope from the eye; the posts' new foot and toe, a tall post (peg up to 2.2 m)
+matched to a ceiling hook; the cloth level with long ropes from a high hook; the limits' messages (2.2 to 4 m, too low,
+too high, uneven, in the way, no floor, wards); the hook check bringing a hammock down when its wall, beam or rock goes
+(the 10 s settle, the area-loading guard, the drop) and not on a reload; on a launched ship: hooks in its beams, walls
+and masts, posts on its deck, a first click on a rocking ship, riding, the sling swinging about a sloped rope line, a
+mast falling with a hook in it; the game's support with hooks only (each hook's box against its wall); the painted hide
+and plank wood under the game's light, the rendered icon (stamp `hammock-2`); claiming, setting the spawn point and
+sleeping (the lying pose in the sagging cloth), the fire waived aboard and the roof check, waking after death on a ship
+that has sailed on, a hammock removed and broken (the refund), two players and a dedicated server.
+
+The ship cannons' kept lay and the Shift snap into a gunport (2026-11-02) are compiled only, not yet seen in game: a
+cannon let go staying laid, on a second screen and after the ship is loaded again (drawn there at once); the haul folding
+its bearing into its facing (nothing moving on the hauler's screen, the brief swing on others), hauled and let go; the
+snap on a moving ship, with the ports read live from the test ship's plan (0.7 by 0.65 m ports: the spot works out
+about 0.9 m in from the hull's outside, the muzzle 0.55 m out past it), the deck ray, a cabin window, a gamepad, and a
+port with a cannon already in it.
+
+The dockside decorations (2026-11-02) are compiled only, not yet seen in game: the eight models, materials, metal shine
+and icons; placing each (the placing box), removing each with the hammer (refund, `m_fragmentRoots` null) and breaking
+one; the beacon's fire at its basket (the brazier's flames, light, smoke and sound moved off its bowl, never seen: their
+height and size in the 0.6 m basket, the embers glowing only while lit, rain and wind, its fuel by hand, its hover), and
+the vane's turn to the wind (the sign, the easing) on two screens.
+
+The 26 dockside decorations of set 2 (2026-11-03) are compiled only (no warnings; every bundle embedded; the game's
+`fire_pit` fire, `piece_cauldron`'s steam, `sfx_fader_bell` and the layers read from the running game through DevBridge,
+read only; the bundles read back clean by the workshop's `verify_bundle.py`), not yet seen in game: the 26 models,
+materials, metal shine and icons; placing each (the wall pieces aimed at a wall, hung flush at the aimed height; the
+gangplank against a dock; the pilings, fenders and anchor in shallow water), removing each with the hammer (the shavings
+by their flat box, the bell by its posts or its bell) and breaking one; the tar pot's and steam box's fires (their size
+under the cauldron and the kettle, the light, the crackle, the steam's size and rise at the pipe), the lantern pole lit
+at dusk and dark at dawn on two screens, seated over a dock's piling (by hand, the ghost snapping and losing its cairn;
+and by the Auto-decorate tool): the post on the piling's axis, the trimmed foot's look, the lamp over the deck toward
+the middle, the curb cut round it, no cairn on a second screen or its box on a dedicated server; the mooring post flush
+with the deck's side over its piling, the bell's swing (its sign and size) and the Fader's bell pitched up as a
+signal bell's sound, heard by a second player, the cooldown, and nothing made on a dedicated server.
+
+The Auto-decorate tool (2026-11-03, reworked into scenes and quay furniture the same day) is compiled, its patch targets
+checked offline and its layout checked offline only (`Decorate/DECORATE.md`, "Checked offline": four synthetic places
+laid out and rendered top down), never run in game (`Decorate/DECORATE.md`, "Not checked yet"): the tool and its icon,
+the plain wheel zooming and Alt + wheel owned beside the Dock tool's own, the square up to 64 m, N, [ ], Esc and Ctrl +
+Z, the reading's real time on a 64 m area, the reading on vanilla floors, the Dock tool's docks, walls, slopes, beaches
+and paths, the keep-clear sides of stations and chests, every scene's look with the real models, the quay against real
+curbs, the previews, the cost line, placing in a scene's order, Shift's partial placing, the undo's refunds, two players
+and a dedicated server; and the mooring post and stone anchor placed by hand at the waterline and in shallow water.
 
 The ammunition piles (2026-11-02) are compiled only, not yet seen in game: the models, icons and fill steps (their
 bundles not yet embedded: the wood chest's look until they are), the item filter by every route (dragging both ways,
@@ -1195,8 +1711,20 @@ captain's loads taking from piles his game owns and from piles another player or
 the answer, the 1.5 s fallback to his pack, a late answer going into his pack), and a pile on another ship left alone.
 
 The cargo crane and its crate (2026-11-02) were never run in game, as the Asset Lab bench or here (its boom slides
-8.5 m since that day). The storage crates (2026-11-02) are compiled only, not yet seen in game: the models and icons, the lid's swing (seen by
+8.5 m since that day). The storage crates on its hook, the rope sling and the ship hand-off (2026-11-02) are compiled
+only (`Crane/CRANE.md`, "Not checked yet"). The remodelled crane with its works (2026-11-03: both bundles read back
+against the workshop's contract) and the operator's hands on its controls are compiled only, not yet seen in Unity or in
+game: the gears meshing as they turn, the levers' and latch's signs, the hands on the grips (the crank's low handle, the
+45° bow), the crank at about half a turn a second (the step-up of 2026-11-03), a second player watching. The storage crates (2026-11-02) are compiled only, not yet seen in game: the models and icons, the lid's swing (seen by
 a second player), building one on land and on a launched ship's deck, sailing with one full, removing and breaking one; the slatted crates' marks (each crate its own, the same on every screen, the composite against `seed.py`).
+
+Crates on the game's cart, the cart's storage closed and crates breaking with their heaps (2026-11-03) are compiled only
+(no warnings; the cart's colliders, storage box and mass numbers and the crates' boxes read from the running game through
+DevBridge, read only; the game's classes decompiled for the patch targets); none of it seen in game (`Crane/CRANE.md`,
+"Not checked yet", has the list: the bed measured at runtime, lowering and the drop onto the bed, riding a pulled cart on
+two screens and for a late joiner, the pull and tipping with two large crates, hover, E and Shift+E through the storage
+box, the crane lifting off, a cart removed or unloaded with crates on it, the old storage's refusals, the mass; the
+fall, the break's effects, the spill's spots and the heaps' look).
 
 The bronze ship cannon and stone shot (2026-10-26) are compiled only, not yet seen in game: the bronze and fine wood
 looks, the stone material on the ball, its icon and the shot in flight, the hammer showing it alone. The ship cannons (2026-10-26) were tried in game as the AssetLab Cannons bench (`AL_` names, built anywhere) and
@@ -1223,7 +1751,15 @@ yet seen in game: the dock's re-plan as pieces are added, the fairlead's looks, 
 fairlead off the bow. Its lead straight out from the drum and the rope coil (2026-10-25, the user's report) are
 checked the same way on the user's live dock (read through DevBridge), Pirate_ship (eight places), Medium (four) and
 bubba: the place chosen, no deck lead where a straight one is clear, the cable clear of every part and of the coil, the
-let-go cable plumb past the keel, the coil 9 mm or more from the flanges and frame; not yet seen in game. Holes, flooding,
+let-go cable plumb past the keel, the coil 9 mm or more from the flanges and frame; not yet seen in game. The lead from a
+cabin's roof and the lead straight out abeam (2026-11-03, the user's report on the ready-made Wayfinder: "a cabin" was in
+the way of the windlass on its forecastle roof, so its anchor was let go from the stem head) are checked the same way
+offline: the five ready-made ships with a windlass on a forecastle roof all lead over the roof railing on the windlass's
+side, 0.2 to 0.55 m forward of it, the Hearth Barge's on deck unchanged; the Wayfinder's forecastle roof at 100 places and
+turns, each over its nearest side (a windlass standing over the railing still runs its cable through its own cheek, as
+on the sheer); the abeam lead forced at five places; 1,420 places on the decks of Pirate_ship,
+Medium, bubba, the Hearth Barge and the Wayfinder unchanged wherever a clear lead was found before. Not yet seen in game:
+the fairlead on a roof railing, the dock's hover for an abeam lead, a launched ship riding to it. Holes, flooding,
 bailing and the hold's water (2026-10-25) are checked offline only (the part map, the damage rule, the hole text, the
 flood level, sinking times and the roll with the water sloshing on the saved Medium and Pirate_ship hulls; the
 compartments the same day: trim with end and midships holes, flooded evenly, list, slosh, sinking times), not yet
@@ -1261,6 +1797,9 @@ Unity's own quaternion maths, the jib cuts on many bowsprits, the foremast's pic
 shape, the pull and the costs), not yet seen in game: the sheared jib cloth and its bolt rope under a stretched parent,
 the jibs' sheets tying on, the window's two pages, climbing the pegs (the boxes on `piece_nonsolid`), standing on a
 launched ship's platforms and the pennant's colours (the bowsprit tool has its painted icon since the sail patterns).
+The pennant bound to its staff (2026-11-03) is checked offline only (its compiled shape for a 5 and a 10 m mast, calm and
+strongest: the hoist on the staff's face, the straight part, the droop from there; the lashings' depths), not yet seen in
+game: the lashings round the staff, the cloth's colour against the sky with tangents and vertex colours.
 Sail patterns (2026-10-25) are checked offline only (every sail and bowsprit text old and new, reshaped; the patterns
 painted on the three cloths for square, triangle, gaff and a 55° jib, laid on the reefed cloths' geometry; a banner
 from the game's own texture), not yet seen in game: reading the game's linen and banner textures back from the
@@ -1415,5 +1954,10 @@ frames', covers' and doors'; plain work a part 0.5 to 11 ms of boxes, 3 to 36 ms
 openings on the part), 1 to 8 ms numbering the openings); not yet seen in game: the parts drawn alone and their ghost
 hiding one, a part's look and boxes replaced and its holes cut again, the leaves renumbered, the hammer's remove on a
 window, two players and a dedicated server.
+The speed retune (2026-11-03) is checked offline only (`speed` harness in the session's scratchpad, the built DLL's
+`KwShipStats.Of` and `KwBpHandling` on the 11 ready-made ships: the big, well-rigged Black Gull, Little Gull, Storm Petrel
+and Wayfinder 95 to 103% of a karve's top speed under sail and 91 to 98% under oars, the small Fjord Skiff, Fjord Wasp
+and Skerry Sprite 112 to 114%, the Hearth Barge 91%, the same hulls with only their aft mast 48 to 78%); not yet seen in
+game: a launched ship's speed at the helm, the panel's and the table's figures, the turning circle at the new speeds.
 No `thunderstore/icon.png` yet, and no wiki pages. The words are English in the code: the Translations library is not
 used yet.

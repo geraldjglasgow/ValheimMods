@@ -40,7 +40,10 @@ weapon's model, its look and its particular motions stay in the mod; everything 
   The trigger takes what the crosshair is on (`Aim.Mark`); while `Steady` (a cannon from its lanyard's pull until the
   ball has left) the weapon stays laid on that mark rather than the live crosshair, so the operator stepping aside never
   moves it and a deck rolling or turning meanwhile is followed. The aim goes to the ZDO when it moves more than
-  `WriteStep`; every other peer eases toward it at `Follow`.
+  `WriteStep`; every other peer eases toward it at `Follow`, but takes it at once the first frame it draws the weapon
+  (it came into range, or joined late), so a weapon left laid is drawn there rather than swinging to it from (0, 0).
+  `Aim.Set(weapon, yaw, pitch)`: on the owner of a weapon nobody mans, a lay set at once (ZDO written, drawn there here
+  without easing; other peers ease), for a mod that turns the piece under the weapon by the same yaw.
 - **The operator's body** (`OperatorBody`). Brought to `StandPoint` as he takes hold (`QuickStep`, above), his feet then
   walk after it with the game's own walk, steered by `m_moveDir` (a stand point on the yaw part swings round as the
   weapon turns, so turning it walks him round it); he
@@ -82,6 +85,10 @@ weapon's model, its look and its particular motions stay in the mod; everything 
   the ZDO, every peer easing after it as after an operator's aim; at rest it writes nothing and looks again every half
   second. A weapon never aimed reads the rest lay as its lay (`WeaponState`). A called shot fires where the weapon
   points and a reload leaves the aim alone. Null (the default, the Bone Ballista): it stays where it was left.
+  `WeaponRest.Returns = false` (2026-11-02, Broadside's ship cannons: "Keep the cannon in the position the player aimed
+  it"): the rest lay is only a never-aimed weapon's lay, and an unmanned one keeps its last operator's lay, in its ZDO
+  (to within `WriteStep`) for every peer and anyone who comes later; nothing turns it back. `Returns` defaults to true,
+  so a design that sets a rest lay without it behaves as before.
 
 ## A weapon
 

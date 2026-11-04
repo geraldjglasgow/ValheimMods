@@ -4,7 +4,7 @@ namespace Broadside
     public static class KwCraneText
     {
         public const string CraneDescription =
-            "A crane for loading and unloading ships. Work it with E like a ship's helm, one person at a time; it lifts cargo crates with everything inside.";
+            "A crane for loading and unloading ships. Work it with E like a ship's helm, one person at a time; it lifts cargo and storage crates with everything inside, off ships and onto them.";
         public const string CrateDescription = "A crate for cargo, 24 slots. Only a cargo crane can lift it, with everything inside.";
 
         /// <summary>The keys box's lines (<see cref="KwCraneKeys"/>), the game's bindings in its key colour.</summary>
@@ -19,7 +19,7 @@ namespace Broadside
 
         public const string NotReady = "The crane is not ready yet";
         public const string Holding = "The hook already holds a crate";
-        public const string NoCrate = "Lower the hook onto a cargo crate";
+        public const string NoCrate = "Lower the hook onto a crate";
         public const string InUse = "Someone has that crate open";
         public const string NoAnswer = "The crate did not answer";
         public const string Empty = "Nothing hangs from the hook";

@@ -39,7 +39,7 @@ as a ship part (blueprints, snap rules, undo, `kwship clear`).
 | Shots, bursts | `BS_shot_cannon_bronze`, `_small_iron`, `_small`, `_large`; `BS_burst_<same>` |
 | ZDO keys | the manned weapon's (MannedWeapons, "Manning" below): `bs_arm_user`, `bs_arm_yaw`, `bs_arm_pitch`, `bs_arm_loaded` (1 once loaded), `bs_arm_step`, `bs_arm_load_at`, `bs_arm_shots`, `bs_arm_shot_at`; the cannon's own: `bs_arm_kind` (the trigger that fired), `bs_arm_load_kind` (the trigger a load is for), `bs_arm_ammo` (the ball loaded), `bs_arm_tower` (who hauls it), `bs_arm_untied` (1: its breeching left unmade where it was hauled to, nothing there to make it fast to); and Broadside's rider record (`kw_rider`, `kw_rider_pos`, `kw_rider_rot`: `KwShipRider`), its pose written as it is hauled |
 | RPCs (on the cannon's own view) | the manned weapon's, named from its key prefix by the library: `bs_arm_request`, `bs_arm_release`, `bs_arm_answer`, `bs_arm_call`, `bs_arm_called` (a shot without an operator), `bs_arm_order` (a shot ordered whoever mans it: the captain's broadside); the cannon's own: `BS_Arm_Load` (the captain asks for an empty cannon to load it), `BS_Arm_Tow`, `BS_Arm_TowDenied` (haul it) |
-| Patches | the cannons': `Player.SetControls` (the hauler's controls, `KwArmControls`), `Player.UpdatePlacementGhost` and `Player.TryPlacePiece` (only on a launched ship's deck, `KwArmPlace`), `Projectile.OnHit` (the harder hit on structures and the energy under water, `KwShotHits`), `ObjectDB.Awake`/`CopyOtherDB` (the items and recipes, `KwItems`); the MannedWeapons library's, by hand (`KwCannonPrefabs.Install`): `Player.SetControls`, `Player.SetMouseLook`, `Character.UpdateRotation`, `Projectile.OnHit` (the pass-through); each acts only on the cannons' own pieces, gunners and shots. No patch reads the captain's keys (U, J): a hidden ticker object does (`Broadside_CannonsTicker`, `KwBroadside`, the Hotkeys library) |
+| Patches | the cannons': `Player.SetControls` (the hauler's controls, `KwArmControls`), `Player.UpdatePlacementGhost` and `Player.TryPlacePiece` (only on a launched ship's deck, `KwArmPlace`), `Player.PieceRayTest` (postfix, low priority, after Broadside's ship ray) and `Player.UpdatePlacementGhost` (postfix: the ghost set square in a gunport with Shift, `KwArmPortSnap`, `KwArmPortGhost`), `Projectile.OnHit` (the harder hit on structures and the energy under water, `KwShotHits`), `ObjectDB.Awake`/`CopyOtherDB` (the items and recipes, `KwItems`); the MannedWeapons library's, by hand (`KwCannonPrefabs.Install`): `Player.SetControls`, `Player.SetMouseLook`, `Character.UpdateRotation`, `Projectile.OnHit` (the pass-through); each acts only on the cannons' own pieces, gunners and shots. No patch reads the captain's keys (U, J): a hidden ticker object does (`Broadside_CannonsTicker`, `KwBroadside`, the Hotkeys library) |
 | UI and drawn objects (the captain's screen only) | `Broadside_FireBroadside` and `Broadside_ShotArcs`, the cannons' two lines on Broadside's helm key list (`Broadside_HelmKeys`, `KwHelmKeys`); `Broadside_ShotArcLines`, the shot arcs' lines under the ship steered; the reload lines, rows `cannons.port` and `cannons.starboard` of Broadside's own ship panel (`KwShipPanel`) |
 
 ## Recipes
@@ -73,6 +73,25 @@ only stone shot, the two small ones iron balls, the large one only the flametal 
   built on a launched ship's deck"; the game's own ships never take a ghost. On a launched ship nothing else is built
   (Broadside's `KwShipRiderRules`: "Only ship cannons, crates and ammunition piles are built on a launched ship"), unless the .cfg's
   `AllowBuildingOnShips` is on; pieces already aboard stay.
+- **Square in a gunport** (asked for on 2026-11-02: "When placing a cannon allow holding shift if it's near a porthole and
+  have the cannon preview perfectly centered in the porthole facing directly out"; `KwArmPortSnap`, `KwGunports`): while
+  the player places a ship cannon on a launched ship and holds the game's alternate placement (AltPlace, Left Shift by
+  default; a gamepad's JoyAltPlace, or the newer gamepad scheme's toggle: the game's own test, so a rebound key works), the
+  ghost snaps to the nearest of that ship's openings but doorways (gunports, portholes, windows, in its planking, a cabin's
+  raised sides or its own walls, any whose wall stands near upright) whose middle is within 2.5 m of the aim across the
+  deck, the aim on that port's deck (from 0.3 m under the deck up to 0.3 m over the port's head: the hull's side about the
+  port counts), passing over a port the barrel would not line up with (its trunnions' height over that deck not between
+  the port's sill and head: a porthole high in a cabin's side) and a port a cannon already stands at (its middle within 0.6 m of the spot: cannons skip the
+  game's clipping test, so one would go into the other). Where it lands: on the port's middle line, standing on the first of the ship's own faces under it (a ray
+  down from the port's middle; no deck there, no snap), as near the wall as the `broadside-ships` generator sets a cannon
+  run out (`ship.py arm`): its brackets' front 0.12 m inside the wall's inside face at the trunnions' height and its front
+  trucks 0.06 m inside it from 0.1 to 0.5 m over the deck (a flaring hull is narrower low down), whichever is further in;
+  turned to face straight out through the port, square to the wall at the port's middle (its tunnel's way) laid level in
+  the ship's frame. On the test ship's 0.7 by 0.65 m bronze-cannon ports that is about 0.9 m in from the hull's outside,
+  the trunnions level with the port's middle and the muzzle about 0.55 m out past the hull. The placement point itself
+  is moved there, so the game's own checks (wards, no-build places, players in the way) are made there; a port too small
+  for the cannon is still centred, and the game's rules decide. Without the key, or no port near, placing is as before.
+  It is placed by the game's own `TryPlacePiece` and rides the ship as any cannon; local to the placing player.
 - **Ship cannon**: built on a launched Broadside ship's deck. A breech-loader with a long barrel (each shape's `Long` stretch, `Guns/KwStretch.cs`:
   the reinforce drawn out behind the trunnions and the chase ahead of them, rings, hoops, breech and muzzle unchanged) on
   a long, low naval truck carriage made in code to the proportions of a photographed naval gun (below): two brackets
@@ -179,16 +198,19 @@ library's `MannedWeapon`; `KwArmDesigns` makes each kind's design from its defin
   run, taking the powder and a ball as it begins (`KwArmReload`, from a store: the gunner's pack, `KwAmmoStore`), so a
   cannon fires every 8, 7 and 10 s; letting go mid-reload leaves it to run out (taking hold again never cuts it short).
   A cannon the captain's broadside fired reloads the same way from the ammunition piles aboard, then the captain's pack (below).
-- **Rest lay** (asked for on 2026-10-26: "when a player is done using a cannon, the aim ... needs to have some set
-  position it reverts back to ... so the captain knows where his cannons are likely to fire"): whenever nobody mans a
-  cannon (its gunner let go, walked off, died or left the game), its owner turns it back to the middle of its arc
-  (straight out of a ship cannon's port, a mount's placed facing, a field cannon along its trail) at 1 degree up
-  (`KwArmDesigns.RestPitch`), at the cannon's own turn and tilt speeds (0.6 to 1.5 s back from the far ends offline),
-  written to its ZDO so every peer's copy eases after it; a cannon never aimed reads it. The bearing is centred as well
-  as the elevation, so a broadside fires where the captain expects. The library's `WeaponDesign.Rest` (`RestLay`, on the
-  owner, a dedicated server too); the Bone Ballista has none and stays where it was left. A called shot and a reload
-  never move it. One degree up: from a 1.5 m deck the ball is still about 2 m over a calm sea 30 m out and meets it 53
-  to 55 m out (small iron) or 68 to 72 m (the others).
+- **Its lay is kept** (asked for on 2026-11-02: "Do not have the cannons move back to its initial position after a
+  player aims it. Keep the cannon in the position the player aimed it."): a cannon nobody mans (its gunner let go, walked
+  off, died or left the game) stays where he last laid it, bearing and elevation, in its ZDO (`bs_arm_yaw`,
+  `bs_arm_pitch`, to within the library's 0.1 degree write step) for every peer, a dedicated server and anyone who comes
+  later; a peer drawing it for the first time takes that lay at once rather than swinging to it. A called shot and a
+  reload never move it, so the captain's broadside fires each cannon where its gunner left it (the shot arcs, J, show
+  where). A cannon never aimed lies at its rest lay: the middle of its arc (straight out of a ship cannon's port) at 1
+  degree up (`KwArmDesigns.RestPitch`; from a 1.5 m deck the ball is still about 2 m over a calm sea 30 m out and meets it
+  53 to 55 m out from the small iron cannons, 68 to 72 m from the others). The library's `WeaponDesign.Rest` with
+  `WeaponRest.Returns` off. Hauled, it keeps its elevation and its bearing becomes its facing (below, the haul's "Taking
+  it up"). From 2026-10-26 until then (asked for that day: "the aim ... needs to have some set position it
+  reverts back to ... so the captain knows where his cannons are likely to fire") every unmanned cannon was turned back to
+  the rest lay by its owner at its own turn and tilt speeds (0.6 to 1.5 s back from the far ends offline).
 - **Firing**: attack pulls the lanyard of a loaded cannon (`KwArmTrigger`; the secondary attack a cannon's other shot,
   when one has one); the shot leaves 0.32 s into the pull (`KwArmLaunch`), from the muzzle, carried on by what the cannon
   stands on and passing through it and the cannon (`KwShooter`, the library's `WeaponShot`); its way is worked out as it
@@ -241,7 +263,8 @@ the owner, when it is free and loaded and not mid-reload, hands its ZDO to the c
 the captain's game fires it once the ZDO is its own as its gunner's lanyard would (`KwArm.ShootCalled`: the shot the
 load is for), so the ball, the muzzle's blast and sound and a ship cannon's recoil follow on every screen from the ZDO,
 and the captain is the shot's attacker. One still reloading or empty is skipped. Every cannon aboard says the key on its
-hover. An unmanned cannon lies at its rest lay (above, "Manning"), so a broadside fires where the captain expects.
+hover. An unmanned cannon fires where its last gunner left it laid (a cannon never aimed: straight out of its port, 1
+degree up; above, "Manning"), and the shot arcs (J) show where that is.
 
 **One side at a time** (the user, the evening of 2026-10-26: "where the captain is looking [is] the halfway point. So if
 you are looking more to the port side, then pressing U fires the port side ... you can only fire one set at a time ...
@@ -372,7 +395,7 @@ cannons should auto reload if the captain is firing ... have the reloading mater
   reload under way on that side is done (a side is fired at once, so the moment the whole side is loaded is what he
   waits for; cannons fired together finish within a fraction of a second, so it is also nearly always the next one),
   and how many are empty with nothing coming. A cannon is port when it was placed facing left of the ship's heading
-  (its rest lay), else starboard. Coloured as the ship panel's own lines: all loaded "3/3 ready" in the game's orange
+  (the middle of its arc; laid at most 20 degrees off it), else starboard. Coloured as the ship panel's own lines: all loaded "3/3 ready" in the game's orange
   (the panel's Ready for an ability), the seconds in its cooldown grey, the empty in its red. Manned cannons count like
   the rest (U fires them). Counted from each cannon's ZDO alone (its load, its reload step and that step's start, its
   last shot, on the network clock), so every peer would count the same whoever owns the cannons and nothing is sent or
@@ -414,6 +437,15 @@ cannons should auto reload if the captain is firing ... have the reloading mater
   with it running.
 
 - **Where the reload lines go**: rows `cannons.port` and `cannons.starboard` of Broadside's own ship panel (`KwShipPanel.Row`, `KwReloadRows`), written only when a side's count changed.
+- **Taking it up** (2026-11-02, since a cannon keeps its gunner's lay unmanned, above, "Its lay is kept"): the carriage is
+  the yaw part, levered round up to 20 degrees on the piece, while the haul rolls, stands and checks the piece (its trucks'
+  feet, its deck room, its colliders, all on the piece, and its rear). So as the hauler's game is handed it, before he is
+  brought to its rear, the lay's bearing is folded into the piece (`KwDeckHaul.Square`): the piece is turned about its
+  pivot under the carriage's middle by the bearing and the bearing set to 0 at once (the library's `WeaponAim.Set`), so
+  nothing moves on his screen; the elevation is kept; the new turn goes to its rider record and its breeching's plates,
+  which turn with the piece, are looked at again. Other screens ease both over a fifth of a second, the carriage
+  swinging up to about a quarter of the bearing past and back meanwhile. Hauled, it rolls the way its carriage points,
+  and its arc of 20 degrees each way is round that facing from then on. A cannon laid straight out is not changed.
 - **Keys**: Shift+E anywhere on it (its rear too) takes it up, Shift+E again lets go; E still mans it. Only from its own
   ship's deck ("Stand on its deck to haul it"; a moment in the air is fine). He is brought to its rear at once
   (`QuickStep`), walks (1 m/s at most, no running or jumping), and his fists hold its brackets' rear ends on every screen
@@ -439,9 +471,9 @@ cannons should auto reload if the captain is firing ... have the reloading mater
   than 0.25 m from its rear (`KwDeckHaul.Leash`). What it already stands in never holds it, room by room (one built with
   its barrel through a railing is hauled back out, its carriage never in). Players do not stop it (it nudges them).
 - **Letting go**: Shift+E, walking off (more than 2.2 m from its rear), stepping off its ship, dying, logging out,
-  dodging, swimming, being given other controls. It stays where it was left, at its rest lay relative to its new facing
-  (the aim is the carriage's own), and the broadside, the shot arcs and the reload rows read it there (they read the
-  cannons aboard each time). Nobody mans it while it is hauled, nor hauls it while it is manned, and the broadside
+  dodging, swimming, being given other controls. It stays where it was left, its carriage straight on its new facing and
+  its gun at the elevation it had (above, "Taking it up"), and the broadside, the shot arcs and the reload rows read it
+  there (they read the cannons aboard each time). Nobody mans it while it is hauled, nor hauls it while it is manned, and the broadside
   neither fires nor reloads a hauled cannon (it is not free).
 - **Its breeching** (`KwBreechingTie`): while someone hauls it (its ZDO names him) both
   ropes and the ringbolts on their deck plates are hidden on every screen; let go, its owner looks for something solid
@@ -567,8 +599,14 @@ hull takes the full damage each time and the speed at impact (39, 14 m/s) for it
   answer after the load went on from his pack) goes into his pack, or at his feet without room, once nothing waits, so
   nothing taken is lost. Every peer loads the pile's inventory from the ZDO and shows its fill from it; nothing else is
   sent or saved.
-- The rest lay is decided by the cannon's owner, whoever that is when nobody mans it (the gunner's game as he lets go,
-  the server or another player once he has left), and kept in the ZDO's aim; every peer eases after it.
+- A cannon's lay is in its ZDO's aim, written by its gunner's game while he lays it; nobody writes it once he lets go
+  (since 2026-11-02: before, its owner turned it back to the rest lay), so every peer, the server and anyone who loads it
+  later draws it where he left it (a peer drawing it for the first time takes it at once). The only other write is the
+  hauler's game folding the bearing into the piece as it takes the cannon up (`KwDeckHaul.Square`: the aim and the rider
+  record's turn in the same frame, on the game that owns the ZDO then).
+- Snapping a cannon's ghost into a gunport (Shift while placing, `KwArmPortSnap`) is the placing player's screen only:
+  the ports are read from the ship's openings' plan, which every peer makes the same, and the deck under one by a ray at
+  the ship's colliders; the piece the game places then rides the ship and replicates as any cannon.
 - The helm key list, the shot arcs and the reload lines are the captain's own screen: nothing of them is sent or saved;
   the reload lines read only the cannons' ZDOs, so they are right whoever owns each cannon.
 - A shot is flown and its hits tested on the gunner's game, which sends each hit to the owner of what it struck (the

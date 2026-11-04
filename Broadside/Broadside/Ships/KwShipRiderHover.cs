@@ -11,7 +11,8 @@ namespace Broadside
     /// object can be hovered, as the body itself, so a chest built on a ship hovered as the ship and E opened nothing.
     /// When the game has picked a launched ship that way, the same ray is cast again: a first hit on a rider is that
     /// rider's collider, as the game takes a collider of a piece that has no body. Only for the local player, and only
-    /// when the hover is a launched ship: one ray then, none otherwise.
+    /// when the hover is a launched ship: one ray then, none otherwise. The same patch serves crates riding the game's cart
+    /// (<see cref="KwCartHover"/>), asked first while any cart carries one.
     /// </summary>
     [HarmonyPatch(typeof(Player), "FindHoverObject")]
     public static class KwShipRiderHover
@@ -21,7 +22,14 @@ namespace Broadside
         [HarmonyPostfix]
         private static void Postfix(Player __instance, ref GameObject hover)
         {
-            if (hover == null || KwShipRiders.Loaded.Count == 0 || !hover.TryGetComponent(out KwShipRiders _))
+            if (hover == null)
+                return;
+            if (KwCartBed.Carried > 0 && Guard.Run("Broadside cart hover", static (p, h) => KwCartHover.Pick(p, ref h) ? h : (GameObject?)null, __instance, hover) is GameObject crate)
+            {
+                hover = crate;
+                return;
+            }
+            if (KwShipRiders.Loaded.Count == 0 || !hover.TryGetComponent(out KwShipRiders _))
                 return;
             try
             {

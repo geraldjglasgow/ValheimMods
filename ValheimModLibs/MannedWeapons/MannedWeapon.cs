@@ -230,7 +230,7 @@ public abstract class MannedWeapon : MonoBehaviour, Interactable, Hoverable, IDo
 		{
 			Safe.Run(Design.TriggerContext, static weapon => WeaponCall.Tick(weapon), this);
 		}
-		if (!holding && Design.Rest != null && Net.IsValid() && Net.IsOwner())
+		if (!holding && Design.Rest != null && Design.Rest.Returns && Net.IsValid() && Net.IsOwner())
 		{
 			Safe.Run(Design.HoldContext, static weapon => RestLay.Tick(weapon), this);
 		}

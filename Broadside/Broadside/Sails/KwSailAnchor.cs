@@ -5,7 +5,8 @@ namespace Broadside
     /// <summary>
     /// Where a rope from any rigged piece (a bowsprit's jibs' sheets) ties on to its ship, by the masts' own rules
     /// (<see cref="KwRigTies"/>): to the top of the ship's side its aim is on, at the aim's place along the ship (its
-    /// railing's top rail or its gunwale, or the outer edge of the roof the piece stands on), clear of the decks, cabins,
+    /// railing's top rail or its gunwale, the outer edge of the roof the piece stands on, or the top of a cabin standing at
+    /// that place where the side there is under it), clear of the decks, cabins,
     /// railings, sails, yards and masts, worked out from the ship's own pieces (<see cref="KwRigSource"/>) the same on every
     /// peer, never by the physics. The rope's fitting (a cleat, or an eyebolt) is drawn under the piece where it ends. Kit
     /// axes as <see cref="KwSailLayout"/>. Where nothing is drawn (a dedicated server), the aim itself.

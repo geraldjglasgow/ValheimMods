@@ -27,8 +27,10 @@ public sealed class WeaponDesign
 	public ReloadCycle Reload { get; set; } = new(1f);
 
 	/// <summary>
-	/// The lay the weapon goes back to whenever nobody mans it (<see cref="WeaponRest"/>): its operator let go, walked off,
-	/// died or left the game; a new one starts there. Null (the default): it stays where its last operator left it.
+	/// The lay of a weapon never aimed (<see cref="WeaponRest"/>) and, while it <see cref="WeaponRest.Returns"/> (the
+	/// default), the lay it goes back to whenever nobody mans it: its operator let go, walked off, died or left the game; a
+	/// new one starts where it lies. Null (the default): never aimed it lies at (0, 0), and it stays where its last operator
+	/// left it.
 	/// </summary>
 	public WeaponRest? Rest { get; set; }
 
@@ -108,9 +110,10 @@ public sealed class ReloadCycle
 
 /// <summary>
 /// A weapon's rest lay (<see cref="WeaponDesign.Rest"/>), degrees as the aim's: <see cref="Yaw"/> right of where it was
-/// placed, <see cref="Pitch"/> up from the plane it stands on, each held within its arcs. Unmanned, its owner turns it
-/// back there at its own turn and tilt rates (<see cref="RestLay"/>), every peer following the ZDO, so a gunner's last
-/// lay never stays on it; a weapon never aimed reads it as its lay.
+/// placed, <see cref="Pitch"/> up from the plane it stands on, each held within its arcs; a weapon never aimed reads it as
+/// its lay. While it <see cref="Returns"/> (the default), unmanned, its owner turns it back there at its own turn and tilt
+/// rates (<see cref="RestLay"/>), every peer following the ZDO, so a gunner's last lay never stays on it; otherwise the
+/// weapon keeps the lay its last operator left it at, in its ZDO for every peer and anyone who comes later.
 /// </summary>
 public sealed class WeaponRest
 {
@@ -119,6 +122,9 @@ public sealed class WeaponRest
 	public float Yaw { get; }
 
 	public float Pitch { get; }
+
+	/// <summary>Whether the weapon goes back to the rest lay whenever nobody mans it (true, the default), or keeps where its last operator laid it (false: then only a weapon never aimed lies there).</summary>
+	public bool Returns { get; set; } = true;
 }
 
 /// <summary>Where the operator's elbows point while his hands are on the grips.</summary>

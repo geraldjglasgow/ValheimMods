@@ -9,8 +9,8 @@ namespace Broadside
     /// <summary>
     /// Broadside's pieces at the end of the hammer's Misc tab, in build order (<see cref="Steps"/>), every one free
     /// (<see cref="KwPrefabs"/>: design mode); the generated parts the tools make are never in it. Then the ship cannons
-    /// the storage crates and the ammunition piles, at their own cost (<see cref="KwCannonHammer"/>, <see cref="KwCrateHammer"/>,
-    /// <see cref="KwPileHammer"/>). The saved ships come
+    /// the storage crates, the ammunition piles and the hammock, at their own cost (<see cref="KwCannonHammer"/>, <see cref="KwCrateHammer"/>,
+    /// <see cref="KwPileHammer"/>, <see cref="KwHammockHammer"/>), and the dockside decorations (<see cref="KwDockHammer"/>). The saved ships come
     /// after them, put in by <see cref="KwBpHammer"/>, each costing what its parts do. Refreshed when the item database
     /// wakes and after the pieces are made, whichever comes last. Idempotent.
     /// </summary>
@@ -41,6 +41,14 @@ namespace Broadside
             KwCannonHammer.Add(database!, pieces);
             KwCrateHammer.Add(database!, pieces);
             KwPileHammer.Add(database!, pieces);
+            KwHammockHammer.Add(database!, pieces);
+            KwTrawlHammer.Add(database!, pieces);
+            // then the dockside decorations, at their own cost
+            KwDockHammer.Add(database!, pieces);
+            // then the Auto-decorate tool, placing them
+            KwDecorTool.AddTo(pieces);
+            // then the Dock tool, building docks at their size's cost
+            KwPierHammer.Add(pieces);
             Log.Info($"Broadside: {KwPrefabs.All.Count} pieces, {KwCannonHammer.Offered} of {KwCannonPrefabs.All.Count} cannons, {KwCrates.All.Count} storage crates and {KwPiles.All.Count} ammunition piles in the hammer's Misc tab.");
         }
 

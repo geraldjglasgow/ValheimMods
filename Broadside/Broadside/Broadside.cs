@@ -19,7 +19,7 @@ namespace Broadside
     {
         public const string PluginGuid = "milkyteam.broadside";
         public const string PluginName = "Broadside";
-        public const string PluginVersion = "0.5.0";
+        public const string PluginVersion = "0.6.0";
 
         private void Awake()
         {
@@ -28,12 +28,7 @@ namespace Broadside
             KwSettings.Bind(synced);
             Harmony harmony = new Harmony(PluginGuid);
             int failed = PatchEverything(harmony);
-            KwPrefabs.Install(harmony);
-            KwCannonPrefabs.Install(harmony);
-            KwCrates.Install(harmony);
-            KwPiles.Install(harmony);
-            KwCargoPrefabs.Install(harmony);
-            KwRepairKit.Install(harmony);
+            InstallPieces(harmony);
             KwBpCamera.Install();
             KwHelmKeys.Install();
             KwReadyShips.Install();
@@ -44,6 +39,26 @@ namespace Broadside
 
             // Exceptions thrown by this mod's patches are logged under the Broadside log source, then rethrown.
             Guard.Install(harmony, Logger, Assembly.GetExecutingAssembly());
+        }
+
+        /// <summary>
+        /// The pieces, items and the ship, made whenever the network scene wakes, in this order: Broadside's own pieces first
+        /// (the plank wood and the rope the others wear), then the cannons, crates, piles, the hammock, the net winch, the dockside
+        /// decorations, the Auto-decorate tool, the Dock tool and its docks, the cargo crane and the repair kit.
+        /// </summary>
+        private static void InstallPieces(Harmony harmony)
+        {
+            KwPrefabs.Install(harmony);
+            KwCannonPrefabs.Install(harmony);
+            KwCrates.Install(harmony);
+            KwPiles.Install(harmony);
+            KwHammocks.Install(harmony);
+            KwTrawl.Install(harmony);
+            KwDockside.Install(harmony);
+            KwDecorTool.Install(harmony);
+            KwPierPrefabs.Install(harmony);
+            KwCargoPrefabs.Install(harmony);
+            KwRepairKit.Install(harmony);
         }
 
         /// <summary>Applies every patch class on its own so one failure is logged and the others still apply.</summary>

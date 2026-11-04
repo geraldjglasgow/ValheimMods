@@ -9,7 +9,8 @@ namespace Broadside
     /// <summary>
     /// Broadside's own sublist in the build menu's Categories tab: picking Transportation opens a "Broadside" entry under
     /// it that holds every Broadside piece in the hammer (the dock pieces and tools, the fittings, the blueprint table,
-    /// the ship cannons and the saved ships), and Transportation itself lists the rest: the game's own transport and other
+    /// the ship cannons, the storage crates, ammunition piles, the hammock, cargo crane and crate, the dockside decorations and
+    /// the saved ships), and Transportation itself lists the rest: the game's own transport and other
     /// mods'. The entry shows while Transportation or itself is picked, and only when the hammer has a Broadside piece.
     /// The game's tag ids on that tab are indexes into its usage flags; Broadside's is one clear of them all
     /// (<see cref="TagId"/>), handled in <see cref="KwBuildMenuTags"/>, <see cref="KwBuildMenuName"/>,
@@ -32,18 +33,32 @@ namespace Broadside
         /// <summary>Whether picking the tag opens the entry: Transportation or the entry itself.</summary>
         public static bool Opens(int tagId) => tagId == TagId || tagId == Transport;
 
-        /// <summary>Whether the piece is Broadside's: a dock piece, tool, fitting or table, a ship cannon or a saved ship.</summary>
+        /// <summary>Whether the piece is Broadside's: a dock piece, tool, fitting or table, a ship cannon, a crate, pile, hammock or the crane, a dockside decoration, the Auto-decorate tool, the Dock tool or a saved ship.</summary>
         public static bool Owns(Piece piece) => piece != null && (KwBpEntries.IsEntry(piece.gameObject) || Kit().Contains(piece.gameObject));
 
         // Broadside's made prefabs, gathered again when more have been made (each list is made once).
         private static HashSet<GameObject> Kit()
         {
-            int count = KwPrefabs.All.Count + KwCannonPrefabs.All.Count;
+            GameObject? crane = KwCargoPrefabs.Crane, crate = KwCargoPrefabs.Crate, decorate = KwDecorTool.Made;
+            int count = KwPrefabs.All.Count + KwCannonPrefabs.All.Count + KwDockside.All.Count + KwCrates.All.Count
+                + KwPiles.All.Count + KwHammocks.All.Count + KwTrawl.All.Count + KwPierPrefabs.All.Count + (crane != null ? 1 : 0) + (crate != null ? 1 : 0) + (decorate != null ? 1 : 0);
             if (count == kitCount)
                 return kit;
             kit.Clear();
             kit.UnionWith(KwPrefabs.All);
             kit.UnionWith(KwCannonPrefabs.All);
+            kit.UnionWith(KwDockside.All);
+            kit.UnionWith(KwCrates.All);
+            kit.UnionWith(KwPiles.All);
+            kit.UnionWith(KwHammocks.All);
+            kit.UnionWith(KwTrawl.All);
+            kit.UnionWith(KwPierPrefabs.All);
+            if (crane != null)
+                kit.Add(crane);
+            if (crate != null)
+                kit.Add(crate);
+            if (decorate != null)
+                kit.Add(decorate);
             kitCount = count;
             return kit;
         }

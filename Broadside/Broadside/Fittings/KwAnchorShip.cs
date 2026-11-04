@@ -8,8 +8,9 @@ namespace Broadside
     /// blueprint, or the dock's pieces read the same way, <see cref="KwAnchorDock"/>), all in the windlass's kit frame (x
     /// forward, y left, z up from the deck under it): its planking parts (<see cref="KwAnchorHull"/>), railings
     /// (<see cref="KwAnchorRail"/>), decks with their hatch openings (<see cref="KwAnchorDeck"/>), cabins
-    /// (<see cref="KwAnchorCabin"/>), ribs, and what else stands in the way (<see cref="KwAnchorFixtures"/>). Plain maths
-    /// over the pieces' saved shapes, never the physics, so every peer works out the same from the same pieces.
+    /// (<see cref="KwAnchorCabin"/>; the one whose roof the windlass stands on, <see cref="Roof"/>), roof railings
+    /// (<see cref="KwAnchorRoofRail"/>), ribs, and what else stands in the way (<see cref="KwAnchorFixtures"/>). Plain
+    /// maths over the pieces' saved shapes, never the physics, so every peer works out the same from the same pieces.
     /// </summary>
     public sealed class KwAnchorShip
     {
@@ -30,16 +31,24 @@ namespace Broadside
             }
             foreach (KwAnchorCabin cabin in Cabins)
                 cabin.Holds = cabin.Inside(new Vector3(0f, 0f, 0.45f), 0f);
+            Roof = Housed ? null : Cabins.Find(c => c.OnRoof(Vector3.zero));
+            if (Roof != null)
+                Roof.Carries = true;
             solids.AddRange(Hulls);
             solids.AddRange(Rails);
             solids.AddRange(Decks);
             solids.AddRange(Cabins);
+            solids.AddRange(RoofRails);
         }
 
         public List<KwAnchorHull> Hulls { get; } = new List<KwAnchorHull>();
         public List<KwAnchorRail> Rails { get; } = new List<KwAnchorRail>();
         public List<KwAnchorDeck> Decks { get; } = new List<KwAnchorDeck>();
         public List<KwAnchorCabin> Cabins { get; } = new List<KwAnchorCabin>();
+        public List<KwAnchorRoofRail> RoofRails { get; } = new List<KwAnchorRoofRail>();
+
+        /// <summary>The cabin whose roof the windlass stands on (its cable then leads over the roof's edge); null on a deck.</summary>
+        public KwAnchorCabin? Roof { get; }
 
         /// <summary>Where each rib stands (windlass kit).</summary>
         public List<Vector3> Ribs { get; } = new List<Vector3>();
@@ -76,20 +85,19 @@ namespace Broadside
             return near;
         }
 
-        /// <summary>The deck's top under a point (windlass kit x, y) nearest a height, within a reach of it; null with none.</summary>
+        /// <summary>The deck's top (or the windlass's roof's) under a point (windlass kit x, y) nearest a height, within a reach of it; null with none.</summary>
         public float? DeckTop(float x, float y, float near, float within)
         {
-            float? best = null;
+            float? best = Nearer(null, Roof?.RoofTop(x, y), near, within);
             foreach (KwAnchorDeck deck in Decks)
-            {
-                float? top = deck.Top(x, y);
-                if (top.HasValue && Mathf.Abs(top.Value - near) <= within && (best == null || Mathf.Abs(top.Value - near) < Mathf.Abs(best.Value - near)))
-                    best = top;
-            }
+                best = Nearer(best, deck.Top(x, y), near, within);
             return best;
         }
 
-        // One piece: a hull part, a railing, a deck, a cabin, a rib, or a fitting in the way.
+        private static float? Nearer(float? best, float? top, float near, float within) =>
+            top.HasValue && Mathf.Abs(top.Value - near) <= within && (best == null || Mathf.Abs(top.Value - near) < Mathf.Abs(best.Value - near)) ? top : best;
+
+        // One piece: a hull part, a railing, a deck, a cabin, a roof railing, a rib, or a fitting in the way.
         private void Take(KwBpPiece piece, KwAnchorPose pose, KwBlueprint ship, List<(Vector3 Middle, Vector3[] Corners)> hatches)
         {
             string saved = KwBpData.Text(piece.Data, SpanHash) ?? "";
@@ -99,7 +107,9 @@ namespace Broadside
                     Cabins.Add(new KwAnchorCabin(pose, spec));
                 return;
             }
-            if (piece.Prefab == KwRibs.Made)
+            if (piece.Prefab == KwToolPieces.PartPrefix + "rail" && KwRoofRail.TryParse(saved, out KwRoofRail roof))
+                RoofRails.Add(new KwAnchorRoofRail(pose, roof));
+            else if (piece.Prefab == KwRibs.Made)
                 Ribs.Add(pose.Out(Vector3.zero));
             else if (Part(piece, pose, saved, hatches))
                 return;

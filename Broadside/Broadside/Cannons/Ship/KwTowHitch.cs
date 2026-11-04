@@ -78,6 +78,8 @@ namespace Broadside
         public void Attach(Player player)
         {
             KwArmTow.Mine?.Hitch.Release();
+            if (tow.OnDeck)
+                tow.Deck.Square();
             (puller, walked, Phase) = (player, player.GetWalk(), KwTowPhase.StepIn);
             step.Begin(player, Spot, tow.Arm.transform.position, tow.Arm.transform);
             Collide(player, false);

@@ -1,3 +1,4 @@
+using MannedWeapons;
 using UnityEngine;
 
 namespace Broadside
@@ -36,6 +37,26 @@ namespace Broadside
         private Transform Self => tow.Arm.transform;
 
         private Transform Ship => Self.parent;
+
+        /// <summary>
+        /// As he is hitched to it, on his game (which owns it now), before he is brought to its rear: the lay its last gunner
+        /// left it at folded into the piece, so it is hauled the way its carriage points and its colliders, its rear and its
+        /// deck room are where its carriage is drawn (the carriage is the yaw part, levered round up to 20 degrees on the
+        /// piece, and a cannon now keeps its lay unmanned). The piece is turned about its pivot (the carriage's) by the lay's
+        /// yaw and the yaw set to 0 at once (the library's <see cref="WeaponAim.Set"/>), so nothing moves on his screen; its
+        /// elevation is kept. The new turn goes to its rider record for every peer, and its breeching's plates, which turned
+        /// with the piece, are looked at again (<see cref="KwBreechingTie"/>), in case he lets go before taking it up.
+        /// </summary>
+        public void Square()
+        {
+            KwArm arm = tow.Arm;
+            WeaponState s = arm.State;
+            if (Mathf.Abs(s.Yaw) < 0.01f || !arm.Aim.Set(arm, 0f, s.Pitch))
+                return;
+            Self.localRotation *= Quaternion.Euler(0f, s.Yaw, 0f);
+            Record(tow.Link.Zdo, Self.localPosition, Self.localRotation);
+            KwBreechingTie.Decide(arm);
+        }
 
         /// <summary>As he takes it up: where it stands now, the deck under its trucks, and what it stands in already.</summary>
         public void Begin()

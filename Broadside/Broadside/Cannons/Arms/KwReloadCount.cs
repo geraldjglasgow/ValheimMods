@@ -11,7 +11,7 @@ namespace Broadside
     /// sent: loaded (ready), reloading (its step under way, or fired and resting before the reload the captain's or its
     /// gunner's game begins as the rest ends, <see cref="ReloadCycle.Rest"/>), or empty (nothing loaded and no reload under
     /// way or due). A manned cannon counts as any other: the broadside fires it too. A cannon is port when it was placed
-    /// facing left of the ship's heading (its rest lay, where a broadside fires it), else starboard.
+    /// facing left of the ship's heading (the middle of its arc, its gunner's lay within 20 degrees of it), else starboard.
     /// </summary>
     public static class KwReloadCount
     {
@@ -36,7 +36,7 @@ namespace Broadside
             }
         }
 
-        /// <summary>Whether a cannon aboard is on the port side: placed facing left of the ship's heading (its rest lay, where a broadside fires it).</summary>
+        /// <summary>Whether a cannon aboard is on the port side: placed facing left of the ship's heading (the middle of its arc).</summary>
         public static bool Port(Transform ship, KwArm arm) => Vector3.Dot(arm.transform.forward, ship.right) < 0f;
 
         /// <summary>Seconds until the cannon is loaded: 0 when it is, less than 0 when it is empty with no reload under way or due.</summary>

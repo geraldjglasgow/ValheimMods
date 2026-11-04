@@ -15,7 +15,8 @@ namespace Broadside
     /// refused, and trying to place it says why (<see cref="KwArmPlaceMessage"/>): on a Broadside dock's design parts the
     /// ship is not launched yet (<see cref="KwArmWords.Dock"/>), elsewhere (the ground, the game's floors)
     /// <see cref="KwArmWords.Afloat"/>. The game's own ships never take a ghost (the game drops placement hits on a body).
-    /// Runs after the game has placed the ghost and found it valid; only the cannons' own ghosts are looked at.
+    /// Runs after the game has placed the ghost and found it valid; only the cannons' own ghosts are looked at. With the
+    /// game's alternate placement held near a gunport the ghost is set square in it (<see cref="KwArmPortSnap"/>).
     /// </summary>
     [HarmonyPatch(typeof(Player), "UpdatePlacementGhost")]
     public static class KwArmPlace

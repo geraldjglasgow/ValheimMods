@@ -6,7 +6,7 @@
     <RootNamespace>Broadside</RootNamespace>
     <LangVersion>latest</LangVersion>
     <Nullable>enable</Nullable>
-    <Version>0.5.0</Version>
+    <Version>0.6.0</Version>
     <Product>Broadside</Product>
     <Authors>Gerald Glasgow</Authors>
     <Company>Gerald Glasgow</Company>
@@ -82,6 +82,10 @@
     <EmbeddedResource Include="assets\bundles\kw_cargocrate.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
     <!-- The ammunition piles, cannonballs and black powder, one bundle each per platform (ValheimAssets workshop), read as Broadside.assets.bs_pile_<id>.<platform> -->
     <EmbeddedResource Include="assets\bundles\bs_pile_*.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <!-- The dockside decorations, one bundle each per platform (ValheimAssets Assets/Ships/Keelwright/Dockside), read as Broadside.assets.bs_dock_<id>.<platform> -->
+    <EmbeddedResource Include="assets\bundles\bs_dock_*.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
+    <!-- The towed trawl net (ValheimAssets Assets/Props/TrawlNet v001, va_trawlnet_v001 renamed), read as Broadside.assets.bs_trawlnet.<platform>; Trawl/TRAWL.md -->
+    <EmbeddedResource Include="assets\bundles\bs_trawlnet.*" LogicalName="Broadside.assets.%(Filename)%(Extension)" WithCulture="false" Type="Non-Resx" />
   </ItemGroup>
 
   <ItemGroup>

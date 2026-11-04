@@ -14,7 +14,8 @@ namespace Broadside
     /// on the cursor. Refused in the window, the game's own words say so ("$msg_wrongitem" in the middle of the screen, at
     /// most twice a second). Loading the pile's inventory from its ZDO is never refused (the Container's own load), so
     /// nothing already in it is lost. Each patch costs one count read while no pile is loaded, one dictionary look-up
-    /// otherwise; nothing runs per frame.
+    /// otherwise; nothing runs per frame. The game's cart's own storage takes nothing at all since carts carry crates
+    /// (2026-11-03, <see cref="KwCartBed.Refuses"/>, <c>Cart/</c>): the same patches ask it, with the cart's own words.
     /// </summary>
     [HarmonyPatch]
     public static class KwPileFilter
@@ -34,6 +35,8 @@ namespace Broadside
         /// <summary>Whether the inventory is a loaded pile's that does not take the item (never while it loads from its ZDO).</summary>
         public static bool Refuses(Inventory inventory, ItemDrop.ItemData? item)
         {
+            if (item != null && KwCartBed.Stores > 0 && KwCartBed.Refuses(inventory))
+                return true;
             if (piles.Count == 0 || item == null || !piles.TryGetValue(inventory, out KwPile pile) || pile == null)
                 return false;
             return !pile.Box.m_loading && !pile.Accepts(item);
@@ -62,7 +65,7 @@ namespace Broadside
         private static bool DropItem(InventoryGrid __instance, Inventory fromInventory, ItemDrop.ItemData item, Vector2i pos, ref bool __result)
         {
             Inventory into = __instance.m_inventory;
-            if (piles.Count == 0 || into == null || fromInventory == null || fromInventory == into)
+            if (piles.Count == 0 && KwCartBed.Stores == 0 || into == null || fromInventory == null || fromInventory == into)
                 return true;
             Inventory? pile = Refuses(into, item) ? into : Swaps(fromInventory, into, item, pos) ? fromInventory : null;
             if (pile == null)
@@ -72,14 +75,20 @@ namespace Broadside
             return false;
         }
 
-        // Dragged out of a pile onto an item there the pile would not take in its place.
+        // Dragged out of a pile onto an item there the pile would not take in its place (out of a cart's storage: only where
+        // the game would swap them, so goods still stack onto the same goods).
         private static bool Swaps(Inventory pile, Inventory into, ItemDrop.ItemData item, Vector2i pos)
         {
-            if (!piles.ContainsKey(pile))
+            bool cart = KwCartBed.Stores > 0 && KwCartBed.Refuses(pile);
+            if (!cart && !piles.ContainsKey(pile))
                 return false;
             ItemDrop.ItemData? there = into.GetItemAt(pos.x, pos.y);
-            return there != null && there != item && Refuses(pile, there);
+            return there != null && there != item && (!cart || Trades(there, item)) && Refuses(pile, there);
         }
+
+        // The game's swap: a different item there, another quality, or one that does not stack.
+        private static bool Trades(ItemDrop.ItemData there, ItemDrop.ItemData item) =>
+            there.m_shared.m_name != item.m_shared.m_name || item.m_shared.m_maxQuality > 1 && there.m_quality != item.m_quality || there.m_shared.m_maxStackSize == 1;
 
         private static bool Allow(Inventory inventory, ItemDrop.ItemData item, ref bool result)
         {
@@ -98,7 +107,7 @@ namespace Broadside
             if (gui == null || player == null || gui.m_currentContainer == null || gui.m_currentContainer.GetInventory() != pile || Time.time < said + Quiet)
                 return;
             said = Time.time;
-            player.Message(MessageHud.MessageType.Center, WrongItem);
+            player.Message(MessageHud.MessageType.Center, KwCartBed.Stores > 0 && KwCartBed.Refuses(pile) ? KwCartText.NothingIn : WrongItem);
         }
     }
 }

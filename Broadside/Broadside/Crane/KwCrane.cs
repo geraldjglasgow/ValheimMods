@@ -58,6 +58,8 @@ namespace Broadside
             view.Register<ZDOID, bool>(KwCargo.HookedRpc, (sender, crate, ok) => Guard.Run("Broadside crane hooked", () => Lift.Hooked(crate, ok)));
             shown.Read(view.GetZDO(), rig.RestDrop);
             rig.Pose(shown);
+            if (KwCargoModel.Screens)
+                gameObject.AddComponent<KwCraneHands>();
         }
 
         // A throw is reported once and stops this crane, rather than once a frame.

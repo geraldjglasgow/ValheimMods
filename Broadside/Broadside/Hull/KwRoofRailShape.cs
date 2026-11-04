@@ -131,8 +131,8 @@ namespace Broadside
             Solid.Hexa(b, ring);
         }
 
-        // The outline's middle, which every edge's inside faces.
-        private static Vector2 Middle(List<KwRoofSegment> edges)
+        /// <summary>The outline's middle, which every edge's inside faces.</summary>
+        public static Vector2 Middle(List<KwRoofSegment> edges)
         {
             Vector2 sum = Vector2.zero;
             foreach (KwRoofSegment edge in edges)

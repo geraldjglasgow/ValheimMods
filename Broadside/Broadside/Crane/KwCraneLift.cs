@@ -3,19 +3,22 @@ using UnityEngine;
 namespace Broadside
 {
     /// <summary>
-    /// What the crane's hook does, on the operator's game (the crane's owner). Pick up (Attack): a cargo crate whose top
-    /// the hook has been lowered onto is asked to hang from this crane: the crane names it in its ZDO
+    /// What the crane's hook does, on the operator's game (the crane's owner). Pick up (Attack): a crate (the cargo crate or
+    /// any storage crate, <see cref="KwCrate"/>) whose top the hook has been lowered onto, anywhere over it, is asked to hang
+    /// from this crane: the crane names it in its ZDO
     /// (<see cref="KwCargo.CrateKey"/>) and calls the crate's owner (<see cref="KwCargo.HookRpc"/>), who agrees unless the
     /// crate is open or on another crane and names the crane in the crate's ZDO; only with both names does the crate hang
     /// (<see cref="KwCrate"/>). Hooked, the head is drawn up to the sling and lifts the crate a little. Set down (Block),
     /// the operator leaving or the crane changing owner: the crane forgets the crate and tells it to let go
     /// (<see cref="KwCargo.ReleaseRpc"/>); the crate's owner sets it down under where it hung, and either name missing for a
-    /// few seconds lets it go too. The crate's items never leave it: only where it stands changes. Lowering stops where the
-    /// hook, or the crate's bottom, meets what is under it (<see cref="Lowest"/>).
+    /// few seconds lets it go too. Block over the game's cart with no room for the crate (or a crate too big, or a cart not
+    /// ready) is refused with a message (<see cref="KwCartLoad.Refusal"/>). The crate's items never leave it but when it
+    /// falls more than 2 m and breaks (<see cref="KwCrateBreak"/>). Lowering stops where the hook, or the crate's bottom,
+    /// meets what is under it, a cart's load space too (<see cref="Lowest"/>).
     /// </summary>
     public sealed class KwCraneLift
     {
-        private const float Answer = 4f, LiftAbove = 0.3f, Reach = 0.75f, Below = 0.45f, Above = 1.1f;
+        private const float Answer = 4f, LiftAbove = 0.3f, Margin = 0.25f, Below = 0.45f, Above = 1.1f;
         private readonly KwCrane crane;
         private readonly ZNetView view;
         private readonly KwCraneRig rig;
@@ -52,7 +55,7 @@ namespace Broadside
                 me.Message(MessageHud.MessageType.Center, KwCraneText.NotReady);
             else if (!Crate.IsNone())
                 me.Message(MessageHud.MessageType.Center, KwCraneText.Holding);
-            else if (KwCrate.Under(rig.Hook!.position, Reach, Below, Above) is KwCrate crate)
+            else if (KwCrate.Under(rig.Hook!.position, Margin, Below, Above) is KwCrate crate)
                 Ask(crate);
             else
                 me.Message(MessageHud.MessageType.Center, KwCraneText.NoCrate);
@@ -87,6 +90,8 @@ namespace Broadside
         {
             if (Crate.IsNone())
                 me.Message(MessageHud.MessageType.Center, KwCraneText.Empty);
+            else if (KwCartLoad.Refusal(KwCrate.Find(Crate)) is string full)
+                me.Message(MessageHud.MessageType.Center, full);
             else
                 Release();
         }

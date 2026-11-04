@@ -10,8 +10,8 @@ namespace Broadside
     /// carts every two seconds and keeps the sum in the ship's ZDO (<see cref="LoadKey"/>), which every peer shows. On the
     /// owner, where the physics runs, the load is added to the body's mass, so the hull floats deeper on its own
     /// (<see cref="KwShipHydro"/> lifts by the water displaced), and the drag along the ship grows with it
-    /// (<see cref="KwShipLoad.Drag"/>), so a laden ship is slower. The mass and the drag are changed by what this
-    /// component added before, never set outright, so whatever else changes them stays. Past the most the hull can float
+    /// (<see cref="KwShipLoad.Drag"/>, the trim's <see cref="KwShipTrim.Cargo"/>), so a laden ship is slower. The mass is
+    /// changed by what this component added before, never set outright, so whatever else changes it stays. Past the most the hull can float
     /// (<see cref="KwShipLoad.Most"/>) the ship is overloaded: it sits no deeper (it would swamp), but the extra weight
     /// keeps slowing it, to at most four times the drag (about half speed), and everyone aboard is told.
     /// </summary>
@@ -33,7 +33,7 @@ namespace Broadside
         private Ship? ship;
         private ZNetView? view;
         private KwBpHull? hull;
-        private float unladen, most, added, dragged = 1f, nextReport, nextTally, warned = -99f;
+        private float unladen, most, added, nextReport, nextTally, warned = -99f;
 
         /// <summary>The load aboard as the owner last counted it (kg).</summary>
         public float Load => view != null && view.IsValid() ? view.GetZDO().GetFloat(LoadHash) : 0f;
@@ -114,9 +114,7 @@ namespace Broadside
                 body.mass = mass;
                 added = floated;
             }
-            float drag = KwShipLoad.Drag(load, unladen);
-            ship.m_dampingForward *= drag / dragged;
-            dragged = drag;
+            KwShipTrim.Of(ship).Cargo = KwShipLoad.Drag(load, unladen);
         }
     }
 }

@@ -5,8 +5,9 @@ namespace Broadside
 {
     /// <summary>
     /// An anchor windlass placed on the dock (<see cref="KwAnchor"/>): its anchor shown weighed as it will be on the launched
-    /// ship, hanging over the side at its fairlead with the cable led to it from the drum (<see cref="KwAnchorPlan"/>), or,
-    /// when no clear place is near, stowed upright on the deck, and its hover says why. The plan is worked out again when
+    /// ship, hanging over the side at its fairlead with the cable led to it from the drum (<see cref="KwAnchorPlan"/>); when
+    /// no clear place is near, at the one straight out abeam to the nearest side anyway, and its hover says what is in the
+    /// way (with no hull round it, stowed upright on the deck, and its hover says why). The plan is worked out again when
     /// the ship round it changes (pieces added or taken away, a shield hung on a railing or taken off; a part never changes
     /// once built): every <see cref="Every"/> seconds, while the local player is within <see cref="Near"/>, the ship's
     /// pieces are counted. From the dock's pieces (<see cref="KwBpDock.Ship"/>, or those round it off a dock) read as
@@ -135,8 +136,9 @@ namespace Broadside
 
         public string GetHoverText()
         {
-            string line = lead == null ? "" : lead.Found
+            string line = lead == null ? "" : lead.Clear
                 ? $"\nIts anchor hangs over the side at the fairlead ({KwAnchorRoute.Length(lead.Deck):0.0} m of cable on deck)"
+                : lead.Found ? $"\nNo clear way over the side: {lead.Why}; its cable is led straight across to the nearest side"
                 : $"\nIts anchor stays on the deck: {lead.Why}";
             return "Anchor windlass" + line + "\nOn a launched ship, E drops or weighs the anchor";
         }

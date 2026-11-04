@@ -9,8 +9,9 @@ namespace Broadside
     /// first windlass shows the anchor and its cable, led as the blueprint's pieces lead it (<see cref="KwAnchorPlan"/>,
     /// the same as on the dock): weighed, the anchor hangs over the side at the fairlead, the cable from the drum along the
     /// deck through the fairlead and down to its ring; dropped, it lies tipped over on the sea floor where it was let go,
-    /// the cable from the fairlead down to it. With no clear place found, the anchor is stowed on the deck while weighed,
-    /// and the cable runs over the stem head when it is down. Only drawn: a dedicated server makes none
+    /// the cable from the fairlead down to it. With no clear place found the lead is the one straight out abeam to the
+    /// nearest side, drawn the same; only with no lead at all (no hull round it) is the anchor stowed on the deck while
+    /// weighed, the cable run over the side abeam of it when it is down. Only drawn: a dedicated server makes none
     /// (<see cref="KwShipBody.Drawn"/>); the anchor itself is the ship's.
     /// </summary>
     public sealed class KwShipWindlass : MonoBehaviour, Interactable, Hoverable
@@ -70,7 +71,7 @@ namespace Broadside
             KwAnchorLook.Set(cable!, transform, dropped!, model!.position);
         }
 
-        // No clear place: stowed on the deck, no cable; down, the cable from the drum over the stem head to the anchor.
+        // No lead: stowed on the deck, no cable; down, the cable from the drum over the side abeam of it to the anchor.
         private void Unled(bool down)
         {
             cable!.enabled = down;

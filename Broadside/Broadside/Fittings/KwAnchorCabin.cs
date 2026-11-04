@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace Broadside
@@ -6,7 +7,9 @@ namespace Broadside
     /// A cabin as an anchor's cable sees it (<see cref="KwAnchorShip"/>), from its saved text (<see cref="KwCabinSpec"/>), in
     /// its kit frame: its whole room from its floor to over its roof, out to its walls' outer faces (a side at the hull: the
     /// hull's outside, carried up to the roof). A windlass standing inside it leads its cable inside its walls to a hawse
-    /// pipe through a side at the hull; one outside keeps its cable out of the cabin altogether.
+    /// pipe through a side at the hull; one on its roof (<see cref="Carries"/>) leads it over the roof, which is then solid
+    /// only up to its top (its roof railing read as itself, <see cref="KwAnchorRoofRail"/>), to a chock on its edge
+    /// (<see cref="KwAnchorRoofSpots"/>); one anywhere else keeps its cable out of the cabin altogether.
     /// </summary>
     public sealed class KwAnchorCabin : KwAnchorSolid
     {
@@ -14,6 +17,7 @@ namespace Broadside
         private const float Wall = 0.1f, Roof = 1f, Floor = 0.15f;
 
         private readonly KwAnchorPose pose;
+        private List<(float X, float Left, float Right)>? outline;
 
         public KwAnchorCabin(KwAnchorPose pose, KwCabinSpec spec) : base("a cabin")
         {
@@ -23,9 +27,45 @@ namespace Broadside
         }
 
         public KwCabinSpec Spec { get; }
+        public KwAnchorPose Pose => pose;
 
         /// <summary>Whether the windlass stands inside it (set once the ship is read).</summary>
         public bool Holds { get; set; }
+
+        /// <summary>Whether the windlass stands on its roof (set once the ship is read).</summary>
+        public bool Carries { get; set; }
+
+        /// <summary>Whether a point stands on its roof's top: at its height and inside its outline.</summary>
+        public bool OnRoof(Vector3 p)
+        {
+            Vector3 k = pose.Local(p);
+            return Mathf.Abs(k.z - Spec.Top) < 0.12f && RoofReach(k.x) is (float left, float right) && k.y < left + 0.05f && k.y > -right - 0.05f;
+        }
+
+        /// <summary>The roof's top over a point (windlass kit x, y) as a height there; null off the roof.</summary>
+        public float? RoofTop(float x, float y)
+        {
+            Vector3 k = pose.Local(new Vector3(x, y, 0f));
+            if (!(RoofReach(k.x) is (float left, float right)) || k.y >= left || k.y <= -right)
+                return null;
+            return pose.Out(new Vector3(k.x, k.y, Spec.Top)).z;
+        }
+
+        /// <summary>How far the roof's top reaches to the left and right at x along the cabin (its kit); null past its ends.</summary>
+        public (float Left, float Right)? RoofReach(float x)
+        {
+            outline ??= KwCabinOutline.Roof(Spec);
+            for (int i = 0; i + 1 < outline.Count; i++)
+            {
+                (float x0, float l0, float r0) = outline[i];
+                (float x1, float l1, float r1) = outline[i + 1];
+                if (x < x0 - 1e-4f || x > x1 + 1e-4f)
+                    continue;
+                float t = x1 - x0 < 1e-4f ? 0f : Mathf.Clamp01((x - x0) / (x1 - x0));
+                return (Mathf.Lerp(l0, l1, t), Mathf.Lerp(r0, r1, t));
+            }
+            return null;
+        }
 
         /// <summary>Whether a point is in its room, clear of its walls and roof by r.</summary>
         public bool Inside(Vector3 p, float r)
@@ -38,11 +78,12 @@ namespace Broadside
             return Mathf.Abs(k.y) < reach - r;
         }
 
-        /// <summary>Whether a point is within the cabin's outer faces (its walls, its room or its roof), widened by r.</summary>
+        /// <summary>Whether a point is within the cabin's outer faces (its walls, its room or its roof, and what stands on the roof
+        /// unless the windlass does), widened by r.</summary>
         public bool Within(Vector3 p, float r)
         {
             Vector3 k = pose.Local(p);
-            if (k.x < Spec.X0 - Wall - r || k.x > Spec.X1 + Wall + r || k.z < Spec.Floor - Floor - r || k.z > Spec.Top + Roof + r)
+            if (k.x < Spec.X0 - Wall - r || k.x > Spec.X1 + Wall + r || k.z < Spec.Floor - Floor - r || k.z > Spec.Top + (Carries ? 0f : Roof) + r)
                 return false;
             KwCabinSide side = k.y >= 0f ? Spec.Left : Spec.Right;
             float reach = side.AtHull ? KwShapes.WidthAt(KwCabinOutline.Up(Spec, Mathf.Clamp(k.x, Spec.X0, Spec.X1)).Half, k.z) + KwPlanks.Lap

@@ -7,7 +7,7 @@ namespace Broadside
     /// <summary>
     /// The anchor windlass's and the captain's wheel's ghosts go only on a deck (they work on the launched ship's deck), the
     /// wheel on a cabin's roof's top too (<see cref="KwCabinRoofs.OnRoof"/>; its steering gear climbs the cabin to it,
-    /// <see cref="KwGearClimb"/>): off one they are refused. They may face any way; the windlass's cable is led to the bow wherever it stands. Runs after the game has placed the ghost and found
+    /// <see cref="KwGearClimb"/>): off one they are refused. They may face any way; the windlass's cable is led over the side nearest it wherever it stands (<see cref="KwAnchorPlan"/>). Runs after the game has placed the ghost and found
     /// it valid.
     /// </summary>
     [HarmonyPatch(typeof(Player), "UpdatePlacementGhost")]
