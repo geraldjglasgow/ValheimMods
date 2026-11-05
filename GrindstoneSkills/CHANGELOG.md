@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.21.0
+
+- Russian translation, used while the game's language is Russian.
+
 ## 0.20.5
 
 - Ukrainian translation updated: Fog Lift, diving and Water Builder now in Ukrainian, with reworded lines throughout.
