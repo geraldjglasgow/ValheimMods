@@ -36,17 +36,18 @@ namespace Broadside
         /// <summary>
         /// Whether anyone is aboard: in the game's onboard trigger (round the hull to 25 m over its sheer, KwShipFittings.Aloft,
         /// <see cref="KwShipFittings"/>), or over the hull's plan higher up (on a cabin's roof, up a mast, <see cref="Over"/>),
-        /// as this game sees the players.
+        /// as this game sees the players; the game's count made true first (<see cref="KwShipAboard"/>).
         /// </summary>
         public static bool Aboard(Ship ship, KwBpHull? hull)
         {
+            KwShipAboard.Prune(ship);
             if (ship.m_players.Count > 0)
                 return true;
             if (hull == null)
                 return false;
             foreach (Player player in Player.GetAllPlayers())
             {
-                if (player != null && Over(ship.transform.InverseTransformPoint(player.transform.position), hull))
+                if (player != null && !player.IsDead() && Over(ship.transform.InverseTransformPoint(player.transform.position), hull))
                     return true;
             }
             return false;

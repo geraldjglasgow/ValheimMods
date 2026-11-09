@@ -8,7 +8,7 @@ namespace Broadside
     /// <summary>
     /// Drives the ship panel from the HUD's own object (added at Hud.Awake): while the local player is aboard a launched
     /// Broadside ship (<c>KW_ship</c>, built: its <see cref="KwSeaShip"/>), alive and with the large map closed, it builds
-    /// the panel the first time, shows it, tests the hover every frame and measures and redraws it four times a second
+    /// the panel the first time, shows it (unless the player's own .cfg turns it off, <see cref="KwSettings.ShipPanel"/>), tests the hover every frame and measures and redraws it four times a second
     /// (<see cref="KwShipPanelLines"/>); aboard any Broadside ship it keeps ShipConfig's panel off screen
     /// (<see cref="KwShipConfigPanel"/>). Runs in LateUpdate, after ShipConfig's own Update has shown its panel. Everything
     /// here is the local player's own view, read from synced state; nothing is networked, and a dedicated server has no HUD.
@@ -55,7 +55,7 @@ namespace Broadside
                 shipConfig.Hide(hudRoot);
             else
                 shipConfig.Restore();
-            bool show = sea != null && ship != null && Shown();
+            bool show = KwSettings.ShipPanel && sea != null && ship != null && Shown();
             if (show && view == null && hudRoot != null)
                 view = KwShipPanelView.Create(hudRoot);
             if (view == null)

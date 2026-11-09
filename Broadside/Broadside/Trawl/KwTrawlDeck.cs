@@ -10,9 +10,11 @@ namespace Broadside
     /// game's items slide off a moving deck and Broadside's riders are pieces, so the fish's ZDO records its ship's own id
     /// (<see cref="ShipKey"/>, the ship's <c>kw_ship_uid</c>), its place and turn in the ship's frame (<see cref="PosKey"/>,
     /// <see cref="RotKey"/>) and its fall out of the bag (<see cref="FallKey"/> metres from <see cref="AtKey"/>, the network
-    /// clock), written once by the game that made it. Each peer holds the fish still (its body kinematic and out of the
-    /// physics, which still finds it for the hover and the game's pickup; its synced transform off) and puts it where the
-    /// ship is drawn every frame, falling at first; moved by the game (drawn to a player picking it up) it keeps where it
+    /// clock), written once by the game that made it. Each peer holds the fish still (its body kinematic, its synced
+    /// transform off) and puts it where the ship is drawn every frame, falling at first. Its colliders stay on, so the
+    /// game's hover, pickup and autopickup find it, but pass through its own ship's (<see cref="Ignore"/>), so it never
+    /// pushes the ship (a player's report, 2026-11-04: the catch lay on the deck and could not be picked up, "they seem
+    /// decorative"); it is dead (<see cref="KwTrawlDead"/>), so it lies still and counts as out of the water; moved by the game (drawn to a player picking it up) it keeps where it
     /// was moved to. Its owner keeps its ZDO's place with the ship once a second, so it loads and unloads with the ship;
     /// with the ship not in its scene it follows the ship's ZDO found near; with the ship gone for good (destroyed, or
     /// nowhere near for a minute, <see cref="KwShipRiderRules.Released"/>) it is let go as an ordinary item where it is.
@@ -26,6 +28,7 @@ namespace Broadside
         private const float LookEvery = 0.5f, KeepEvery = 1f, Metres = 0.5f, Gravity = 9.81f;
 
         private ZNetView? view;
+        private KwShipRiders? ignored;
         private Rigidbody? body;
         private ZSyncTransform? sync;
         private RigidbodyInterpolation smoothing;
@@ -62,14 +65,14 @@ namespace Broadside
             Hold();
         }
 
-        // Held still: no physics of its own (nor touching the ship's), no synced transform; drawn where the ship has it.
+        // Held still: no physics of its own, no synced transform; drawn where the ship has it.
         private void Hold()
         {
             if (body != null)
             {
                 smoothing = body.interpolation;
                 body.interpolation = RigidbodyInterpolation.None;
-                (body.isKinematic, body.detectCollisions) = (true, false);
+                (body.isKinematic, body.detectCollisions) = (true, true);
             }
             if (sync != null && sync.enabled)
                 (synced, sync.enabled) = (true, false);
@@ -114,7 +117,10 @@ namespace Broadside
             if (ship == null || ship.Zdo == null)
                 ship = KwShipRiders.Find(id);
             if (ship != null)
+            {
                 missing = Time.time;
+                Ignore(ship);
+            }
             if (zdo.IsOwner() && Time.time >= nextKeep)
                 Keep(zdo);
         }
@@ -152,6 +158,23 @@ namespace Broadside
             return true;
         }
 
+        // Its colliders pass through its ship's (once per ship found): held where the deck is, it must never push the ship.
+        private void Ignore(KwShipRiders found)
+        {
+            if (ignored == found)
+                return;
+            ignored = found;
+            Collider[] own = GetComponentsInChildren<Collider>(), hull = found.GetComponentsInChildren<Collider>();
+            foreach (Collider mine in own)
+            {
+                foreach (Collider part in hull)
+                {
+                    if (mine != null && part != null && !part.isTrigger)
+                        Physics.IgnoreCollision(mine, part, true);
+                }
+            }
+        }
+
         private bool AreaReady() => ZNetScene.instance != null && ZNetScene.instance.IsAreaReady(transform.position);
 
         // An ordinary item again where it is: its body and synced transform back.
@@ -162,6 +185,7 @@ namespace Broadside
                 (body.isKinematic, body.detectCollisions) = (false, true);
                 body.interpolation = smoothing;
             }
+
             if (sync != null && synced)
                 sync.enabled = true;
             Destroy(this);

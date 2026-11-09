@@ -10,7 +10,8 @@ namespace Broadside
     /// seats, colliders and its chest: a Broadside ship has no hold). <see cref="KwShipBody"/> builds the rest from the
     /// blueprint its ZDO carries. Never in the hammer itself: a saved ship's entry makes it (<see cref="KwShipLaunch"/>).
     /// Its piece costs nothing: the hammer took the ship's cost (<see cref="KwBpCost"/>), and gives it back in floating
-    /// crates when the ship is broken up with the hammer (<see cref="KwShipBreak"/>); destroyed, it plays no karve's wreck.
+    /// crates when the ship is broken up with the hammer (<see cref="KwShipBreak"/>) or wrecked (<see cref="KwShipWreck"/>);
+    /// destroyed, it plays no karve's wreck.
     /// </summary>
     public static class KwShipPrefab
     {
@@ -46,6 +47,7 @@ namespace Broadside
             Quiet(copy.transform.Find("SurfaceEffects/SpeedWake"));
             copy.AddComponent<KwShipBody>();
             copy.AddComponent<KwShipRiders>();
+            copy.AddComponent<KwShipAboard>();
             return copy;
         }
 

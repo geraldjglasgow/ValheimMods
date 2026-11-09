@@ -14,11 +14,15 @@ namespace Broadside
     /// <item>fire hurts it less (<see cref="Fire"/>, its wear's fire modifier): the karve's own for Meadows and Black Forest,
     /// slightly resistant for Swamp and Mountains, resistant for Plains and Mistlands, very resistant for Ashlands.</item>
     /// </list>
+    /// A ship set Ashlands-ready on <c>KW_ship</c> itself (ShipConfig) stays so whatever its hull.
     /// Set from the stats on every peer (the burning and the hits land on the ship's owner); the helm's hover lists them
     /// with the cargo and the anchor (<see cref="KwShipCard"/>).
     /// </summary>
     public sealed class KwShipPerks : MonoBehaviour
     {
+        private static ZNetScene? scene;
+        private static Ship? prefab;
+
         private static readonly float[] Burns = { 1f, 1f, 0.9f, 0.8f, 0.6f, 0.35f, 0f };
 
         private static readonly HitData.DamageModifier?[] Fires =
@@ -52,10 +56,22 @@ namespace Broadside
             if (!ship.TryGetComponent(out KwShipPerks perks))
                 perks = ship.gameObject.AddComponent<KwShipPerks>();
             (perks.Share, perks.Tier, perks.Health) = (stats.AshlandsBurn, stats.Materials, stats.Health);
-            ship.m_ashlandsReady = perks.Share <= 0.001f;
+            ship.m_ashlandsReady = perks.Share <= 0.001f || PrefabReady();
             if (wear != null && stats.Fire is HitData.DamageModifier fire)
                 wear.m_damages.m_fire = fire;
             perks.FireModifier = wear != null ? wear.m_damages.m_fire : HitData.DamageModifier.Normal;
+        }
+
+        // Whether KW_ship's own Ship is Ashlands-ready (ShipConfig's AshlandsOceanDamage off writes it there and on the loaded
+        // ships; read again here, as every load and edit at sea sets the field).
+        private static bool PrefabReady()
+        {
+            if (scene != ZNetScene.instance || prefab == null)
+            {
+                scene = ZNetScene.instance;
+                prefab = scene != null ? scene.GetPrefab(KwShipPrefab.Name)?.GetComponent<Ship>() : null;
+            }
+            return prefab != null && prefab.m_ashlandsReady;
         }
 
         /// <summary>The share of the Ashlands sea's burning a ship takes: its perks', or all of it.</summary>

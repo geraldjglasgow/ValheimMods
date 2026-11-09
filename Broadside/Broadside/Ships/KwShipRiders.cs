@@ -111,6 +111,7 @@ namespace Broadside
             KwBodyMass kept = KwBodyMass.Of(body);
             rider.transform.SetParent(transform, false);
             rider.transform.SetLocalPositionAndRotation(local, turn);
+            KwShipRiderTriggers.Own(rider.gameObject);
             kept.Put(body);
             if (!riders.Contains(rider))
                 riders.Add(rider);

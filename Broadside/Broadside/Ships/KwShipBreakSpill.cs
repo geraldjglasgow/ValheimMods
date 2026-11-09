@@ -34,6 +34,22 @@ namespace Broadside
             return Fill(body.transform, body.Hull ?? KwBpHull.Measure(blueprint), crate, items, zdo.IsCheated());
         }
 
+        /// <summary>
+        /// On the owner of a ship wrecked (sunk, or destroyed by damage; <see cref="KwShipWreck"/>): its cost packed into crates
+        /// along it, as a sunk game ship gives back its own; its riders and hung shields drop where they were on their own
+        /// (<see cref="KwShipRiderBreak.Wreck"/>, <see cref="KwShipShields"/>). How many crates were made.
+        /// </summary>
+        public static int Wreck(KwShipBody body)
+        {
+            ZDO zdo = body.GetComponent<ZNetView>().GetZDO();
+            KwBlueprint? blueprint = body.Blueprint ?? KwShipData.Unpack(zdo.GetString(KwShipBody.Key));
+            GameObject? crate = ZNetScene.instance != null ? ZNetScene.instance.GetPrefab(Crate) : null;
+            if (blueprint == null || crate == null)
+                return 0;
+            List<ItemDrop.ItemData> items = Materials(body.GetComponent<Piece>(), blueprint);
+            return Fill(body.transform, body.Hull ?? KwBpHull.Measure(blueprint), crate, items, zdo.IsCheated());
+        }
+
         // The shields hung on the railings, in hook order; one that does not read in this game is left out, as its drop would be.
         private static List<ItemDrop.ItemData> Shields(ZDO zdo)
         {

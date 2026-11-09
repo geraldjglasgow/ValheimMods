@@ -1,5 +1,15 @@
 # Changelog
 
+## 0.7.0
+
+- A ship that sinks or is destroyed gives back what it cost in floating crates.
+- `ShowShipPanel` hides the ship panel on your own screen.
+- Fixed: a ship left behind could no longer be broken up ("Everyone must leave the ship first").
+- Fixed: the ship panel stayed on screen after leaving the ship.
+- Fixed: players near a hammock aboard counted as on the ship.
+- Fixed: ShipConfig's health and Ashlands settings no longer revert on Broadside ships; the helm card shows them.
+- Trawl: the catch lands dead and can be picked up.
+
 ## 0.6.0
 
 - Dock tool: level piers on pilings in wood, core wood or fine wood, branching off existing docks.

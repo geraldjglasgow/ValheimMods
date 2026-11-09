@@ -53,6 +53,9 @@ namespace Broadside
         private static KwShipRiders? Aboard(Player player)
         {
             Ship? local = Ship.GetLocalShip();
+            if (local != null)
+                KwShipAboard.Prune(local);
+            local = Ship.GetLocalShip();
             KwShipRiders? found = local != null ? local.GetComponent<KwShipRiders>() : null;
             if (found != null)
                 return found;

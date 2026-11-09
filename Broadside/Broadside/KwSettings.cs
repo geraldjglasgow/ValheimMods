@@ -7,14 +7,18 @@ namespace Broadside
     /// Broadside's .cfg (<c>BepInEx/config/milkyteam.broadside.cfg</c>), written at startup, hot reloaded on edit and bound
     /// to the server's values through Charter: the lock, and whether any piece is built on a launched ship
     /// (<see cref="KwShipRiderRules"/>; 2026-11-01, from a player's wish to "build on these boats like any other structure.
-    /// I want to live on board one of these beauties!").
+    /// I want to live on board one of these beauties!"); and, each player's own and never synced, whether the ship panel
+    /// shows (<see cref="KwShipPanelHud"/>; 2026-11-09, a player's wish for "an on/off toggle").
     /// </summary>
     public static class KwSettings
     {
-        private static ConfigEntry<bool>? buildingOnShips;
+        private static ConfigEntry<bool>? buildingOnShips, shipPanel;
 
         /// <summary>Whether players build any piece on a launched ship, not only ship cannons (the server's value while it binds).</summary>
         public static bool BuildingOnShips => buildingOnShips?.Value ?? false;
+
+        /// <summary>Whether this player's screen shows the ship panel aboard a launched ship (each player's own, never synced).</summary>
+        public static bool ShipPanel => shipPanel?.Value ?? true;
 
         public static void Bind(SyncedConfiguration config)
         {
@@ -24,6 +28,9 @@ namespace Broadside
                 "When on, players build any piece on a launched ship (walls, floors, roofs, chests, beds, workbenches, decorations, " +
                 "other mods' pieces), and it sails with the ship. When off, only ship cannons are built there. Pieces already on a " +
                 "ship stay either way.");
+            shipPanel = config.Bind("Ship panel", "ShowShipPanel", true,
+                "Your own screen only. When on, the ship panel (speed, health, explore radius, the guns' reloads) shows under the " +
+                "minimap while you are aboard a launched ship. When off, it stays hidden.", synced: false);
         }
     }
 }

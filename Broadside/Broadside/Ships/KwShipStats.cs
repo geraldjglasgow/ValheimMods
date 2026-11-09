@@ -78,7 +78,7 @@ namespace Broadside
         {
             Trim(ship);
             if (wear != null)
-                Cap(wear, KwShipTrim.Of(ship));
+                KwShipTrim.Of(ship).Hold();
             KwShipPerks.Apply(ship, wear, this);
         }
 
@@ -96,17 +96,6 @@ namespace Broadside
             trim.Helm = Mathf.Max(Steering, 0.6f) / KarveHelm;
             trim.Health = Health;
             (ship.GetComponent<KwShipWind>() ?? ship.gameObject.AddComponent<KwShipWind>()).Mix = Mix;
-        }
-
-        // The ship's full health; its owner brings a stored health above it down to it (ships launched before the health
-        // was brought in line with the game's ships kept their old, larger health).
-        private static void Cap(WearNTear wear, KwShipTrim trim)
-        {
-            trim.Hold();
-            float full = wear.m_health;
-            ZDO? zdo = wear.m_nview != null && wear.m_nview.IsValid() && wear.m_nview.IsOwner() ? wear.m_nview.GetZDO() : null;
-            if (zdo != null && zdo.GetFloat(ZDOVars.s_health, full) > full)
-                zdo.Set(ZDOVars.s_health, full);
         }
 
         // The hull's speed against the karve's: size × beam × height × materials × rudder (no rudder counts as Meadows').

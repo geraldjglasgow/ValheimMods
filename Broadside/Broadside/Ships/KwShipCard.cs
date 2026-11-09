@@ -41,8 +41,11 @@ namespace Broadside
         private static string Lines(KwShipPerks perks)
         {
             StringBuilder text = new StringBuilder("\n" + Grey);
-            text.Append($"{TierName(perks.Tier)} hull: {perks.Health:0} health, {Fire(perks.FireModifier)}");
-            text.Append("\nAshlands sea: " + (perks.Share <= 0.001f ? "does not burn it" : perks.Share >= 0.999f ? "burns it" : $"burns it {perks.Share * 100f:0}% as much"));
+            // the full health as it is held (KwShipTrim.Hold: other mods' and the world's share in), not the build's alone
+            float health = perks.TryGetComponent(out WearNTear wear) ? wear.m_health : perks.Health;
+            text.Append($"{TierName(perks.Tier)} hull: {health:0} health, {Fire(perks.FireModifier)}");
+            bool ready = perks.TryGetComponent(out Ship ship) && ship.m_ashlandsReady;
+            text.Append("\nAshlands sea: " + (ready || perks.Share <= 0.001f ? "does not burn it" : perks.Share >= 0.999f ? "burns it" : $"burns it {perks.Share * 100f:0}% as much"));
             KwShipCargo? cargo = perks.GetComponent<KwShipCargo>();
             if (cargo != null)
                 text.Append($"\nCargo {cargo.Load:0} of {cargo.Most:0} kg" + (cargo.Overloaded ? ": overloaded" : ""));

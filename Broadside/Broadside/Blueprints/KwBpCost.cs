@@ -20,8 +20,8 @@ namespace Broadside
     /// so the piece carries only as many as it can show (<see cref="Split"/>) and the rest are checked and taken at the
     /// click (<see cref="KwBpPlace"/>) the game's way (<see cref="KwGamePay"/>: nearby chests count where a mod lets them),
     /// however many kinds of item the ship needs. The game recovers none of it (the
-    /// requirements are not recovered); a launched ship broken up with the hammer gives all of it back in floating crates
-    /// (<see cref="KwShipBreakSpill"/>).
+    /// requirements are not recovered); a launched ship broken up with the hammer or wrecked gives all of it back in floating
+    /// crates (<see cref="KwShipBreakSpill"/>, <see cref="KwShipWreck"/>).
     /// </summary>
     public static class KwBpCost
     {

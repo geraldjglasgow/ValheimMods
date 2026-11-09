@@ -5,7 +5,7 @@ namespace Broadside
 {
     /// <summary>
     /// The catch onto the deck, on the winch's owner only (one game spawns the fish, so each is made once): each fish in
-    /// the net is the game's own fish item, made as a networked item under the bag where it hangs with the davit swung
+    /// the net is the game's own fish item, dead (<see cref="KwTrawlDead"/>), made as a networked item under the bag where it hangs with the davit swung
     /// in (spread round it a little), standing on whatever of its ship is under it (a ray where the ship's colliders are,
     /// carried to its frame; else the winch's own deck), marked as riding that ship from there (<see cref="KwTrawlDeck"/>:
     /// the ship's own id, its place and turn in the ship's frame, how far it falls and when), so every peer draws it falling
@@ -67,6 +67,7 @@ namespace Broadside
             GameObject made = Object.Instantiate(prefab, world, rot);
             ZDO? zdo = made.GetComponent<ZNetView>()?.GetZDO();
             ItemDrop.OnCreateNew(made);
+            KwTrawlDead.Mark(made, zdo);
             if (zdo == null)
                 return;
             KwTrawlDeck.Mark(zdo, ship.Id, local, turn, fall, at);
@@ -77,8 +78,11 @@ namespace Broadside
         private static void Loose(string name, Vector3 at)
         {
             GameObject? prefab = Fish(name);
-            if (prefab != null)
-                ItemDrop.OnCreateNew(Object.Instantiate(prefab, at, Quaternion.Euler(0f, Random.Range(0f, 360f), 90f)));
+            if (prefab == null)
+                return;
+            GameObject made = Object.Instantiate(prefab, at, Quaternion.Euler(0f, Random.Range(0f, 360f), 90f));
+            ItemDrop.OnCreateNew(made);
+            KwTrawlDead.Mark(made, made.GetComponent<ZNetView>()?.GetZDO());
         }
 
         private static GameObject? Fish(string name)

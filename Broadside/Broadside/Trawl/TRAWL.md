@@ -44,7 +44,10 @@ first, English words in the code).
   sheave, bunching up and hanging bag down. **Landing** (6.6 s): the davit swings in over the deck (2 s), the bag hangs
   there, opens and shakes (the fish fall out at 2.4 s), is wound onto the drum (to 5 s) and the davit swings back out:
   stowed. The fish lie on the deck under the bag (spread 0.45 m round it), each the game's own item, picked up with E
-  or the game's auto pickup, and they stay where they lie however the ship sails (below).
+  or the game's auto pickup, and they stay where they lie however the ship sails (below). They are dead (2026-11-04, the
+  user: "the fish need to be dead coming out of the net"; `KwTrawlDead`, the ZDO key `bs_catch_dead`): the game's fish
+  behaviour and animation off, always out of the water for the pickup. Their colliders stay on, passing through their
+  own ship's (they were off in 0.6.0, and a player found the catch could not be picked up: "they seem decorative").
 
 ## Contract (the net's model)
 

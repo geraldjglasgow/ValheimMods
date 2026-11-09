@@ -10,13 +10,14 @@ namespace Broadside
     /// values for <c>KW_ship</c> from the start and when changed live, a talent or skill raising the sail force for a
     /// step (a player's report, 2026-11-04: ShipConfig's speed took only on the ship they stood on, after a live edit, and
     /// Path of Valheiman's sailing talents not at all). The ship's health is held the same way, as its build's times
-    /// <c>KW_ship</c>'s against the karve's (<see cref="Hold"/>).
+    /// the health set on it against the karve's (<see cref="Hold"/>).
     /// </summary>
     public sealed class KwShipTrim : MonoBehaviour
     {
-        private static ZNetScene? scene;
-        private static WearNTear? prefabWear;
         private WearNTear? wear;
+
+        // The full health last written here, and the karve-sized health it stands for (Hold).
+        private float written = float.NaN, basis = KwShipStats.KarveHealth;
 
         /// <summary>The sails' push, the drag along the ship and the steering against the karve's; the helm's swing.</summary>
         public float Sail { get; set; } = 1f;
@@ -56,25 +57,31 @@ namespace Broadside
             }
         }
 
-        /// <summary>The full health its build gives times <c>KW_ship</c>'s against the karve's, put back when anything set another.</summary>
+        /// <summary>
+        /// The full health its build gives, times the karve-sized health set on this ship against the karve's: its copy of
+        /// <c>KW_ship</c>'s, as ShipConfig (with the world's level) and a skill's bonus leave it as it loads, or whatever
+        /// another mod writes there later (a live ShipConfig edit), taken as that health in turn (a player's report,
+        /// 2026-11-09: the ships "keep reverting to their original stats"; the health was put back from the prefab every
+        /// step). The stored health's share is worked out again when the full health moves.
+        /// </summary>
         public void Hold()
         {
             if (wear == null)
                 return;
-            float full = Health * HealthShare();
+            if (!Mathf.Approximately(wear.m_health, written))
+                basis = Mathf.Max(0f, wear.m_health);
+            float full = Health * basis / KwShipStats.KarveHealth;
             if (!Mathf.Approximately(wear.m_health, full))
-                wear.m_health = full;
+                Put(wear, full);
+            written = full;
         }
 
-        // KW_ship's health against the karve's (1 unless something such as ShipConfig set the prefab's).
-        private static float HealthShare()
+        private static void Put(WearNTear wear, float full)
         {
-            if (scene != ZNetScene.instance || prefabWear == null)
-            {
-                scene = ZNetScene.instance;
-                prefabWear = scene != null ? scene.GetPrefab(KwShipPrefab.Name)?.GetComponent<WearNTear>() : null;
-            }
-            return prefabWear != null ? Mathf.Max(0f, prefabWear.m_health) / KwShipStats.KarveHealth : 1f;
+            wear.m_health = full;
+            ZNetView view = wear.m_nview;
+            if (full > 0f && view != null && view.IsValid())
+                wear.m_healthPercentage = Mathf.Clamp01(view.GetZDO().GetFloat(ZDOVars.s_health, full) / full);
         }
     }
 }

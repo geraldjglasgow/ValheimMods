@@ -150,7 +150,7 @@ namespace Broadside
             int shown = entry.Prefab.GetComponent<Piece>().m_resources.Length;
             string rest = entry.Rest.Count > 0 ? $" (the slots show the first {shown}; the rest is taken too when it is placed)" : "";
             return $"Costs {KwBpCost.Words(entry.Cost)}{rest}. A saved ship: {blueprint.Pieces.Count} pieces, {entry.Hull.Length:0.#} m long, " +
-                "built on the water near a workbench. Broken up with the hammer near a workbench, it gives its cost back in floating crates.";
+                "built on the water near a workbench. Broken up with the hammer near a workbench, or sunk, it gives its cost back in floating crates.";
         }
 
         /// <summary>Every entry without its own icon has its look made, and its icon rendered and kept (the hammer was taken up).</summary>
