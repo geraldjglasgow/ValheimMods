@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.7.1
+
+- Fixed: creatures beside a launched ship that cannot reach you (leeches, boarding pirates) no longer drop the game to a few frames a second.
+
 ## 0.7.0
 
 - A ship that sinks or is destroyed gives back what it cost in floating crates.

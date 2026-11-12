@@ -95,6 +95,7 @@ namespace Broadside
             Manual(GetComponent<Rigidbody>());
             Step("Broadside ship colliders", () => KwShipColliders.Add(transform.Find(KwShipPrefab.Colliders), blueprint));
             Step("Broadside ship tuning", () => KwShipTuning.Apply(transform, blueprint, hull));
+            Step("Broadside ship target", () => KwShipTarget.Add(transform, hull));
             yield return true;
             foreach (bool step in KwShipFittings.Steps(transform, blueprint, hull))
                 yield return step;
