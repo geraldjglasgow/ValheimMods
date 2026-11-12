@@ -6,13 +6,14 @@ using UnityEngine;
 namespace Broadside
 {
     /// <summary>
-    /// A launched ship as something a creature attacks, answered cheaply (a player's report, 2026-11-08: leeches by a
-    /// moored ship and pirates coming up to one took the creatures' owner down to 5 frames a second, until one died or
-    /// got aboard). A creature that cannot reach its enemy turns on what players built near it, and a ship is one piece
-    /// (the game's <c>StaticTarget</c>): twenty times a second the game asked for the ship's nearest point by measuring
-    /// every collider it has (<c>StaticTarget.FindClosestPoint</c>) and whether it sees it by looking each thing in the
-    /// way up in the list of them all (<c>BaseAI.CanSeeTarget</c>; every two seconds that once for each of up to 128
-    /// colliders near the creature). The game's ships have a dozen colliders; ours has thousands of boxes.
+    /// A launched ship as something a creature attacks, answered cheaply (found on the way to a player's report,
+    /// 2026-11-08, of frame drops with leeches or pirates by a ship; the drops themselves were the ship's sync,
+    /// <see cref="KwShipSync"/>). A creature that cannot reach its enemy turns on what players built near it, and a ship
+    /// is one piece (the game's <c>StaticTarget</c>): twenty times a second the game asked for the ship's nearest point
+    /// by measuring every collider it has (<c>StaticTarget.FindClosestPoint</c>: measured 0.3 ms a call at 2300
+    /// colliders, 1.1 ms at 8500) and whether it sees it by looking each thing in the way up in the list of them all
+    /// (<c>BaseAI.CanSeeTarget</c>; every two seconds that once for each of up to 128 colliders near the creature). The
+    /// game's ships have a dozen colliders; ours has thousands of boxes.
     /// Here the nearest point is taken from the few boxes round the asker (<see cref="Closest"/>), or far off from the
     /// hull's own box; a thing in the way is the ship's when it is of the ship's body (<see cref="Seen"/>, asked once a
     /// step by a creature); and the ship's middle is the hull box's, set once, so the game never lists the colliders.

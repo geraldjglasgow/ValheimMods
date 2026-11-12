@@ -1,8 +1,12 @@
 # Changelog
 
+## 0.7.2
+
+- Fixed: multiplayer frame drops near a launched ship, worst while it rocked, sailed or a creature pushed it.
+
 ## 0.7.1
 
-- Fixed: creatures beside a launched ship that cannot reach you (leeches, boarding pirates) no longer drop the game to a few frames a second.
+- Creatures attacking a launched ship cost less.
 
 ## 0.7.0
 

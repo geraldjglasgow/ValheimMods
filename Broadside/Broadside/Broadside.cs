@@ -19,7 +19,7 @@ namespace Broadside
     {
         public const string PluginGuid = "milkyteam.broadside";
         public const string PluginName = "Broadside";
-        public const string PluginVersion = "0.7.1";
+        public const string PluginVersion = "0.7.2";
 
         private void Awake()
         {

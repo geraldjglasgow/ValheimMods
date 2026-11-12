@@ -48,6 +48,7 @@ namespace Broadside
             copy.AddComponent<KwShipBody>();
             copy.AddComponent<KwShipRiders>();
             copy.AddComponent<KwShipAboard>();
+            copy.AddComponent<KwShipSync>();
             return copy;
         }
 
