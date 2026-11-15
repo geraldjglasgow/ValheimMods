@@ -56,7 +56,7 @@ namespace EliteCreaturesReborn.Runtime
                 enabled = false;
                 return;
             }
-            _isBoss = _character.IsBoss();
+            _isBoss = PrefabBoss.Is(_character); // another mod's stand-in boss (an Epic Loot bounty) scales as its kind
             if (LeftAsShipped())
             {
                 enabled = false;
@@ -190,6 +190,7 @@ namespace EliteCreaturesReborn.Runtime
             CreatureTraits fresh = _forced ?? RollFor(biome);
             TraitStore.Save(zdo, fresh);
             TraitStore.SetBiome(zdo, biome);
+            OutsideHealth.Measure(_character, zdo, rolled: _forced == null && _forcedDraw == null); // before the park
             if (!RuleState.Active.KeepsLevel(fresh, _isBoss))
             {
                 GameLevel.Park(_character, zdo);

@@ -87,7 +87,7 @@ namespace EliteCreaturesReborn.Loot
 
         /// <summary>A boss that died in its own right; never a Phantom copy, whose drops are off anyway.</summary>
         private static bool Pays(EliteController controller) =>
-            controller.Creature != null && controller.Creature.IsBoss() && !controller.Traits.PhantomCopy;
+            PrefabBoss.Is(controller.Creature) && !controller.Traits.PhantomCopy;
 
         /// <summary>Each distinct trophy in the boss's own table that no `drop overrides` row names.</summary>
         private static List<GameObject> TableTrophies(CharacterDrop drop, HashSet<string>? overridden)

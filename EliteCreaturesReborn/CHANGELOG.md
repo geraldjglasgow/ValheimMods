@@ -1,5 +1,11 @@
 # Changelog
 
+## 3.36.1
+
+- Fixed: Epic Loot bounty bosses and minions keep Epic Loot's extra health and roll stars as their kind, not as bosses.
+- The bosses' `star power` lines apply only to real bosses again.
+- Fixed: hotkeys work right after closing the console.
+
 ## 3.36.0
 
 - Altar window: choosing Bountiful lets you pick its two extra aspects; any left on Random still roll.

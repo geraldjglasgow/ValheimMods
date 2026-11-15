@@ -63,7 +63,7 @@ namespace EliteCreaturesReborn.Runtime
 
         // An arena boss (Hel's Trial) never counts: the world's own fights are what lean the next one.
         private static bool Counts(Character victim, CreatureTraits traits, ZDO zdo) =>
-            victim.IsBoss() && !traits.PhantomCopy && !Arena.Trial.ArenaTag.IsArena(zdo)
+            PrefabBoss.Is(victim) && !traits.PhantomCopy && !Arena.Trial.ArenaTag.IsArena(zdo)
             && !(traits.HasAspect(Aspect.Tethered) && TetherPair.Standing(AspectStore.GetTether(zdo)));
 
         private static void Write(string bossPrefab)

@@ -26,7 +26,7 @@ namespace EliteCreaturesReborn.Loot
 
         /// <summary>The engine's aspect factor: <see cref="Factor"/> for a boss or a creature carrying an aspect, else 1.</summary>
         public static float Paid(EliteController controller) =>
-            controller.Traits.AnyAspect || (controller.Creature != null && controller.Creature.IsBoss()) ? Factor(controller) : 1f;
+            controller.Traits.AnyAspect || PrefabBoss.Is(controller.Creature) ? Factor(controller) : 1f;
 
         /// <summary>What a fight pays: the headline's multiplier (`none`'s for the plain fight) times each extra's own.</summary>
         public static float FactorOf(BossAspects aspects, AspectRules rules)

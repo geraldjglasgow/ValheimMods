@@ -37,6 +37,15 @@ level in a `Ragdoll.SpawnLoot` postfix (not sooner: a waking corpse's looks come
 drops at once has `m_level` raised for the `CharacterDrop.OnDeath` postfixes and put back by a finalizer. A prefix that
 reads the level (Hearthhold's meat star odds) still sees 1.
 
+**Other mods' bosses and health.** A boss is a boss by its prefab (`Runtime/PrefabBoss.cs`): a creature another mod
+made a boss on the spot (Epic Loot's bounty targets set `m_boss` on the creature, not its prefab) rolls, scales and
+drops as its kind - its biome's stars and mutations, no boss table, aspect, boss trophies, rewards or kill count. The
+game's `IsBoss` still keeps it from Devouring and Howling and gives it the boss's bar. Health another mod gave a
+creature before this mod rolled it (Epic Loot: bounty targets x2 or x3, their minions x1.5) is measured once by the
+owner on the fresh roll against the game's maximum for its level, kept in `ecr_outside_health` when not 1, and
+multiplied into this mod's health on every load (`Scaling/OutsideHealth.cs`); `elite inspect` shows it. Up to 3.36.0 a
+bounty boss rolled on the boss table and lost Epic Loot's health (Discord, 2026-11-13).
+
 **Stars.** The most stars a creature can have:
 
 | Difficulty | Biome you're entering | Each boss killed after a biome | Ocean |

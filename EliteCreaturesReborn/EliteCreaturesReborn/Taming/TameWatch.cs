@@ -25,7 +25,7 @@ namespace EliteCreaturesReborn.Taming
         public static void Track(EliteController controller)
         {
             Character creature = controller.Creature;
-            if (!creature.IsBoss())
+            if (!PrefabBoss.Is(creature))
             {
                 Applied[controller] = TameStrip.Of(controller.View.GetZDO());
             }

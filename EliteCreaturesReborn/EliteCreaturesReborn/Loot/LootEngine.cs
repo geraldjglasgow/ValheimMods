@@ -89,7 +89,7 @@ namespace EliteCreaturesReborn.Loot
                 Loot = loot,
                 Rule = FindRule(controller),
                 Stars = controller.Traits.Stars,
-                IsBoss = controller.Creature != null && controller.Creature.IsBoss(),
+                IsBoss = PrefabBoss.Is(controller.Creature),
                 AspectMultiplier = AspectLoot.Paid(controller), // a creature given an aspect through the API pays it too
                 GildedMultiplier = GildedLoot.Factor(controller),
             };

@@ -1,4 +1,5 @@
 using EliteCreaturesReborn.Config;
+using EliteCreaturesReborn.Runtime;
 using EliteCreaturesReborn.Traits;
 
 namespace EliteCreaturesReborn.Taming
@@ -19,7 +20,7 @@ namespace EliteCreaturesReborn.Taming
         /// <summary>What the settings take from this creature now: nothing unless it is tamed, and never from a boss.</summary>
         public static int Wanted(Character creature)
         {
-            if (!creature.IsTamed() || creature.IsBoss())
+            if (!creature.IsTamed() || PrefabBoss.Is(creature))
             {
                 return 0;
             }

@@ -18,7 +18,7 @@ namespace EliteCreaturesReborn.Runtime
         public static CreatureTraits For(Character creature, Heightmap.Biome biome)
         {
             string prefab = Utils.GetPrefabName(creature.gameObject);
-            if (creature.IsBoss())
+            if (PrefabBoss.Is(creature)) // another mod's stand-in boss rolls as its kind
             {
                 // a registered boss's aspects come through its draw (AspectRoller reads the registration)
                 return WithMutations(creature, prefab, BossDraw.Roll(prefab, BossKills.StarBoost(prefab)).ToTraits());

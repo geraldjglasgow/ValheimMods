@@ -82,7 +82,7 @@ namespace EliteCreaturesReborn.Loot
         {
             reward = default;
             Character? boss = controller.Creature;
-            return RuleState.Active.Boss.Rewards && boss != null && boss.IsBoss() && !controller.Traits.PhantomCopy
+            return RuleState.Active.Boss.Rewards && boss != null && PrefabBoss.Is(boss) && !controller.Traits.PhantomCopy
                 && Table.TryGetValue(Utils.GetPrefabName(controller.gameObject), out reward);
         }
 

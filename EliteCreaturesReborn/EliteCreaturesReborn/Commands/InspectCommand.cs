@@ -44,13 +44,14 @@ namespace EliteCreaturesReborn.Commands
             EliteCommands.Reply(args, $"  stars {t.Stars} ({t.LargeGlyphs} large, {t.Stars % 5} small), biome {TraitStore.GetBiome(controller.View.GetZDO())}{(t.Tier > 0 ? $", rolled at world tier {t.Tier}" : "")}");
             TameLines(args, controller);
             EliteCommands.Reply(args, $"  health x{StatMath.HealthMultiplier(r, t) * AspectMath.HealthFactor(t):0.00}, size x{StatMath.SizeMultiplier(r, t) * AspectMath.SizeFactor(t):0.00}, move x{StatMath.MoveMultiplier(r, t, 0f):0.00}, swing x{StatMath.SwingSpeedMultiplier(r, t):0.00}, attack x{DamageMath.OutgoingMultiplier(r, t, 1f):0.00}");
-            EliteCommands.Reply(args, $"  max health {c.GetMaxHealth():0}");
+            float outside = OutsideHealth.Of(controller.View.GetZDO()); // another mod's health before the roll (Epic Loot bounties)
+            EliteCommands.Reply(args, $"  max health {c.GetMaxHealth():0}{(Mathf.Approximately(outside, 1f) ? "" : $", another mod's health x{outside:0.00} kept")}");
             foreach (Mutation m in t.Active())
             {
                 EliteCommands.Reply(args, "  " + MutationReport.Line(r, t, m));
             }
             HoldingLines(args, controller);
-            if (c.IsBoss() || t.AnyAspect) // a creature another mod gave aspects reports them as a boss does
+            if (PrefabBoss.Is(c) || t.AnyAspect) // a creature another mod gave aspects reports them as a boss does
             {
                 AspectReport.Lines(controller).ForEach(line => EliteCommands.Reply(args, "  " + line));
             }
@@ -59,7 +60,7 @@ namespace EliteCreaturesReborn.Commands
         // A creature's game stars and, once tamed, what `15 - Tamed` takes from it. Bosses keep this mod's stars when tamed.
         private static void TameLines(Terminal.ConsoleEventArgs args, EliteController controller)
         {
-            if (controller.Creature.IsBoss())
+            if (PrefabBoss.Is(controller.Creature))
             {
                 return;
             }

@@ -255,6 +255,10 @@ namespace EliteCreaturesReborn.Traits
         /// when above 1, so a tame that takes the game's stars (`15 - Tamed`) gets that level back.</summary>
         public const string GameLevel = "ecr_game_level";
 
+        /// <summary>The factor another mod put on a creature's maximum health before this mod rolled it (Epic Loot's bounty
+        /// targets), kept on top of this mod's figure; only when not 1 (<see cref="Scaling.OutsideHealth"/>).</summary>
+        public const string OutsideHealth = "ecr_outside_health";
+
         /// <summary>On a corpse: the level other mods' drops read as it spawns its loot - its creature's stars + 1, written
         /// by the owner as the game sets the corpse up, only when above the game's level (<see cref="Loot.LootLevel"/>).</summary>
         public const string LootLevel = "ecr_loot_level";
