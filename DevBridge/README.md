@@ -22,7 +22,8 @@ or a script can see the game, play it and check a mod unattended.
 - `/eval`: reads, sets or calls anything by reflection, private members too.
 - `/trace`: records each call of a game or mod method, with arguments and result.
 - `/events`: hits, deaths, spawns, boss fights and warnings, polled or streamed.
-- `/perf`, `/heap`: frame cost per mod; memory and garbage-collection hitches.
+- `/perf`, `/perf/record`, `/heap`: frame cost per mod, sampled or recorded to disk for hours; memory and garbage-collection hitches.
+- `/load`: fake players on a server, spread out or in a crowd; its frame time, sync time and bytes per player.
 - `/time`, `/burst`: slow motion and frame stepping; a run of frames on one contact sheet.
 - `/overlay`, `/hitbox`: colliders, AI senses, paths and wards drawn in the world; melee reach.
 - `/scenario`: a scripted test from a JSON file, pass or fail per step.

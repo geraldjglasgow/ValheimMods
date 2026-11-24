@@ -80,6 +80,25 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
   0 (no zoom; UI scroll views read the wheel themselves), prefix `Menu.Update` (Esc closes the window instead of
   opening the menu). Walking stays possible. Consumer: EliteCreaturesReborn (the death recap window); EarthWright's
   `Preview/PanelInputPatches` is the same rules and is to move onto it.
+- `HaloRing/`: a radial ring a mod opens itself (taken out of the HaloMenu mod on 2026-11-02; the mod itself was then deleted the same day, so EliteEquipment is the only consumer). `HaloRingMenu.Install(harmony)`
+  (once, the mod's own Harmony: this copy's WindowInput window), `new HaloRingMenu(owner, name, report)` (its canvas
+  `"<owner> Ring [<name>]"`), `Style` (`HaloRingStyle`: radii, gap, start angle, dead zone, icons, UI scale, hover look,
+  colours, centre label, gamepad stick; the retired HaloMenu's look by default; `TopFirst(n)`), `Open(items, segmentCount)`
+  (`HaloRingItem`: id, label, icon, `Sublabel`, `Enabled`/`IsEnabled` asked every frame, `Tag`; segment 0 at the start
+  angle, counter-clockwise, a null an empty segment; false when a game screen is up or another mod's ring is open),
+  `Tick` once a frame while open (or its steps `CloseIfBlocked`, `CloseOnEscape`, `Track`), `Release(refuseDisabled)`
+  (`HaloRingPick`: Picked, Refused with a shake and still open, Cancelled), `Cancel`, events `Cancelled` and
+  `HighlightChanged`, `Blocked`, `HoldUntilReleased(button)`. The direction of the mouse from the screen centre, or of
+  the stick, picks (past the rim too), with a 2 degree band against flicker; the hovered segment grows and brightens
+  with a rim and its name and sublabel in the middle; a disabled one dims. While open: the cursor free (saved and put
+  back), WindowInput holds attacks, hotbar and mouse look (walking stays), Esc cancels, the inventory, map, console,
+  chat, text input, menu or death cancel. No config or keys inside. One ring open at a time per copy; across copies
+  each leaves a `Func<bool>` check of its rings in the `AppDomain` slot `HaloRing.openRing`, asked by the next opener
+  (nothing else shared). Internals: `OpenRings`, `Layout/` (`RingGeometry`, `RingLayout`, `SegmentGeometry`),
+  `Rendering/` (`RingView`, `SegmentView`, `WedgeGraphic`, `HoverLook`, `RingUi`), `Pointing/` (`SelectionMath`,
+  `HysteresisSelector`, `RingPointer`, `RingSlots`, `BlockingUi`, `CursorHold`, `GameUiScale`). Depends on WindowInput
+  (merge both). Consumers: EliteEquipment (the casters' spell ring, right
+  mouse held).
 - `AreaLoading/`: arriving somewhere far, quicker. `AreaLoader.Install(harmony, report)` (once; two postfixes by name,
   `ZoneSystem.Update` and `ZNetScene.CreateDestroyObjects`, once per merged copy, no attributes) and
   `AreaLoader.When(busy)`: while a registered reason holds (on a connected, non-dedicated machine) the land around the
@@ -177,8 +196,9 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
   `IDoodadController`) and gives it `Design` (`WeaponDesign(name, WeaponKeys(prefix))`: `Aim` = `WeaponArcs` (yaw limit
   each way, 180 all round; pitch; turn, tilt and view rates; the view's tilt; follow; write step; reach; stop at sea),
   `Reload` = `ReloadCycle(step seconds...)` (rest after a shot, ammo type, the step that takes it, whether letting go
-  finishes a step or leaves it to run out), `Rest` = `WeaponRest(yaw, pitch)` (optional: the lay its owner turns it back
-  to whenever nobody mans it, `RestLay`), `Body` = `OperatorBody` (feet and hands numbers, facing, `ElbowHint`),
+  finishes a step or leaves it to run out), `Rest` = `WeaponRest(yaw, pitch)` (optional: a never-aimed weapon's lay, and
+  with `Returns` (the default) the lay its owner turns it back to whenever nobody mans it, `RestLay`; `Returns = false`
+  keeps the last operator's lay), `Body` = `OperatorBody` (feet and hands numbers, facing, `ElbowHint`),
   `Words` = `WeaponWords` (with `Unreachable`), `UseRange` (at most `MostUse`, 4.5 m: E works from anywhere within it,
   exactly where the hover offers it), `HolderRange` (from the stand point, at least `UseRange` + 0.5)), `FindFrame` (a
   `WeaponFrame`: yaw, pitch, stand point, grips) and `Shoot`; hooks `StandPoint`, `AimPivot`, `Kick`, `Steady` (the aim
@@ -232,7 +252,7 @@ Shared libraries for Valheim BepInEx mods, extracted from Elite Creatures Reborn
 ## Rules
 
 - Public API changes must keep every consuming mod compiling (EliteCreaturesReborn, EliteCreaturesPack, FeastMaster, Lockstep, OpenKeep, PackPanel, ShipConfig, EarthWright). Build the mods after touching a library.
-- Keep game coupling minimal and explicit. `YamlGameHooks` (behind `YamlFileHub.HookGame`), `ItemCopies`, `BundlePrefabs`, `LocalEffects`, `PlayerGrid`, `Hotkeys` (`Chat`, `Console`, `TextInput`, all public), `WindowInput`, `MapClicks`, `RecipeCounts`, `BuildCamera` and `MannedWeapons` (private members by name) are the only places that touch game types on purpose; use reflection (`AccessTools.Field`) instead of publicized assemblies so consumers do not need a publicizer for the library's sake.
+- Keep game coupling minimal and explicit. `YamlGameHooks` (behind `YamlFileHub.HookGame`), `ItemCopies`, `BundlePrefabs`, `LocalEffects`, `PlayerGrid`, `Hotkeys` (`Chat`, `Console`, `TextInput`, all public), `WindowInput`, `HaloRing`, `MapClicks`, `RecipeCounts`, `BuildCamera` and `MannedWeapons` (private members by name) are the only places that touch game types on purpose; use reflection (`AccessTools.Field`) instead of publicized assemblies so consumers do not need a publicizer for the library's sake.
 - `YamlNode` readers are generic (scalars, lists, maps, enums): no mod vocabulary in the library, neither a consumer's domain nouns nor its setting names such as "world level"; that belongs in the consumer's `YamlModel`. Docs and examples use neutral words (rules, tags, tools).
 - `YamlModel` reports problems through `Errors` (files are rejected, the previous configuration stays) and `Warnings` (files are applied). Use the right one.
 - Consumers merge these DLLs with ILRepack `Internalize=true`; do not rely on public types being visible across mods.

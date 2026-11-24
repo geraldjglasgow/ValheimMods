@@ -11,7 +11,9 @@ namespace EliteEquipment.Casters
     /// (<see cref="Spell.Effect"/>, the game's own <c>SE_Stats</c>, <see cref="Spell.ChantSeconds"/> long) and its longer
     /// twin for a Mossweave wearer (<see cref="LongSuffix"/>), each robe set's bonus (<see cref="RobeSet.Bonus"/>: a
     /// resistance or Blood Magic, or only a mark that the set is complete, read by <see cref="SpellCost"/> and
-    /// <see cref="SpellCast"/>), and the stamina a Sunweave wearer's heals give (<see cref="HealStaminaName"/>).
+    /// <see cref="SpellCast"/>), the stamina a Sunweave wearer's heals give (<see cref="HealStaminaName"/>) and Cleanse's
+    /// carrier (<see cref="CleanseEffect"/>), Ward's shield (<see cref="WardEffect"/>) and Sanctuary's shelter and cooldown
+    /// (<see cref="SanctuaryEffect"/>).
     /// </summary>
     public static class CasterStatus
     {
@@ -31,6 +33,7 @@ namespace EliteEquipment.Casters
             if (effects == null)
                 return;
             Build();
+            GameBorrow.Take(effects);
             foreach (StatusEffect effect in made)
                 StatusTable.Put(effects, effect);
         }
@@ -51,6 +54,11 @@ namespace EliteEquipment.Casters
             SE_Stats stamina = Make(HealStaminaName, "", "", null, Instant);
             stamina.m_staminaUpFront = HealStamina;
             made.Add(stamina);
+            made.Add(CleanseEffect.Make());
+            Chant(Spells.WarChant, WarChant.Stats);
+            Chant(Spells.FeatherFall, FeatherFall.Stats);
+            made.AddRange(new StatusEffect[] { WardEffect.Make(Spells.Ward), SanctuaryEffect.Make(Spells.Sanctuary), SanctuaryEffect.MakeCooldown(Spells.Sanctuary) });
+            HealSpells.Effects(made);
         }
 
         /// <summary>A chant's effect and its longer twin.</summary>

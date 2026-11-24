@@ -3,9 +3,9 @@ using UnityEngine;
 namespace DevBridge.Perf
 {
     /// <summary>
-    /// Takes the probes off when the sample's coroutine cannot: Unity stops a coroutine without running its finally
-    /// blocks when its object is disabled or destroyed, or when its coroutines are stopped. Lives on DevBridge's own
-    /// object. Not at quit, when the process is ending anyway.
+    /// Takes the probes off when a sample's or a recording's coroutine cannot: Unity stops a coroutine without running its
+    /// finally blocks when its object is disabled or destroyed, or when its coroutines are stopped. Lives on DevBridge's
+    /// own object. At quit the probes stay (the process is ending anyway), but a recording's files are closed.
     /// </summary>
     internal sealed class PerfGuard : MonoBehaviour
     {
@@ -25,18 +25,25 @@ namespace DevBridge.Perf
             PerfSession session = PerfSession.Current;
             if (session != null && Time.frameCount - session.BeatFrame > SilentFrames)
                 PerfSession.Abort("its coroutine stopped running");
+            PerfRecording recording = PerfRecording.Current;
+            if (recording != null && recording.Silent(SilentFrames)) recording.Abort("its coroutine stopped running");
         }
 
-        private void OnApplicationQuit() => quitting = true;
-
-        private void OnDisable()
+        private void OnApplicationQuit()
         {
-            if (!quitting) PerfSession.Abort("DevBridge's object was disabled or destroyed");
+            quitting = true;
+            PerfRecording.Current?.AtQuit();
         }
 
-        private void OnDestroy()
+        private void OnDisable() => Gone("DevBridge's object was disabled or destroyed");
+
+        private void OnDestroy() => Gone("DevBridge's object was destroyed");
+
+        private static void Gone(string why)
         {
-            if (!quitting) PerfSession.Abort("DevBridge's object was destroyed");
+            if (quitting) return;
+            PerfSession.Abort(why);
+            PerfRecording.Current?.Abort(why);
         }
     }
 }

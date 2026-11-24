@@ -67,7 +67,9 @@ PowerShell call `curl.exe`, not the `curl` alias.
 | `/events` | game events as they happen (hits, deaths, spawns, the player, bosses, log warnings, console lines, hitbox records, other features' kinds): a long poll (`since=`, `kinds=`, `grep=`, `wait=`) or a live NDJSON stream (`stream=1`) |
 | `/trace` | live tracepoints: patch any game or mod method now (`method=Attack.DoMeleeAttack`) and record each call: time, ms, instance, arguments, result or exception; `id=N&last=20` reads them, `off=N` or `off=all` unpatches |
 | `/perf` | samples `seconds=` (default 5, max 60): fps, frame ms avg/p50/p95/p99/max, collections, managed heap; per mod the main-thread ms and calls per frame of its Harmony patches and MonoBehaviour updates, with its costliest methods (`mod=`, `top=`, `baseline=1`) |
+| `/perf/record` | `start=1`: what `/perf` times, every frame, to disk for minutes or hours without lagging the game (`mod=`, `seconds=`, `max_mb=`, `budget=`, `min_us=`, `name=`); `stop=1`; alone: the running or last recording. Read with `examples/perf/perfrec.py` |
 | `/heap` | memory now (managed heap, collections, GC mode, Unity native); `seconds=` watches frames and puts each hitch beside the garbage collections, the log lines and the objects spawned around it; `objects=1` Unity objects by type, `statics=1` mods' static collections, both with `mark=`/`diff=` |
+| `/load` | on a server: fake players (`players=N`, `mode=spread` or `crowd`, `x=`, `z=`, `radius=`, `speed=`, `deltas=1` to read HighSeat's smaller updates, `verify=1` to keep a copy of what they are sent), each a peer that counts and drops what it is sent and a Player body walking a loop; `remove=all`; `measure=10`: frame ms, ZDOMan.Update ms, bytes per fake player per second, HighSeat's SyncStats and DeltaStats; `verify=1` alone: each verifying fake holds what the server has it booked at; alone, the fakes |
 | `/scenario` | a scripted test from a JSON file (`file=`) or POST body: setup, steps, cleanup; each step calls an endpoint, evals, waits, waits for an event or checks the log, with expectations; pass/fail per step |
 | `/sync` | this game against every other DevBridge on the machine (a dedicated server, a host, clients): `peers=1` who runs what, a ZDO (`id=`, `nearest=`, `hover=1`), an `/eval` result (`expr=`), a plugin's config (`config=`); `"same"` and the differences |
 | `/config` | a plugin's config entries in memory (`mod=` name or GUID, `section=`): value, default, type, description, Charter status; without `mod=` the plugins |
@@ -238,6 +240,34 @@ come off over the frames after the reply, as they went on (HarmonyX keeps its re
 a restart, with the same behaviour). One sample runs at a time; its summary is also a `perf` event. It measures this
 process only: a client's own cost, or a host's or server's.
 
+### Recording frame costs for a long run
+
+`/perf/record?start=1` times the same methods as `/perf`, but keeps timing until `/perf/record?stop=1`, `seconds=`,
+`max_mb=` (default 1024, max 16384) or the game quitting, and writes every frame to
+`%LOCALAPPDATA%\DevBridge\perf\<yyyyMMdd-HHmmss>[-name]\`. It replies at once. The plan is made on a worker thread,
+and the probes go on and come off at `budget=` ms per frame (default 2; `/perf` uses 100), so putting them on takes
+10-30 s with every mod loaded instead of a few seconds of stutter. Each frame only copies the counters into memory; a
+writer thread puts them on disk. `/perf/record` alone shows the state (`planning`, `probing`, `recording`, `removing
+probes`, `done`), how many probes are on, frames, MB and the top mods. It never runs beside a `/perf` sample. Quitting
+mid-recording closes the files; a crash leaves them readable up to the last second.
+
+The folder holds `index.json` (record layouts, method and mod ids, probing and calibration, summary), `frames.bin`
+(56 bytes a frame: time, main-thread ms step to step, Unity's frame ms, collections, managed heap, networked objects,
+peers, the local player's position) and `entries.bin` (20 bytes per method or mod that ran in a frame: main-thread
+ticks, calls and slowest call; other threads apart; each mod's outermost time). Size depends on how many timed methods
+run each frame, roughly 0.3-1 MB/s with every mod; `min_us=` leaves calls under it out of the frames file.
+
+```
+python DevBridge/examples/perf/perfrec.py summary          # frames, percentiles, mods and methods by total
+python DevBridge/examples/perf/perfrec.py hitches --over 40 # worst frames: timed share, costliest methods vs usual
+python DevBridge/examples/perf/perfrec.py spikes            # methods by time above their usual cost inside hitches
+python DevBridge/examples/perf/perfrec.py method 'Support'  # one method: per-frame avg/p99/max, slowest call
+python DevBridge/examples/perf/perfrec.py timeline --bucket 10   # fps, hitches, objects, peers, top mods over time
+```
+
+`--rec` picks a recording by folder or part of its name (default the newest); `list`, `mod`, `frames` and `where` are
+the rest. A hitch whose timed share is small was the game, Unity, rendering or the collector, not a mod.
+
 ### What memory holds and whether hitches are the collector
 
 `/heap` alone reads the memory now: the managed heap in use, its size and free space, the collection count, the GC
@@ -260,6 +290,134 @@ and lists `broken_types`: classes whose static constructor threw, which fail on 
 its class's static constructor if nothing has used the class yet, so take this census in the world. Both take
 `mark=a` to keep the census and `diff=a` later to show what grew since: a leak shows as a row that only grows. Each
 census walks everything once and is a hitch of its own (`census_ms`).
+
+### Load testing with fake players
+
+`/load` puts fake players on a server, to measure what 10, 25, 50 or 100 players cost it without gathering them
+(`HighSeatPlus/PLAN.md`, designs 12 and 13). It runs on the server's own DevBridge: a dedicated server (a second
+DevBridge on this machine answers on the next port) or the game hosting the world, single player included.
+`players=N` adds fakes until there are N in all (at most 500; it never removes any), `remove=all` takes every one off,
+`measure=SECONDS` samples, `verify=1` checks what verifying fakes hold (below), and `/load` alone (or `status=1`) lists
+them: name, uid, mode, position, loop, bytes sent, whether it reads deltas (and its delta bytes) and verifies, body,
+and whether the patches are on. One action per call; a bad argument changes nothing.
+
+**A fake player** is a peer of the game's own (`ZNetPeer`) on a socket of DevBridge's (`ISocket`) that counts what the
+server sends it and drops it (all bytes, and apart the world data, the `ZDOData` messages), always reports an empty
+send queue (so the send loop offers it its whole 10 KB each time, as to a player on a fast line) and never sends
+anything back. It joins as `ZNet.RPC_PeerInfo` joins a client that passed its checks: on ZNet's peer list, the
+server's own simulation distance (through `RPC_RequestValidSimulationDistance`), uid, name, reference position, the
+server's peer info sent to it, `ZDOMan.AddPeer` and `ZRoutedRpc.AddPeer` (which sends it the global keys and location
+icons); once per batch the player, historical and admin lists go to everyone, as after any join. The checks
+themselves are skipped (password, bans, permitted list, session ticket, the player cap), and so are the mods' hooks on
+`OnNewConnection` and `RPC_PeerInfo` (Charter's join check, version checks): fakes join past the cap and count towards
+the cap a real player meets, so join real players first. Every two seconds its reference position (shown on the map)
+reaches the server's peer, as a client's `RPC_ServerSyncedPlayerData` would.
+
+**Its body** is a ZDO of the game's `Player` prefab under the fake's uid, owned by the fake and never persistent (never
+saved), the peer's `m_characterID`, so the fake counts in `GetNrOfPlayers`, the player list sent to every player and
+`GetAllCharacterZDOS`. It is named (Fake 1, Fake 2...; the names count on through the session), dressed (hair, beard,
+an armour set, a cape, a weapon and a shield on the back), given a walker's health, stamina and the other values a
+player's own game keeps on its body (so an update is about the size of a real one) and moved twenty times a second, as
+a client sends its character: position, rotation and velocity (what `ZSyncTransform` reads), with the walk animation's
+speed and on-ground flag (`ZSyncAnimation`), so a real player beside a crowd sees Vikings jogging round. Each walks a loop at `speed=` m/s (default 4, a jog; 0 stands) on the ground (the
+terrain where that machine has the zone loaded, else the world's generated height without players' digging, read again
+point by point as zones load).
+
+| `mode=` | Where |
+| --- | --- |
+| `spread` (default) | each on its own spot of land, on a loop of about `radius=` metres (default 20): first among the zones the world has generated whose neighbours are generated too, 320 m apart, then closer; then any land, round which the server generates the world as for any player who goes there (the save keeps it; `spots_outside_explored_land` and a `warning` say how many) |
+| `crowd` | loops inside `radius=` metres round `x=`,`z=`, else the hosting player, else the first real player connected |
+
+**Leaving** is the game's own `ZNet.Disconnect` for each fake: off the routed RPC and ZDOMan peers (whose pass over
+every ZDO for a gone peer's non-persistent ones destroys the body, as for any disconnect: `leave_ms` says what the
+batch cost), off the peer list, socket closed, the player list sent. They leave on `remove=all` and before the world
+is saved at a logout or when the game or server closes (`ZNet.Shutdown`), and are forgotten if the world unloads
+without either. A fake the game disconnects by itself is let go with a warning.
+
+While there are fakes, and only then, five ZNet methods are patched under the Harmony id `com.DevBridge.load`:
+`Shutdown` and `ShutdownWithoutSave` (the fakes leave first), `OnDestroy` (forgotten), `UpdatePlayerHistory` (the
+fakes are taken out of the player list while the game copies it into the world's player history, saved in the `.fwl`,
+and Steam's recent players, then put back where they were) and `InternalKick` (a fake is never kicked; a permitted list
+would kick it every five seconds). A coroutine on DevBridge's own object sets each fake's ZRpc ping timer back every
+frame (a fake never answers a ping, and ZRpc closes a connection whose pings have gone unanswered for 30 s), moves the
+bodies, reports the positions and re-reads one ground height a frame; it ends with the last fake. One frame longer
+than 30 s still times the fakes out.
+
+**`measure=10`** (1 to 120 s, default 10) runs on any game in a world, the server or a player's game beside a crowd,
+and replies with:
+
+| Field | What |
+| --- | --- |
+| `frames` | count, fps, ms avg, p95 and max (Unity's unscaled frame time) |
+| `zdoman_update` | the time `ZDOMan.Update` (the world sync) took: a stopwatch prefix first of all prefixes, postfix last of all postfixes, so HighSeat's own patches count, patched under `com.DevBridge.load.sync` only while measuring; total ms, ms per frame avg/p95/max, share of frame time |
+| `bytes_per_player_per_s` | each fake's average per second over the sample (all bytes, world bytes, world messages), min/avg/max over the fakes; world bytes again apart for the fakes that read deltas (`world_bytes_delta_fakes`) and the others (`world_bytes_game_format_fakes`) |
+| `players_sent_world_data_per_s` | how many fakes were sent any world data in a second, min/avg/max over the seconds |
+| `per_second` | each second (at least one second of real time): bytes per second per fake (all and world data, min/avg/max), the count sent world data, and ZDOMan's own count of ZDOs sent to everyone in its last second |
+| `highseat` | every public static field (and plain static property) of HighSeat's `HighSeat.SyncStats`, read once a second by name, numbers as last/min/avg/max, or `loaded: false` with the reason |
+| `highseat_deltas` | the same for `HighSeat.DeltaStats`: players reading deltas, objects sent as deltas and whole to them and their bytes, bytes saved, diffs worked out and their ms, whole sends for want of a kept record, objects asked for whole, the history's objects and KB |
+
+Also `role`, `players`, `peers`, `fake_players` and `zdos`. Each batch added, each removal and each measure is a
+`load` event. HighSeat's `Big server sync` switch (section `2 - Big servers` of its .cfg) picks the send loop measured:
+off, the game's own; on, HighSeat's; so one world can be measured both ways. A fake that has just joined is first sent
+everything in its area, as a joining player is, so a measure right after a batch shows the join; the steady state
+comes once the world bytes per fake fall to the trickle of what changes. The coroutine's own work (a few microseconds
+a fake a frame) is in the frame time, and on a hosting game so is drawing every fake body near the host: a dedicated
+server's figures are the server's alone.
+
+**What fakes do not do.** They send nothing: the server's work receiving every player's updates (`RPC_ZDOData`) is not
+in the figures, nor is a Steam socket's own work per send. What the game gives a fake to run (anything near it that no
+other player near it holds: on a vanilla server its creatures and spawners too, on HighSeat only what HighSeat leaves to
+players) stands still until a real player comes after the fake has gone. Creatures that a game near the fakes runs (the
+host's, or the server's with HighSeat) fight them, and the fakes never take the damage. Random events never start at a
+fake (it has no event keys); a drop made once per player (a boss's) counts the fakes. While a fake is in, the night
+cannot be slept through (it is never in bed) and a dedicated server's clock runs. A fake's peer player id stays 0: the
+game never reads it, and Lockstep keeps a saved roster of the peers that have one.
+
+A first round, against the server's DevBridge (`S=http://127.0.0.1:7781` for a dedicated server beside the game, 7780
+for a hosting game), with a baseline first and time between steps for each new area to be sent:
+
+    curl -s "$S/load?measure=10"
+    curl -s "$S/load?players=10&mode=spread"; curl -s "$S/wait?seconds=30"; curl -s "$S/load?measure=10"
+    curl -s "$S/load?players=25&mode=spread"; curl -s "$S/wait?seconds=30"; curl -s "$S/load?measure=10"
+    curl -s "$S/load?players=50&mode=spread"; curl -s "$S/wait?seconds=30"; curl -s "$S/load?measure=10"
+    curl -s "$S/load?players=100&mode=spread"; curl -s "$S/wait?seconds=30"; curl -s "$S/load?measure=10"
+    curl -s "$S/load?remove=all"
+    curl -s "$S/load?players=10&mode=crowd"; curl -s "$S/wait?seconds=30"; curl -s "$S/load?measure=10"
+    ...                                    # 25, 50, 100 the same way; x=&z= on a dedicated server nobody is on
+    curl -s "$S/load?remove=all"
+
+**Smaller world updates (`deltas=1`)** make the fakes added read HighSeat's delta format, as a player's game with
+HighSeatPlus does: right after a fake joins, its hello (`HighSeatPlus_Deltas` with the protocol version) is handed to
+the server's own `ZRpc` for its connection as if it had come over the network (`ZRpc.HandlePackage`), where HighSeat's
+handler (registered on every peer by `ZDOMan.AddPeer`) takes it. From then on HighSeat sends it `HighSeat_ZDODeltas` in
+place of `ZDOData`: each object whole, or as what changed since the record the fake is booked at. Both count as world
+data; `delta_world_bytes` in the status is the delta part. Without HighSeat, or with its `Big server sync` off, the
+hello changes nothing and the fake gets the game's format.
+
+**Verifying (`verify=1`)** gives the fakes added their own copy of the world: every world package the server hands their
+socket, in either format, is read on the spot (from a copy) by DevBridge's own reader, written from the game's
+`ZDOMan.RPC_ZDOData` and the format, not from HighSeat's code: a whole record taken as the game takes it (a missing
+object or newer data takes everything in it, a newer owner revision alone only the owner), a delta only when the copy
+stands at exactly the revisions it starts from, else the object is asked for whole (`HighSeatPlus_FullCopy`, sent on the
+fake's next tick, after the send that carried the delta is booked, as a real player's ask arrives later). Reading costs
+the server's frame time, so measure without it. `/load?verify=1` alone then reports, for every verifying fake and every
+object the server has it booked at (`ZDOPeer.m_zdos`, the revisions of the last record sent to it; the fake's own body
+left out): the copy must stand at those revisions with the owner, position, flags, prefab, rotation, connection and every
+list value of the server's record of them, byte for byte. The server's record is the object itself while it still stands
+at those revisions (`against_object`), else HighSeat's history of sent records (`HighSeat.DeltaProbe`, by reflection:
+`against_history`), else the object is `unverifiable` (it changed and the record is no longer kept). The reply:
+`passed` (no `missing`, no `revision_mismatch`, no `value_mismatch`, no `unreadable_packages`), the counts, `ok`,
+`awaiting_whole_copy` (asked for, not answered within two seconds), `extra_keys` (the copy has keys beyond the record:
+the game's own updates never remove a key either, so only a sign that the server removed one), up to 12 `samples` of
+problems (fake, id, prefab, what differs), and per fake what it received (packages in each format, whole and delta
+records, deltas that did not fit, asks sent, objects held). With HighSeat's deltas working, `deltas_not_fitting` stays 0
+for fakes: they write nothing of what they are sent.
+
+    curl -s "$S/load?players=50&mode=crowd&radius=30&deltas=1&verify=1"; curl -s "$S/wait?seconds=30"
+    curl -s "$S/load?verify=1"           # passed: true, and value_mismatch 0
+    curl -s "$S/load?remove=all"
+    curl -s "$S/load?players=50&mode=crowd&radius=30&deltas=1"; curl -s "$S/wait?seconds=30"
+    curl -s "$S/load?measure=10"         # world_bytes_delta_fakes, highseat_deltas
 
 ## Testing
 

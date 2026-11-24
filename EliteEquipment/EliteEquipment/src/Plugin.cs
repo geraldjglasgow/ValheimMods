@@ -40,6 +40,8 @@ namespace EliteEquipment
             Harmony harmony = new Harmony(PluginGuid);
             // The player-facing words, in the game's language (translations/English.yml and any translation files).
             Translations.Lang.Install(harmony, Assembly.GetExecutingAssembly(), "EliteEquipment", Logger);
+            // HaloRing: the casters' spell ring holds the game's input like a window while it is open (this copy's patches).
+            HaloRing.HaloRingMenu.Install(harmony);
             BootsModule.Initialize(Synced);
             ShieldsModule.Initialize(Synced);
             WeaponsModule.Initialize(Synced);

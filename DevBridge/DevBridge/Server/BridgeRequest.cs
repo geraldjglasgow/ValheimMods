@@ -74,13 +74,18 @@ namespace DevBridge.Server
         internal string Require(string name) =>
             Get(name) ?? throw new BridgeException($"missing argument {name}=");
 
-        /// <summary>How long the HTTP thread waits for the main thread: timeout= or seconds= (a scenario 300 s by default; /perf both), plus a margin.</summary>
+        /// <summary>
+        /// How long the HTTP thread waits for the main thread: timeout= or seconds= (a scenario 300 s by default; /perf
+        /// both; /load 120 s, since hundreds of fake players leaving each cost the game a pass over every ZDO, or its
+        /// measure= seconds with room for slow frames), plus a margin.
+        /// </summary>
         internal TimeSpan Patience
         {
             get
             {
                 // /perf probes every mod before it samples seconds=, so its wait is both
                 float wait = Path == "/perf" ? Float("seconds", 5f) + Float("timeout", 30f)
+                    : Path == "/load" ? Math.Max(Float("timeout", 120f), Float("measure", 10f) + 15f)
                     : Math.Max(Float("timeout", Path == "/scenario" ? 300f : 30f), Float("seconds", 0f));
                 return TimeSpan.FromSeconds(Math.Min(600f, wait + 5f));
             }

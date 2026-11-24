@@ -10,9 +10,10 @@ namespace EliteEquipment.Casters
     /// The little white spell at a charging caster's wand tip (user, 2026-10-11: "a little white spell that shows at tip of
     /// wand after you pull the wand back, that should get bigger if you decide to hold to cast, once full size it should
     /// emit a larger glow around it"), drawn for every player near on this machine, from the state the caster shares
-    /// (<see cref="ChargeState"/>): the workshop's <c>ee_fx_charge</c>, grown from its own size at a tap to
+    /// (<see cref="ChargeState"/>): the workshop's <c>ee_fx_charge</c> in the wand's stone colour (<see cref="BoltTint"/>), grown from its own size at a tap to
     /// <see cref="Largest"/> times it at full charge; at full charge <c>ee_fx_charge_full</c>'s larger glow joins it,
-    /// with <c>ee_fx_charge_ready</c>'s flash once. Local copies only, gone when the bolt flies.
+    /// with <c>ee_fx_charge_ready</c>'s flash once. With the Greywood Wand a stone grows at the tip with it
+    /// (<see cref="ChargeStone"/>). Local copies only, gone when the bolt flies.
     /// </summary>
     public static class ChargeOrb
     {
@@ -23,6 +24,8 @@ namespace EliteEquipment.Casters
             public Transform Tip;
             public GameObject Orb;
             public GameObject Glow;
+            public GameObject Stone;
+            public Player Owner;
         }
 
         private static readonly Dictionary<Player, Drawn> drawn = new Dictionary<Player, Drawn>();
@@ -59,13 +62,17 @@ namespace EliteEquipment.Casters
             if (tip == null)
                 return;
             if (now == null)
-                drawn[player] = now = Make(tip);
+            {
+                drawn[player] = now = Make(tip, BoltTint.Charge(player));
+                now.Owner = player;
+                now.Stone = ChargeStone.Make(player, tip);
+            }
             Size(now, charge);
         }
 
-        private static Drawn Make(Transform tip)
+        private static Drawn Make(Transform tip, GameObject charge)
         {
-            GameObject orb = LocalEffect.Attach(CasterFx.Prepared(CasterFx.Charge), tip, tip.position, endless: true);
+            GameObject orb = LocalEffect.Attach(charge, tip, tip.position, endless: true);
             if (orb != null)
                 ScaleWithParent(orb);
             return new Drawn { Tip = tip, Orb = orb };
@@ -75,10 +82,12 @@ namespace EliteEquipment.Casters
         {
             if (now.Orb != null)
                 now.Orb.transform.localScale = Vector3.one * Mathf.Lerp(1f, Largest, charge) / Mathf.Max(0.001f, now.Tip.lossyScale.x);
+            if (now.Stone != null)
+                ChargeStone.Size(now.Stone, now.Tip, charge);
             if (charge < 1f || now.Glow != null)
                 return;
-            now.Glow = LocalEffect.Attach(CasterFx.Prepared(CasterFx.ChargeFull), now.Tip, now.Tip.position, endless: true);
-            CasterFx.Here(CasterFx.ChargeReady, now.Tip.position);
+            now.Glow = LocalEffect.Attach(BoltTint.Full(now.Owner), now.Tip, now.Tip.position, endless: true);
+            CasterFx.Here(BoltTint.Ready(now.Owner), now.Tip.position);
         }
 
         private static void Remove(Drawn now)
@@ -87,6 +96,8 @@ namespace EliteEquipment.Casters
                 Object.Destroy(now.Orb);
             if (now.Glow != null)
                 Object.Destroy(now.Glow);
+            if (now.Stone != null)
+                Object.Destroy(now.Stone);
         }
 
         /// <summary>Forgets players no longer here (logged out, out of range); their copies went with their wands.</summary>

@@ -1,7 +1,7 @@
 namespace EliteEquipment.Casters
 {
     /// <summary>
-    /// A wand's heal power: its own (more each quality), the focus's while one is held, then up to half again from the
+    /// A wand's heal power: its own (more each quality), the held spellbook's own (<see cref="GearPiece.HealPower"/>), then up to half again from the
     /// caster's Blood Magic, the game's skill factor (0 to 1) times <see cref="SkillBonus"/>.
     /// </summary>
     public static class HealPower
@@ -12,12 +12,12 @@ namespace EliteEquipment.Casters
         {
             if (wand == null)
                 return 0f;
-            float power = Base(wand) + (CasterGearWorn.HoldsFocus(caster) ? CasterGear.FocusHealPower : 0f);
+            float power = Base(wand) + (CasterGearWorn.HeldBook(caster)?.HealPower ?? 0f);
             float skill = caster != null ? caster.GetSkillFactor(Skills.SkillType.BloodMagic) : 0f;
             return power * (1f + SkillBonus * skill);
         }
 
-        /// <summary>The wand's own, by quality, without focus or skill (the tooltip's number).</summary>
+        /// <summary>The wand's own, by quality, without book or skill (the tooltip's number).</summary>
         public static float Base(ItemDrop.ItemData wand) => Base(wand, wand.m_quality);
 
         /// <summary>The wand's own at a quality.</summary>

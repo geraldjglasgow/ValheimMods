@@ -18,7 +18,8 @@ namespace EliteEquipment.Casters
     /// wand's bolt is a three-level chained attack, so the game picks the level as it picks a sword's swing (the next level
     /// for a click during a move once its <c>Chain</c> point has passed, or within 0.2 s of its end; the first again after
     /// that), and the level is the move. A charged release is the first move from the back; a cast turned into a charge sends
-    /// every machine the upper body into the charged staff's raise (<see cref="ToCharge"/>).
+    /// every machine the upper body into the charged staff's raise (<see cref="ToCharge"/>). The same message carries a
+    /// spell's own motion, its numbers from <see cref="SpellMotion.Base"/> on (<see cref="SpellMotion"/> plays those).
     /// </summary>
     public static class WandMoves
     {
@@ -76,10 +77,12 @@ namespace EliteEquipment.Casters
         {
             GameObject found = id.IsNone() || ZNetScene.instance == null ? null : ZNetScene.instance.FindInstance(id);
             Player player = found != null ? found.GetComponent<Player>() : null;
-            if (player == null || segment < 0 || segment > ToCharge)
+            if (player == null || segment < 0 || segment > SpellMotion.Last)
                 return;
             moves.RemoveAll(m => m.Player == player);
-            moves.Add(new Move { Player = player, Segment = segment, Since = Time.time });
+            // A spell's own motion (the numbers past ToCharge) is SpellMotion's; any other move ends one first.
+            if (!SpellMotion.Heard(player, segment))
+                moves.Add(new Move { Player = player, Segment = segment, Since = Time.time });
         }
 
         /// <summary>Every frame on a machine that draws: each announced move started, and ended at its segment's end.</summary>

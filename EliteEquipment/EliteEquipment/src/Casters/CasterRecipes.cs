@@ -8,7 +8,7 @@ namespace EliteEquipment.Casters
 {
     /// <summary>
     /// A recipe per caster item, beside the game item it copies (same station, station level, repair station and order),
-    /// costing its own materials (<see cref="CasterGear"/>); the spell items with a recipe (Hearthsong) beside the wand's (the flint axe).
+    /// costing its own materials (<see cref="CasterGear"/>); spell pages have none (found, never crafted: <see cref="PageDrops"/>).
     /// In every database the game builds or copies once the items exist. Enabled while the switch is on and the game's own
     /// recipe is; an item whose game recipe or station is missing is never enabled. A recipe's cost is written once, when
     /// it is made (EliteEquipment's boots keep the Deerhide Trousers' whole cost and swap in four fifths while split), and
@@ -17,9 +17,6 @@ namespace EliteEquipment.Casters
     public static class CasterRecipes
     {
         private static readonly Dictionary<string, Recipe> made = new Dictionary<string, Recipe>();
-
-        private static readonly GearCost[] HearthsongCost =
-            { new GearCost("Raspberry", 5, 0), new GearCost("Honey", 2, 0), new GearCost("Dandelion", 3, 0) };
 
         [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.Awake))]
         private static class DatabasePatch
@@ -46,8 +43,6 @@ namespace EliteEquipment.Casters
                 return;
             foreach (GearPiece piece in CasterGear.All)
                 Add(db, piece.Item, piece.RecipeBeside, piece.Cost);
-            GameObject hearthsong = db.GetItemPrefab(Spells.Hearthsong.Item);
-            Add(db, hearthsong, CasterGear.Wand.RecipeBeside, HearthsongCost);
             foreach (FoodPiece food in CasterFood.All)
                 Add(db, food.Item, food.RecipeBeside, food.Cost, food.Makes);
         }

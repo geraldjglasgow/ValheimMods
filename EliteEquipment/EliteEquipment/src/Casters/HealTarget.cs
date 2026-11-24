@@ -5,10 +5,13 @@ namespace EliteEquipment.Casters
 {
     /// <summary>
     /// The healer's highlight (user, 2026-10-09: "when you point at a friendly person they kinda get highlighted"): while
-    /// the local player holds a wand with a heal in either slot, the friend it would hit (<see cref="FriendTarget"/>) wears
+    /// the local player holds a wand and a spellbook with a heal or Ward page (any page can be picked from the spell ring), the
+    /// friend it would hit (<see cref="FriendTarget"/>) wears
     /// the workshop's looping marker (<c>ee_fx_heal_target</c>, a local copy under them, seen only by the healer). Looked
     /// for <see cref="Every"/> seconds; the marker moves when the pick does and goes when nobody is picked, the spell
-    /// changes, the wand leaves the hand or the inventory opens. <see cref="Current"/> is who a cast locks on to.
+    /// leaves the book, the wand leaves the hand or the inventory opens. <see cref="Current"/> is who a cast locks on to;
+    /// it stays as it was while the spell ring is open and until its cast starts (<see cref="SpellRing.Aiming"/>), so a
+    /// heal goes to the friend marked as the ring opened.
     /// </summary>
     public static class HealTarget
     {
@@ -26,7 +29,7 @@ namespace EliteEquipment.Casters
 
         public static void Tick()
         {
-            if (Time.time < next)
+            if (Time.time < next || SpellRing.Aiming)
                 return;
             next = Time.time + Every;
             Player player = Player.m_localPlayer;
@@ -37,8 +40,12 @@ namespace EliteEquipment.Casters
         private static bool Healing(Player player)
         {
             ItemDrop.ItemData wand = CastersSettings.On && player != null && !player.IsDead() ? CasterGearWorn.Wand(player) : null;
-            return wand != null && !InventoryGui.IsVisible() && Loadout.Holds(player, wand, SpellKind.Heal);
+            return wand != null && !InventoryGui.IsVisible() && Marks(CasterGearWorn.Book(player));
         }
+
+        /// <summary>The book holds a page aimed at a friend: a heal, or Ward.</summary>
+        private static bool Marks(ItemDrop.ItemData book) =>
+            BookPages.HasKind(book, SpellKind.Heal) || BookPages.Holds(book, Spells.Ward);
 
         private static void Mark(Character target)
         {

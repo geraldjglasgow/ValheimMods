@@ -20,15 +20,21 @@ namespace DevBridge.Perf
         private readonly string filter;
         private readonly Dictionary<MethodInfo, PerfTarget> byMethod = new Dictionary<MethodInfo, PerfTarget>();
 
-        internal readonly ModDirectory Mods = new ModDirectory();
+        internal readonly ModDirectory Mods;
         internal readonly List<PerfTarget> Targets = new List<PerfTarget>();
         internal readonly Dictionary<PerfMod, List<string>> Transpilers = new Dictionary<PerfMod, List<string>>();
         internal readonly List<string> Untimeable = new List<string>();
         internal readonly SortedSet<string> Seen = new SortedSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        internal PerfPlan(string filter)
+        internal PerfPlan(string filter) : this(filter, new ModDirectory())
+        {
+        }
+
+        /// <summary>Reflection only, so it may run on a worker thread once mods was made on the main thread.</summary>
+        internal PerfPlan(string filter, ModDirectory mods)
         {
             this.filter = filter;
+            Mods = mods;
             foreach (MethodBase original in Harmony.GetAllPatchedMethods().ToList()) AddPatches(original);
             foreach (Assembly assembly in Mods.PluginAssemblies) AddBehaviours(assembly);
         }

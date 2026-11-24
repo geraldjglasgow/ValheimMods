@@ -1,6 +1,6 @@
 namespace EliteEquipment.Casters
 {
-    /// <summary>What caster gear a character has on: the wand in hand, the focus, the robes; by the item's own word.</summary>
+    /// <summary>What caster gear a character has on: the wand in hand, the spellbook, the robes; by the item's own word.</summary>
     public static class CasterGearWorn
     {
         public static bool IsWand(ItemDrop.ItemData item) => WandPiece(item) != null;
@@ -16,7 +16,21 @@ namespace EliteEquipment.Casters
             return null;
         }
 
-        public static bool IsFocus(ItemDrop.ItemData item) => Is(item, CasterGear.Focus);
+        /// <summary>Which of the spellbooks an item is, or null.</summary>
+        public static GearPiece BookPiece(ItemDrop.ItemData item)
+        {
+            foreach (GearPiece book in CasterGear.Books)
+            {
+                if (Is(item, book))
+                    return book;
+            }
+            return null;
+        }
+
+        public static bool IsBook(ItemDrop.ItemData item) => BookPiece(item) != null;
+
+        /// <summary>Which of the spellbooks is in the left hand, or null.</summary>
+        public static GearPiece HeldBook(Humanoid humanoid) => BookPiece(humanoid != null ? humanoid.m_leftItem : null);
 
         /// <summary>The wand in the right hand, or null.</summary>
         public static ItemDrop.ItemData Wand(Humanoid humanoid)
@@ -25,7 +39,12 @@ namespace EliteEquipment.Casters
             return IsWand(right) ? right : null;
         }
 
-        public static bool HoldsFocus(Humanoid humanoid) => humanoid != null && IsFocus(humanoid.m_leftItem);
+        /// <summary>The spellbook in the left hand, or null.</summary>
+        public static ItemDrop.ItemData Book(Humanoid humanoid)
+        {
+            ItemDrop.ItemData left = humanoid != null ? humanoid.m_leftItem : null;
+            return IsBook(left) ? left : null;
+        }
 
         /// <summary>The eitr the worn robes and the wielded wand give (none while the switch is off).</summary>
         public static float Eitr(Humanoid humanoid)

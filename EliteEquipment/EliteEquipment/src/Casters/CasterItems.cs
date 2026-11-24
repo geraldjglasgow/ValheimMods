@@ -7,12 +7,15 @@ namespace EliteEquipment.Casters
 {
     /// <summary>
     /// Makes the caster items once per process, on every peer (dedicated server included), the first time the scene or the
-    /// item database wakes with the game's club in its list, and the wand's bolt the first time the scene does (the shard
-    /// it copies is a scene prefab, not an item); then adds them to every scene's and database's list before the game
+    /// item database wakes with the game's club in its list, and the wand's bolt, the Rootbound Wand's roots
+    /// (<see cref="WandRoots"/>), the Frostsilver Wand's ice shards (<see cref="IceShards"/>), the Greywood Wand's rock
+    /// (<see cref="WandRock"/>), the Ashwood Wand's firebolt (<see cref="Firebolt"/>) and Elder's Volley's seeds
+    /// (<see cref="VolleySeeds"/>) and Moder's Breath's breath (<see cref="BreathLook"/>) the first time the scene
+    /// does (the shards and the root they copy are scene prefabs, not items); then adds them to every scene's and database's list before the game
     /// indexes it (<c>ZNetScene.Awake</c>, <c>ObjectDB.Awake</c>, <c>ObjectDB.CopyOtherDB</c>), with the casters' status
     /// effects (<see cref="CasterStatus"/>). They exist whether the switch is on or not, so items already made always load.
     /// A piece that cannot be made is logged and left out; nothing ever throws out of an Awake (a throw there stops the
-    /// world loading). After the scene wakes, the bolt gets its look and Eikthyr his spell drop (<see cref="EikthyrDrop"/>).
+    /// world loading). After the scene wakes, the bolt gets its look and the bosses their page drops (<see cref="BossPages"/>).
     /// </summary>
     public static class CasterItems
     {
@@ -34,7 +37,7 @@ namespace EliteEquipment.Casters
             private static void Postfix(ZNetScene __instance) => Safe("scene", () =>
             {
                 WandBolt.Dress(bolt);
-                EikthyrDrop.Refresh(__instance);
+                BossPages.Refresh(__instance);
             });
         }
 
@@ -62,7 +65,7 @@ namespace EliteEquipment.Casters
             }
         }
 
-        /// <summary>The spell items made (to drop, to recognise in the inventory).</summary>
+        /// <summary>The spell pages made (to drop, to recognise in the inventory).</summary>
         public static IReadOnlyList<GameObject> MadeSpellItems => spellItems;
 
         private static void Prepare(List<GameObject> prefabs, bool scene) => Safe("items", () =>
@@ -88,23 +91,37 @@ namespace EliteEquipment.Casters
             itemsBuilt = true;
             foreach (GearPiece wand in CasterGear.Wands)
                 Make(wand, () => WandItem.Build(wand, Need(prefabs, wand.Base), Need(prefabs, "StaffFireball")));
-            Make(CasterGear.Focus, () => FocusItem.Build(Need(prefabs, CasterGear.Focus.Base)));
+            foreach (GearPiece book in CasterGear.Books)
+                Make(book, () => BookItem.Build(book, Need(prefabs, book.Base)));
             foreach (GearPiece piece in CasterGear.Robes)
                 Make(piece, () => RobeItems.Build(piece, Need(prefabs, piece.Base), Need(prefabs, "HelmetMage")));
             foreach (FoodPiece food in CasterFood.All)
                 Safe(food.Prefab, () => food.Item = FoodItems.Build(food, Need(prefabs, food.Base)));
             foreach (Spell spell in Spells.All)
-            {
-                if (!spell.KnownByAll)
-                    Safe(spell.Item, () => spellItems.Add(SpellItems.Build(spell, Need(prefabs, "Raspberry"))));
-            }
+                Safe(spell.Item, () => spellItems.Add(SpellItems.Build(spell, Need(prefabs, "Raspberry"))));
             ArmWands();
         }
 
         private static void ArmWands()
         {
             foreach (GearPiece wand in CasterGear.Wands)
-                WandItem.Arm(wand.Item, bolt);
+                WandItem.Arm(wand.Item, Fired(wand));
+        }
+
+        /// <summary>
+        /// What a wand's left mouse fires: the Rootbound's roots, the Frostsilver's ice shards, the Greywood's rock, the
+        /// Ashwood's firebolt, else the
+        /// bolt (also when that wand's own could not be made).
+        /// </summary>
+        private static GameObject Fired(GearPiece wand)
+        {
+            if (WandRoots.Raises(wand) && WandRoots.Cast != null)
+                return WandRoots.Cast;
+            if (WandRock.Fires(wand) && WandRock.Rock != null)
+                return WandRock.Rock;
+            if (Firebolt.Fires(wand) && Firebolt.Bolt != null)
+                return Firebolt.Bolt;
+            return IceShards.Fires(wand) && IceShards.Shard != null ? IceShards.Shard : bolt;
         }
 
         private static void BuildBolt(List<GameObject> prefabs)
@@ -113,6 +130,14 @@ namespace EliteEquipment.Casters
                 return;
             boltBuilt = true;
             Safe(WandBolt.Prefab, () => bolt = WandBolt.Build(Need(prefabs, WandBolt.GameName)));
+            Safe(WandRoots.RootPrefab, () => WandRoots.Build(Need(prefabs, WandRoots.GameRoot), Need(prefabs, WandRoots.GameElder)));
+            Safe(IceShards.Prefab, () => IceShards.Build(Need(prefabs, IceShards.GameShard)));
+            Safe(VolleySeeds.Prefab, () => VolleySeeds.Build(Need(prefabs, VolleySeeds.GameSeed)));
+            Safe(BreathLook.Prefab, () => BreathLook.Build(Need(prefabs, BreathLook.GameBreath)));
+            Safe(WandRock.Prefab, () => WandRock.Build(Need(prefabs, WandRock.GameStone), Find(prefabs, WandRock.GameChips),
+                Find(prefabs, WandRock.GameCrack)));
+            Safe(Firebolt.Prefab, () => Firebolt.Build(Need(prefabs, Firebolt.GameBolt), Find(prefabs, Firebolt.GameSpark),
+                Find(prefabs, Firebolt.GameBang)));
             ArmWands();
         }
 
@@ -130,9 +155,21 @@ namespace EliteEquipment.Casters
                 if (food.Item != null)
                     yield return food.Item;
             }
-            if (scene && bolt != null)
-                yield return bolt;
+            if (!scene)
+                yield break;
+            foreach (GameObject shot in Shots())
+            {
+                if (shot != null)
+                    yield return shot;
+            }
         }
+
+        /// <summary>The scene prefabs the wands and spells fire or spawn (those made).</summary>
+        private static GameObject[] Shots() => new[]
+        {
+            bolt, WandRoots.Root, WandRoots.Rise, IceShards.Shard, WandRock.Rock, Firebolt.Bolt, VolleySeeds.Seed,
+            BreathLook.Breath,
+        };
 
         private static void Make(GearPiece piece, Func<GameObject> build) => Safe(piece.Prefab, () => piece.Item = build());
 

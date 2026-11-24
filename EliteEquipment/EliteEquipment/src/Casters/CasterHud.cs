@@ -3,8 +3,9 @@ using HarmonyLib;
 namespace EliteEquipment.Casters
 {
     /// <summary>
-    /// Once a frame on a machine with a HUD (never a dedicated server): the heal highlight, the turn to a
-    /// locked friend, the charging bolts' little spells (every player's), the spell bar, the Spellbook.
+    /// Once a frame on a machine with a HUD (never a dedicated server): the spell ring, the heal highlight, the turn to a
+    /// locked friend, the charging bolts' little spells (every player's), the spell bar, the Spellbook, the old learned
+    /// spells turned into pages.
     /// </summary>
     [HarmonyPatch(typeof(Hud), "Update")]
     public static class CasterHud
@@ -16,14 +17,17 @@ namespace EliteEquipment.Casters
         {
             if (Player.m_localPlayer == null)
                 return;
+            SpellRing.Tick();
             HealTarget.Tick();
             CastTurn.Tick();
             ChargeOrb.Tick();
             ChargeStream.Tick();
             WandAnimations.Tick();
             WandMoves.Tick();
+            SpellMotion.Tick();
             SpellBar.Tick();
             Spellbook.Tick();
+            PageMigration.Tick();
         }
     }
 }

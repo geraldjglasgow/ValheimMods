@@ -19,6 +19,9 @@
       <InputAssemblies Include="$(OutDir)LocalEffects.dll" />
       <InputAssemblies Include="$(OutDir)Translations.dll" />
       <InputAssemblies Include="$(OutDir)StatusTemplates.dll" />
+      <InputAssemblies Include="$(OutDir)LimbIk.dll" />
+      <InputAssemblies Include="$(OutDir)HaloRing.dll" />
+      <InputAssemblies Include="$(OutDir)WindowInput.dll" />
       <InputAssemblies Include="$(OutDir)YamlDotNet.dll" />
     </ItemGroup>
     <ItemGroup>

@@ -49,6 +49,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StatusTemplates", "StatusTe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MannedWeapons", "MannedWeapons\MannedWeapons.csproj", "{5327C8F5-DE5C-413B-9551-1A1921D473C9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HaloRing", "HaloRing\HaloRing.csproj", "{C168A8A4-6BF0-4466-B667-CE20F841903A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -150,5 +152,9 @@ Global
 		{5327C8F5-DE5C-413B-9551-1A1921D473C9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{5327C8F5-DE5C-413B-9551-1A1921D473C9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{5327C8F5-DE5C-413B-9551-1A1921D473C9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{C168A8A4-6BF0-4466-B667-CE20F841903A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{C168A8A4-6BF0-4466-B667-CE20F841903A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{C168A8A4-6BF0-4466-B667-CE20F841903A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{C168A8A4-6BF0-4466-B667-CE20F841903A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal

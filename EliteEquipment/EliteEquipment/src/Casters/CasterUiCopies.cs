@@ -9,8 +9,9 @@ using Object = UnityEngine.Object;
 namespace EliteEquipment.Casters
 {
     /// <summary>
-    /// Copies of the game's own UI parts for the Spellbook (the crafting panel's background and title font, the recipe
-    /// row, the craft button, the hotbar slot), so it looks like the game's and like whatever a UI mod made of it. A copy
+    /// Copies of the game's own UI parts for the Spellbook (the crafting panel's background, darkening and title, the
+    /// recipe list's panel, the recipe row, the item name and description fonts, the craft button, the hotbar slot), so it
+    /// looks like the game's and like whatever a UI mod made of it. A copy
     /// loses what ties it to the game's panel (gamepad hooks and hints, tooltips, localizers, layout groups) and a UI mod's
     /// skin (PackPanel's timber child), so that mod skins the copy itself. The same rules as OpenKeep's
     /// <c>Blueprints/Bench/BenchCopies</c>; the two are to become one library.
@@ -95,15 +96,48 @@ namespace EliteEquipment.Casters
         }
 
         /// <summary>Fills the parent, inset (positive) or outset (negative) by a margin on every side.</summary>
-        public static void Fill(RectTransform rect, float margin)
+        public static void Fill(RectTransform rect, float margin) =>
+            Stretch(rect, Vector2.zero, Vector2.one, margin, margin, margin, margin);
+
+        /// <summary>
+        /// Between two corners given as fractions of the parent, then inset by left, bottom, right and top (each counted
+        /// inward from its own edge; negative reaches out past it).
+        /// </summary>
+        public static void Stretch(RectTransform rect, Vector2 min, Vector2 max, float left, float bottom, float right, float top)
         {
-            rect.anchorMin = Vector2.zero;
-            rect.anchorMax = Vector2.one;
+            rect.anchorMin = min;
+            rect.anchorMax = max;
             rect.pivot = new Vector2(0.5f, 0.5f);
-            rect.offsetMin = new Vector2(margin, margin);
-            rect.offsetMax = new Vector2(-margin, -margin);
+            rect.offsetMin = new Vector2(left, bottom);
+            rect.offsetMax = new Vector2(-right, -top);
             rect.localScale = Vector3.one;
             rect.localRotation = Quaternion.identity;
+        }
+
+        /// <summary>A new image drawn as a game image is (sprite, type, colour, material), without its children or parts; none drawn without one.</summary>
+        public static Image Panel(Image source, Transform parent, string name)
+        {
+            Image image = Rect(name, parent).gameObject.AddComponent<Image>();
+            image.enabled = source != null;
+            if (source == null)
+                return image;
+            image.sprite = source.sprite;
+            image.type = source.type;
+            image.color = source.color;
+            image.material = source.material;
+            image.fillCenter = source.fillCenter;
+            image.pixelsPerUnitMultiplier = source.pixelsPerUnitMultiplier;
+            return image;
+        }
+
+        /// <summary>Shrinks to fit its rect, down to a share of its size, wrapped or on one line; cut with an ellipsis past that.</summary>
+        public static void Shrink(TMP_Text text, float least, bool wrap)
+        {
+            text.enableAutoSizing = true;
+            text.fontSizeMax = text.fontSize;
+            text.fontSizeMin = text.fontSize * least;
+            text.textWrappingMode = wrap ? TextWrappingModes.Normal : TextWrappingModes.NoWrap;
+            text.overflowMode = TextOverflowModes.Ellipsis;
         }
     }
 }

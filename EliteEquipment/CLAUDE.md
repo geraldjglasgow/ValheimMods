@@ -3,7 +3,7 @@
 More from the game's own equipment. Four sections: 1 Boots (the game's 20 player leggings split into trousers and boots
 worn on the feet, 80/20 stats and cost; built as OpenKeep's section 16 on 2026-10-07, moved here on 2026-10-08, see "Why
 its own mod"), 2 Shields (new bucklers, round and tower shields, the game's shield icons remade), 3 Weapons (22 new
-weapons filling the game's gaps, the game's weapon icons remade) and 4 Casters (wands, foci, seer's robes, spells and
+weapons filling the game's gaps, the game's weapon icons remade) and 4 Casters (wands, spellbooks, seer's robes, spells and
 eitr foods; off by default). Shields, Weapons and Casters were tried and balanced as AssetLab benches and moved in on
 2026-10-12; each keeps its own notes beside its code (`src/Shields/SHIELDS.md`, `src/Weapons/WEAPONS.md`,
 `src/Casters/CASTERS.md`, the casters' design in `features/casters.md`): numbers, recipes, models, holds and checklists. This file is the code map, the patched methods, the
@@ -109,11 +109,12 @@ EliteEquipment/EliteEquipment/src/
                             axes, a greataxe, a bow, a spear); copies of a game weapon wearing a workshop model (bundle
                             ee_weapons; dual axes and claws skinned to the hand at runtime, HandSkin), recipes beside a
                             same-tier game weapon, the game's weapon icons of these lines remade
-  Casters/                  section 4, Casters (CASTERS.md, features/casters.md): wands (bolt, two spell slots, blink),
-                            foci, seer's robes per biome (trousers split by Boots' AddOwn, CasterBoots), spells learned from
-                            scrolls (Eikthyr drops one), the Spellbook, heals and party buffs sent to the players near
-                            (NearbyCast), eitr foods; bundles ee_wand_*, ee_focus_*, ee_seer_*, ee_spells_meadows,
-                            ee_casterfx_meadows, ee_casteranim, ee_food_*
+  Casters/                  section 4, Casters (CASTERS.md, features/casters.md): wands (bolt, spell ring, blink),
+                            spellbooks, seer's robes per biome (RobeSets: Deerhide to Emberweave, then the Deep North's
+                            Rimegild, tier 8; trousers split by Boots' AddOwn, CasterBoots), spell pages
+                            kept in the held book (from bosses, elite creatures, dungeon chests, rare drops), the Spellbook,
+                            heals and party buffs sent to the players near (NearbyCast), eitr foods; bundles ee_wand_*,
+                            ee_book_*, ee_seer_*, ee_spells_meadows, ee_casterfx_meadows, ee_casteranim, ee_food_*
 EliteEquipment/EliteEquipment/assets/boots/
                             native_split.txt: where the game's leggings are cut into trousers and boots (ValheimAssets
                             Assets/Gear/SeparatedLegArmor/NativeSplit_v001, coordinates only); the trousers' and boots'
@@ -132,8 +133,16 @@ EliteEquipment/EliteEquipment/assets/bundles/
 Libraries merged: SyncedConfig (with Charter, ConfigReload, YamlConfig, YamlDotNet), PatchGuard, ItemCopies (the split
 stats and icons into the prefab and every live copy), PlateColumn (`EmbeddedSprite`), BundlePrefabs (`PrefabBench`,
 `SpriteCrop`, `TexturePixels`: `ReadLinear` added for the fitted looks' normal and metal maps; `EmbeddedBundle`,
-`NetPrefabs`, `GameMaterials` for the new items), EliteCraftingLink and LocalEffects (the casters' effects).
-The game's `MagicaClothV2.dll` is referenced (not merged) for the chest cloth's simulation.
+`NetPrefabs`, `GameMaterials` for the new items), EliteCraftingLink and LocalEffects (the casters' effects), LimbIk
+(the spellbook held open: the left arm by two-bone IK after the animator, `src/Casters/BookHand.cs`), HaloRing with
+WindowInput (the casters' spell ring on right mouse, `src/Casters/SpellRing.cs`; `HaloRingMenu.Install` in
+`Plugin.Awake` adds WindowInput's postfixes on `Player.TakeInput`, `PlayerController.InInventoryEtc`,
+`GameCamera.UpdateMouseCapture`, `ZInput.GetMouseScrollWheel` and its prefix on `Menu.Update`, all acting only while
+the ring is open).
+The game's `MagicaClothV2.dll` is referenced (not merged) for the chest cloth's simulation and the seer's robes' skirts
+(`src/Casters/RobeCloth*.cs`, CASTERS.md "The robes' skirts as cloth": the robe's own renderer as a mesh cloth, fixed
+and moving vertices by a per-vertex list, own leg capsules from the bind pose, built once a worn robe's wearer stands
+still near the camera; players only, never without a graphics device).
 
 ## Patched game methods
 
@@ -154,7 +163,10 @@ drawn in over fitted leggings at once); postfix `FejdStartup.Start` and `Game.St
 character wears released, and at a world's start the bodies and materials made ahead). Core: prefix `Inventory.Changed` (private: the change count); the Translations
 library adds its own postfix on `Localization.SetupLanguage` (the words). Shields, Weapons and Casters: their patches are
 listed in their notes (each builds its items in prefixes on `ZNetScene.Awake`, `ObjectDB.Awake` and `CopyOtherDB`, the
-casters' at `Priority.High` so the seer's trousers are in the lists before the boots look for them).
+casters' at `Priority.High` so the seer's trousers are in the lists before the boots look for them; the casters' held
+spellbook adds postfixes on `Player.LateUpdate` and `Player.OnDestroy`, both private or protected, in
+`src/Casters/CASTERS.md`, "Held open"; the robes' `VisEquipment.AttachArmor` postfix, `RobeBody`, also starts the
+skirt's cloth, `RobeCloth`, with no patch of its own).
 
 ## Words
 
@@ -193,12 +205,17 @@ and key), `2. Shields` (`Shields` true), `3. Weapons` (`Weapons` true), `4. Cast
   (a SkinnedMeshRenderer, mesh `<chest mesh>_ee_cloth`) under the player's `Visual`, its MagicaCloth on a child
   `EE_ChestCloth_Cloth`, its colliders `EE_ChestClothThigh` under the thigh bones, paint map `EE_ChestClothPaint`; all per
   client, nothing networked or saved.
+- Seer's robe skirts: the watch `RobeCloth` (a component) and the MagicaCloth child `EE_RobeCloth` on the robe's
+  `attach_skin(Clone)`, the capsules `EE_RobeClothLeg` under the leg bones; per client, nothing networked or saved.
 
 - Shields `EE_Buckler<Tier>`, `EE_ShieldBronze`, `EE_Tower<Tier>`; weapons `EE_` + the asset name without `ee_`
-  (`EE_greatsword_bronze`; WEAPONS.md lists every asset), a thrown spear's projectile `EE_projectile_` + the same; casters `EE_Wand_<Biome>`, `EE_Focus_<Biome>`, `EE_Seer_<Biome>_<Piece>`, `EE_Spell_<Name>`, `EE_Food_<Name>`,
-  `EE_WandBolt`, status effects `EE_SE_*`. Words `$ee_<asset>` and `_desc`, `$ee_wand_*`, `$ee_focus_*`, `$ee_seer_*`,
-  `$ee_spell*`. Player custom data `EliteEquipment.spells` (known spells), item custom data `EliteEquipment.loadout` (a
-  wand's two slots); routed RPC `EliteEquipment_CasterFx` (effects, to the players near). Every item is a networked
+  (`EE_greatsword_bronze`; WEAPONS.md lists every asset), a thrown spear's projectile `EE_projectile_` + the same; casters `EE_Wand_<Biome>`, `EE_Book_<Biome>`, `EE_Seer_<Biome>_<Piece>`, `EE_Spell_<Name>` (the pages), `EE_Food_<Name>`,
+  `EE_WandBolt`, the Rootbound Wand's root spawner `EE_WandRoots` (not networked) and root `EE_WandRoot` (networked, not
+  saved), Elder's Volley's seed `EE_VolleySeed` (networked), the Ashwood Wand's firebolt `EE_WandFirebolt` (networked), status effects `EE_SE_*`. Words `$ee_<asset>` and `_desc`, `$ee_wand_*`, `$ee_book_*`, `$ee_seer_*`,
+  `$ee_spell*`, `$ee_page_*`. Item custom data `EliteEquipment.pages` (a spellbook's pages) and `EliteEquipment.lastSpell` (the
+  spell last picked on a wand's spell ring; a wand with only the old two-slot `EliteEquipment.loadout` takes its first
+  slot, the old key removed at the next pick); player custom data `EliteEquipment.spells` (spells learned before the spellbook) is read once, turned
+  into pages and removed; routed RPC `EliteEquipment_CasterFx` (effects, to the players near). Every item is a networked
   prefab registered on every peer.
 
 ## Decisions

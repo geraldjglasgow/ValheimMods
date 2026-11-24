@@ -61,6 +61,11 @@ namespace DevBridge.Perf
                 request.Fail("a /perf sample is already running; wait for its reply", 409);
                 return;
             }
+            if (PerfRecording.Current != null)
+            {
+                request.Fail("a /perf/record recording is running; /perf/record?stop=1 first", 409);
+                return;
+            }
             var session = new PerfSession(request, options);
             session.CheckFilter();
             Current = session;

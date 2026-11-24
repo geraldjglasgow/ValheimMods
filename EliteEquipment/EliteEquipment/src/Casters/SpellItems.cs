@@ -8,23 +8,27 @@ using SharedData = ItemDrop.ItemData.SharedData;
 namespace EliteEquipment.Casters
 {
     /// <summary>
-    /// A spell item (<see cref="Spell.Item"/>): a copy of the game's raspberries (a Consumable, so using it from the
-    /// inventory or the hotbar goes to <c>Player.ConsumeItem</c>, where <see cref="SpellLearning"/> teaches the spell
-    /// instead of eating), with no food in it, wearing the workshop's spell scroll on the ground and its own icon.
+    /// A spell page (<see cref="Spell.Item"/>, "Page: &lt;spell&gt;"): a copy of the game's raspberries (a Consumable, so
+    /// using it from the inventory or the hotbar goes to <c>Player.ConsumeItem</c>, where <see cref="PageUse"/> puts it in
+    /// the held spellbook instead of eating), with no food in it, wearing the workshop's one page model on the ground
+    /// (<see cref="PageModel"/>; the old scroll until the new bundle has it) and its own icon (Hearthsong's until Mend's
+    /// is in the bundle).
     /// </summary>
     public static class SpellItems
     {
         private const int Stack = 10;
+        private const string PageModel = "ee_spell_page";
+        private const string OldPageModel = "ee_spell_scroll";
 
         public static GameObject Build(Spell spell, GameObject berries)
         {
             GameObject item = PrefabBench.Copy(berries, spell.Item);
-            Look(item, CasterBundles.Prefab(CasterBundles.Spells, "ee_spell_scroll"));
+            Look(item, CasterBundles.PrefabOr(CasterBundles.Spells, PageModel, OldPageModel));
             SharedData shared = item.GetComponent<ItemDrop>().m_itemData.m_shared;
             shared.m_name = spell.ItemToken;
             shared.m_description = Lang.Token("ee_spellitem_desc") + "\n\n" + spell.DescriptionToken;
             shared.m_variants = 0;
-            CasterItemLook.Icon(shared, CasterBundles.Sprite(CasterBundles.Spells, spell.ItemIcon));
+            CasterItemLook.Icon(shared, CasterBundles.SpriteOr(CasterBundles.Spells, spell.ItemIcon, Spells.Hearthsong.ItemIcon));
             NoFood(shared);
             return item;
         }
@@ -43,16 +47,16 @@ namespace EliteEquipment.Casters
         }
 
         /// <summary>
-        /// The berries' meshes and colliders go, the scroll goes in (in the berries' own item material wearing its bake)
-        /// with a box round it; without the scroll the berries stay.
+        /// The berries' meshes and colliders go, the page goes in (in the berries' own item material wearing its bake)
+        /// with a box round it; without the page the berries stay.
         /// </summary>
-        private static void Look(GameObject item, GameObject scroll)
+        private static void Look(GameObject item, GameObject page)
         {
-            if (scroll == null)
+            if (page == null)
                 return;
             Material game = GameMaterials.Borrow(item);
             Strip(item);
-            GameObject model = Object.Instantiate(scroll, item.transform, false);
+            GameObject model = Object.Instantiate(page, item.transform, false);
             model.name = "model";
             foreach (Collider collider in model.GetComponentsInChildren<Collider>(true))
                 Object.DestroyImmediate(collider);

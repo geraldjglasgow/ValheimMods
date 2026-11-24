@@ -51,6 +51,10 @@
     <ProjectReference Include="$(ModLibsPath)\Translations\Translations.csproj" />
     <!-- StatusTemplates: its own status effects made, held on characters and registered in every ObjectDB. -->
     <ProjectReference Include="$(ModLibsPath)\StatusTemplates\StatusTemplates.csproj" />
+    <!-- LimbIk: the spellbook held open, the left hand brought forward palm up (two-bone IK after the animator) -->
+    <ProjectReference Include="$(ModLibsPath)\LimbIk\LimbIk.csproj" />
+    <!-- HaloRing (with WindowInput): the casters' spell ring, right mouse held with a wand -->
+    <ProjectReference Include="$(ModLibsPath)\HaloRing\HaloRing.csproj" />
   </ItemGroup>
 
   <ItemGroup>

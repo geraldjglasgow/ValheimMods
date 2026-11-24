@@ -96,7 +96,7 @@ namespace EliteEquipment.Casters
                 return;
             AnimatorOverrideController ours = For(animator.runtimeAnimatorController);
             if (ours != null)
-                animator.runtimeAnimatorController = ours;
+                animator.runtimeAnimatorController = PlayerControllers.Give(player, ours);
         }
 
         /// <summary>Every player's upper body moved on from the raise into the hold, and out of a hold let go without a throw.</summary>
@@ -105,7 +105,7 @@ namespace EliteEquipment.Casters
             foreach (Player player in Player.GetAllPlayers())
             {
                 Animator animator = player.m_animator;
-                if (animator != null && animator.runtimeAnimatorController is AnimatorOverrideController ours && made.ContainsValue(ours))
+                if (animator != null && PlayerControllers.Owns(player, animator.runtimeAnimatorController))
                     Step(animator, animator.GetLayerIndex("upperbody"));
             }
         }
@@ -135,7 +135,10 @@ namespace EliteEquipment.Casters
             animator.CrossFadeInFixedTime(None, LeaveHold, layer);
         }
 
-        /// <summary>The swapped copy of a controller, made once (another mod's copy is wrapped too); null for our own.</summary>
+        /// <summary>
+        /// The swapped copy of a controller, made once (another mod's copy is wrapped too); null for our own. Each player plays
+        /// a copy of it of their own (<see cref="PlayerControllers"/>), so a spell's motion in one player's cast slot is theirs alone.
+        /// </summary>
         private static AnimatorOverrideController For(RuntimeAnimatorController game)
         {
             if (game == null || (game is AnimatorOverrideController copy && made.ContainsValue(copy)))

@@ -6,17 +6,21 @@ using UnityEngine;
 namespace EliteEquipment.Casters
 {
     /// <summary>
-    /// Casting, on the caster's own machine. When the local player starts a wand's secondary attack (right mouse, or
-    /// right mouse held + left mouse for the second slot; the primary, left mouse, fires the bolt: user, 2026-10-11) the
-    /// slot's spell is fixed for that cast (<see cref="Casting"/>, the slot <see cref="CasterControls"/> chose). The cast does not start
-    /// with no spell in that slot; with the switch off
-    /// neither the cast nor the bolt does.
+    /// Casting, on the caster's own machine. When the local player starts a wand's secondary attack (a spell picked on
+    /// the spell ring, a right mouse tap or middle mouse, <see cref="SpellRing"/>; the primary, left mouse, fires the bolt:
+    /// user, 2026-10-11) the wand's last picked spell is fixed for that cast (<see cref="Casting"/>, <see cref="LastSpell"/>).
+    /// The cast does not start without a spellbook in the left hand, or when that spell's page is not in the book (or none
+    /// was picked yet); with the switch off neither the cast nor the bolt does.
     /// When the cast lands (the game's <c>Attack.DoNonAttack</c>, the trigger of an attack that hits nothing) the spell
     /// takes effect: Mend flies to the friend highlighted as the cast started (<see cref="HealTarget"/>, the lock) and
     /// heals them where it lands, or heals the caster when no friend is highlighted (<c>Character.Heal</c>, which the game
-    /// sends to the owner of a character on another machine); a chant puts its status effect on every friend within
-    /// <see cref="Spell.ChantRange"/> (<c>SEMan.AddStatusEffect</c>, sent to each owner the same way). Each cast raises
-    /// Blood Magic and shows its effects to the players near (<see cref="CasterFx"/>).
+    /// sends to the owner of a character on another machine); Cleanse lifts the same target's harmful effects at once, with
+    /// a small heal (<see cref="Cleanse"/>); Ward shields the same target (<see cref="Ward"/>) and Sanctuary raises its dome
+    /// at the caster's feet, not while its cooldown is on (<see cref="Sanctuary"/>); a chant puts its status effect on every friend within
+    /// <see cref="Spell.ChantRange"/> (<c>SEMan.AddStatusEffect</c>, sent to each owner the same way); a strike fires at
+    /// the aim (<see cref="VolleyCast"/>, its hits raising Elemental Magic). Each heal and chant raises Blood Magic;
+    /// every cast shows its effects to the players near (<see cref="CasterFx"/>). A spell with its own motion
+    /// (<see cref="SpellMotion"/>) lands at its clip's <c>Hit</c> (<see cref="SpellHits"/>), else at the game cast's.
     /// </summary>
     public static class SpellCast
     {
@@ -43,24 +47,37 @@ namespace EliteEquipment.Casters
                 }
                 if (!secondaryAttack)
                     return true;
-                Casting = Loadout.In(Player.m_localPlayer, CasterGearWorn.Wand(__instance), CasterControls.Slot);
+                if (CasterGearWorn.Book(__instance) == null)
+                    return Refuse(Lang.Get("ee_spell_no_book"), ref __result);
+                Casting = LastSpell.In(Player.m_localPlayer, CasterGearWorn.Wand(__instance));
                 if (Casting == null)
                     return Refuse(Lang.Get("ee_spell_none_ready"), ref __result);
-                locked = Casting.Kind == SpellKind.Heal ? HealTarget.Current : null;
+                if (Sanctuary.Waits(Player.m_localPlayer, Casting))
+                    return Refuse(Lang.Get("ee_spell_sanctuary_cooling"), ref __result);
+                if (!HealSpells.Ready(Player.m_localPlayer, Casting, out string why))
+                    return Refuse(why, ref __result);
+                locked = (Casting.Kind == SpellKind.Heal && !HealSpells.Unmarked(Casting)) || Casting == Spells.Ward ? HealTarget.Current : null;
+                SpellMotion.Choose(Player.m_localPlayer, CasterGearWorn.Wand(__instance), Casting);
                 return true;
             }
 
             /// <summary>
             /// The turn to the locked friend begins only once the game has started the cast (it refuses one it cannot pay
-            /// for before any animation): a refused cast neither plays nor turns the caster (user, 2026-10-10).
+            /// for before any animation): a refused cast neither plays nor turns the caster (user, 2026-10-10). The spell's own
+            /// motion goes to every player near only then too (<see cref="SpellMotion"/>).
             /// </summary>
             [HarmonyPostfix]
             private static void Postfix(Humanoid __instance, bool secondaryAttack, bool __result)
             {
-                if (__result && !secondaryAttack && __instance == Player.m_localPlayer && CasterGearWorn.Wand(__instance) != null)
+                if (!__result || __instance != Player.m_localPlayer || CasterGearWorn.Wand(__instance) == null)
+                    return;
+                if (!secondaryAttack)
+                {
                     WindUp.Started(Player.m_localPlayer);
-                if (__result && secondaryAttack && locked != null && __instance == Player.m_localPlayer
-                    && CasterGearWorn.Wand(__instance) != null)
+                    return;
+                }
+                SpellMotion.Started(Player.m_localPlayer);
+                if (locked != null)
                     CastTurn.Begin(locked);
             }
         }
@@ -83,11 +100,24 @@ namespace EliteEquipment.Casters
         private static void Cast(Player caster, ItemDrop.ItemData wand, Spell spell, Vector3 tip)
         {
             CasterFx.Send(CasterFx.Cast, tip, ZDOID.None, spell);
-            if (spell.Kind == SpellKind.Heal)
+            if (spell == Spells.Cleanse)
+                Cleanse.Cast(caster, wand, spell, locked);
+            else if (spell == Spells.Ward)
+                Ward.Cast(caster, wand, spell, locked);
+            else if (spell == Spells.Sanctuary)
+                Sanctuary.Cast(caster, spell);
+            else if (HealSpells.Casts(spell))
+                HealSpells.Cast(caster, wand, spell, locked, tip);
+            else if (spell.Kind == SpellKind.Heal)
                 Mend(caster, wand, spell, tip);
+            else if (spell == Spells.Breath)
+                BreathCast.Fire(caster, wand, spell);
+            else if (spell.Kind == SpellKind.Strike)
+                VolleyCast.Fire(caster, wand, spell);
             else
                 Chant(caster, spell);
-            caster.RaiseSkill(Skills.SkillType.BloodMagic, 1f);
+            if (spell.Kind != SpellKind.Strike)
+                caster.RaiseSkill(Skills.SkillType.BloodMagic, 1f);
         }
 
         /// <summary>
@@ -138,7 +168,8 @@ namespace EliteEquipment.Casters
                     character.GetSEMan().AddStatusEffect(effect, resetTime: true);
             }
             near.Clear();
-            CasterFx.Send(CasterFx.Chant, caster.transform.position, ZDOID.None, spell);
+            // The chant's own release (its ring and more, turned to the caster's facing: the caster's id goes with it), else the shared ring.
+            CasterFx.Send(spell.ReleaseEffect ?? CasterFx.Chant, caster.transform.position, caster.GetZDOID(), spell);
         }
 
         /// <summary>The wand's tip in the hand (its <c>tip</c> point), else where the game starts the attack.</summary>
@@ -149,16 +180,21 @@ namespace EliteEquipment.Casters
             return tip != null ? tip.position : attack.GetAttackOrigin().position;
         }
 
-        /// <summary>The cast does not start; why, in the middle of the screen (not more often than every two seconds).</summary>
+        /// <summary>The cast does not start; why, in the middle of the screen.</summary>
         private static bool Refuse(string word, ref bool result)
         {
             result = false;
-            if (Time.time - lastMessage >= MessageEvery)
-            {
-                lastMessage = Time.time;
-                Player.m_localPlayer?.Message(MessageHud.MessageType.Center, word);
-            }
+            Tell(word);
             return false;
+        }
+
+        /// <summary>A caster's message in the middle of the screen, not more often than every two seconds.</summary>
+        public static void Tell(string word)
+        {
+            if (Time.time - lastMessage < MessageEvery)
+                return;
+            lastMessage = Time.time;
+            Player.m_localPlayer?.Message(MessageHud.MessageType.Center, word);
         }
     }
 }

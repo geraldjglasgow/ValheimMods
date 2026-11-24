@@ -26,6 +26,7 @@ namespace DevBridge.Perf
 
         internal Harmony Harmony => harmony;
         internal int Probed => probed.Count;
+        internal int Pending => work.Count;
         internal double BusySeconds => busy.Elapsed.TotalSeconds;
 
         /// <summary>Queues a probe on every target, then a rebuild of each wrapper that may have inlined a small one.</summary>

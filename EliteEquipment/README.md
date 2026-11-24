@@ -11,8 +11,8 @@ healer and caster class.
 - Shields: bucklers for the biomes that had none, a Bronze round shield and two tower shields.
 - Weapons: 22 new weapons filling the gaps in the game's lines, crafted beside the game's own of the same tier.
 - New icons for the game's own shields and for the weapons in these lines, drawn to match.
-- Casters (off by default): wands that heal friends and fire a charged bolt, a focus, seer's robes for every biome,
-  spells learned from scrolls and eitr foods.
+- Casters (off by default): wands that heal friends and fire a charged bolt, a spellbook of spell pages found on
+  bosses, elite creatures and in dungeons, seer's robes for every biome and eitr foods.
 - PackPanel: a Feet slot under Legs. EliteCrafting: inscriptions on worn boots count.
 - Works with mods that change item weights, such as OpenKeep's Stacks.
 
@@ -34,12 +34,12 @@ Carapace, Eitr-weave, Ask, Flametal, Embla, Protector, Caller and Vanguard boots
 - Flametal Greataxe, Black Metal Bow, Black Metal Spear.
 
 ## Casters
-- Wands: Gnarled Wand, Greywood Wand. Left mouse fires a bolt (hold to charge), right mouse casts your two prepared
-  spells, dodging blinks.
-- Raven Fetish: an off-hand focus for stronger heals.
-- Seer's robes: Deerhide, Mossweave, Rootweave, Wolfwool, Sunweave, Mistweave and Emberweave, each with eitr.
-- Spells: Mend (heal a friend or yourself), Hearthsong and Stag's Swiftness (buffs for everyone near; Eikthyr drops
-  Swiftness's scroll). Prepared in the Spellbook.
+- Wands: Gnarled Wand, Greywood Wand (throws stones), Rootbound Wand (raises roots), Frostsilver Wand (ice shards), Blackmetal Wand, Yggdrasil Wand, Ashwood Wand (firebolts). Left mouse fires a bolt (hold to charge), hold right mouse to pick a spell from
+  your spellbook on a ring (a tap casts the last one again), dodging blinks.
+- Spellbooks: Leatherbound Spellbook (2 pages), Barkbound Grimoire (4) and Cinderbound Tome (8), held in the left hand; their pages are the spells a wand casts, and they strengthen heals.
+- Seer's robes: Deerhide, Mossweave, Rootweave, Wolfwool, Sunweave, Mistweave, Emberweave and Rimegild, each with eitr.
+- Spells: Mend (heal a friend or yourself), Hearthsong and Stag's Swiftness (buffs for everyone near), Elder's Volley (six of the
+  Elder's seeds at the aim), Cleanse (lift every harmful effect from a friend or yourself), Moder's Breath (a frost cone at the aim), Eir's Spring (a healing circle where you aim), Second Wind (stamina for everyone near), Chain Mend (a heal that jumps from friend to friend), Revive (a friend who just fell brought back to their grave; its page only in dungeon chests), Ward (a shield on a friend or yourself), Sanctuary (a dome where friends take less damage), War Chant and Feather Fall (more damage, slow falling for everyone near). Pages drop from bosses (Eikthyr: Swiftness, the Elder: Volley, Moder: Breath, The Queen: Sanctuary), elite creatures, dungeon chests and rarely any kill.
 - Eitr foods: Dandelion Mash, Candied Thistle, Glowcap Broth, Seer's Porridge, Turnip Crisps, Blood Draught, Mire Stew,
   Glacier Tea, Wolfheart Stew, Candied Cloudberries, Lox Marrow Broth, Sunbarley Porridge.
 

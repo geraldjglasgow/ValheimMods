@@ -12,7 +12,9 @@ namespace EliteEquipment.Casters
     /// (<see cref="Rpc"/>, through <see cref="NearbyCast"/>) and each machine draws a local copy of the workshop effect
     /// (<c>ee_casterfx_meadows</c>, dressed by <see cref="BundleEffects"/>) and plays a game sound with it. Nothing is
     /// networked but the message; a dedicated server draws nothing. The cast flash and the chant ring are authored in
-    /// Hearthsong's gold and turned to each spell's colour once (<see cref="Tinted"/>).
+    /// Hearthsong's gold and turned to each spell's colour once (<see cref="Tinted"/>). A spell's own release effects are
+    /// drawn by <see cref="SpellFx"/> (as authored, the ground ones turned to the caster's facing), which also drops the
+    /// cast flash for a spell that has its own (its sound stays).
     /// </summary>
     public static class CasterFx
     {
@@ -115,6 +117,9 @@ namespace EliteEquipment.Casters
                     HealFlight.Launch(at, character, MendOn);
                 return;
             }
+            effect = SpellFx.Draw(effect, at, character, spell);
+            if (effect == null)
+                return;
             LocalEffect.Flash(Tinted(effect, spell), at, AsAuthored);
             LocalEffect.Sound(ZNetScene.instance?.GetPrefab(CasterSounds.For(effect)), at);
         }

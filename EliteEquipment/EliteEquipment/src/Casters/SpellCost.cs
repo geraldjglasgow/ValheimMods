@@ -8,7 +8,8 @@ namespace EliteEquipment.Casters
     /// cost differently on their own: the bolt (the projectile attack) costs <see cref="BoltEitr"/>, up to a third less from
     /// Elemental Magic (user, 2026-10-11: eitr, not stamina), the cast costs the spell being cast
     /// (<see cref="SpellCast.Casting"/>): its eitr, a quarter less for Mend with the whole Deerhide Vestments on, then up
-    /// to a third less from Blood Magic, the game's own reduction for staves (0.33 times the skill factor).
+    /// to a third less from Blood Magic (a strike's from Elemental Magic, <see cref="Spell.Skill"/>), the game's own
+    /// reduction for staves (0.33 times the skill factor).
     /// </summary>
     [HarmonyPatch(typeof(Attack), nameof(Attack.GetAttackEitr), typeof(Character), typeof(ItemDrop.ItemData))]
     public static class SpellCost
@@ -32,7 +33,7 @@ namespace EliteEquipment.Casters
                 __result = WindUp.Prepaid ? 0f : BoltEitr * (1f - SkillSaving * character.GetSkillFactor(Skills.SkillType.ElementalMagic));
                 return;
             }
-            Spell spell = SpellCast.Casting ?? Loadout.In(Player.m_localPlayer, weapon, CasterControls.Slot);
+            Spell spell = SpellCast.Casting ?? LastSpell.In(Player.m_localPlayer, weapon);
             __result = spell != null ? Of(character, spell) : 0f;
         }
 
@@ -41,7 +42,7 @@ namespace EliteEquipment.Casters
             float eitr = spell.Eitr;
             if (spell == Spells.Mend && caster.GetSEMan().HaveStatusEffect(RobeSets.Meadows.BonusHash))
                 eitr *= 1f - SetSaving;
-            return eitr * (1f - SkillSaving * caster.GetSkillFactor(Skills.SkillType.BloodMagic));
+            return eitr * (1f - SkillSaving * caster.GetSkillFactor(spell.Skill));
         }
     }
 }

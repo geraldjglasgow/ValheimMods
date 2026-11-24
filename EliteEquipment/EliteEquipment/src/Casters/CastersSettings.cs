@@ -19,11 +19,13 @@ namespace EliteEquipment.Casters
         public static void Initialize(SyncedConfiguration synced)
         {
             Enabled = synced.Bind(Section, Key, false,
-                "A healer and caster line from the Meadows on: wands that cast spells chosen from the ones the character has " +
-                "learned (2 held ready per wand: right mouse casts the first, right mouse held + left mouse the second; " +
-                "the Spellbook button in the inventory prepares them), an off-hand focus and seer's robes that give eitr before the Mistlands. Meadows so far: the " +
-                "Gnarled Wand, the Raven Fetish, the Deerhide Vestments; Mend, Hearthsong and Stag's Swiftness (Eikthyr). " +
-                "Off by default. Off: none of it can be crafted, Eikthyr drops no spell, spell scrolls teach nothing, wands cast " +
+                "A healer and caster line from the Meadows on: wands that cast the spells whose pages are in the spellbook " +
+                "held in the left hand (2 held ready per wand: right mouse casts the first, right mouse held + left mouse the " +
+                "second; the Spellbook button in the inventory prepares them; without a book a wand fires only its bolt), and " +
+                "seer's robes that give eitr before the Mistlands. Pages drop from bosses (one per player), creatures with two " +
+                "stars or more (5%), dungeon chests (10%) and any creature a player kills (0.5%). Meadows so far: the Gnarled " +
+                "Wand, the Leatherbound Spellbook (2 pages; the Swamp's and Ashlands' books 4 and 8), the Deerhide Vestments; Mend, Hearthsong and Stag's Swiftness " +
+                "(Eikthyr). Off by default. Off: none of it can be crafted, no pages drop, pages go in no book, wands cast " +
                 "nothing, the gear gives no eitr and no spell bar or Spellbook shows (items already made stay).");
         }
     }

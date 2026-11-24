@@ -28,6 +28,7 @@ namespace EliteEquipment.Casters
                     continue;
                 Show(worn.transform, Male, !female);
                 Show(worn.transform, Female, female);
+                RobeCloth.Watch(__instance, worn.transform, female ? Female : Male);
             }
         }
 

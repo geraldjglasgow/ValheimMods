@@ -1,128 +1,112 @@
-using TMPro;
+using System.Collections.Generic;
 using Translations;
-using UnityEngine;
-using UnityEngine.UI;
 
 namespace EliteEquipment.Casters
 {
     /// <summary>
-    /// The Spellbook (features/casters.md, "How spells are chosen", step 2): anywhere, with the inventory open and a wand
-    /// in hand, the Spellbook button opens it beside the inventory. Click one of the wand's two slots, then a known spell
-    /// to hold it ready there (a spell already in another slot moves); clicking the picked slot again empties it. The
-    /// loadout is the wand's own (<see cref="Loadout"/>). The window closes with the inventory, and when the wand leaves
-    /// the hand or the switch goes off. Refreshed only when the wand, its loadout, the picked slot, the known spells or the
-    /// language change.
+    /// The Spellbook window (features/casters.md, "The spellbook"): anywhere, with the inventory open and a spellbook in
+    /// the left hand (a wand is not needed), the Spellbook button opens it in the crafting panel's place, the crafting
+    /// panel hidden until it closes (<see cref="SpellbookCover"/>). It lists the pages in the held book; a click picks
+    /// one, shown on the right with a button that takes it out into the inventory (<see cref="PageUse.TakeOut"/>). The
+    /// spells are chosen with a wand on the spell ring (<see cref="SpellRing"/>), not here (user, 2026-11-02). The window
+    /// closes with its button, with the inventory, and when the book leaves the hand or the switch goes off. Refreshed
+    /// only when the book, its pages, a pick or the language change; the rows are made again only when the pages change.
     /// </summary>
     public static class Spellbook
     {
         private static bool open;
-        private static int editing;
+        private static Spell picked;
         private static bool dirty = true;
-        private static ItemDrop.ItemData shownWand;
-        private static string shownLoadout;
-        private static int shownKnown = -1;
+        private static ItemDrop.ItemData shownBook;
+        private static string shownPages;
         private static int shownWords = -1;
 
         public static void Tick()
         {
             Player player = Player.m_localPlayer;
-            ItemDrop.ItemData wand = CastersSettings.On && InventoryGui.IsVisible() ? CasterGearWorn.Wand(player) : null;
-            if (wand == null)
+            bool shown = CastersSettings.On && InventoryGui.IsVisible();
+            ItemDrop.ItemData book = shown ? CasterGearWorn.Book(player) : null;
+            if (book == null)
             {
                 Hide();
                 return;
             }
-            if (!SpellbookUi.Ensure(Toggle, PickSlot))
+            if (!SpellbookUi.Ensure(Toggle, PickPage, TakeOut))
                 return;
             if (!SpellbookUi.OpenButton.gameObject.activeSelf)
                 SpellbookUi.OpenButton.gameObject.SetActive(true);
             SpellbookUi.Relabel();
-            if (open && Changed(player, wand))
-                Refresh(player, wand);
+            if (open && !SpellbookUi.Window.gameObject.activeSelf)
+                Close();
+            if (!open)
+                return;
+            SpellbookLayout.Fit(SpellbookUi.Window, SpellbookUi.Gui.m_crafting);
+            if (Changed(book))
+                Refresh(player, book);
         }
 
         private static void Hide()
         {
-            open = false;
-            if (SpellbookUi.Window != null && SpellbookUi.Window.gameObject.activeSelf)
-                SpellbookUi.Window.gameObject.SetActive(false);
+            if (open)
+                Close();
             if (SpellbookUi.OpenButton != null && SpellbookUi.OpenButton.gameObject.activeSelf)
                 SpellbookUi.OpenButton.gameObject.SetActive(false);
         }
 
+        private static void Close()
+        {
+            open = false;
+            SpellbookCover.Restore();
+            if (SpellbookUi.Window != null)
+                SpellbookUi.Window.gameObject.SetActive(false);
+        }
+
         private static void Toggle()
         {
-            open = !open;
-            SpellbookUi.Window.gameObject.SetActive(open);
+            if (open)
+            {
+                Close();
+                return;
+            }
+            (open, dirty) = (true, true);
+            SpellbookLayout.Fit(SpellbookUi.Window, SpellbookUi.Gui.m_crafting);
+            SpellbookUi.Window.gameObject.SetActive(true);
+            SpellbookCover.Cover(SpellbookUi.Gui.m_crafting);
+        }
+
+        /// <summary>A page clicked: shown on the right.</summary>
+        private static void PickPage(Spell spell)
+        {
+            picked = spell;
             dirty = true;
         }
 
-        private static void PickSlot(int slot)
+        private static void TakeOut()
         {
-            ItemDrop.ItemData wand = CasterGearWorn.Wand(Player.m_localPlayer);
-            if (wand != null && slot == editing && Loadout.Read(wand)[slot].Length > 0)
-                Loadout.Set(wand, slot, null);
-            editing = slot;
+            if (picked != null)
+                PageUse.TakeOut(Player.m_localPlayer, picked);
             dirty = true;
         }
 
-        private static void PickSpell(Spell spell)
+        private static bool Changed(ItemDrop.ItemData book)
         {
-            ItemDrop.ItemData wand = CasterGearWorn.Wand(Player.m_localPlayer);
-            if (wand != null)
-                Loadout.Set(wand, editing, spell);
-            dirty = true;
-        }
-
-        private static bool Changed(Player player, ItemDrop.ItemData wand)
-        {
-            wand.m_customData.TryGetValue(Loadout.SlotsKey, out string loadout);
-            int known = player.m_customData.TryGetValue(KnownSpells.Key, out string text) ? text.Length : 0;
-            if (!dirty && wand == shownWand && loadout == shownLoadout && known == shownKnown && Lang.Version == shownWords)
+            string pages = BookPages.Text(book);
+            if (!dirty && book == shownBook && pages == shownPages && Lang.Version == shownWords)
                 return false;
-            if (known != shownKnown)
-                SpellbookUi.ClearRows();
-            (dirty, shownWand, shownLoadout, shownKnown, shownWords) = (false, wand, loadout, known, Lang.Version);
+            if (pages != shownPages)
+                SpellbookPages.Clear();
+            (dirty, shownBook, shownPages, shownWords) = (false, book, pages, Lang.Version);
             return true;
         }
 
-        private static void Refresh(Player player, ItemDrop.ItemData wand)
+        private static void Refresh(Player player, ItemDrop.ItemData book)
         {
-            for (int i = 0; i < Loadout.Slots; i++)
-                ShowSlot(SpellbookUi.Slots[i], Loadout.In(player, wand, i), i == editing);
-            var known = KnownSpells.Of(player);
-            Spell picked = Loadout.In(player, wand, editing);
-            for (int i = 0; i < known.Count; i++)
-            {
-                GameObject row = i < SpellbookUi.Rows.Count ? SpellbookUi.Rows[i] : SpellbookUi.Row(i, known[i], PickSpell);
-                ShowRow(row, known[i], known[i] == picked, player);
-            }
-            SpellbookUi.Detail.text = Lang.Get(picked != null ? picked.DescriptionToken : "ee_spellbook_hint");
-        }
-
-        private static void ShowSlot(GameObject slot, Spell spell, bool picked)
-        {
-            Image icon = slot.transform.Find("icon")?.GetComponent<Image>();
-            if (icon != null)
-            {
-                icon.gameObject.SetActive(spell != null);
-                icon.sprite = spell != null ? CasterBundles.Sprite(CasterBundles.Spells, spell.Icon) : null;
-            }
-            slot.transform.Find("selected")?.gameObject.SetActive(picked);
-        }
-
-        private static void ShowRow(GameObject row, Spell spell, bool inPicked, Player player)
-        {
-            Image icon = row.transform.Find("icon")?.GetComponent<Image>();
-            if (icon != null)
-                icon.sprite = CasterBundles.Sprite(CasterBundles.Spells, spell.Icon);
-            TMP_Text name = row.transform.Find("name")?.GetComponent<TMP_Text>();
-            if (name != null)
-            {
-                string cost = Lang.Format("ee_spellbook_cost", Mathf.CeilToInt(SpellCost.Of(player, spell)));
-                name.text = Lang.Get(spell.Token) + "  <color=#9a9a9a>" + cost + "</color>";
-                name.color = inPicked ? new Color(1f, 0.83f, 0.4f) : Color.white;
-            }
+            List<Spell> pages = BookPages.Of(book);
+            if (picked == null || !pages.Contains(picked))
+                picked = pages.Count > 0 ? pages[0] : null;
+            SpellbookUi.ShowHeader(book, pages.Count);
+            SpellbookPages.Show(pages, picked, player, pages.Count == 0 ? Lang.Get("ee_spellbook_empty") : null);
+            SpellbookDetail.Show(picked, player);
         }
     }
 }

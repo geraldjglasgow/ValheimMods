@@ -11,23 +11,20 @@ namespace EliteEquipment.Casters
     /// image: "have some white energy emanating from the other hand toward the wand while it's charging. When fully charged
     /// stop the other hand from emanating white energy"). Drawn for every player near on this machine from the state the
     /// caster shares (<see cref="ChargeState"/>): the workshop's <c>ee_fx_charge_stream</c>, authored along +Z over one
-    /// metre, set at the left hand each frame, turned to the wand's tip and stretched to reach it; gone at full charge,
+    /// metre, set at the left hand (with a spellbook open on it, at the book's pages: <see cref="StreamStart"/>) each frame,
+    /// turned to the wand's tip and stretched to reach it; gone at full charge,
     /// when the charge is let go, or when the hand or wand is not there. Local copies only.
     /// </summary>
     public static class ChargeStream
     {
         private const float Shortest = 0.01f;
 
-        /// <summary>
-        /// The open palm's middle in the charge pose, metres along the left hand bone's own axes (the workshop's
-        /// ee_casteranim build, 2026-10-11), so the stream leaves the palm, not the wrist.
-        /// </summary>
-        private static readonly Vector3 PalmOffset = new Vector3(-0.003f, 0.089f, 0.011f);
-
         private sealed class Drawn
         {
             public Transform Palm;
             public Transform Tip;
+            public Transform Book;
+            public Vector3 BookTop;
             public GameObject Stream;
         }
 
@@ -57,24 +54,25 @@ namespace EliteEquipment.Casters
             if (palm == null || tip == null)
                 return;
             if (now == null)
-                drawn[player] = now = Make(palm, tip);
+                drawn[player] = now = Make(player, palm, tip);
             Aim(now);
         }
 
-        private static Drawn Make(Transform palm, Transform tip)
+        private static Drawn Make(Player player, Transform palm, Transform tip)
         {
-            GameObject stream = LocalEffect.Attach(CasterFx.Prepared(CasterFx.ChargeStream), palm, palm.position, endless: true);
+            GameObject stream = LocalEffect.Attach(BoltTint.Stream(player), palm, palm.position, endless: true);
             if (stream != null)
                 ChargeOrb.ScaleWithParent(stream);
-            return new Drawn { Palm = palm, Tip = tip, Stream = stream };
+            Transform book = StreamStart.Book(player, out Vector3 top);
+            return new Drawn { Palm = palm, Tip = tip, Book = book, BookTop = top, Stream = stream };
         }
 
-        /// <summary>From the palm to the tip: the stream's +Z turned to the tip and stretched to its distance.</summary>
+        /// <summary>From the palm (or the open book on it, <see cref="StreamStart"/>) to the tip: +Z turned to the tip, stretched to reach it.</summary>
         private static void Aim(Drawn now)
         {
             if (now.Stream == null)
                 return;
-            Vector3 palm = now.Palm.position + now.Palm.rotation * PalmOffset;
+            Vector3 palm = StreamStart.From(now.Palm, now.Book, now.BookTop);
             Vector3 reach = now.Tip.position - palm;
             float length = reach.magnitude;
             if (length < Shortest)

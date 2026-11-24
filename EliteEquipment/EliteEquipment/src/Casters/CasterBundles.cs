@@ -27,7 +27,7 @@ namespace EliteEquipment.Casters
             }
             catch (Exception e)
             {
-                Plugin.Log.LogError($"EliteEquipment: the casters' bundle {name} is missing: {e.Message}");
+                Plugin.Log.LogWarning($"EliteEquipment: the casters' bundle {name} is missing: {e.Message}");
                 bundle = null;
             }
             loaded[name] = bundle;
@@ -41,6 +41,28 @@ namespace EliteEquipment.Casters
             if (source != null && prefab == null)
                 Plugin.Log.LogError($"EliteEquipment: the bundle {bundle} has no {asset}");
             return prefab;
+        }
+
+        /// <summary>The asset, or the fallback while the bundle does not have it yet (a warning).</summary>
+        public static GameObject PrefabOr(string bundle, string asset, string fallback)
+        {
+            AssetBundle source = Get(bundle);
+            GameObject prefab = source != null ? source.LoadAsset<GameObject>(asset) : null;
+            if (source == null || prefab != null)
+                return prefab;
+            Plugin.Log.LogWarning($"EliteEquipment: the bundle {bundle} has no {asset} yet; {fallback} instead");
+            return Prefab(bundle, fallback);
+        }
+
+        /// <summary>The sprite, or the fallback while the bundle does not have it yet (a warning).</summary>
+        public static Sprite SpriteOr(string bundle, string asset, string fallback)
+        {
+            AssetBundle source = Get(bundle);
+            Sprite sprite = source != null ? source.LoadAsset<Sprite>(asset) : null;
+            if (source == null || sprite != null)
+                return sprite;
+            Plugin.Log.LogWarning($"EliteEquipment: the bundle {bundle} has no sprite {asset} yet; {fallback} instead");
+            return Sprite(bundle, fallback);
         }
 
         public static Texture2D Texture(string bundle, string asset)

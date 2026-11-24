@@ -7,11 +7,11 @@ using Object = UnityEngine.Object;
 namespace EliteEquipment.Casters
 {
     /// <summary>
-    /// Puts a workshop held model (the wand, the focus) where the game item's model was: under its <c>attach</c> child,
+    /// Puts a workshop held model (the wand, the spellbook) where the game item's model was: under its <c>attach</c> child,
     /// which the game draws in the hand, on the back, on an item stand and on the ground. The game's model and collider
     /// go; the upgrade glow and the equipped marker stay, the glow reshaped to the new model. The workshop builds the model
     /// on fixed axes with a <c>grip</c> point where the fist closes; it is turned the way the game holds its kind
-    /// (<see cref="InFist"/> for the wand, <see cref="OnHand"/> for a buckler-like focus) and moved so the grip sits on
+    /// (<see cref="InFist"/> for the wand, <see cref="OnHand"/> for the spellbook, held as a buckler) and moved so the grip sits on
     /// the attach point. Mesh parts wear the game item's material with
     /// the bake; <c>glow*</c> parts keep the bundle's own emissive material.
     /// </summary>
@@ -21,8 +21,18 @@ namespace EliteEquipment.Casters
         private const string Grip = "grip";
         private const float Gloss = 0.1f;
         private static readonly string[] Keep = { "UpgraderGlow", "equiped" };
-        /// <summary>A wand or anything gripped like the game's club and torch: length +Y laid along the attach's +Z.</summary>
-        public static readonly Quaternion InFist = Quaternion.Euler(90f, 0f, 0f);
+        /// <summary>
+        /// A wand or anything gripped like the game's club and torch: length +Y laid along the attach's +Z, then tipped 5
+        /// degrees down in the idle hold (user, 2026-11-02: "tilted down a bit"; 30 was "way too far", 10 still too much).
+        /// </summary>
+        public static readonly Quaternion InFist =
+            Quaternion.AngleAxis(5f, new Vector3(0.161f, 0.987f, 0f)) * Quaternion.Euler(90f, 0f, 0f);
+
+        /// <summary>
+        /// The closed fist's hole in the right hand's attach, 2.5 cm off the attach point towards the fingers (measured
+        /// from the finger bones in game, 2026-11-02): a wand gripped on the attach point itself sat on the thumb.
+        /// </summary>
+        private static readonly Vector3 FistCentre = new Vector3(0.025f, 0f, 0f);
 
         /// <summary>
         /// A hand-ward held like the game's bucklers (front +Z, up +Y in the workshop): the face out from the arm, turned 29
@@ -75,7 +85,7 @@ namespace EliteEquipment.Casters
             }
         }
 
-        private static void Dress(GameObject model, Material game)
+        internal static void Dress(GameObject model, Material game)
         {
             var dressed = new Dictionary<Material, Material>();
             foreach (Renderer renderer in model.GetComponentsInChildren<Renderer>(true))
@@ -103,7 +113,7 @@ namespace EliteEquipment.Casters
             return GameMaterials.Plain(GameMaterials.Dress(game, placeholder), Gloss);
         }
 
-        /// <summary>The grip on the attach point; without a grip point the model's base is.</summary>
+        /// <summary>The grip on the attach point (in the fist's hole for a wand); without a grip point the model's base is.</summary>
         private static void Place(Transform model, Quaternion hold, string name)
         {
             model.localRotation = hold;
@@ -111,7 +121,8 @@ namespace EliteEquipment.Casters
             Transform grip = model.Find(Grip);
             if (grip == null)
                 Plugin.Log.LogWarning($"EliteEquipment: {name}'s model has no {Grip} point; it is held by its origin");
-            model.localPosition = grip != null ? -(hold * grip.localPosition) : Vector3.zero;
+            Vector3 at = hold == InFist ? FistCentre : Vector3.zero;
+            model.localPosition = at - (grip != null ? hold * grip.localPosition : Vector3.zero);
         }
 
         private static void Collide(Transform holder, Bounds bounds)

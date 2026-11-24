@@ -18,7 +18,12 @@ namespace EliteEquipment.Casters
         [HarmonyPostfix]
         private static void Postfix(Projectile __instance, Character owner, ItemDrop.ItemData item)
         {
-            if (owner == null || owner != Player.m_localPlayer || !CasterGearWorn.IsWand(item) || __instance.m_nview == null)
+            // The Frostsilver Wand's ice shards keep their size: its charge fires more of them (IceVolley); Elder's
+            // Volley's seeds keep theirs: a spell is never charged; the Greywood Wand's rocks are sized by RockShot, the
+            // Ashwood Wand's firebolts by FireboltShot.
+            if (owner == null || owner != Player.m_localPlayer || !CasterGearWorn.IsWand(item) || __instance.m_nview == null
+                || IceShards.Is(__instance) || VolleySeeds.Is(__instance) || WandRock.Is(__instance)
+                || Firebolt.Is(__instance))
                 return;
             float scale = Mathf.Lerp(Smallest, Largest, WindUp.Thrown);
             __instance.m_nview.SetLocalScale(__instance.transform.localScale * scale);

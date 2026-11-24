@@ -10,7 +10,11 @@ namespace EliteEquipment.Casters
     /// back), wearing the workshop wand, with two attacks built on the game's Staff of Embers' cast (<c>staff_fireball</c>,
     /// the one cast motion that plays on a one-handed weapon, tried in game 2026-10-09). Primary (left mouse): the bolt
     /// (<see cref="WandBolt"/>), pierce and spirit, paid in eitr (<see cref="SpellCost"/>), charged by holding
-    /// (<see cref="CasterControls"/>, <see cref="WindUp"/>) and thrown with the charged staff's release (<see cref="Release"/>). Secondary (right mouse through
+    /// (<see cref="CasterControls"/>, <see cref="WindUp"/>) and thrown with the charged staff's release (<see cref="Release"/>);
+    /// the Rootbound Wand raises the Elder's roots instead (<see cref="WandRoots"/>), blunt and spirit, and the Frostsilver
+    /// Wand fires a fan of the Staff of Frost's ice shards (<see cref="IceShards"/>), frost and spirit; the Greywood Wand throws a
+    /// Greydwarf's stone (<see cref="WandRock"/>), blunt and spirit, that a charge makes bigger and breaks apart; the Ashwood
+    /// Wand fires the Staff of Embers' fireball, smaller (<see cref="Firebolt"/>), fire and spirit, exploding at full charge. Secondary (right mouse through
     /// <see cref="CasterControls"/>, and middle mouse): a cast that hits nothing (<c>AttackType.None</c>):
     /// <see cref="SpellCast"/> casts the selected spell when it lands, <see cref="SpellCost"/> prices it. The skill is
     /// Elemental Magic (the bolt's); heals and chants raise Blood Magic themselves.
@@ -31,13 +35,14 @@ namespace EliteEquipment.Casters
             HeldModel.Wear(item, club, CasterBundles.Prefab(wand.Bundle, wand.Asset), HeldModel.InFist);
             SharedData shared = item.GetComponent<ItemDrop>().m_itemData.m_shared;
             CasterItemLook.Describe(shared, wand);
-            Stats(shared, wand.Bolt);
+            Stats(shared, wand);
             Attacks(shared, staff.GetComponent<ItemDrop>().m_itemData.m_shared.m_attack);
             return item;
         }
 
         /// <summary>
-        /// The bolt is built with the scene's prefabs, after the wand: the wand's primary attack fires it. Until then the
+        /// The bolt (the Rootbound Wand's: its root spawner; the Frostsilver Wand's: its ice shard) is built with the scene's prefabs, after the wand: the wand's
+        /// primary attack fires it. Until then the
         /// wand has no primary attack (no animation: the game offers none), so it never fires the staff's own fireball.
         /// </summary>
         public static void Arm(GameObject wand, GameObject bolt)
@@ -49,18 +54,35 @@ namespace EliteEquipment.Casters
             attack.m_attackAnimation = Release;
         }
 
-        private static void Stats(SharedData shared, float bolt)
+        private static void Stats(SharedData shared, GearPiece wand)
         {
             shared.m_skillType = Skills.SkillType.ElementalMagic;
-            shared.m_damages = new HitData.DamageTypes { m_pierce = bolt, m_spirit = bolt };
-            shared.m_damagesPerLevel = new HitData.DamageTypes { m_pierce = 1f, m_spirit = 1f };
+            shared.m_damages = Damage(wand, wand.Bolt);
+            shared.m_damagesPerLevel = Damage(wand, 1f);
             shared.m_weight = 1f;
             shared.m_maxDurability = 100f;
             shared.m_durabilityPerLevel = 50f;
             shared.m_useDurability = true;
             shared.m_useDurabilityDrain = 1f;
             shared.m_attackForce = 10f;
-            shared.m_eitrRegenModifier = 0f;
+            shared.m_eitrRegenModifier = wand.EitrRegen;
+        }
+
+        /// <summary>
+        /// The bolt's pierce and spirit, each this much; the Rootbound Wand's roots hit blunt, as the Elder's do, the Greywood
+        /// Wand's rock blunt, as a stone does (user, 2026-11-02: "should be like a rock"), and the
+        /// Frostsilver Wand's ice shards are frost (they slow by the game's own frost rule; user, 2026-11-02: "an ice wand"), the
+        /// Ashwood Wand's firebolt fire (it sets burning by the game's own fire rule; user, 2026-11-02: "firebolt").
+        /// </summary>
+        private static HitData.DamageTypes Damage(GearPiece wand, float each)
+        {
+            if (WandRoots.Raises(wand) || WandRock.Fires(wand))
+                return new HitData.DamageTypes { m_blunt = each, m_spirit = each };
+            if (wand == CasterGear.Frostsilver)
+                return new HitData.DamageTypes { m_frost = each, m_spirit = each };
+            if (Firebolt.Fires(wand))
+                return new HitData.DamageTypes { m_fire = each, m_spirit = each };
+            return new HitData.DamageTypes { m_pierce = each, m_spirit = each };
         }
 
         private static void Attacks(SharedData shared, Attack cast)

@@ -38,7 +38,9 @@ namespace DevBridge.Routes
             TraceRoute.Register(router);
             ScenarioRoute.Register(router);
             PerfRoute.Register(router);
+            PerfRecordRoute.Register(router);
             HeapRoute.Register(router);
+            LoadRoute.Register(router);
             ReloadRoute.Register(router);
             StudioRoute.Register(router);
             DirectorRoute.Register(router);

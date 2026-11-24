@@ -83,14 +83,15 @@ namespace DevBridge.Perf
         /// Small enough that Mono may have inlined it into the wrappers Harmony built for the methods it patches, where a
         /// probe on it is never reached: those wrappers are rebuilt once the probe is on. Mono's own limit is 20 bytes of IL.
         /// </summary>
-        internal bool MayBeInlined
+        internal bool MayBeInlined => mayBeInlined ?? (mayBeInlined = Inlinable()).Value;
+
+        private bool? mayBeInlined;
+
+        private bool Inlinable()
         {
-            get
-            {
-                if ((Method.MethodImplementationFlags & MethodImplAttributes.AggressiveInlining) != 0) return true;
-                byte[] il = Method.GetMethodBody()?.GetILAsByteArray();
-                return il != null && il.Length <= 64;
-            }
+            if ((Method.MethodImplementationFlags & MethodImplAttributes.AggressiveInlining) != 0) return true;
+            byte[] il = Method.GetMethodBody()?.GetILAsByteArray();
+            return il != null && il.Length <= 64;
         }
     }
 }
